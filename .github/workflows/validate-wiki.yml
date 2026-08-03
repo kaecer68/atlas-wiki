@@ -99,6 +99,122 @@ jobs:
           print(f'✅ {len(files)} 頁 frontmatter 核心欄位齊全')
           EOF
 
+  trigger-template-existence:
+    name: 12 觸發模板存在 + 結構合規
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: 驗證 12 觸發模板
+        run: |
+          python3 - <<'EOF'
+          import os, sys
+          expected = [
+              'trigger-nvda-tsm.md',
+              'trigger-usd-twd-32.md',
+              'trigger-dxy-us10y-weak.md',
+              'trigger-margin-350b.md',
+              'trigger-foreign-3day-inflow.md',
+              'trigger-sox-foreignflow.md',
+              'trigger-taiwan-strait-tension.md',
+              'trigger-china-slowdown.md',
+              'trigger-tariff-shock.md',
+              'trigger-etf-rebalance.md',
+              'trigger-cb-fx-intervention.md',
+              'trigger-retail-margin-decrease.md',
+          ]
+          templates_dir = 'templates'
+          missing = []
+          for t in expected:
+              path = os.path.join(templates_dir, t)
+              if not os.path.exists(path):
+                  missing.append(t)
+          if missing:
+              for m in missing:
+                  print(f'❌ 缺 {m}')
+              sys.exit(1)
+          print(f'✅ 12 觸發模板全在 {templates_dir}/')
+          # 驗證每個含關鍵字
+          for t in expected:
+              with open(os.path.join(templates_dir, t)) as f:
+                  content = f.read()
+              keywords = ['觸發條件', '對位', '端點']
+              missing_kw = [k for k in keywords if k not in content]
+              if missing_kw:
+                  print(f'❌ {t} 缺關鍵字: {missing_kw}')
+                  sys.exit(1)
+          print('✅ 12 觸發模板結構合規(觸發條件/對位/端點 5 段)')
+          EOF
+
+  trigger-endpoint-validation:
+    name: 12 觸發模板對位 atlas 端點
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: checkout atlas-go(只取 mcp server)
+        uses: actions/checkout@v4
+        with:
+          repository: kaecer68/atlas-go
+          path: atlas-go
+          sparse-checkout: |
+            cmd/atlas-mcp/server
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: 驗證模板對位端點存在
+        run: |
+          python3 - <<'EOF'
+          import os, re, sys
+          # 抓 atlas-go 所有 tool 端點名
+          atlas_dir = 'atlas-go/cmd/atlas-mcp/server'
+          if not os.path.exists(atlas_dir):
+              print(f'❌ atlas-go 未 checkout,跳過驗證')
+              sys.exit(1)
+          files = sorted([f for f in os.listdir(atlas_dir) if f.startswith('tools_') and f.endswith('.go')])
+          atlas_endpoints = set()
+          for f in files:
+              with open(os.path.join(atlas_dir, f)) as fh:
+                  c = fh.read()
+              for m in re.findall(r'Name:\s*"([a-z_]+)"', c):
+                  atlas_endpoints.add(m)
+          print(f'atlas-go 端點數: {len(atlas_endpoints)}')
+          # 12 觸發模板對位端點
+          template_endpoints = {
+              'trigger-nvda-tsm.md': ['macro_get_snapshot_latest'],
+              'trigger-usd-twd-32.md': ['macro_get_snapshot_latest'],
+              'trigger-dxy-us10y-weak.md': ['macro_get_snapshot_latest'],
+              'trigger-margin-350b.md': ['macro_get_snapshot_latest', 'risk_get_metrics'],
+              'trigger-foreign-3day-inflow.md': ['capital_flow_summary', 'mcp_quickstart'],
+              'trigger-sox-foreignflow.md': ['macro_get_snapshot_latest', 'capital_flow_summary'],
+              'trigger-taiwan-strait-tension.md': ['taiwan_stress_index', 'capital_flow_summary'],
+              'trigger-china-slowdown.md': ['macro_get_snapshot_latest', 'risk_exposure'],
+              'trigger-tariff-shock.md': ['macro_get_snapshot_latest', 'capital_flow_summary'],
+              'trigger-etf-rebalance.md': ['macro_get_snapshot_latest', 'event_calendar'],
+              'trigger-cb-fx-intervention.md': ['macro_get_snapshot_latest', 'capital_flow_summary'],
+              'trigger-retail-margin-decrease.md': ['macro_get_snapshot_latest', 'risk_get_metrics'],
+          }
+          templates_dir = 'templates'
+          bad = []
+          for t, eps in template_endpoints.items():
+              path = os.path.join(templates_dir, t)
+              if not os.path.exists(path):
+                  continue
+              with open(path) as f:
+                  content = f.read()
+              for ep in eps:
+                  if ep not in content:
+                      bad.append(f'{t} 缺端點 {ep}')
+                  if ep not in atlas_endpoints:
+                      bad.append(f'{t} 端點 {ep} 在 atlas-go 不存在')
+          if bad:
+              for b in bad:
+                  print(f'❌ {b}')
+              sys.exit(1)
+          print(f'✅ 12 觸發模板對位 atlas 端點全在')
+          EOF
+
   notify-telegram:
     name: 失敗 Telegram 通知
     needs: [validate-timestamp-rule, audit-atlas-endpoints, size-check, frontmatter-check]
