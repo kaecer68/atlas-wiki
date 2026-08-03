@@ -39,6 +39,12 @@ verification: 2026-08-02 L3 實跑確認 atlas 無原生 ablation 端點;PR #144
 
 ---
 
+## experiment_diff 端點速查
+
+完整 5 行卡見 [`_atlas-endpoint-cards/experiment-diff.md`](_atlas-endpoint-cards/experiment-diff.md)(2026-08-03 kaecer v6.6 派工對位 wiki 教學)。
+
+---
+
 ## Darwinian-ablation 替代方案（by-factor ablation 不提供時的散戶實務路徑）
 
 **前提**:atlas 不提供 by-factor drop_percentage 端點(開發 agent 報告 v2 §C 必要性為否)。散戶要觀察「策略何時失效」,只能走 Darwinian 多輪 + 跨 regime 對照,**這不是嚴格 ablation,但最接近**:
