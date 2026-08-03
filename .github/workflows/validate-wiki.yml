@@ -14,8 +14,8 @@ jobs:
     name: 第 5 條鐵律 timestamp 驗證
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
       - name: 跑 validate-timestamp-rule.py
@@ -25,15 +25,15 @@ jobs:
     name: atlas-mcp 端點 audit
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: checkout atlas-go(public,只取 mcp server 源碼)
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: kaecer68/atlas-go
           path: atlas-go
           sparse-checkout: |
             cmd/atlas-mcp/server
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
       - name: 執行 audit 並驗證輸出
@@ -51,7 +51,7 @@ jobs:
     name: SK 頁大小檢查(≤ 9000 bytes)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: 每頁 wc -c ≤ 9000
         run: |
           python3 - <<'EOF'
@@ -73,7 +73,7 @@ jobs:
     name: frontmatter 核心欄位檢查
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: frontmatter 10 欄齊全
         run: |
           python3 - <<'EOF'
@@ -103,8 +103,8 @@ jobs:
     name: 12 觸發模板存在 + 結構合規
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
       - name: 驗證 12 觸發模板
@@ -152,15 +152,15 @@ jobs:
     name: 12 觸發模板對位 atlas 端點
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: checkout atlas-go(只取 mcp server)
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: kaecer68/atlas-go
           path: atlas-go
           sparse-checkout: |
             cmd/atlas-mcp/server
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
       - name: 驗證模板對位端點存在
