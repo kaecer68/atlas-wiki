@@ -85,6 +85,16 @@ push / PR 到 `main` 觸發 `validate-wiki`：
 
 > **聲明**:本 wiki 內容僅為學術與教學用途,不構成任何投資建議。投資有風險,決策責任自負。詳見 `skills/_method.md` 與憲章 `~/workspace/atlas/docs/ATLAS_METHODOLOGY.md`。
 
+## 12 觸發模板自動化(2026-08-03 v6.18)
+
+atlas-wiki v6.18 含 **12 觸發模板** 落 `templates/` = 自動信號捕捉系統(對位 ATLAS 憲章 7 層因果鏈 + 12 strategy):
+- trigger-nvda-tsm / trigger-usd-twd-32 / trigger-dxy-us10y-weak / trigger-margin-350b
+- trigger-foreign-3day-inflow / trigger-sox-foreignflow / trigger-taiwan-strait-tension
+- trigger-china-slowdown / trigger-tariff-shock / trigger-etf-rebalance
+- trigger-cb-fx-intervention / trigger-retail-margin-decrease
+
+跑 `atlas-mcp-trigger-monitor.py` 每 5 分鐘觸發 1 次 + 自動 §6 紀錄 + Telegram 通知。
+
 ## 貢獻
 
 以 PR 形式提交至 `main` 分支。CI 會自動跑 4 項檢查;需遵守 `skills/_method.md` 5 條鐵律(尤其第 5 條:快照值必附 timestamp)。貢獻前請閱讀:
