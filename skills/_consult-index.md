@@ -217,6 +217,20 @@ related:
 
 | 日期 | 問題 | 分類 | 走通的端點 | 落點 |
 |------|------|------|-----------|------|
+| 2026-08-03 | **觸發模板 1:NVDA+TSM 模板(單日版)**:NVDA +2.93% > +2.0% ✅ 觸發成功 | Q2 選股 | macro_get_snapshot_latest | §6 觸發模板第 1 觸 |
+| 2026-08-03 | **觸發模板 2:USD_TWD 32+ 模板(單日版)**:USD_TWD 32.38 > 32.3 ✅ 觸發成功 | Q5 宏觀 | macro_get_snapshot_latest | §6 觸發模板第 2 觸 |
+| 2026-08-03 | **觸發模板 3:DXY 弱模板(單日版)**:DXY 99.74 < 100 ✅ 觸發成功 | Q5 宏觀 | macro_get_snapshot_latest | §6 觸發模板第 3 觸 |
+| 2026-08-03 | **觸發模板 4:融資 3500 億模板(單日版)**:retail_margin 5074.63 億 > 5000 ✅ 觸發成功 | Q4 風險 | macro_get_snapshot_latest + risk_get_metrics | §6 觸發模板第 4 觸 |
+| 2026-08-03 | **觸發模板 5:外資買超模板(單日版)**:foreign_investor_net +21.83 億 > +20 ✅ 觸發成功 | Q2 選股 | capital_flow_summary + regime_get_history | §6 觸發模板第 5 觸 |
+| 2026-08-03 | **觸發模板 6:SOX+外資買超模板(單日版)**:SOX +0.07% > 0 + 外資 +21.83 億 ✅ 觸發成功 | Q2 選股 | macro_get_snapshot_latest + capital_flow_summary | §6 觸發模板第 6 觸 |
+| 2026-08-03 | **觸發模板 7:台海緊張模板(單日版)**:geopolitical 5.07 > 4 ✅ 觸發成功 | Q5 宏觀 | taiwan_stress_index + capital_flow_summary | §6 觸發模板第 7 觸 |
+| 2026-08-03 | **觸發模板 8:中國經濟放緩模板(單日版)**:copper +1.63% > 0.5% ❌ 觸發失敗(中國需求強,放緩訊號未觸發;**結構性誠實標**) | Q5 宏觀 | macro_get_snapshot_latest + risk_exposure | §6 觸發模板第 8 觸 |
+| 2026-08-03 | **觸發模板 9:對中/台晶片關稅模板(單日版)**:USD_TWD 32.38 > 32 + export_electronics +14.96% > 0 ✅ 觸發成功 | Q5 宏觀 | macro_get_snapshot_latest + capital_flow_summary | §6 觸發模板第 9 觸 |
+| 2026-08-03 | **觸發模板 10:ETF 換股 / MSCI 調整模板(單日版)**:market_volume 7253 億 > 0 ✅ 觸發成功 | Q5 宏觀 | macro_get_snapshot_latest + event_calendar | §6 觸發模板第 10 觸 |
+| 2026-08-03 | **觸發模板 11:央行匯市干預預警模板(單日版)**:USD_TWD 32.38 < 32.5 ❌ 觸發失敗(未到央行防線 32.5;**結構性誠實標**) | Q5 宏觀 | macro_get_snapshot_latest + capital_flow_summary | §6 觸發模板第 11 觸 |
+| 2026-08-03 | **觸發模板 12:散戶融資大減模板(單日版)**:retail_margin 5074 億 > 5000 + retail_short 1.88 億 ✅ 觸發成功 | Q4 風險 | macro_get_snapshot_latest + risk_get_metrics | §6 觸發模板第 12 觸 |
+| 2026-08-03 | **GTC 2026 對台積電的影響**(散戶提醒:不只台積電,還有記憶體/能源/封裝) | Q2 選股 + Q5 宏觀 | macro_get_snapshot_latest + risk_get_correlation_matrix + capital_flow_summary + event_calendar + (narrative_get_chains 504 timeout) = **5 端點** | [GROW 對話 §6.2 詳](#第-2-筆真實對話) |
+| 2026-08-03 | kaecer 問 4 個問題:① 股市階段 ② 未來一週錢潮方向 ③ 重點產業 ④ 賣出時點 | Q5 宏觀 + Q4 風險 + Q2 選股 |
 | 2026-08-03 | kaecer 問 4 個問題:① 股市階段 ② 未來一週錢潮方向 ③ 重點產業 ④ 賣出時點 | Q5 宏觀 + Q4 風險 + Q2 選股 | regime_get_history(7 日)+macro_get_snapshot_latest+taiwan_stress_index+risk_get_metrics+mcp_quickstart+strategy_ranker+capital_flow_summary+event_flow_prediction 共 8 端點 | [GROW 對話 §6.1 詳](#第-1-筆真實對話) |
 
 **§6 第 1 筆詳記(2026-08-03 kaecer 驗證觸發 M4 升 5 + M5 升 4)**:

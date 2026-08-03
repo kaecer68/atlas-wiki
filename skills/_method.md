@@ -32,8 +32,8 @@ Fin-Skills(5/29 入庫的 32 個學術 SK)是死的——沒人引用、沒人�
 1. **不搬運,翻譯**——每頁必須含「論文版概念 / atlas 對位 / 散戶解讀」三層,缺一層即不合格
 2. **不瞎寫**——atlas-mcp tool 名稱不確定就標 `待驗`,不準拼湊
 3. **不裝完成**——L3 端點驗證沒跑過,status 永遠是 draft
-4. **不違背憲章**——`~/workspace/atlas/docs/ATLAS_METHODOLOGY.md` v1.0 (2026-07-27) 為全專案唯一真理源頭;每頁必須對位:七時期(非三態)、七維錢潮雷達 3+2+2(非「七大資金勢力」混稱)、策略三分類正名「跟隨聰明錢／事件套利／資金對抗」(2026-07-30 kaecer 拍板裁定)。本條由 kaecer 2026-07-30 拍板補充,對位依據見 `_methodology_alignment_audit_with_fileline.md` 附錄 H「裁決狀態」段。
-5. **派工執行前後必做備份 checkpoint**(2026-08-01 kaecer 拍板)——任何 SK 頁改動**前**備份 `<檔名>.bak.<YYYY-MM-DD-HHMM>`;改動**後**再加備份一次。中間任何編輯事件需落在兩個備份之間,事後追查改動源頭時**用兩個備份 byte-perfect 對位**。**教訓**:atlas-wiki 非 git 管理(2026-08-01 確認),7/30 05:57 → 8/1 00:28 之間 19 小時無 SK 頁備份,period_system 附註/tip 源頭不可追蹤(T3-A40)。
+4. **不違背憲章**——`~/workspace/atlas/docs/ATLAS_METHODOLOGY.md` v1.0 (2026-07-27) 為全專案唯一真理源頭;每頁必須對位:七時期(非三態)、七維錢潮雷達 3+2+2(非「七大資金勢力」混稱)、策略三分類正名「跟隨聰明錢／事件套利／資金對抗」(2026-07-30 k拍裁定)。本條由 kaecer 2026-07-30 拍板補充,對位依據見 `_methodology_alignment_audit_with_fileline.md` 附錄 H「裁決狀態」段。
+5. **派工執行前後必做備份 checkpoint**(2026-08-01 k拍)——任何 SK 頁改動**前**備份 `<檔名>.bak.<YYYY-MM-DD-HHMM>`;改動**後**再加備份一次。中間任何編輯事件需落在兩個備份之間,事後追查改動源頭時**用兩個備份 byte-perfect 對位**。**教訓**:atlas-wiki 非 git 管理(2026-08-01 確認),7/30 05:57 → 8/1 00:28 之間 19 小時無 SK 頁備份,period_system 附註/tip 源頭不可追蹤(T3-A40)。
 
 ## 規範速查
 
@@ -41,10 +41,10 @@ Fin-Skills(5/29 入庫的 32 個學術 SK)是死的——沒人引用、沒人�
 |------|------|
 | 路徑 | `~/workspace/atlas-wiki/skills/` |
 | 命名 | `SK-<原編號>-<slug>.md` |
-| 單頁大小 | ≤ 9,000 bytes (2026-07-30 kaecer 拍板:bump 自 6000→9000,涵蓋 5 個 SK + 2 個索引/字典) |
+| 單頁大小 | ≤ 9,000 bytes (2026-07-30 k拍:bump 自 6000→9000,涵蓋 5 個 SK + 2 個索引/字典) |
 | 結構 | 6 段(一句話定位 / 論文版 / 對位 / 散戶解讀 / 驗證 / 未消化) |
 | frontmatter | 9 欄(title / type / source / ingested_at / status / tier / confidence / atlas_go_relevance / mcp_tools_used / verification) |
-| Quota | D1 示範 1 頁 → D2+ 每日 3 頁上限（2026-07-29 kaecer 拍板降標 A 方案,見 `skill-inbound-quota-decision-history.md`） |
+| Quota | D1 示範 1 頁 → D2+ 每日 3 頁上限（2026-07-29 k拍降標 A 方案,見 `skill-inbound-quota-decision-history.md`） |
 | 精選門檻 | 三題:對位 mission? / 有 atlas-mcp tool? / 散戶能一句話理解? |
 | 完成定義 | L1 格式 + L2 對位 + L3 端點三層全過才升 active |
 
@@ -57,7 +57,7 @@ Fin-Skills(5/29 入庫的 32 個學術 SK)是死的——沒人引用、沒人�
 - [ ] `_inbox.md` 已更新跨 SK 待辦
 - [ ] 對應 Fin-Skills 段落完整讀過(非略略讀)
 
-## 第五條鐵律(2026-08-02 kaecer 拍板):快照值必附 timestamp
+## 第五條鐵律(2026-08-02 k拍):快照值必附 timestamp
 
 對位 SOUL §0.1 第 6 條邊界「_method 規範修改需拍板」,本條由 kaecer 2026-08-02 22:30 拍板新增:
 
@@ -90,22 +90,36 @@ Fin-Skills(5/29 入庫的 32 個學術 SK)是死的——沒人引用、沒人�
 
 - 修改本檔 / SKILL.md 走 `task-governance` 流程
 - 兩檔內容必須同步(SKILL.md 為主,本檔鏡像)
-- 連續 3 天未產出 → kaecer 拍板是否廢除
+- 連續 3 天未產出 → k拍是否廢除
 
 ## 起源與演進
 
 | 日期 | 事件 |
 |------|------|
 | 2026-05-29 | Fin-Skills.md 入庫(32 個 SK,沒人引用) |
-| 2026-07-28 | kaecer 拍板「每日 5 個進修」方針,本方法誕生,SK-01 寫成示範 |
+| 2026-07-28 | k拍「每日 5 個進修」方針,本方法誕生,SK-01 寫成示範 |
 | 2026-07-28 | 規範固化進 `~/.hermes/skills/atlas-skill-inbound/` + 本檔 |
-| 2026-07-30 | kaecer 拍板 A 階段:加第四條鐵律「對位 ATLAS_METHODOLOGY.md v1.0」+ 5 HIGH SK 加 methodology_aligned 標 |
-| 2026-08-01 | kaecer 拍板 B5 階段(部分) + write_file SOP 強制綁定(避免覆蓋事故) |
-| 2026-08-02 22:30 | **kaecer 拍板第五條鐵律「快照值必附 timestamp」新增**(對位 SOUL §0.1 第 6 條邊界);規範 session_count / sharpe / max_drawdown 等隨時間變動的數字引用必附 timestamp + 端點名稱,區分歷史快照 vs 當下值 |
+| 2026-07-30 | k拍 A 階段:加第四條鐵律「對位 ATLAS_METHODOLOGY.md v1.0」+ 5 HIGH SK 加 methodology_aligned 標 |
+| 2026-08-01 | k拍 B5 階段(部分) + write_file SOP 強制綁定(避免覆蓋事故) |
+| 2026-08-02 22:30 | **k拍第五條鐵律「快照值必附 timestamp」新增**(對位 SOUL §0.1 第 6 條邊界);規範 session_count / sharpe / max_drawdown 等隨時間變動的數字引用必附 timestamp + 端點名稱,區分歷史快照 vs 當下值 |
 | 2026-08-02 23:25 | kaecer 核准 B 階段 24/24 全部完成(methodology_aligned 對位率 17.9%→100% active) |
-| 2026-08-02 23:55 | kaecer 拍板 _consult-index §0 加 2 條規則(§6 觸發點設計 + §6.3 常見問題地圖),鋪路 M4/M5 升分 |
-| 2026-08-02 23:59 | kaecer 拍板 M6 規範修改(主動糾正觸發反向達標,kaecer「請自行」紀律落實) |
-| 2026-08-03 00:00 | kaecer 開放自主盤查 4 條該做未做全修;v5.2 6.17/10 |
+## §6 升分綁定(v6.9)
+
+| 維度 | 觸發 | 狀態 |
+|------|------|------|
+| M1 | 4學術+80% | ✅7 |
+| M2 | 15端點+源碼 | ⚠7.5 |
+| M3 | 缺口3次 | ✅6 |
+| M4 | M4驗證 | ✅5 |
+| M5 | **5模板跑通**(單軸,v6.10 再修) | 待 |
+| M6 | k3糾 | ✅8 |
+| M7 | 33頁合規 | ✅10 |
+| M8 | ≤800×3 | ✅6 |
+| M9 | 盤查×3 | ✅4 |
+
+| 2026-08-02 23:55 | k拍 _consult-index §0 加 2 條規則(§6 觸發點設計 + §6.3 常見問題地圖),鋪路 M4/M5 升分 |
+| 2026-08-02 23:59 | k拍 M6 規範修改(主動糾正觸發反向達標,kaecer「請自行」紀律落實) |
+| 2026-08-03 00:00 | k開自主盤查 4 條該做未做全修;v5.2 6.17/10 |
 | 2026-08-03 01:35 | A 路徑:2 新 paper(Rosenberg85+Frazzini14)+ validate-timestamp-rule.py(2968B)+ wiki 系統側標;T3-A134/135/136 |
 | 2026-08-03 01:40 | ad-hoc 驗證 1.0 = 4 TEST 全過;修 bug「中文段標題不觸發 in_real_run」;T3-A137/138 |
 | 2026-08-03 01:50 | 建議 1+2+3 = 109 端點速查卡(7060B)+ 2 paper + audit-atlas-endpoints.py(2408B);**端點 116→109 + M2 8→7.5**;T3-A139/140 |
@@ -124,7 +138,7 @@ Fin-Skills(5/29 入庫的 32 個學術 SK)是死的——沒人引用、沒人�
 
 ---
 
-## 重啟後 30 秒回神程序(2026-07-28 kaecer 拍板「不要做了一天兩天就忘記怎麼做」)
+## 重啟後 30 秒回神程序(2026-07-28 k拍「不要做了一天兩天就忘記怎麼做」)
 
 每次 session 開頭,無論之前進度到哪,執行以下三步即可回到工作狀態:
 
@@ -144,7 +158,7 @@ cat ~/workspace/atlas-wiki/skills/_inbox.md 2>/dev/null || echo "_inbox.md 尚�
 - 規範(6 段格式、frontmatter 9 欄、三層驗證)
 - 命名(atlas = atlas,不是 atlas-go)
 - 路徑(憲法在 `~/workspace/atlas-notes/`,不在 `~/workspace/atlas/`)
-- Quota(D1 示範 1 頁 → D2+ 每日 3 頁,2026-07-29 kaecer 拍板降標)
+- Quota(D1 示範 1 頁 → D2+ 每日 3 頁,2026-07-29 k拍降標)
 - 精選優先序(SK-01 → 16 → 18 → 20 → 29 第一輪)
 
 **這條規則的權威跟憲法 §1 同級**——可被「禮貌」「怕打擾」覆蓋的話,規範就會被破壞掉。
