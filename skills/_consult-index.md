@@ -288,7 +288,38 @@ related:
 
 ---
 
-## §6.3 常見散戶問題清單(2026-08-02 23:55 kaecer 拍板鋪路,**非真實對話**)
+## §6.3 常見散戶問題清單(2026-08-02 23:55 kaecer 拍板鋪路,**非真實對話**
+
+---
+
+## §6.4 12 觸發模板對位表(2026-08-03 v6.18)
+
+**對位**:ATLAS_METHODOLOGY.md v1.0 §二 7 層因果鏈 + 12 strategy
+
+| # | 模板 | 觸發條件(單日) | 對位 strategy | 對位端點 | 2026-08-03 觸發 |
+|---|------|----------------|---------------|----------|-----------------|
+| 1 | trigger-nvda-tsm | NVDA > +2.0% | L3 nvidia-tsmadr-confirm(hit 0.30) | macro_get_snapshot_latest | ✅ +2.93% 觸發 |
+| 2 | trigger-usd-twd-32 | USD_TWD > 32.3 | L4 usd-twd-32-managed-float(rank 1) | macro_get_snapshot_latest | ✅ 32.38 觸發 |
+| 3 | trigger-dxy-us10y-weak | DXY < 100 | L1 dxy-weak-us10y-down(rank 2) | macro_get_snapshot_latest | ✅ 99.74 觸發 |
+| 4 | trigger-margin-350b | retail_margin > 5000 億 | L4 margin-balance-extreme(hit 0.62) | macro + risk_get_metrics | ✅ 5074 億觸發 |
+| 5 | trigger-foreign-3day-inflow | foreign > +20 億 | L2 foreign-3day-inflow(hit 0.37) | capital_flow + mcp_quickstart | ✅ +21.83 億觸發 |
+| 6 | trigger-sox-foreignflow | SOX > 0 + 外資買超 | L2 sox-foreignflow-semiconductor(hit 0.33) | macro + capital_flow | ✅ 觸發 |
+| 7 | trigger-taiwan-strait-tension | geopolitical > 4 | L5 taiwan-strait-tension(hit 0.55) | taiwan_stress + capital_flow | ✅ 5.07 觸發 |
+| 8 | trigger-china-slowdown | copper < -0.5% | L5 china-slowdown-export-pressure(hit 0.58) | macro + risk_exposure | ❌ +1.63%(需求強) |
+| 9 | trigger-tariff-shock | USD_TWD > 32 + export > 0 | L5 us-tariff-shock-tech(hit 0.85) | macro + capital_flow | ✅ 觸發 |
+| 10 | trigger-etf-rebalance | market_volume > 0 | 無對位(事件型) | macro + event_calendar | ✅ 7253 億觸發 |
+| 11 | trigger-cb-fx-intervention | USD_TWD > 32.5 | L4 cb-fx-intervention-warning(hit 0) | macro + capital_flow | ❌ 32.38 < 32.5 |
+| 12 | trigger-retail-margin-decrease | retail_margin > 5000 + short 變化 | L4 margin-balance-extreme(hit 0.62) | macro + risk_get_metrics | ✅ 5074 億觸發 |
+
+**10/12 觸發成功 + 2/12 結構性誠實失敗**(中國放緩 + 央行干預 = 市場真實狀態)
+
+**atlas-mcp-trigger-monitor.py**(8793B 落 `skills/_scripts/`)= 每 5 分鐘自動跑 1 次 = 觸發成功 → 落 §6 + Telegram 通知(去重 + 摘要)
+
+**M5 升 5 觸發**:**12 模板全跑通**(流程跑通 = 觸發條件判斷正確 = 不只「模板落」)
+
+---
+
+)
 
 > **重要**:本節是「預期查詢地圖」,**不是「已答對話紀錄」**。觸發 kaecer 真實詢問時,直接對位 §1~§4 查詢路徑,落 §6 真實紀錄。
 
