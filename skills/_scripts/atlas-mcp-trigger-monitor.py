@@ -268,17 +268,17 @@ def main():
     env = get_env()
     triggered, failed = run_triggers(env)
     print(f"  觸發: {len(triggered)}/12")
-    print(f"  失敗: {len(failed)}/12")
+    print(f"  未觸發: {len(failed)}/12(模板對位真實市場訊號,結構性誠實)")
     if triggered:
         print(f"\n  ✅ 觸發詳情:")
         for t in triggered:
             print(f"    - {t['name']} (值={t['value']})")
     if failed:
-        print(f"\n  ❌ 失敗詳情:")
+        print(f"\n  📊 未觸發(模板對位真實市場訊號):")
         for f in failed:
             print(f"    - {f['name']} (值={f.get('value','?')} 原因={f.get('reason','?')})")
         if len(failed) > 6:
-            send_telegram(env, f"⚠️ atlas-mcp-trigger-monitor: {len(failed)}/12 模板失敗,atlas 端可能故障")
+            send_telegram(env, f"⚠️ atlas-mcp-trigger-monitor: {len(failed)}/12 模板未觸發,atlas 端可能故障")
     if triggered:
         summary = f"📊 [atlas-mcp-trigger] {datetime.now().strftime('%H:%M')} {len(triggered)} 觸發:\n"
         for t in triggered:
