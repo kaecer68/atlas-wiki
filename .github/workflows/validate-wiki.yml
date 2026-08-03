@@ -115,11 +115,7 @@ jobs:
             exit 0
           fi
           CHAT_ID="${TG_CHAT_ID:-8387647295}"
-          MSG="❌ atlas-wiki CI 失敗
-動作: ${{ github.workflow }}
-提交: ${{ github.sha }}
-觸發: ${{ github.event_name }}
-詳情: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          MSG=$(printf '❌ atlas-wiki CI 失敗 | 動作: %s | 提交: %s | 觸發: %s | 詳情: %s/actions/runs/%s' "${{ github.workflow }}" "${{ github.sha }}" "${{ github.event_name }}" "${{ github.server_url }}/${{ github.repository }}" "${{ github.run_id }}")
           curl -sS -X POST "https://api.telegram.org/bot${TG_TOKEN}/sendMessage" \
             --data-urlencode "chat_id=${CHAT_ID}" \
             --data-urlencode "text=${MSG}" \
