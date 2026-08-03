@@ -1,0 +1,125 @@
+name: validate-wiki
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  validate-timestamp-rule:
+    name: 第 5 條鐵律 timestamp 驗證
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: 跑 validate-timestamp-rule.py
+        run: python3 skills/_scripts/validate-timestamp-rule.py --skills-dir skills
+
+  audit-atlas-endpoints:
+    name: atlas-mcp 端點 audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: checkout atlas-go(public,只取 mcp server 源碼)
+        uses: actions/checkout@v4
+        with:
+          repository: kaecer68/atlas-go
+          path: atlas-go
+          sparse-checkout: |
+            cmd/atlas-mcp/server
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: 執行 audit 並驗證輸出
+        run: |
+          OUT=$(python3 skills/_scripts/audit-atlas-endpoints.py --atlas-mcp-dir atlas-go/cmd/atlas-mcp/server 2>&1)
+          echo "$OUT"
+          if echo "$OUT" | grep -q "audit 完成"; then
+            echo "✅ audit 正常完成"
+          else
+            echo "❌ audit 未完成"
+            exit 1
+          fi
+
+  size-check:
+    name: SK 頁大小檢查(≤ 9000 bytes)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: 每頁 wc -c ≤ 9000
+        run: python3 - <<'EOF'
+          import glob, sys
+          files = sorted(glob.glob('skills/SK-*.md'))
+          bad = []
+          for f in files:
+              size = len(open(f, 'rb').read())
+              if size > 9000:
+                  bad.append((f, size))
+          if bad:
+              for f, s in bad:
+                  print(f'❌ {f}: {s} bytes > 9000')
+              sys.exit(1)
+          print(f'✅ {len(files)} 頁全部 ≤ 9000 bytes')
+          EOF
+
+  frontmatter-check:
+    name: frontmatter 核心欄位檢查
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: frontmatter 10 欄齊全
+        run: python3 - <<'EOF'
+          import glob, re, sys
+          REQUIRED = ['title', 'type', 'source', 'ingested_at', 'status', 'tier',
+                      'confidence', 'atlas_go_relevance', 'mcp_tools_used', 'verification']
+          files = sorted(glob.glob('skills/SK-*.md'))
+          bad = []
+          for f in files:
+              content = open(f, encoding='utf-8').read()
+              m = re.match(r'^---\n(.*?)\n---', content, re.DOTALL)
+              if not m:
+                  bad.append((f, '無 frontmatter'))
+                  continue
+              fm = m.group(1)
+              missing = [k for k in REQUIRED if not re.search(rf'^{re.escape(k)}:', fm, re.MULTILINE)]
+              if missing:
+                  bad.append((f, '缺: ' + ', '.join(missing)))
+          if bad:
+              for f, msg in bad:
+                  print(f'❌ {f}: {msg}')
+              sys.exit(1)
+          print(f'✅ {len(files)} 頁 frontmatter 核心欄位齊全')
+          EOF
+
+  notify-telegram:
+    name: 失敗 Telegram 通知
+    needs: [validate-timestamp-rule, audit-atlas-endpoints, size-check, frontmatter-check]
+    if: failure()
+    runs-on: ubuntu-latest
+    steps:
+      - name: 發送 Telegram 通知
+        env:
+          TG_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TG_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          if [ -z "$TG_TOKEN" ]; then
+            echo "⚠️ TELEGRAM_BOT_TOKEN 未設定(需在 GitHub Settings → Secrets 設定),跳過通知"
+            exit 0
+          fi
+          CHAT_ID="${TG_CHAT_ID:-8387647295}"
+          MSG="❌ atlas-wiki CI 失敗
+動作: ${{ github.workflow }}
+提交: ${{ github.sha }}
+觸發: ${{ github.event_name }}
+詳情: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          curl -sS -X POST "https://api.telegram.org/bot${TG_TOKEN}/sendMessage" \
+            --data-urlencode "chat_id=${CHAT_ID}" \
+            --data-urlencode "text=${MSG}" \
+            --data-urlencode "disable_web_page_preview=true" \
+            || echo "⚠️ Telegram 發送失敗(不使 job 失敗)"

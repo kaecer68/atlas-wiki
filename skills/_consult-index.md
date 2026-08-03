@@ -1,0 +1,282 @@
+---
+title: atlas 諮詢索引 — 散戶問題 × Fin-Skill × atlas-mcp 端點
+type: consult-index
+purpose: 散戶問金融問題時,先查這檔決策錨,知道走哪條 atlas-mcp + 哪個 Fin-Skill
+created: 2026-07-29
+created_by: hermes-agent
+ground_truth_basis: |
+  - ~/workspace/atlas/ (atlas-mcp backend,唯讀)
+  - ~/workspace/Fin-Skills/Fin-Skills.md (32 SK)
+  - atlas-mcp 端點實跑驗證 2026-07-29：
+    * backtest_signals → sharpe_long/short、VaR、active_signals
+    * risk_get_metrics → max_drawdown_pct、insufficient_data、session_count
+    * industry_sector_lookup → 半導體(class 12 支同業)
+status: active
+related:
+  - ~/workspace/atlas-wiki/skills/_index-finskills.md
+  - ~/workspace/atlas-wiki/skills/_method.md
+  - ~/workspace/atlas-wiki/skills/_inbox.md
+---
+
+# atlas 諮詢索引
+
+> 設計目標:未來任何金融問題,我都能在這張表找到「問題分類 → 哪個 Fin-Skill 對位 → 哪個 atlas-mcp 端點驗證 → 給散戶的語言」四欄。
+> 不是 SK 的索引,是「問題的索引」。
+
+---
+
+## §0 使用規則
+
+1. 散戶進問題 → §1 找分類 → §2 找「核心 SK」 → §3 找「atlas 端點」 → §4 找「散戶語言」
+2. 若問題跨多個分類,依**首要關切**入主分類,次要分類在「附加」欄標
+3. 若 §1 找不到:擴張到 §5「未分類問題」工作流,找新端點並補登
+4. 每跑完一題,於 §6「諮詢紀錄」追蹤,作為後續 SK 寫入優先序依據
+5. **§6 觸發點設計(2026-08-02 23:55 kaecer 拍板鋪路)**:§6 真實對話紀錄觸發需「**kaecer 真實詢問散戶問題**」(USER §7「事實撒謊修不了」+ SOUL §5「不補造缺失資料」);**agent 不可編造對話紀錄**;觸發 1 筆後即啟用 §6 紀錄,作為 M4/M5 升分依據
+6. **§6.3 常見散戶問題清單(2026-08-02 23:55 kaecer 拍板鋪路)**:預期散戶常見 6 大類問題(Q1~Q6),列示每類典型問句 + 對位 §1~§4 的查詢路徑;**這是「預期查詢地圖」不是「已答對話」**;觸發真實對話時直接對位 §1~§4 即可
+
+---
+
+## §1 問題六大分類
+
+散戶的金融問題,大致落這六類:
+
+| 代號 | 分類 | 核心關切 | 一句話特徵 |
+|------|------|---------|-----------|
+| **Q1** | 個股基本判斷 | 這支會不會再漲/跌? | 提到具體股票代號/名稱 |
+| **Q2** | 多空/選股策略 | 怎麼挑股?做多做空怎麼配? | 提到 top/bottom、十分位、因子、Alpha |
+| **Q3** | 產業/類股輪動 | 哪個產業現在值得進? | 提到半導體/金融/航運、產業代碼 |
+| **Q4** | 風險/回測 | 這策略穩嗎?會不會大虧? | 提到回測、drawdown、夏普、VaR |
+| **Q5** | 宏觀/事件 | 現在是空頭還是多頭?有什麼大事? | 提到美股、聯準會、台股大盤、事件 |
+| **Q6** | 交易實務 | 該扣多少成本?怎麼算實際報酬? | 提到手續費、證交稅、滑價、淨報酬 |
+
+---
+
+## §2 每個分類對位的 Fin-Skill(以 HIGH 優先)
+
+| 分類 | 核心 SK | 附加 SK | 已落地 SK(2026-08-02) | 為什麼這幾個 |
+|------|---------|---------|----------------------|--------------|
+| Q1 個股 | SK-01(因子庫) | SK-09(PLS) | **SK-01** (active,2026-08-02 v0.9 升;data_get_field_contract 41 欄位已對位) | factor library 是個股分析底層,PLS 監督式降維 |
+| Q2 選股 | SK-16(多空十分位) + SK-18(因子 Alpha) | SK-13(排列重要性)、SK-22(消去法,**實驗級 metric delta 已對位 PR #1443 2026-08-02,但 by-factor 仍對位失敗,僅作 Fin-Skill 概念參考**) | **SK-16**、**SK-18** | Q2 是 mission「找漏洞」直接入場點 |
+| Q3 產業 | (待補) | SK-23(產業輪動 env),但 LOW 暫不啟動 | — | atlas 端點強(industry_sector_lookup),但 Fin-Skill 對位薄 |
+| Q4 風險 | SK-29(滾動回測) + SK-18(Alpha 風險調整) | SK-20(規模分組穩健)、SK-21(仙股排除) | **SK-29**(active,v3.1 升,risk_get_drawdown 雖 not_available 但端點活+七時期對位已寫)、**SK-18**(active,v0.9 升)、**SK-20**(active,v0.9 升,industry_sector_lookup + stock_get_quote + stock_get_fundamentals 三端點全跑通) | Q4 必須先有回測,才有穩健/風險 |
+| Q5 宏觀 | (atlas 端點為主) | SK-25(獎勵函數),LOW 暫不啟動 | — (atlas macro 端點為主:macro_get_snapshot_latest ✅ / narrative_get_events ✅ / taiwan_stress_index ✅ **-9.33** low,**mcp_quickstart.stress_index ✅ -7.90** low 為另一口徑,2026-08-02 20:11 實跑;**crossmarket_get_us_indices ✅ 4 指數 + 4 科技股**;**mcp_quickstart ✅ 12 strategies + 5 events**) | 這類問題 Fin-Skill 沒對位,直接吃 atlas macro 端點 |
+| Q6 成本 | SK-19(交易成本與稅務調整) | — | **SK-19** (active,2026-08-01 v0.9 升;backtest_signals + risk_get_metrics + report_get_tax_snapshot 三端點全跑通) | 唯一直接對位 |
+
+**問題: Q3 與 Q5 的 Fin-Skill 對位薄**
+- Q3(產業輪動):atlas-mcp `industry_sector_lookup` 強,但 Fin-Skills 只有 SK-23(LOW、需 RL 框架才有用)
+- Q5(宏觀):Fin-Skills 整套沒對位,直接吃 atlas `macro_get_snapshot_latest` + `narrative_get_events` + `stress_index_*`
+- 這兩塊用 atlas 端點強過用 Fin-Skill,所以「諮詢」時不該為了對位而對位
+
+---
+
+## §3 atlas-mcp 端點字典(已實跑驗 2026-07-29)
+
+### Q1 個股基本判斷
+| 用途 | 端點 | 驗證狀態 |
+|------|------|----------|
+| 報價(盤中) | `stock_get_quote` | 已驗(端點描述:FUGLE_API_KEY 需配) |
+| 基本面(PE/PB/股利率) | `stock_get_fundamentals` | 已驗(端點描述) |
+| 技術指標(SMA/RSI) | `stock_get_technical` | 已驗(端點描述) |
+| 籌碼(法人/外資) | `stock_get_chips` | 已驗(端點描述) |
+| 產業歸屬 | `industry_sector_lookup` | 已驗 2330 → 半導體 12 支 |
+
+### Q2 選股策略
+| 用途 | 端點 | 驗證狀態 |
+|------|------|----------|
+| 多空訊號 | `backtest_signals` | **已實跑**:active_signals=["CIRCUIT_BREAKER"],sharpe_long=0.27,sharpe_short=0.49,var_95=-0.023 |
+| 因子 Alpha | `risk_get_metrics` | **已實跑**:max_drawdown_pct=1,insufficient_data=1,session_count=147 |
+| 模擬歷史 | `universe_get_sessions` | 端點描述(待實跑) |
+
+### Q3 產業輪動
+| 用途 | 端點 | 驗證狀態 |
+|------|------|----------|
+| 產業清單 | `industry_sector_list` | **已實跑 2026-08-02 20:11**:38 個 sector(半導體 12 支 / 電子零組件 10 支 / 金融保險 10 支 / 光電 5 支 / 航運 6 支 / 鋼鐵 5 支 / 機械 5 支 等) |
+| 個股找產業 | `industry_sector_lookup` | 已實跑(見 Q1) |
+
+### Q4 風險/回測
+| 用途 | 端點 | 驗證狀態 |
+|------|------|----------|
+| 風險指標 | `risk_get_metrics` | 已實跑(見 Q2) |
+| 風險解讀 | `risk_get_commentary` | 端點描述(待實跑) |
+| 回測 | `backtest_signals` + `universe_get_sessions` | 部分實跑 |
+
+### Q5 宏觀/事件
+| 用途 | 端點 | 驗證狀態 |
+|------|------|----------|
+| 宏觀快照 | `macro_get_snapshot_latest` | **已實跑 2026-08-02 20:11**:current_period=consolidation/盤整,taiex 43119.75,vix 15.99,tsmc_revenue 4426.79 億 TWD,aapl -7.35%,msft +3.02%,nvda +2.93%,usd_twd 32.29 |
+| 事件流 | `narrative_get_events` | **已實跑 2026-08-02 20:11**:4 個 active events(AI_capex_surge conf=0.95 / JPY_carry_unwind conf=0.66 / tech_peak_season conf=0.75 / earnings_surprise conf=1.0) |
+| 壓力指數 | `taiwan_stress_index` | **已實跑 2026-08-02 20:11**:score=**-9.33**/low(注意:_inbox 舊文 19.99 是過時快照,真實當下為 -9.33,均屬 low 區間但數字已更新;**`mcp_quickstart.stress_index` 同時間戳 score=-7.90** 為另一計算路徑,US10Y 元件 0.60 vs 1.61 不同源,兩個口徑並存,引用時需註明來源) |
+| 美股 | `crossmarket_get_us_indices` | **已實跑 2026-08-02 20:11**:4 指數(S&P 500 7489.72 /NASDAQ 25373.85 /DJI 52485.03 /SOX 11311.08) + 4 科技股(NVDA 200.75 /AAPL 308.91 /MSFT 464.72 /TSM 404.25),data_status=stale |
+| 一站式速覽 | `mcp_quickstart` | **已實跑 2026-08-02 20:11**:12 active strategies + 5 events(配息回流/期貨結算/除權息旺季/Q2 季報 8/14/營收高峰 8/10)+ macro_snapshot + recent_regime_5_days(8/2~7/29 全盤整 + 7/30 turnaround_down)+ stress_index score=-7.90 |
+
+### Q6 交易成本
+| 用途 | 端點 | 驗證狀態 |
+|------|------|----------|
+| (atlas 端點不直接扣成本,需套用 Fin-Skill SK-19 公式) | — | 待策略層補 |
+
+### §3.1 方法論憲章對位的 MCP 工具狀態(2026-07-30 對位)
+
+對位 `~/workspace/atlas/docs/ATLAS_METHODOLOGY.md` v1.0 後,MCP 端的對位狀態（按憲章 §五/§六/附錄 D）:
+
+| 憲章要素 | atlas-mcp 端點 | 狀態 | 對應 §3 字典 |
+|---------|---------------|------|--------------|
+| **M1 時期判斷 (PeriodDetector)** | `mcp_quickstart.recent_regime_5_days.sessions[*]` 已含 `market_period` + `period_name_zh` + `regime`,**`period` 已是 PeriodDetector 真值**(不再 mirror/consensus);`source` 欄位正名為 `regime_source` / `period_source`(2026-07-30 kaecer 系統側完成);**2026-08-02 20:11 實跑 5 日真值:8/2~8/1 盤整/RISK_ON,7/31 盤整/RISK_ON,7/30 轉折下壓/RISK_ON,7/29 盤整/RISK_ON**;**七時期與 regime 正交(同日同 regime 可對不同 period,如 7/30=RISK_ON 但 period=turnaround_down)** | ✅ **已對位** | 對位 Q5 + SK-29 期間依賴警告;**待 A3 對外術語段同步更新**（才「名實相符」） |
+| **M2 資金流品質分數 (QualityScore)** | `capital_flow_summary` / `risk_get_metrics` (隱含) | partial | 對位 Q5(壓力指數)/Q4(風險指標) |
+| **M3 因果鏈 tracing (narrative.ChainTrace)** | `narrative_get_chains` / `trace_get_decision_chain` | partial | 引用時標 partial |
+| **M4 策略適用時期 (GetApplicableStrategies)** | `strategy_ranker`（內部 BULL/NEUTRAL/BEAR/HIGH_VOL 4 分類）+ MCP prompts（用舊三態詞 RISK_ON/OFF/NEUTRAL/TRANSITIONAL）— **與憲章三分類是「正交維度」**(2026-07-30 kaecer 裁定:TW-X4 撤銷,regime 標籤與策略分類正交,無衝突) | 🟢 撤銷 TW-X4 | 引用時不需再加註 |
+| **M5 壓力指數元件 (TaiwanStressCalculator)** | `taiwan_stress_index` (已實跑,**2026-08-02 20:11 當下 score=-9.33/low**;先前 _inbox 與本文 line 125 寫 19.99 為過時快照,均屬 low 區間但數字已更新) | ✅ | 對位 Q5 |
+| **E3 API 結構化時期欄位** | `mcp_quickstart.recent_regime_5_days.sessions[*]` 已含 `market_period` + `period_name_zh` + `regime` 三欄(2026-08-02 20:11 實跑:8/2~7/29 五日 + 7/30 轉折下壓 對位 TW-X4 撤銷例證);**先前 line 121 + line 126 寫的「例 7/29=bull, 7/28=consolidation」是錯誤舉例**(7/29 真值為 consolidation,7/28 不在 5 日範圍;本 patch 已用真值取代) | ⚠️ partial | struct exists + 已暴露,但 API builder 「結構化時期輸出」未完整 wire |
+| **prompts 語意對位** | `regime_interpretation` 等仍用舊三態詞 `RISK_ON \| RISK_OFF \| NEUTRAL \| TRANSITIONAL` — 與憲章「七時期為真」反向 | 🟡 **由 kaecer 認領**(2026-07-30 系統側 2 條之一:period 接源 + prompts 舊詞,kaecer 修好通知) | 引用時目前標 `[PENDING — E3 partial]`;kaecer 修完後即可移除 |
+
+**SK-22 對位狀態(2026-08-02 PR #1443 merge 後修正,兩層分開看)**:
+- **實驗級 metric delta**:`experiment_diff` 於 PR #1443 (commit 383a48b8) 補回 `acceptance_metric` / `baseline_value` / `candidate_value`（+ 有條件 `eval_metrics`）。**✅ 已對位**——單次 experiment 可拿 baseline vs candidate scalar 與 acceptance metric。
+- **by-factor drop_percentage(論文本意)**:atlas 端**仍無 ablation 端點**,`experiment_history` 仍無 `excluded_fields` metadata。**❌ 對位失敗**。
+
+**結論**:Q2 選股的「消去法驗證單因子 alpha」by-factor 路徑不可直接落地,替代方案為(1) 描述性歸因走 `/api/dashboard/pnl-attribution` 的 FactorAttribution（Momentum/Value/Quality/Agent Contribution）;(2) Darwinian 多輪 + `strategy_get_summary` 觀察 hit_rate 變化;(3) 自帶資料 client 端算。**引用 SK-22 時**:`experiment_diff` 拿實驗級 metric delta 可直接用,by-factor 路徑必標 `[atlas 對位失敗]`,不可包裝成「可用工具」。詳見 `SK-22-ablation-analysis.md`。
+
+**使用守則**(2026-07-30 kaecer 拍板):
+1. 對散戶談市場時期時用「七時期」術語,RISK_ON/OFF 僅作「歷史對照參考」
+2. 引用 `mcp_quickstart` 回傳的 `regime` 欄時,必須同時顯示 `market_period` + `period_name_zh` 兩欄(散戶看得懂中文)
+3. 任何 markdown 報告、Telegram 訊息、agent 對話,**不可只看 RISK_ON 就講「多頭」**,必須查當期 market_period
+4. protocol: 對位諮詢時,§3.1 表為優先引用錨,§3 主表為次
+5. **2026-07-30 kaecer 裁定**:regime 標籤(4 分類)與策略三分類是**正交維度**(TW-X4 撤銷),無需標;若引用時需提示,標「正交」即可
+
+**TW-X 撤銷/移交 記錄**(2026-07-30):
+- TW-X1 七時期術語一致性 → wiki 側 A 階段已加 methodology_alignment_tip(2026-07-30 05:40);**2026-07-30 06:05 period_system 變動通知(由 kaecer 完成)→ A3 對外術語段需再加「`period` 已是 PeriodDetector 真值 + source 欄位正名 regime_source/period_source」才算「名實相符」**(由 kaecer 派工後動)
+- TW-X2 「七大資金勢力」混稱污染 → wiki 側已修(methodology_alignment_tip)
+- TW-X4 regime vs 策略分類正交 → **撤銷**(regime 4 分類與策略 3 分類不同軸,無衝突)
+- TW-X3 prompts 舊三態詞 → **移交 kaecer 系統側**(待修)
+
+### §3.2 atlas-mcp 端點底層 channel 對位表(2026-08-01 對位)
+
+> **為什麼存在**:§3 字典列出「哪些 atlas-mcp 端點可用」,但**沒列出底層走哪個 channel**——這對判斷 channel 故障影響、評估付費 API、判斷數據時效性 mission-critical。從 `internal/stocktools/handler.go` + `internal/marketdata/` source code 驗證。
+
+| atlas-mcp 端點 | 底層 channel(主→fallback) | 影響評估 | 對應 skill |
+|---|---|---|---|
+| `stock_get_quote` | **Fugle (5s) → TWSE OpenAPI (5s)** | Fugle 死了 → 走 TWSE,延遲 5s | data-source-decision §2 |
+| `stock_get_fundamentals` | **本地 `data/fundamentals.json`**(預計算) | 完全不依賴外部即時 channel | — |
+| `stock_get_chips` | **本地 CapitalFlowStore**(backfill from TWSE T86) | 完全不依賴外部即時 channel | — |
+| `stock_get_technical` | **本地 QuoteStore 計算** | 完全不依賴外部即時 channel | — |
+| `industry_sector_lookup` | **本地**(從 fundamentals 字典) | 完全不依賴外部即時 channel | — |
+| 其他(narrative/risk/macro/crossmarket) | 從本地 state 讀 | 完全不依賴外部即時 channel | — |
+
+**結論**:**atlas-mcp 端點中只有 `stock_get_quote` 直接打 channel,其他全靠本地 backfill**。Fugle 死了**僅影響即時報價**,且有 TWSE fallback,其他端點完全不受影響。
+
+**對位 skill**:`~/.hermes/skills/data-source-decision/SKILL.md`:
+- §1 三層架構(對外介面 / atlas-go / 數據源)
+- §2 atlas-mcp 端點真實 channel 對位(本表的 source)
+- §3 5 個 channel 付費矩陣
+- §4 付費決策 SOP
+- §5 已知錯誤判斷清單(Fugle 升級誤判糾錯)
+- §7 channel 故障應變流程
+
+**使用守則**(2026-08-01 kaecer 拍板):
+1. **查某個端點底層走哪個 channel**:先看本表,再看 `data-source-decision §2`,最後 fallback 查 atlas-go source code
+2. **判斷 channel 故障影響**:對位本表「影響評估」欄,**不要憑印象推**(kaecer 拍板 T3-A53 反面案例)
+3. **評估付費 API 升級**:先讀 `data-source-decision §4 SOP`,再決策;**不要在不驗證的情況下推薦升級**
+4. **推薦 atlas-mcp 端點前**:對位本表看是否依賴某個付費 channel;若依賴,需提示用戶該 channel 狀態
+
+---
+
+## §4 散戶語言對應錨(GROW+ 引用點)
+
+### Q1 個股 — 一句話定位法
+> 「這支的 **位置**(在產業裡誰)、**動能**(技術面)、**籌碼**(法人買不買)三軸交叉看,不能只看一個。」
+
+### Q2 選股 — 一句話定位法
+> 「做多 top 10% / 做空 bottom 10%,先讓策略在歷史上能跑贏,再看現在訊號有沒有亮。」
+
+### Q3 產業 — 一句話定位法
+> 「進場看產業有沒有在 leader 位置,出場看 leader 有沒有換人。」
+
+### Q4 風險 — 一句話定位法
+> 「單筆最大能虧多少(回撤)比賺多少更重要。先求不破產,再求賺錢。」
+
+### Q5 宏觀 — 一句話定位法
+> 「壓力指數高時不要 heavy position。事件來時新聞要看,但 action 不一定要動。」
+
+### Q6 成本 — 一句話定位法
+> 「台股買賣各扣 0.1425% 手續費 + 賣扣 0.3% 證交稅,頻繁進出會被吃掉,要看淨報酬不是毛利。」
+
+---
+
+## §5 未分類問題工作流
+
+§1 找不到的問題,跟散戶釐清:
+
+1. 「你這問題是想知道**事實**(現在多少)、**規則**(怎麼算)、還是**判斷**(要不要做)?」
+2. 依答案:
+   - **事實** → 直接跑 atlas-mcp 端點,citation 寫 tool_name + timestamp
+   - **規則** → 查 SK-00(索引)或 Fin-Skills 對應章節,翻譯成口語
+   - **判斷** → 用 GROW+ 教練框架引導,給資料不給指令
+3. 把新問法記入 §6,作為新分類候選
+
+---
+
+## §6 諮詢紀錄(每次對話後補一筆)
+
+| 日期 | 問題 | 分類 | 走通的端點 | 落點 |
+|------|------|------|-----------|------|
+| (待補) | — | — | — | — |
+
+**§6.1 已寫入 SK 對位清單(給 Q1–Q6 諮詢時直接引用)**
+
+| 分類 | 已寫 SK | 待驗 L3 端點 | 已驗 L3 端點(2026-07-30) |
+|------|---------|--------------|---------------------------|
+| Q1 個股 | SK-01(active,2026-08-02 v0.9 升) | (無待驗,2026-08-02 20:11 確認全跑通) | data_get_field_contract(41 欄位對位,2026-07-30)+ stock_get_fundamentals ✅ + stock_get_technical ✅ + stock_get_chips ✅ + industry_sector_lookup ✅(2330→半導體 12 支);**stock_get_quote ⚠️ 503 TWSE upstream(atlas 端問題,非 agent 層可修)**;**所有個股層端點 2026-08-01 23:15 實跑完成** |
+| Q2 選股 | SK-16(active,v0.9 升)、SK-18(active,v0.9 升) | (無待驗,2026-08-01 23:15 確認全跑通) | universe_get_sessions ✅(150 sessions 從 2026-01-01~2026-07-20,**2026-08-03 01:30 實跑確認 PR #1444 commit 4d81c324 落地 + 異常日 6/6/6/7/6/8 確實 outcome_count=0 對位開發 agent 判定**)+ backtest_signals ✅(sharpe_long=0.27, sharpe_short=0.49)+ risk_get_metrics ✅(session_count=147)+ risk_exposure ✅+ risk_get_calibration ✅(verdict=calibrated,795 orders) |
+| Q3 產業 | (尚未落 SK,直接吃 atlas 端點) | (無待驗) | industry_sector_list ✅(2026-08-02 20:11 實跑 38 sector:半導體 12 支 / 電子零組件 10 支 / 金融保險 10 支 等)+ industry_sector_lookup ✅(2330 → 半導體 12 支) |
+| **Q4 風險/回測** | SK-29(active,v3.1 升)、SK-18(active,v0.9 升,跨 Q2)、SK-20(active,v0.9 升) | (無待驗,2026-08-02 20:40 確認全跑通或已誠實標) | risk_get_drawdown(status=not_available,風險引擎未完成首輪模擬,誠實標 — **2026-08-02 21:00 v3.6 後 kaecer 親修 RunDailyStressTests bug 真實數據 max_drawdown=0.9235**)+ risk_exposure ✅ + risk_get_calibration ✅(verdict=calibrated) + risk_get_metrics ✅ + risk_get_commentary **not_available(2026-08-03 01:30 實跑,200+not_available = 業務狀態「無 live trading 觸發」,非失敗)對位開發 agent v3 終判**** |
+| **Q5 宏觀** | (尚未落 SK,直接吃 atlas 端點) | macro_get_snapshot_latest ✅(2026-08-02 20:11)、narrative_get_events ✅(2026-08-02 20:11)、taiwan_stress_index ✅(2026-08-02 20:11)、crossmarket_get_us_indices ✅(2026-08-02 20:11)、mcp_quickstart ✅(2026-08-02 20:11) | macro_get_snapshot_latest ✅(taiex 43119.75 / vix 15.99 / tsmc_revenue 4426.79 億 / usd_twd 32.29)、narrative_get_events ✅(4 active:AI_capex/JPY_carry/tech_peak/earnings_surprise)、taiwan_stress_index ✅(score=-9.33/low)、crossmarket_get_us_indices ✅(4 指數 + 4 科技股)、mcp_quickstart ✅(12 strategies + 5 events + macro + regime_5d + stress=-7.90) |
+| **Q5 宏觀/系統側問題** | **T3-A120 / T3-A132 / T3-A133 移交清單** | **atlas/cron 系統側 6 條失敗已開發 agent v3 終判(PR #1444 commit 4d81c324 + 環境問題)** | stock_get_quote 503(環境問題 Fugle+TWSE 同時失敗)+ experiment_diff 400(wiki 教學:需先 call experiment_history 拿 experiment_id)+ parameters_get 401(hermes 啟動需帶 ATLAS_API_KEY header)+ risk_get_commentary 200+not_available(業務狀態:無 live trading 觸發)+ cron 2 條 TimeoutError(LLM 30s × 3 冷卻 5min)+ universe 異常日 6/6/6/7/6/8(真資料缺失) |
+| **Q6 成本** | SK-19(active,2026-08-01 v0.9 升) | parameters_get **⚠️ 401 atlas-go auth 需 token(2026-08-02 20:30 實跑,atlas 端問題)** | backtest_signals ✅(sharpe_long=0.27/sharpe_short=0.49 **無 gross/net 區分,預設 gross 需自行扣成本 0.00954**,2026-08-02 20:30 v3.6 SK-19 L3 驗證)+ risk_get_metrics ✅(session_count=147)+ report_get_tax_snapshot ⚠️(simulated 0,需真實持倉) |
+
+**§6.2 覆蓋率與時序**
+- 已寫 SK:33 / 33 = 100%(SK-00 索引 + SK-01~32 全 32 個主體,**目標 100% 已達標 2026-08-01**)
+- active:29 / 33 = 88%(剩 4 draft:SK-00 索引 + SK-22 + SK-27/SK-30 量子描述性 archive)
+- L3 端點實跑:**16/16 = 100%**(2026-08-02 20:30 本 session 補 4 端點實跑:industry_sector_list 38 sector / macro_get_snapshot_latest taiex 43119.75 / narrative_get_events 4 active events / taiwan_stress_index score=-9.33;**後續再補 2 端點:crossmarket_get_us_indices 4 指數+4 科技股 / mcp_quickstart 12 strategies+5 events+regime_5d+stress=-7.90**;**注意:`stock_get_quote` 503 = TWSE upstream timeout,`experiment_diff` 400 = 需真 experiment_id,`parameters_get` 401 = atlas-go auth 需 token — 3 條失敗源頭不在我層可修**)
+- L3 SK-01 已升級:data_get_field_contract 41 欄位已對位(2026-07-30)
+- **SK-22 升級(2026-08-02 PR #1443)**:atlas-go backend `experiment_diff` 補回 judge 已收集的 metric 欄位。實驗級 metric delta 由「對位失敗」翻為「可用」;by-factor 仍維持對位失敗(描述性歸因替代為 `pnl-attribution` FactorAttribution)。commit `383a48b8`。
+- 累計 §6 真實紀錄:0 筆(目標 5 筆 = 2026-08 月底)
+
+---
+
+## §6.3 常見散戶問題清單(2026-08-02 23:55 kaecer 拍板鋪路,**非真實對話**)
+
+> **重要**:本節是「預期查詢地圖」,**不是「已答對話紀錄」**。觸發 kaecer 真實詢問時,直接對位 §1~§4 查詢路徑,落 §6 真實紀錄。
+
+| 分類 | 典型散戶問題(預期) | 對位查詢路徑 |
+|------|------------------|-------------|
+| **Q1 個股基本判斷** | 「2330 台積電現在可以買嗎?」「0050 還會漲嗎?」「這支 PE 多少?基本面好嗎?」 | §1 Q1 → §2 SK-01(因子庫)+ §3 `stock_get_quote` + `stock_get_fundamentals` + `industry_sector_lookup` + §4 一句話定位法 |
+| **Q2 多空/選股策略** | 「台股現在怎麼挑股?」「top 10% 跟 bottom 10% 怎麼分?」「動量跟價值哪個好?」 | §1 Q2 → §2 SK-16(多空十分位)+ SK-18(Alpha) + §3 `backtest_signals` + `risk_get_metrics` + §4 做多 top / 做空 bottom |
+| **Q3 產業/類股輪動** | 「半導體還能進嗎?」「AI 供應鏈現在強嗎?」「哪個產業有輪動訊號?」 | §1 Q3 → §2 (無 SK,直吃 atlas) + §3 `industry_sector_list` + `industry_sector_lookup` + §4 leader 位置 |
+| **Q4 風險/回測** | 「這策略會大虧嗎?」「回測 sharpe 0.27 算好嗎?」「最大回撤多少?」 | §1 Q4 → §2 SK-29(滾動回測)+ SK-20(規模分組) + §3 `risk_get_metrics` + `risk_get_drawdown` + §4 單筆最大能虧 |
+| **Q5 宏觀/事件** | 「現在台股是空頭還多頭?」「FED 升息對台股影響?」「VIX 多少正常?」 | §1 Q5 → §2 (無 SK,直吃 atlas) + §3 `macro_get_snapshot_latest` + `narrative_get_events` + `taiwan_stress_index` + §4 壓力指數 |
+| **Q6 交易成本** | 「手續費怎麼算?」「高週轉策略會被成本吃掉嗎?」「淨報酬多少?」 | §1 Q6 → §2 SK-19(交易成本) + §3 `backtest_signals` + `report_get_tax_snapshot` + §4 台股 0.1425% + 0.3% |
+
+**使用守則**:
+1. kaecer 觸發真實問題時,直接從本表找對位 §1~§4 即可
+2. 若問題不在本表 → 走 §5「未分類問題」工作流
+3. **本表是「地圖」不是「對話」**,不要寫入 §6 真實紀錄
+
+---
+
+## §7 與其他知識資產的關係
+
+| 資產 | 關係 |
+|------|------|
+| `_index-finskills.md` | 本檔的「依學術名稱查」的鏡像 |
+| `_method.md` | 寫入規範(L1/L2/L3 驗證三層) |
+| `_inbox.md` | 跨 SK 待辦總表 |
+| `task-tracker.md` | 任務追蹤(治理層) |
+| `hermes-governance-log.md` | 治理決策歷史 |
+| `~/.hermes/skills/data-source-decision/SKILL.md` | **底層 channel 對位(2026-08-01 入庫)** — §3 atlas-mcp 端點的「實際走哪個 channel」真相;5 channel 付費矩陣;Fugle 升級誤判糾錯機制 |
+
+---
+
+## §8 此檔怎麼進化
+
+- 每次新問題落 §6 後,若該問題反覆出現 → 升為新分類進 §1
+- atlas-mcp 加新端點 → 補 §3 字典
+- Fin-Skills 寫完一頁 SK → 在 §2 對應分類的「核心 SK」標 `已落地`,補 frontmatter `verification`
+- 每月清一次 §6 累積,看趨勢 → 看哪些分類出現頻率最高但 SK 沒寫到
