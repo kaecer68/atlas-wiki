@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+# atlas-wiki pre-push hook
+# 攔截:push 前跑完整 ci-gate(5 項檢查)
+# 攔截:Telegram secrets 未設定時警告
+# 繞過:SKIP_CI_GATE=1 可跳過(緊急 hotfix 用)
+
+set -e
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+cd "$REPO_ROOT"
+
+if [ "${SKIP_CI_GATE:-0}" = "1" ]; then
+    echo "⚠️  SKIP_CI_GATE=1,跳過預檢(push 後 GitHub CI 仍會跑)"
+    exit 0
+fi
+
+echo "🚀 pre-push: 跑本地 ci-gate(避免 GitHub CI 來回空等)..."
+make ci-gate
+
+# Secrets 健康檢查(若 GitHub CLI 已登入)
+if command -v gh >/dev/null 2>&1 && gh auth status >/dev/null 2>&1; then
+    if ! gh secret list --repo kaecer68/atlas-wiki 2>/dev/null | grep -q TELEGRAM_BOT_TOKEN; then
+        echo "⚠️  TELEGRAM_BOT_TOKEN 未設定為 GitHub Secret — push 後失敗將無 Telegram 通知"
+    fi
+fi
+
+exit 0
