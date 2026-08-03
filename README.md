@@ -1,10 +1,15 @@
 # Atlas Wiki — 散戶 AI 實戰金融工程知識引擎
 
-## Mission
+[![Version](https://img.shields.io/badge/version-v1.0.0-blue.svg)](https://github.com/kaecer68/atlas-wiki/releases)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![CI: validate-wiki](https://img.shields.io/badge/CI-validate--wiki-brightgreen.svg)](.github/workflows/validate-wiki.yml)
+[![Public](https://img.shields.io/badge/visibility-public-lightgrey.svg)](https://github.com/kaecer68/atlas-wiki)
 
-散戶 AI 實戰金融工程。找信息差、找漏洞、找大型機構不會幹的落差。悶聲賺錢。
+> **Mission**:散戶 AI 實戰金融工程。找信息差、找漏洞、找大型機構不會幹的落差。悶聲賺錢。
 
-atlas-wiki = 提煉成品知識層：`atlas-notes`（原料庫）→ `atlas-wiki`（知識引擎）流水線的輸出端。
+ ## Mission
+
+atlas-wiki = 提煉成品知識層。`atlas-notes`(原料庫)→ atlas-wiki(知識引擎)流水線的輸出端。33 SK 頁、5 條鐵律、CI 自動驗證一條龍。
 
 ## 目錄結構
 
@@ -58,7 +63,38 @@ push / PR 到 `main` 觸發 `validate-wiki`：
 3. **size-check** — 每頁 ≤ 9,000 bytes
 4. **frontmatter-check** — frontmatter 核心欄位齊全
 
-任一失敗 → **Telegram 通知**。需在 GitHub repo Settings → Secrets and variables 設定：
+ 任一失敗 → **Telegram 通知**。需在 GitHub repo Settings → Secrets and variables 設定：
 
-- `TELEGRAM_BOT_TOKEN`(來源 `~/.hermes/.env`)
-- `TELEGRAM_CHAT_ID`(可選,預設 `8387647295`)
+ - `TELEGRAM_BOT_TOKEN`(來源 `~/.hermes/.env`)
+ - `TELEGRAM_CHAT_ID`(可選,預設 `8387647295`)
+
+## 版本
+
+[v1.0.0](https://github.com/kaecer68/atlas-wiki/releases/tag/v1.0.0)(2026-08-03)— 首發版。33 SK 頁 + 9 索引 + CI validate-wiki(4 檢查 + Telegram 通知)+ audit 模板。
+
+版本紀律遵循 semver:
+- **MAJOR**:憲章對位/鐵律變更(對位憲章 §1)
+- **MINOR**:新增 SK 頁或索引章節
+- **PATCH**:錯字修正、連結修補、frontmatter 補欄
+
+## 許可證
+
+[MIT License](LICENSE)— Copyright (c) 2026 Kaecer Chan。
+
+可自由使用、修改、散布、商業利用,僅需保留著作權聲明。
+
+> **聲明**:本 wiki 內容僅為學術與教學用途,不構成任何投資建議。投資有風險,決策責任自負。詳見 `skills/_method.md` 與憲章 `~/workspace/atlas/docs/ATLAS_METHODOLOGY.md`。
+
+## 貢獻
+
+以 PR 形式提交至 `main` 分支。CI 會自動跑 4 項檢查;需遵守 `skills/_method.md` 5 條鐵律(尤其第 5 條:快照值必附 timestamp)。貢獻前請閱讀:
+
+1. `AGENTS.md`(專案 context)
+2. `skills/_method.md`(寫入規範)
+3. `skills/_index-finskills.md`(來源映射)
+
+## 相關連結
+
+- 上游:`atlas-notes/`(原料庫,未公開)
+- 對位:`kaecer68/atlas-go`(atlas-mcp 端點來源)
+- 憲章:`~/workspace/atlas/docs/ATLAS_METHODOLOGY.md` v1.0
