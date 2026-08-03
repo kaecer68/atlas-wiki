@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+# atlas-wiki pre-commit hook
+# 攔截:若 SK-*.md 變更,跑 size + frontmatter 快速預檢
+# 攔截:若 .github/workflows/*.yml 變更,跑 actionlint
+
+set -e
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+
+changed_files=$(git diff --cached --name-only)
+
+# SK 頁變更 → 跑 size + frontmatter
+if echo "$changed_files" | grep -qE '^skills/SK-[0-9]+'; then
+    echo "🔍 pre-commit: SK 頁變更,跑 size + frontmatter 預檢"
+    make check-skill-pages
+fi
+
+# workflow 變更 → 跑 actionlint
+if echo "$changed_files" | grep -qE '^\.github/workflows/.*\.yml$'; then
+    echo "🔍 pre-commit: workflow 變更,跑 actionlint"
+    if command -v actionlint >/dev/null 2>&1; then
+        actionlint .github/workflows/*.yml
+    fi
+fi
+
+exit 0
