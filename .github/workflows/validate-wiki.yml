@@ -53,7 +53,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: 每頁 wc -c ≤ 9000
-        run: python3 - <<'EOF'
+        run: |
+          python3 - <<'EOF'
           import glob, sys
           files = sorted(glob.glob('skills/SK-*.md'))
           bad = []
@@ -74,7 +75,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: frontmatter 10 欄齊全
-        run: python3 - <<'EOF'
+        run: |
+          python3 - <<'EOF'
           import glob, re, sys
           REQUIRED = ['title', 'type', 'source', 'ingested_at', 'status', 'tier',
                       'confidence', 'atlas_go_relevance', 'mcp_tools_used', 'verification']
