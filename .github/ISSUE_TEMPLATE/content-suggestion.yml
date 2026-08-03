@@ -1,0 +1,47 @@
+name: 內容建議 / 補充
+description: 對 SK 頁或索引的內容建議、補充、勘誤
+labels: ["content"]
+body:
+  - type: input
+    id: target_file
+    attributes:
+      label: 影響的檔案
+      placeholder: 例: skills/SK-22-ablation-analysis.md
+    validations:
+      required: true
+  - type: dropdown
+    id: type
+    attributes:
+      label: 類型
+      options:
+        - 補充內容
+        - 勘誤(錯字/連結失效/數字失真)
+        - 對位憲章有疑義
+        - frontmatter 補欄
+        - 其他
+    validations:
+      required: true
+  - type: textarea
+    id: current
+    attributes:
+      label: 現況引用(原文 + 行號或段落)
+      placeholder: |
+        引用現有內容(含 frontmatter 欄位、段落標題、原始字句)。
+        對位 §6 紅線「不 silent overwrite 既有相反證據」。
+    validations:
+      required: true
+  - type: textarea
+    id: proposed
+    attributes:
+      label: 建議變更
+      placeholder: |
+        寫出具體的內容、引用來源(若有)、對位何條鐵律。
+    validations:
+      required: true
+  - type: textarea
+    id: verification
+    attributes:
+      label: 驗證方式
+      placeholder: |
+        怎麼驗證這個變更後仍對位憲章 + 5 條鐵律?
+        若引用隨時間變動數字(第 5 條鐵律),務必附 timestamp + 端點名稱。

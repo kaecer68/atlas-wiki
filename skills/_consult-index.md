@@ -217,7 +217,7 @@ related:
 
 | 日期 | 問題 | 分類 | 走通的端點 | 落點 |
 |------|------|------|-----------|------|
-| (待補) | — | — | — | — |
+| 2026-08-03 | kaecer 問 4 個問題:① 股市階段 ② 未來一週錢潮方向 ③ 重點產業 ④ 賣出時點 | Q5 宏觀 + Q4 風險 + Q2 選股 | regime_get_history(7 日)+macro_get_snapshot_latest+taiwan_stress_index+risk_get_metrics+mcp_quickstart+strategy_ranker+capital_flow_summary+event_flow_prediction 共 8 端點 | [GROW 對話 §6.1 詳](#第-1-筆真實對話) |
 
 **§6.1 已寫入 SK 對位清單(給 Q1–Q6 諮詢時直接引用)**
 

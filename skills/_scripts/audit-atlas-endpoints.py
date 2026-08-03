@@ -4,7 +4,15 @@ atlas-mcp 端點 audit 工具 — 自動掃描 109 端點 + 抓 Description
 
 對位 SOUL §4.1 跨代理協作紀律:未來 atlas 端有問題時能快速 audit
 
-執行: python3 /Users/kaecer/workspace/atlas-wiki/skills/_scripts/audit-atlas-endpoints.py
+執行:
+  本地(預設絕對路徑):
+    python3 ~/workspace/atlas-wiki/skills/_scripts/audit-atlas-endpoints.py
+  CI(sparse-checkout atlas-go 後):
+    python3 skills/_scripts/audit-atlas-endpoints.py --atlas-mcp-dir atlas-go/cmd/atlas-mcp/server
+  或用環境變數覆寫:
+    ATLAS_MCP_SERVER_DIR=path python3 skills/_scripts/audit-atlas-endpoints.py
+
+2026-08-03 修:加 --atlas-mcp-dir 參數(CI 相對路徑可跑),預設路徑保留供本地直接呼叫。
 """
 import os
 import re

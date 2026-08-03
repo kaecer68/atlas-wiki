@@ -2,7 +2,8 @@
 
 > 散戶 AI 實戰金融工程 知識圖譜
 > 從 2026-07-15 開始建立
-> Last updated: 2026-08-02 | Total pages: 36 (+10 系統性參考概念 2026-08-02 補入)
+> Last updated: 2026-08-02 | Knowledge entries: 36 (this index) / Repo .md 總數: 91 / SK 知識頁: 33
+> 2026-08-03 repo 公開化(MIT + v1.0.0 + CI validate-wiki)
 
 ## Entities
 <!-- 從 raw/ 抽取的具體實體:事件、論文、audit 報告 -->
