@@ -100,42 +100,48 @@ Fin-Skills(5/29 入庫的 32 個學術 SK)是死的——沒人引用、沒人�
 - 兩檔內容必須同步(SKILL.md 為主,本檔鏡像)
 - 連續 3 天未產出 → k拍是否廢除
 
-## 起源與演進
+## 起源與演進 + 升分綁定(v6.34 整合)
 
-| 日期 | 事件 |
+| 日期 | 事件 + M 升分綁定 |
 |------|------|
-| 2026-05-29 | Fin-Skills.md 入庫(32 個 SK,沒人引用) |
-| 2026-07-28 | k拍「每日 5 個進修」方針,本方法誕生,SK-01 寫成示範 |
-| 2026-07-28 | 規範固化進 `~/.hermes/skills/atlas-skill-inbound/` + 本檔 |
-| 2026-07-30 | k拍 A 階段:加第四條鐵律「對位 ATLAS_METHODOLOGY.md v1.0」+ 5 HIGH SK 加 methodology_aligned 標 |
-| 2026-08-01 | k拍 B5 階段(部分) + write_file SOP 強制綁定(避免覆蓋事故) |
-| 2026-08-02 22:30 | **k拍第五條鐵律「快照值必附 timestamp」新增**(對位 SOUL §0.1 第 6 條邊界);規範 session_count / sharpe / max_drawdown 等隨時間變動的數字引用必附 timestamp + 端點名稱,區分歷史快照 vs 當下值 |
-| 2026-08-02 23:25 | kaecer 核准 B 階段 24/24 全部完成(methodology_aligned 對位率 17.9%→100% active) |
-## §6 升分綁定(v6.34)
+| 2026-05-29 | Fin-Skills.md 入庫 |
+| 2026-07-28 | k拍「每日 5 個進修」方針 + SK-01 示範 |
+| 2026-07-30 | k拍 A 階段 + 第四條鐵律「對位 ATLAS_METHODOLOGY.md」 |
+| 2026-08-01 | write_file SOP 強制綁定 |
+| 2026-08-02 22:30 | **k拍第五條鐵律「快照值必附 timestamp」** |
+| 2026-08-02 23:25 | B 階段 24/24 全部完成(對位率 17.9%→100%) |
+| 2026-08-02 23:55-23:59 | k拍 _consult-index §0 + M6 主動糾正反向達標 |
+| 2026-08-03 02:30 | v6.0 = SK-01 加 7 框架 + 對位率 90%+;M2 升 8 + M5 升 5 + SOUL §3.7.3 例外 1 擴展 |
+| 2026-08-04 09:46 | **k拍第六條鐵律「外部權威報告週期稽核」(T3-A248)**:UNCTAD/HAI/HKS 等 annual/semi-annual 報告週期觸發 + narrative hit_rate 重置 |
 
+**§6 升分綁定表**(整合):
 | 維度 | 觸發 | 狀態 |
 |------|------|------|
 | M1 | 4學術+80% | ✅7 |
 | M2 | 全部源碼理解 | ⚠7.5 |
 | M3 | 缺口3次 | ✅6 |
 | M4 | M4驗證 | ✅5 |
-| M5 | **5模板跑通**(v6.10 單軸) | 待 |
+| M5 | 5模板跑通 | ⚠5 |
 | M6 | k3糾 | ✅8 |
-| M7 | 33頁合規 | ✅10 |
+| M7 | 33頁合規 | ⚠10 |
 | M8 | ≤800×3 | ✅6 |
 | M9 | 盤查×3 | ✅4 |
 
-| 2026-08-02 23:55 | k拍 _consult-index §0 加 2 條規則(§6 觸發點設計 + §6.3 常見問題地圖),鋪路 M4/M5 升分 |
-| 2026-08-02 23:59 | k拍 M6 規範修改(主動糾正觸發反向達標,kaecer「請自行」紀律落實) |
-| 2026-08-03 00:00 | k開自主盤查 4 條該做未做全修;v5.2 6.17/10 |
-| 2026-08-03 01:35 | A 路徑:2 新 paper(Rosenberg85+Frazzini14)+ validate-timestamp-rule.py(2968B)+ wiki 系統側標;T3-A134/135/136 |
-| 2026-08-03 01:40 | ad-hoc 驗證 1.0 = 4 TEST 全過;修 bug「中文段標題不觸發 in_real_run」;T3-A137/138 |
-| 2026-08-03 01:50 | 建議 1+2+3 = 109 端點速查卡(7060B)+ 2 paper + audit-atlas-endpoints.py(2408B);**端點 116→109 + M2 8→7.5**;T3-A139/140 |
-| 2026-08-03 02:00 | v5.9.1:SK-01 精簡 9571→8796 |
-| 2026-08-03 02:10 | ad-hoc 驗證 2.0 = 7 TEST 全過;T3-A141 |
-| 2026-08-03 02:20 | 路徑修正(`/private/tmp/`→`/private/var/folders/.../T/`);T3-A142 |
-| 2026-08-03 02:30 | **v6.0** = SK-01 加 Chan-Hameed-Tong 2000(7 框架)+ 對位率 90%+;T3-A143 |
-| 2026-08-03 | M2 升 8 完成(108 端點)+ M5 升 5(12 模板)+ SOUL §3.7.3 例外 1 擴展 = v6.28/33 |
+## 第六條鐵律(2026-08-04 T3-A248 k拍「B+C」):外部權威報告週期稽核
+
+對位 SOUL §0.1 例外 6 + kaecer 2026-08-04「B+C 才是正確的」拍板。
+
+- **觸發條件**:對位 narrative model 之 `hit_rate` / `weight` 引用,必附 (a) 報告來源 + (b) release 日期 + (c) PDF link
+- **5 錨點**(對位 `templates/trigger-equipment-capex-external-report-cycle.md`):
+  1. UNCTAD WIR(annual,5-7 月)
+  2. Stanford HAI AI Index(annual,4 月)
+  3. BIS Annual Economic Report(annual,6 月)
+  4. IMF WEO(semi-annual,4/10 月)
+  5. HKS M-RCBG WP(irregular)
+- **正確格式**:`UCTAD WIR 2026 (5/21/2026 release, ISBN 978-92-1-154998-0): 5 年半導體 greenfield CAGR +54%`;未命中即標「未達觸發條件」,**禁止編造**
+- **與第 5 條對位**:第 5 條「快照值必附 timestamp」= 形式紀律;第 6 條「外部權威報告週期稽核」= 內容紀律(雙層)
+- **降級觸發**:narrative model 對位不到外部報告來源 = M7 結算分降 1
+- **升級驗收**:2027 年 4 月 WIR + HAI 同步 release → 命中 + hit_rate 改善 ≥5% = M1 升 1
 
 ## 索引
 

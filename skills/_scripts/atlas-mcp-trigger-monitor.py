@@ -154,6 +154,25 @@ TEMPLATES = {
         "compare": "gt",
         "is_custom_calc": True,  # 觸發 run_triggers 走自訂計算分支
     },
+    # 第 14 模板(2026-08-04 新增,T3-A248 kaecer B+C 拍板)
+    # 設備鏈(3680/3533/5434)月營收連 3 月 YoY > +30% = AI 設備接單結構性訊號
+    # 走 /api/stock/fundamentals(自訂 branches:is_fundamentals_revenue_yoy)
+    "megaproject-2-quarter-lag": {
+        "name": "Megaproject 半年報週期 + 設備鏈月營收 lag 觸發",
+        "file": "trigger-megaproject-2-quarter-lag.md",
+        "condition": "3680 / 3533 / 5434 月營收連 3 月 YoY > +30%",
+        "http_path": "/api/stock/fundamentals",
+        "symbols": ["3680", "3533", "5434"],  # 多 symbol 月營收掃描
+        "metric": "monthly_revenue_yoy_pct",
+        "threshold": 30.0,
+        "compare": "gt",
+        "consecutive_months": 3,  # 連續 3 月
+        "is_fundamentals_revenue_yoy": True,  # 新分支:多 symbol 月營收連續觸發
+    },
+    # 第 15 模板(2026-08-04 新增,T3-A248 kaecer B+C 拍板)
+    # 5 錨點 annual/semi-annual 週期型 trigger → 不在 monitor 即時掃描,走獨立 cron-cadence
+    # 不寫進 TEMPLATES 字典(避免每 5 分鐘被誤掃);由獨立 scripts/external-report-cycle-monitor.py + cron 觸發
+    # "equipment-capex-external-report-cycle" 為獨立 cron job 保留名
 }
 
 
@@ -237,7 +256,11 @@ _data_cache = {}
 
 
 def run_triggers(env):
-    """跑 13 觸發模板(12 既有 + 第 13 個股報價觸發 2330-tsmc-swing)"""
+    """跑 14 觸發模板(12 既有 + 第 13 個股報價 + 第 14 設備鏈月營收)
+
+    第 15 模板為週期型,不走 run_triggers,即時掃描每 5 分鐘會誤觸;
+    由獨立 scripts/external-report-cycle-monitor.py + cron 觸發(T3-A248 + 第六條鐵律)
+    """
     triggered = []
     failed = []
     for t_id, t in TEMPLATES.items():
@@ -261,6 +284,39 @@ def run_triggers(env):
                     continue
                 intraday_swing_pct = (high - low) / open_ * 100
                 value = intraday_swing_pct
+            elif t.get("is_fundamentals_revenue_yoy"):
+                # 設備鏈月營收多 symbol 連續觸發(對位 SK-31 §3 + trigger-megaproject-2-quarter-lag.md)
+                # 設計:跑每個 symbol,看 monthly_revenue_yoy_pct;若 symbol ≥ consecutive_months 月都過 threshold → 觸發
+                # 結構性誠實:此分支無 extra_check(對位 T3-A14 v8「禁止 fallback 假資料」);直接判斷觸發結果
+                symbols = t["symbols"]
+                consecutive_months = t["consecutive_months"]
+                symbol_pass_count = 0
+                symbol_yoy_values = {}
+                for sym in symbols:
+                    data = get_atlas_data(t["http_path"], params={"symbol": sym})
+                    if data is None or data.get("__unauthorized__"):
+                        symbol_yoy_values[sym] = None
+                        continue
+                    # monthly_revenue_yoy_pct 可能是 list(最近 N 月)或 scalar
+                    yoy_data = data.get(t["metric"])
+                    if isinstance(yoy_data, list):
+                        recent = yoy_data[-consecutive_months:] if len(yoy_data) >= consecutive_months else yoy_data
+                        symbol_yoy_values[sym] = recent
+                        if len(recent) == consecutive_months and all(v > t["threshold"] for v in recent):
+                            symbol_pass_count += 1
+                    elif yoy_data is not None:
+                        symbol_yoy_values[sym] = yoy_data
+                        if yoy_data > t["threshold"]:
+                            symbol_pass_count += 1
+                    else:
+                        symbol_yoy_values[sym] = None
+                triggered_flag = symbol_pass_count >= 1  # 至少 1 個 symbol 連續觸發
+                summary_value = f"passed {symbol_pass_count}/{len(symbols)} symbols, yoy={symbol_yoy_values}"
+                if triggered_flag:
+                    triggered.append({"id": t_id, "name": t["name"], "value": summary_value})
+                else:
+                    failed.append({"id": t_id, "name": t["name"], "value": summary_value, "reason": "monthly_revenue_yoy_threshold_not_met"})
+                continue  # 跳過標準 extra_check + threshold 段(本分支已有結論)
             else:
                 # 拉真實數據(打 atlas HTTP API)
                 data = get_atlas_data(t["http_path"])
@@ -304,8 +360,8 @@ def main():
     print("=" * 60)
     env = get_env()
     triggered, failed = run_triggers(env)
-    print(f"  觸發: {len(triggered)}/13")
-    print(f"  未觸發: {len(failed)}/13(模板對位真實市場訊號,結構性誠實)")
+    print(f"  觸發: {len(triggered)}/14")
+    print(f"  未觸發: {len(failed)}/14(模板對位真實市場訊號,結構性誠實)")
     if triggered:
         print(f"\n  ✅ 觸發詳情:")
         for t in triggered:
@@ -315,7 +371,7 @@ def main():
         for f in failed:
             print(f"    - {f['name']} (值={f.get('value','?')} 原因={f.get('reason','?')})")
         if len(failed) > 7:
-            send_telegram(env, f"⚠️ atlas-mcp-trigger-monitor: {len(failed)}/13 模板未觸發,atlas 端可能故障")
+            send_telegram(env, f"⚠️ atlas-mcp-trigger-monitor: {len(failed)}/14 模板未觸發,atlas 端可能故障")
     if triggered:
         summary = f"📊 [atlas-mcp-trigger] {datetime.now().strftime('%H:%M')} {len(triggered)} 觸發:\n"
         for t in triggered:
