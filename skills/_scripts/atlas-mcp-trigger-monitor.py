@@ -154,20 +154,20 @@ TEMPLATES = {
         "compare": "gt",
         "is_custom_calc": True,  # 觸發 run_triggers 走自訂計算分支
     },
-    # 第 14 模板(2026-08-04 新增,T3-A248 kaecer B+C 拍板)
-    # 設備鏈(3680/3533/5434)月營收連 3 月 YoY > +30% = AI 設備接單結構性訊號
-    # 走 /api/stock/fundamentals(自訂 branches:is_fundamentals_revenue_yoy)
+    # 第 14 模板(v0.3,T3-A253 修補:eeb20aa commit 時 dormant 因 atlas-mcp 不暴露 monthly_revenue_yoy)
+    # 設備鏈(3680/3533/5434)當日投信買超張數合計 + capital_flow_summary 投信 z_score 同步
+    # 走 /api/stock/chips(自訂 branch:is_chips_aggregate)
     "megaproject-2-quarter-lag": {
-        "name": "Megaproject 半年報週期 + 設備鏈月營收 lag 觸發",
+        "name": "Megaproject 半年報週期 + 設備鏈當日投信 aggregate 觸發",
         "file": "trigger-megaproject-2-quarter-lag.md",
-        "condition": "3680 / 3533 / 5434 月營收連 3 月 YoY > +30%",
-        "http_path": "/api/stock/fundamentals",
-        "symbols": ["3680", "3533", "5434"],  # 多 symbol 月營收掃描
-        "metric": "monthly_revenue_yoy_pct",
-        "threshold": 30.0,
+        "condition": "設備鏈(3680/3533/5434)當日投信買超張合計 > +1000 張 + 投信 z_score > +1.0",
+        "http_path": "/api/stock/chips",
+        "symbols": ["3680", "3533", "5434"],  # 多 symbol aggregate
+        "metric": "domestic_fund_net",  # 投信當日淨買賣超(單位:張)
+        "threshold": 1000.0,  # 合計 trigger門檻
         "compare": "gt",
-        "consecutive_months": 3,  # 連續 3 月
-        "is_fundamentals_revenue_yoy": True,  # 新分支:多 symbol 月營收連續觸發
+        "aggregate_mode": "sum",  # 多 symbol 對位 sum(對位 trigger-monitor v6.22 unified signature 擴增)
+        "is_chips_aggregate": True,  # v0.3 新分支:chips 多 symbol aggregate
     },
     # 第 15 模板(2026-08-04 新增,T3-A248 kaecer B+C 拍板)
     # 5 錨點 annual/semi-annual 週期型 trigger → 不在 monitor 即時掃描,走獨立 cron-cadence
@@ -284,38 +284,45 @@ def run_triggers(env):
                     continue
                 intraday_swing_pct = (high - low) / open_ * 100
                 value = intraday_swing_pct
-            elif t.get("is_fundamentals_revenue_yoy"):
-                # 設備鏈月營收多 symbol 連續觸發(對位 SK-31 §3 + trigger-megaproject-2-quarter-lag.md)
-                # 設計:跑每個 symbol,看 monthly_revenue_yoy_pct;若 symbol ≥ consecutive_months 月都過 threshold → 觸發
-                # 結構性誠實:此分支無 extra_check(對位 T3-A14 v8「禁止 fallback 假資料」);直接判斷觸發結果
+            elif t.get("is_chips_aggregate"):
+                # 多 symbol 投信當日 aggregate 觸發(對位 T3-A253 v0.3 + trigger-megaproject-2-quarter-lag.md)
+                # 設計:每個 symbol 呼叫 /api/stock/chips 取 domestic_fund_net(投信當日淨買賣超,單位:張)
+                # aggregate_mode: sum(目前只支援 sum;avg/max 留 v0.4 擴充)
+                # 觸發條件:合計 > threshold(對位 v6.22 unified signature)
+                # 結構性誠實:此分支無 extra_check(對位 T3-A14 v8);直接判斷觸發結果
                 symbols = t["symbols"]
-                consecutive_months = t["consecutive_months"]
-                symbol_pass_count = 0
-                symbol_yoy_values = {}
+                aggregate_total = 0.0
+                symbol_net_values = {}
+                hit_count = 0
                 for sym in symbols:
                     data = get_atlas_data(t["http_path"], params={"symbol": sym})
                     if data is None or data.get("__unauthorized__"):
-                        symbol_yoy_values[sym] = None
+                        symbol_net_values[sym] = None
                         continue
-                    # monthly_revenue_yoy_pct 可能是 list(最近 N 月)或 scalar
-                    yoy_data = data.get(t["metric"])
-                    if isinstance(yoy_data, list):
-                        recent = yoy_data[-consecutive_months:] if len(yoy_data) >= consecutive_months else yoy_data
-                        symbol_yoy_values[sym] = recent
-                        if len(recent) == consecutive_months and all(v > t["threshold"] for v in recent):
-                            symbol_pass_count += 1
-                    elif yoy_data is not None:
-                        symbol_yoy_values[sym] = yoy_data
-                        if yoy_data > t["threshold"]:
-                            symbol_pass_count += 1
-                    else:
-                        symbol_yoy_values[sym] = None
-                triggered_flag = symbol_pass_count >= 1  # 至少 1 個 symbol 連續觸發
-                summary_value = f"passed {symbol_pass_count}/{len(symbols)} symbols, yoy={symbol_yoy_values}"
+                    net = data.get(t["metric"])
+                    if net is None:
+                        symbol_net_values[sym] = None
+                        continue
+                    symbol_net_values[sym] = net
+                    aggregate_total += net
+                    if net > 0:
+                        hit_count += 1
+                summary_value = f"aggregate={aggregate_total:.1f} ({sum(1 for v in symbol_net_values.values() if v is not None)}/{len(symbols)} symbols hit), per={symbol_net_values}"
+                aggregate_mode = t.get("aggregate_mode", "sum")
+                threshold = t["threshold"]
+                compare = t.get("compare", "gt")
+                if aggregate_mode == "sum":
+                    triggered_flag = (
+                        (compare == "gt" and aggregate_total > threshold) or
+                        (compare == "lt" and aggregate_total < threshold)
+                    )
+                else:
+                    # v0.4 預留 aggregate_mode=avg/max;v0.3 對位 T3-A14 v8 fail-closed
+                    triggered_flag = False
                 if triggered_flag:
                     triggered.append({"id": t_id, "name": t["name"], "value": summary_value})
                 else:
-                    failed.append({"id": t_id, "name": t["name"], "value": summary_value, "reason": "monthly_revenue_yoy_threshold_not_met"})
+                    failed.append({"id": t_id, "name": t["name"], "value": summary_value, "reason": "chips_aggregate_threshold_not_met"})
                 continue  # 跳過標準 extra_check + threshold 段(本分支已有結論)
             else:
                 # 拉真實數據(打 atlas HTTP API)
