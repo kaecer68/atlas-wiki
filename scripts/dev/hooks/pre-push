@@ -1,13 +1,129 @@
 #!/usr/bin/env bash
-# atlas-wiki pre-push hook
-# 攔截:push 前跑完整 ci-gate(5 項檢查)
-# 攔截:Telegram secrets 未設定時警告
-# 繞過:SKIP_CI_GATE=1 可跳過(緊急 hotfix 用)
+# atlas-wiki pre-push hook v2 (T3-A256 kaecer "C" 拍板)
+# 對位 SOUL §0.1 例外 6 + v6.46 規範修改
+#
+# 對位 T3-A256 evidence 候選 C 真實描述:
+# - 「修 pre-push hook:HUSKY_CHECK_REQUIRED_PR_REVIEWS=true 強制 hook 內 check GitHub API」
+# - 對未來 push:每個 local_sha 必須屬於某個 OPEN PR 的 head,否則拒絕
+# - 對位真實 PR-only workflow 加 GitHub-side 查核層
+#
+# 保留 v1 邏輯:
+# - branch=main 攔 PARENT_COUNT <= 1(對位 T3-A254 護欄精神)
+# - 例外路徑:HUSKY_SKIP_MAIN_PROTECTION=1 跳過(緊急 hotfix)
+# 新增 v2 邏輯:
+# - HUSKY_CHECK_REQUIRED_PR_REVIEWS=true 啟用時,跑 gh api 查
+# - 例外路徑:HUSKY_SKIP_REQUIRED_PR_REVIEWS=1 跳過(緊急 hotfix)
+#
+# 預期對您工作流的影響:
+# - 「commit → push → 開 PR」會被攔(因為 push 時還沒 PR,commit 不在 OPEN PR head)
+# - 必須改成「先建 PR → 取得 PR 編號 → commit 帶 (#N) → push」順序
+# - 對您「避免忘記」拍板的真實價值:push 階段就拒絕直推 main 沒開 PR 的 commit
 
 set -e
+
 REPO_ROOT="$(git rev-parse --show-toplevel)"
 cd "$REPO_ROOT"
 
+REPO_NAME="kaecer68/atlas-wiki"
+
+# ===== v1 既有邏輯保留 =====
+if [ "${HUSKY_SKIP_MAIN_PROTECTION:-0}" = "1" ]; then
+    echo "⚠️  HUSKY_SKIP_MAIN_PROTECTION=1 跳過 main 防護(緊急 hotfix 模式,需事後 T3 evidence 補 governance-log)"
+fi
+
+# 讀 push 參數
+while read -r local_ref local_sha remote_ref remote_sha; do
+    # 跳過 deleted refs
+    if [ "$local_sha" = "0000000000000000000000000000000000000000" ]; then
+        continue
+    fi
+
+    # 只檢查 push 到 origin/main
+    TARGET_BRANCH=$(echo "$remote_ref" | sed "s|^refs/heads/||")
+    if [ "$TARGET_BRANCH" != "main" ] && [ "$TARGET_BRANCH" != "master" ]; then
+        continue  # 不是 push 到 main,放行
+    fi
+
+    # v1 例外跳過
+    if [ "${HUSKY_SKIP_MAIN_PROTECTION:-0}" = "1" ]; then
+        continue
+    fi
+
+    # v1 既有邏輯:偵測 local_sha 是否為 merge commit(>= 2 parents)
+    PARENT_COUNT=$(git cat-file -p "$local_sha" 2>/dev/null | grep -c "^parent ")
+    if [ "$PARENT_COUNT" -le 1 ]; then
+        echo ""
+        echo "❌ 偵測到直接 push 到 main branch 單 parent commit(非 merge commit)"
+        echo "   local_ref: $local_ref"
+        echo "   local_sha: ${local_sha:0:12}"
+        echo "   remote_ref: $remote_ref"
+        echo "   parent_count: $PARENT_COUNT(合併 commit 應 >= 2 parents)"
+        echo ""
+        echo "📋 正確流程(對位 SOUL §3.7 自扛姿態):"
+        echo "   1. 建 feat/* branch:  git checkout -b feat/<topic>"
+        echo "   2. 在 branch 上 commit + push:  git push -u origin feat/<topic>"
+        echo "   3. 開 PR:                  gh pr create --base main --head feat/<topic>"
+        echo "   4. 等 reviewer + merge commit = 多 parent"
+        echo "   5. main merge after PR review"
+        echo ""
+        echo "如為緊急 hotfix:"
+        echo "   export HUSKY_SKIP_MAIN_PROTECTION=1  ← 跳過,但需事後 T3 evidence 補 governance-log"
+        exit 1
+    fi
+
+    # ===== v2 新增邏輯:HUSKY_CHECK_REQUIRED_PR_REVIEWS=true =====
+    if [ "${HUSKY_CHECK_REQUIRED_PR_REVIEWS:-0}" = "1" ]; then
+        # 例外跳過
+        if [ "${HUSKY_SKIP_REQUIRED_PR_REVIEWS:-0}" = "1" ]; then
+            continue
+        fi
+
+        # 對每個 push 的 local_sha,跑 gh api 查所有 OPEN PR 的 head commit
+        # 若 local_sha 不屬於任何 OPEN PR 的 head → 拒絕
+        if ! command -v gh >/dev/null 2>&1; then
+            echo "⚠️  gh CLI 不存在,跳過 HUSKY_CHECK_REQUIRED_PR_REVIEWS 查核"
+            continue
+        fi
+
+        # 抓所有 OPEN PR 的 number
+        OPEN_PR_NUMBERS=$(gh pr list --repo "$REPO_NAME" --state open --json number --jq '.[].number' 2>/dev/null)
+        if [ -z "$OPEN_PR_NUMBERS" ]; then
+            echo ""
+            echo "❌ HUSKY_CHECK_REQUIRED_PR_REVIEWS=true 但 repo 無 OPEN PR"
+            echo "   必須先開 PR:gh pr create --base main --head <feat_branch>"
+            echo "   注意:C 路線要求 push 必須有對應 OPEN PR 編號"
+            exit 1
+        fi
+
+        # 對每個 OPEN PR 查最新 commit.sha,找匹配的 local_sha
+        MATCHED_PR=""
+        for pr_number in $OPEN_PR_NUMBERS; do
+            PR_HEAD_SHA=$(gh pr view "$pr_number" --repo "$REPO_NAME" --json headRefOid --jq '.headRefOid' 2>/dev/null)
+            if [ "$PR_HEAD_SHA" = "$local_sha" ]; then
+                MATCHED_PR="$pr_number"
+                break
+            fi
+        done
+
+        if [ -z "$MATCHED_PR" ]; then
+            echo ""
+            echo "❌ HUSKY_CHECK_REQUIRED_PR_REVIEWS=true 但 local_sha ${local_sha:0:12} 不屬於任何 OPEN PR"
+            echo "   OPEN PR 編號: $(echo $OPEN_PR_NUMBERS | tr '\n' ' ')"
+            echo ""
+            echo "📋 正確流程(對位 C 路線):"
+            echo "   1. 建 feat/* branch:  git checkout -b feat/<topic>"
+            echo "   2. 開 PR:                  gh pr create --base main --head feat/<topic>"
+            echo "   3. 在 branch 上 commit + push:  git push -u origin feat/<topic>"
+            echo "   注意:push 順序顛覆(先建 PR 再 push,不要先 push 補開 PR)"
+            echo ""
+            echo "如為緊急 hotfix:"
+            echo "   export HUSKY_SKIP_REQUIRED_PR_REVIEWS=1  ← 跳過,但需事後 T3 evidence 補 governance-log"
+            exit 1
+        fi
+    fi
+done
+
+# ===== 既有 ci-gate + secrets 健康檢查邏輯保留 =====
 if [ "${SKIP_CI_GATE:-0}" = "1" ]; then
     echo "⚠️  SKIP_CI_GATE=1,跳過預檢(push 後 GitHub CI 仍會跑)"
     exit 0
@@ -18,7 +134,7 @@ make ci-gate
 
 # Secrets 健康檢查(若 GitHub CLI 已登入)
 if command -v gh >/dev/null 2>&1 && gh auth status >/dev/null 2>&1; then
-    if ! gh secret list --repo kaecer68/atlas-wiki 2>/dev/null | grep -q TELEGRAM_BOT_TOKEN; then
+    if ! gh secret list --repo "$REPO_NAME" 2>/dev/null | grep -q TELEGRAM_BOT_TOKEN; then
         echo "⚠️  TELEGRAM_BOT_TOKEN 未設定為 GitHub Secret — push 後失敗將無 Telegram 通知"
     fi
 fi
