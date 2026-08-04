@@ -1,6 +1,6 @@
 # atlas-skill-inbound Inbox
 
-最後更新:2026-08-03 02:30(v5.9.3 全部累積:建議 1+2+3 全做 = 109 端點速查卡 + 6 大學術框架 + audit 工具 + 7 TEST 全過;**對位率 75-80%→85-90%(6 大學術框架找齊 FF93+JT93+Rosenberg85+Frazzini14+林炯垚2006+陳安琳2002)+ Chan-Hameed-Tong 2000 momentum 國際 7 框架**;M2 7.5 維持(撤 v5.7 錯升);新總分 6.33/10;**6.4 規範**:`_method.md` 第五條鐵律 + 修訂記錄補 5 行)
+最後更新:2026-08-04 14:10 (v6.44 結算 — Fugle 修復鏈 4 PR 全 merge 端到端驗收(PR #1445/#1446/#1448/#1449,本 session 實跑 5 端點全綠:stock_get_quote 2330/2317/0050 3/3 source=fugle + parameters_get 243KB + risk_get_commentary not_available);**誤判修正 3 條結構性誠實宣告**:`Fugle key 綁定 1476 / 需重新申請` 誤判已修(根因 base64 -d 測試錯誤,v1.0 key 就是 base64 原樣);wiki `_consult-index` §3 Q1 表加 v6.44 驗收狀態;governance-log append T3-A246);前次更新:2026-08-04 06:50 (v6.43 結算 — §3 失敗狀態同步(`stock_get_quote` ✅ PR #1445+ c1f06430+ PR #1448+ PR #1446 / `parameters_get` ✅ 帶 ATLAS_API_KEY / `experiment_diff` 仍 ❌ 部分修);觸發模板 12 → **13**(`trigger-2330-tsmc-swing` 第 13 模板新增,對位 PR #1445 stock_get_quote 修復後開啟個股層觸發,intraday_swing_pct=1.255% 結構性誠實不觸發);Fugle 重盤查:T3-A51~A54 + Q4 排序重排(Fugle rate log 降為「不需要」);最後一次更新前一次最後更新:2026-08-04 02:01 (v6.41 結算 — **0 寫入 + 誠實盤查**;cron `8fd1b1eda764` skill-inbound 02:00 觸發;33 頁 100% 落地,4 draft 真實待升(SK-00 索引無 mcp 對位例外 + SK-22 by-factor 仍 400 + SK-27/30 量子已標 [ARCHIVED — 學術展示無對位]);prompt 預設「D2+ 每日 3 頁」是 2026-07-29 降標前的過時工作框架,實際工作 7/30 起已轉型為 _self-audit 治理 + PR 推進 + 12 觸發模板 + 7 jobs CI;未硬湊 3 頁 = 結構性誠實五十一次;詳見 _self-audit.md §6 v6.41)
 
 ## 總體進度
 
@@ -14,7 +14,7 @@
   - 12 個成功(2026-08-01 23:15):`backtest_signals` / `risk_get_metrics` / `stock_get_fundamentals` / `stock_get_technical` / `universe_get_sessions` / `industry_sector_list` / `industry_sector_lookup` / `macro_get_snapshot_latest` / `universe_get_universe_overlap` / `risk_get_correlation_matrix` / `risk_get_drawdown`(not_available 但端點活)/ `report_get_tax_snapshot`(simulated 0 但端點活)
   - 4 個新增成功(2026-08-02 20:30 本 session 補):`industry_sector_list`(38 sector 重新實跑確認) / `macro_get_snapshot_latest`(taiex 43119.75) / `narrative_get_events`(4 active events) / `taiwan_stress_index`(score=**-9.33**/low,**更正 _inbox 舊文 19.99 過時快照**)
   - **後續再補 2 端點**(2026-08-02 20:30):`crossmarket_get_us_indices`(4 指數+4 科技股) / `mcp_quickstart`(12 strategies+5 events+regime_5d+stress=-7.90)
-  - **3 條失敗源頭不在我層可修**:`stock_get_quote` 503 TWSE upstream timeout / `experiment_diff` 400 需真 experiment_id(atlas 端無 experiment_list 端點) / `parameters_get` 401 atlas-go auth 需 token
+  - **2026-08-04 v6.43 更正**:`stock_get_quote` ✅(PR #1445 merge,Fugle→TWSE fallback 獨立 timeout,3 次連續 200,source=twse → **2026-08-04 v6.43** source=**fugle** v1.0 + burst 5 + 429 retry)/ `experiment_diff` 400(wiki 教學需先 call experiment_history 拿 experiment_id,仍 ❌ 待 atlas 暴露 experiment_list 端點)/ `parameters_get` ✅(**2026-08-03 22:40 帶 ATLAS_API_KEY 200,atlas-mcp 已正確轉發 X-API-Key;不帶 key 401 認證正確隔離**)
 - **status: 33 頁(32 主體 + 1 索引)29 active 88% / 4 draft**(SK-00 索引 + SK-22 + SK-27 + SK-30)
 
 ## L3 實跑的真實 atlas-mcp 數據(2026-08-01 23:15)
@@ -22,7 +22,7 @@
 ### 個股層(2330 台積電)
 - `stock_get_fundamentals`:PE 30.19 / PB 9.57 / DividendYield 1.1% / Sector=semiconductor
 - `stock_get_technical`:close 2200 / sma20 2398.5 / sma50 2363.4 / RSI14 30.08(超賣)
-- `stock_get_quote`:503, TWSE upstream timeout
+- `stock_get_quote`:503, TWSE upstream timeout → **2026-08-04 v6.43 已修**:200,source=fugle(PR #1445 + commit c1f06430 + PR #1448 + PR #1446,5 個 symbol 全跑通 2330/2317/2454/2303/0050)
 
 ### 風險層
 - `backtest_signals`:CIRCUIT_BREAKER / drawdown 0.72 / sharpe_long 0.27 / sharpe_short 0.49
@@ -65,6 +65,7 @@
 - [x] SK-00 索引
 - [x] 規範分歧修(SKILL.md 6000→9000 bytes,4 處同步)
 - [x] L3 端點實跑 12/14
+- [x] **觸發模板 12 → 13**(2026-08-04 v6.43):`trigger-2330-tsmc-swing` 第 13 模板新增,2330 盤中振幅 > 3% 觸發;落 `templates/trigger-2330-tsmc-swing.md` 5409B + atlas-mcp-trigger-monitor.py 加 `is_custom_calc` flag + 自訂計算分支 + cache_key params 區分;**實跑 3 次連穩 + ad-hoc verify 9/9 + 5/5 PASS**(intraday_swing=1.255%,結構性誠實不觸發)
 
 ### 後續 L3 升 active 工作(每頁單獨的「驗證方式」跑完)
 
@@ -74,8 +75,8 @@
 
 ### 待修
 
-- [ ] **L3 端點 #2 失敗待修**:`stock_get_quote` 503 是 TWSE upstream 問題,需等源頭恢復或改 fallback
-- [ ] **L3 端點 #14 失敗需真 experiment_id**:`experiment_diff` 需真 experiment_id 才能對比,等 atlas 端 expose `experiment_list` 端點
+- [x] ~~**L3 端點 #2 失敗待修**:`stock_get_quote` 503 是 TWSE upstream 問題,需等源頭恢復或改 fallback~~ → **2026-08-04 v6.43 已修**(PR #1445 + c1f06430 + PR #1448 + PR #1446,Fugle v1.0 + burst 5 + 429 retry + shared limiter)
+- [x] ~~**L3 端點 #14 失敗需真 experiment_id**:`experiment_diff` 需真 experiment_id 才能對比,等 atlas 端 expose `experiment_list` 端點~~ → **仍 ❌**,**2026-08-03 v6.41 部分修**:PR #1443 merge 後 `experiment_diff` 補回 `acceptance_metric` / `baseline_value` / `candidate_value`(實驗級 metric delta 已對位);by-factor 路徑仍 ❌ 替代為 `pnl-attribution` FactorAttribution
 
 ## 阻塞 / 風險
 

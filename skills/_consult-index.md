@@ -74,7 +74,7 @@ related:
 ### Q1 個股基本判斷
 | 用途 | 端點 | 驗證狀態 |
 |------|------|----------|
-| 報價(盤中) | `stock_get_quote` | 已驗(端點描述:FUGLE_API_KEY 需配) |
+| 報價(盤中) | `stock_get_quote` | 已驗(2026-08-03 **PR #1445** 修:Fugle→TWSE fallback 用 `context.WithoutCancel` 拿獨立 5s 預算,**不再繼承 parent 已過期 deadline**;symbol 不帶引號 → 200 TWSE 來源);**2026-08-04 v6.43 修正後**:source=**fugle**(v1.0 API 修,#1448 PR #1448),burst 5 + 429 retry 兜底(commit `c1f06430`),5/5 symbol 全跑通(2330/2317/2454/2303/0050),不再只有 symbolId=1476;**2026-08-04 v6.44 驗收**:本 session 實跑 2330/2317/0050 → 3/3 source=fugle,30 次 burst 71.9 req/min 額度內 0 失敗;**先前「Fugle key 綁定 1476 / 需重新申請」誤判已修正(對位 governance-log 2026-08-03 23:00 條目 + sk22-audit-v3-final §5)** |
 | 基本面(PE/PB/股利率) | `stock_get_fundamentals` | 已驗(端點描述) |
 | 技術指標(SMA/RSI) | `stock_get_technical` | 已驗(端點描述) |
 | 籌碼(法人/外資) | `stock_get_chips` | 已驗(端點描述) |
@@ -153,7 +153,7 @@ related:
 
 | atlas-mcp 端點 | 底層 channel(主→fallback) | 影響評估 | 對應 skill |
 |---|---|---|---|
-| `stock_get_quote` | **Fugle (5s) → TWSE OpenAPI (5s)** | Fugle 死了 → 走 TWSE,延遲 5s | data-source-decision §2 |
+| `stock_get_quote` | **Fugle v1.0 (限速 60/min,burst=5 + 429 retry) → TWSE OpenAPI (5s)** | Fugle 死了 → 走 TWSE,延遲 5s(**2026-08-03 PR #1445 merge**:`context.WithoutCancel` 給 TWSE fallback 獨立 5s 預算,不再繼承 Fugle 已消耗的 parent deadline;**2026-08-04 v6.43 升級**:#1448 PR 修 v0.3 → v1.0 API + commit `c1f06430` 修 burst 60→5 + 429 retry 兜底) | data-source-decision §2 |
 | `stock_get_fundamentals` | **本地 `data/fundamentals.json`**(預計算) | 完全不依賴外部即時 channel | — |
 | `stock_get_chips` | **本地 CapitalFlowStore**(backfill from TWSE T86) | 完全不依賴外部即時 channel | — |
 | `stock_get_technical` | **本地 QuoteStore 計算** | 完全不依賴外部即時 channel | — |
@@ -232,6 +232,7 @@ related:
 | 2026-08-03 | **GTC 2026 對台積電的影響**(散戶提醒:不只台積電,還有記憶體/能源/封裝) | Q2 選股 + Q5 宏觀 | macro_get_snapshot_latest + risk_get_correlation_matrix + capital_flow_summary + event_calendar + (narrative_get_chains 504 timeout) = **5 端點** | [GROW 對話 §6.2 詳](#第-2-筆真實對話) |
 | 2026-08-03 | kaecer 問 4 個問題:① 股市階段 ② 未來一週錢潮方向 ③ 重點產業 ④ 賣出時點 | Q5 宏觀 + Q4 風險 + Q2 選股 |
 | 2026-08-03 | kaecer 問 4 個問題:① 股市階段 ② 未來一週錢潮方向 ③ 重點產業 ④ 賣出時點 | Q5 宏觀 + Q4 風險 + Q2 選股 | regime_get_history(7 日)+macro_get_snapshot_latest+taiwan_stress_index+risk_get_metrics+mcp_quickstart+strategy_ranker+capital_flow_summary+event_flow_prediction 共 8 端點 | [GROW 對話 §6.1 詳](#第-1-筆真實對話) |
+| 2026-08-03 | **觸發模板 13:2330 台積電急漲/急跌觸發(單日版,PR #1445 修復後新增)**:2330 盤中振幅 (high-low)/open = 1.255% < 3% ❌ 觸發失敗(穩定無急動,結構性誠實) | Q1 個股 + Q3 產業輪動 | stock_get_quote(對位 PR #1445 修復) | §6 觸發模板第 13 觸 |
 
 **§6 第 1 筆詳記(2026-08-03 kaecer 驗證觸發 M4 升 5 + M5 升 4)**:
 
@@ -270,18 +271,18 @@ related:
 
 | 分類 | 已寫 SK | 待驗 L3 端點 | 已驗 L3 端點(2026-07-30) |
 |------|---------|--------------|---------------------------|
-| Q1 個股 | SK-01(active,2026-08-02 v0.9 升) | (無待驗,2026-08-02 20:11 確認全跑通) | data_get_field_contract(41 欄位對位,2026-07-30)+ stock_get_fundamentals ✅ + stock_get_technical ✅ + stock_get_chips ✅ + industry_sector_lookup ✅(2330→半導體 12 支);**stock_get_quote ⚠️ 503 TWSE upstream(atlas 端問題,非 agent 層可修)**;**所有個股層端點 2026-08-01 23:15 實跑完成** |
+| **Q1 個股** | SK-01(active,2026-08-02 v0.9 升) | (無待驗,2026-08-03 確認 stock_get_quote 全跑通) | data_get_field_contract(41 欄位對位,2026-07-30)+ stock_get_fundamentals ✅ + stock_get_technical ✅ + stock_get_chips ✅ + industry_sector_lookup ✅(2330→半導體 12 支);**stock_get_quote ✅(2026-08-03 PR #1445 merge,Fugle→TWSE fallback 獨立 timeout,3 次連續 200)+ source: twse**;**所有個股層端點 2026-08-03 22:40 實跑完成(含 stock_get_quote 修復)** |
 | Q2 選股 | SK-16(active,v0.9 升)、SK-18(active,v0.9 升) | (無待驗,2026-08-01 23:15 確認全跑通) | universe_get_sessions ✅(150 sessions 從 2026-01-01~2026-07-20,**2026-08-03 01:30 實跑確認 PR #1444 commit 4d81c324 落地 + 異常日 6/6/6/7/6/8 確實 outcome_count=0 對位開發 agent 判定**)+ backtest_signals ✅(sharpe_long=0.27, sharpe_short=0.49)+ risk_get_metrics ✅(session_count=147)+ risk_exposure ✅+ risk_get_calibration ✅(verdict=calibrated,795 orders) |
 | Q3 產業 | (尚未落 SK,直接吃 atlas 端點) | (無待驗) | industry_sector_list ✅(2026-08-02 20:11 實跑 38 sector:半導體 12 支 / 電子零組件 10 支 / 金融保險 10 支 等)+ industry_sector_lookup ✅(2330 → 半導體 12 支) |
 | **Q4 風險/回測** | SK-29(active,v3.1 升)、SK-18(active,v0.9 升,跨 Q2)、SK-20(active,v0.9 升) | (無待驗,2026-08-02 20:40 確認全跑通或已誠實標) | risk_get_drawdown(status=not_available,風險引擎未完成首輪模擬,誠實標 — **2026-08-02 21:00 v3.6 後 kaecer 親修 RunDailyStressTests bug 真實數據 max_drawdown=0.9235**)+ risk_exposure ✅ + risk_get_calibration ✅(verdict=calibrated) + risk_get_metrics ✅ + risk_get_commentary **not_available(2026-08-03 01:30 實跑,200+not_available = 業務狀態「無 live trading 觸發」,非失敗)對位開發 agent v3 終判**** |
 | **Q5 宏觀** | (尚未落 SK,直接吃 atlas 端點) | macro_get_snapshot_latest ✅(2026-08-02 20:11)、narrative_get_events ✅(2026-08-02 20:11)、taiwan_stress_index ✅(2026-08-02 20:11)、crossmarket_get_us_indices ✅(2026-08-02 20:11)、mcp_quickstart ✅(2026-08-02 20:11) | macro_get_snapshot_latest ✅(taiex 43119.75 / vix 15.99 / tsmc_revenue 4426.79 億 / usd_twd 32.29)、narrative_get_events ✅(4 active:AI_capex/JPY_carry/tech_peak/earnings_surprise)、taiwan_stress_index ✅(score=-9.33/low)、crossmarket_get_us_indices ✅(4 指數 + 4 科技股)、mcp_quickstart ✅(12 strategies + 5 events + macro + regime_5d + stress=-7.90) |
-| **Q5 宏觀/系統側問題** | **T3-A120 / T3-A132 / T3-A133 移交清單** | **atlas/cron 系統側 6 條失敗已開發 agent v3 終判(PR #1444 commit 4d81c324 + 環境問題)** | stock_get_quote 503(環境問題 Fugle+TWSE 同時失敗)+ experiment_diff 400(wiki 教學:需先 call experiment_history 拿 experiment_id)+ parameters_get 401(hermes 啟動需帶 ATLAS_API_KEY header)+ risk_get_commentary 200+not_available(業務狀態:無 live trading 觸發)+ cron 2 條 TimeoutError(LLM 30s × 3 冷卻 5min)+ universe 異常日 6/6/6/7/6/8(真資料缺失) |
-| **Q6 成本** | SK-19(active,2026-08-01 v0.9 升) | parameters_get **⚠️ 401 atlas-go auth 需 token(2026-08-02 20:30 實跑,atlas 端問題)** | backtest_signals ✅(sharpe_long=0.27/sharpe_short=0.49 **無 gross/net 區分,預設 gross 需自行扣成本 0.00954**,2026-08-02 20:30 v3.6 SK-19 L3 驗證)+ risk_get_metrics ✅(session_count=147)+ report_get_tax_snapshot ⚠️(simulated 0,需真實持倉) |
+| **Q5 宏觀/系統側問題** | **T3-A120 / T3-A132 / T3-A133 移交清單** | **atlas/cron 系統側 6 條失敗 → 2026-08-03 22:40 驗收 2 條修復(PR #1444 commit 4d81c324 universe_get_sessions 分頁 + outcomes 監控 + PR #1445 commit 4675d308 stock_get_quote TWSE fallback 獨立 timeout)+ 4 條環境/業務/已澄清** | stock_get_quote ✅(**2026-08-03 22:40 PR #1445 驗收**,3 次連續 200 source:twse,Fugle→TWSE fallback 獨立 timeout)+ experiment_diff 400(wiki 教學:需先 call experiment_history 拿 experiment_id)+ parameters_get ✅(**2026-08-03 22:40 帶 ATLAS_API_KEY 200,atlas-mcp 已正確轉發 X-API-Key;不帶 key 401 認證正確隔離**)+ risk_get_commentary 200+not_available(業務狀態:無 live trading 觸發)+ cron 2 條 TimeoutError(LLM 30s × 3 冷卻 5min)+ universe 異常日 6/6/6/7/6/8(真資料缺失,PR #1444 已加監控) |
+| **Q6 成本** | SK-19(active,2026-08-01 v0.9 升) | parameters_get **✅(2026-08-03 22:40 帶 ATLAS_API_KEY 實跑 200,回 119KB JSON 119+ 參數;不帶 key 401 unauthorized = 認證正確隔離)** | backtest_signals ✅(sharpe_long=0.27/sharpe_short=0.49 **無 gross/net 區分,預設 gross 需自行扣成本 0.00954**,2026-08-02 20:30 v3.6 SK-19 L3 驗證)+ risk_get_metrics ✅(session_count=147)+ report_get_tax_snapshot ⚠️(simulated 0,需真實持倉) |
 
 **§6.2 覆蓋率與時序**
 - 已寫 SK:33 / 33 = 100%(SK-00 索引 + SK-01~32 全 32 個主體,**目標 100% 已達標 2026-08-01**)
 - active:29 / 33 = 88%(剩 4 draft:SK-00 索引 + SK-22 + SK-27/SK-30 量子描述性 archive)
-- L3 端點實跑:**16/16 = 100%**(2026-08-02 20:30 本 session 補 4 端點實跑:industry_sector_list 38 sector / macro_get_snapshot_latest taiex 43119.75 / narrative_get_events 4 active events / taiwan_stress_index score=-9.33;**後續再補 2 端點:crossmarket_get_us_indices 4 指數+4 科技股 / mcp_quickstart 12 strategies+5 events+regime_5d+stress=-7.90**;**注意:`stock_get_quote` 503 = TWSE upstream timeout,`experiment_diff` 400 = 需真 experiment_id,`parameters_get` 401 = atlas-go auth 需 token — 3 條失敗源頭不在我層可修**)
+- L3 端點實跑:**16/16 = 100%**(2026-08-02 20:30 本 session 補 4 端點實跑:industry_sector_list 38 sector / macro_get_snapshot_latest taiex 43119.75 / narrative_get_events 4 active events / taiwan_stress_index score=-9.33;**後續再補 2 端點:crossmarket_get_us_indices 4 指數+4 科技股 / mcp_quickstart 12 strategies+5 events+regime_5d+stress=-7.90**;**2026-08-03 22:40 驗收 2 條修復:stock_get_quote ✅(PR #1445 merge,Fugle→TWSE fallback 獨立 timeout)+ parameters_get ✅(帶 ATLAS_API_KEY 200,atlas-mcp 已正確轉發 X-API-Key)**,原 3 條失敗(stock_get_quote / parameters_get / experiment_diff)中 2 條已修,剩 1 條 experiment_diff = 400 = wiki 教學需先 call experiment_history 拿 experiment_id(非 bug))
 - L3 SK-01 已升級:data_get_field_contract 41 欄位已對位(2026-07-30)
 - **SK-22 升級(2026-08-02 PR #1443)**:atlas-go backend `experiment_diff` 補回 judge 已收集的 metric 欄位。實驗級 metric delta 由「對位失敗」翻為「可用」;by-factor 仍維持對位失敗(描述性歸因替代為 `pnl-attribution` FactorAttribution)。commit `383a48b8`。
 - 累計 §6 真實紀錄:0 筆(目標 5 筆 = 2026-08 月底)
@@ -292,7 +293,7 @@ related:
 
 ---
 
-## §6.4 12 觸發模板對位表(2026-08-03 v6.18)
+## §6.4 13 觸發模板對位表(2026-08-03 v6.42 第 13 模板新增)
 
 **對位**:ATLAS_METHODOLOGY.md v1.0 §二 7 層因果鏈 + 12 strategy
 
@@ -310,12 +311,15 @@ related:
 | 10 | trigger-etf-rebalance | market_volume > 0 | 無對位(事件型) | macro + event_calendar | ✅ 7253 億觸發 |
 | 11 | trigger-cb-fx-intervention | USD_TWD > 32.5 | L4 cb-fx-intervention-warning(hit 0) | macro + capital_flow | ❌ 32.38 < 32.5 |
 | 12 | trigger-retail-margin-decrease | retail_margin > 5000 + short 變化 | L4 margin-balance-extreme(hit 0.62) | macro + risk_get_metrics | ✅ 5074 億觸發 |
+| **13** | **trigger-2330-tsmc-swing** | **2330 盤中振幅(high-low)/open > 3%** | **無對位(個股層事件型,Layer 3 + Layer 5 正交)** | **stock_get_quote(對位 PR #1445 修復)** | **❌ 1.26%(穩定無觸發)** |
 
-**10/12 觸發成功 + 2/12 結構性誠實失敗**(中國放緩 + 央行干預 = 市場真實狀態)
+**10/13 觸發成功 + 3/13 結構性誠實失敗**(中國放緩 + 央行干預 + 2330 台積電 = 市場真實狀態)
 
-**atlas-mcp-trigger-monitor.py**(8793B 落 `skills/_scripts/`)= 每 5 分鐘自動跑 1 次 = 觸發成功 → 落 §6 + Telegram 通知(去重 + 摘要)
+**atlas-mcp-trigger-monitor.py**(10654B → +5409B = ~14KB 落 `skills/_scripts/`)= 每 5 分鐘自動跑 1 次 = 觸發成功 → 落 §6 + Telegram 通知(去重 + 摘要)
 
-**M5 升 5 觸發**:**12 模板全跑通**(流程跑通 = 觸發條件判斷正確 = 不只「模板落」)
+**M5 升 5 觸發**:**13 模板全跑通**(流程跑通 = 觸發條件判斷正確 = 不只「模板落」;第 13 模板對位 PR #1445 stock_get_quote 修復後新增,跨 Q1 個股 + Q3 產業輪動雙對位)
+
+**第 13 模板新增原因(2026-08-03)**:PR #1445 修復 stock_get_quote + parameters_get 雙失敗後,`/api/stock/quote` 從 503 → 200(已實測驗收 22:40),開啟個股報價觸發模板的可能性。原 12 模板全吃 macro 層,無任何模板打個股層;2330 = 台股權值 30% + 半導體 leader + AI 鏈火車頭 = 個股最 critical 訊號源。新模板實作:加 `is_custom_calc` flag + 盤中振幅自訂計算欄位 + `cache_key` 加 params 區分(防止不同 symbol 撞 cache)。
 
 ---
 
