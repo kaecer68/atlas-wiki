@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+# atlas-wiki commit-msg hook
+# 對位 kaecer 2026-08-04 拍板「所有更新必須經過 PR 才能 merge 到 main」
+# 對位 T3-A254 governance evidence(新規範護欄):
+# - 任何 commit message 必含可追蹤字串(PR 編號 / T3-A 編號 / refs 編號)
+# - 結構性誠實:若有 hotfix 例外,使用 --no-verify 跳過 + 在 commit body 註明理由
+# 引用先例:T3-A14 / T3-A44 / T3-A132 / T3-A176 / T3-A201 / T3-A240 → 治理日誌
+
+set -e
+
+COMMIT_MSG_FILE="$1"
+COMMIT_MSG=$(cat "$COMMIT_MSG_FILE")
+FIRST_LINE=$(echo "$COMMIT_MSG" | head -n 1)
+
+# 允許跳過路徑(緊急 hotfix)
+if [ "${HUSKY:-0}" = "0" ] && git config --get hooks.allow-no-trail >/dev/null 2>&1; then
+    echo "⚠️  hooks.allow-no-trail is set,但仍嘗試驗證 commit 結構"
+fi
+
+# 必含可追蹤字串
+# 對位 kaecer repo:以往 commit 前綴為 "feat / fix / chore / docs"
+# 對位 governance culture:commit message 必含 T3-Axxx 或 PR 編號 (#N) 或 refs #N
+TRACE_OK=0
+if echo "$FIRST_LINE" | grep -qE '\(#[0-9]+\)|\(T3-A[0-9]+\)|refs #'; then
+    TRACE_OK=1
+fi
+
+if [ $TRACE_OK -eq 0 ]; then
+    echo "❌ commit message 第一行必含可追蹤字串"
+    echo "   接受格式:"
+    echo "     - feat(atlas-wiki): <subject> (#PR_NUMBER)"
+    echo "     - fix(atlas-wiki): <subject> (T3-A240)"
+    echo "     - chore: <subject> (refs #PR_NUMBER)"
+    echo "   你的第一行:[ $FIRST_LINE ]"
+    echo ""
+    echo "⚠️  如為緊急 hotfix,請在 commit body 明確寫「hotfix 理由」+ 用 `git commit --no-verify` + 事後 T3 evidence 補治理日誌"
+    exit 1
+fi
+
+# 對位 SK 頁 / 規範本體變動:必須寫對位的 T3 evidence 編號
+if echo "$FIRST_LINE" | grep -qE '^\(feat|fix\)\(atlas-wiki\):'; then
+    # 若是 SK 頁或規範本體改動,必須含 T3-A
+    if echo "$COMMIT_MSG" | grep -qE '^\*\*T3-A[0-9]+'; then
+        :  # OK
+    else
+        echo "⚠️  feat/fix(atlas-wiki): 開頭建議在 commit body 包含 **T3-Axxx** 編號(對位 governance-log 追溯)"
+    fi
+fi
+
+exit 0
