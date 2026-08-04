@@ -141,6 +141,19 @@ TEMPLATES = {
         "threshold": 5000,
         "extra_check": {"retail_short_balance": "value!=0"},
     },
+    # 第 13 模板(2026-08-03 新增,對位 PR #1445 stock_get_quote 修復)
+    # 2330 台積電盤中振幅 > 3% = 半導體 leader 急動 → Q3 產業輪動訊號
+    "2330-tsmc-swing": {
+        "name": "2330 台積電急漲/急跌觸發",
+        "file": "trigger-2330-tsmc-swing.md",
+        "condition": "2330 盤中振幅(high-low)/open > 3%",
+        "http_path": "/api/stock/quote",
+        "field": "2330",  # 用作 query symbol
+        "metric": "intraday_swing_pct",  # 自訂計算欄位
+        "threshold": 3.0,
+        "compare": "gt",
+        "is_custom_calc": True,  # 觸發 run_triggers 走自訂計算分支
+    },
 }
 
 
@@ -168,15 +181,19 @@ def get_env():
     return env
 
 
-def get_atlas_data(http_path):
+def get_atlas_data(http_path, params=None):
     """打 atlas HTTP API 拉真實數據(對位 atlas-go HTTP server)
-    
+
     對位 server.go:21 AtlasBaseURL http://127.0.0.1:18080
     加 X-API-Key header(對位 auth.go 認證)
+    params: dict,query string 附加(如 ?symbol=2330)
     """
-    if http_path in _data_cache:
-        return _data_cache[http_path]
+    cache_key = http_path + (("?" + urllib.parse.urlencode(params)) if params else "")
+    if cache_key in _data_cache:
+        return _data_cache[cache_key]
     url = ATLAS_HTTP_BASE + http_path
+    if params:
+        url += "?" + urllib.parse.urlencode(params)
     # 拉 ATLAS_API_KEY
     env = get_env()
     api_key = env.get("ATLAS_API_KEY")
@@ -194,7 +211,7 @@ def get_atlas_data(http_path):
         if '"code":"401"' in r.stdout or "unauthorized" in r.stdout.lower():
             return {"__unauthorized__": True}
         data = json.loads(r.stdout)
-        _data_cache[http_path] = data
+        _data_cache[cache_key] = data
         return data
     except Exception:
         return None
@@ -220,21 +237,41 @@ _data_cache = {}
 
 
 def run_triggers(env):
-    """跑 12 觸發模板"""
+    """跑 13 觸發模板(12 既有 + 第 13 個股報價觸發 2330-tsmc-swing)"""
     triggered = []
     failed = []
     for t_id, t in TEMPLATES.items():
         try:
-            # 拉真實數據(打 atlas HTTP API)
-            data = get_atlas_data(t["http_path"])
-            if data is None:
-                failed.append({"id": t_id, "name": t["name"], "reason": "no_data(atlas_http_unreachable)"})
-                continue
-            # 判斷觸發
-            field_data = data.get(t["field"], {})
-            value = field_data.get(t["metric"], 0) if isinstance(field_data, dict) else field_data
-            if isinstance(value, dict):
-                value = value.get(t["metric"], 0)
+            # 自訂計算分支(個股報價觸發用,對位 PR #1445 stock_get_quote 修復)
+            if t.get("is_custom_calc"):
+                params = {"symbol": t["field"]}
+                data = get_atlas_data(t["http_path"], params=params)
+                if data is None:
+                    failed.append({"id": t_id, "name": t["name"], "reason": "no_data(atlas_http_unreachable)"})
+                    continue
+                if data.get("__unauthorized__"):
+                    failed.append({"id": t_id, "name": t["name"], "reason": "401_unauthorized"})
+                    continue
+                # 計算盤中振幅(high - low) / open * 100
+                high = data.get("high", 0)
+                low = data.get("low", 0)
+                open_ = data.get("open", 0)
+                if open_ <= 0:
+                    failed.append({"id": t_id, "name": t["name"], "reason": "open_zero_or_negative"})
+                    continue
+                intraday_swing_pct = (high - low) / open_ * 100
+                value = intraday_swing_pct
+            else:
+                # 拉真實數據(打 atlas HTTP API)
+                data = get_atlas_data(t["http_path"])
+                if data is None:
+                    failed.append({"id": t_id, "name": t["name"], "reason": "no_data(atlas_http_unreachable)"})
+                    continue
+                # 判斷觸發
+                field_data = data.get(t["field"], {})
+                value = field_data.get(t["metric"], 0) if isinstance(field_data, dict) else field_data
+                if isinstance(value, dict):
+                    value = value.get(t["metric"], 0)
             triggered_flag = False
             compare = t.get("compare", "gt")  # gt 或 lt
             if compare == "lt":
@@ -267,8 +304,8 @@ def main():
     print("=" * 60)
     env = get_env()
     triggered, failed = run_triggers(env)
-    print(f"  觸發: {len(triggered)}/12")
-    print(f"  未觸發: {len(failed)}/12(模板對位真實市場訊號,結構性誠實)")
+    print(f"  觸發: {len(triggered)}/13")
+    print(f"  未觸發: {len(failed)}/13(模板對位真實市場訊號,結構性誠實)")
     if triggered:
         print(f"\n  ✅ 觸發詳情:")
         for t in triggered:
@@ -277,8 +314,8 @@ def main():
         print(f"\n  📊 未觸發(模板對位真實市場訊號):")
         for f in failed:
             print(f"    - {f['name']} (值={f.get('value','?')} 原因={f.get('reason','?')})")
-        if len(failed) > 6:
-            send_telegram(env, f"⚠️ atlas-mcp-trigger-monitor: {len(failed)}/12 模板未觸發,atlas 端可能故障")
+        if len(failed) > 7:
+            send_telegram(env, f"⚠️ atlas-mcp-trigger-monitor: {len(failed)}/13 模板未觸發,atlas 端可能故障")
     if triggered:
         summary = f"📊 [atlas-mcp-trigger] {datetime.now().strftime('%H:%M')} {len(triggered)} 觸發:\n"
         for t in triggered:

@@ -27,13 +27,21 @@ Fin-Skills(5/29 入庫的 32 個學術 SK)是死的——沒人引用、沒人�
 
 對位憲法 §1「金融工程根據」、mission「找信息差、找漏洞」。
 
-## 四條鐵律
+## 六條鐵律(v6.37 kaecer 拍板:所有 .md ≤ 9000 bytes)
 
-1. **不搬運,翻譯**——每頁必須含「論文版概念 / atlas 對位 / 散戶解讀」三層,缺一層即不合格
-2. **不瞎寫**——atlas-mcp tool 名稱不確定就標 `待驗`,不準拼湊
-3. **不裝完成**——L3 端點驗證沒跑過,status 永遠是 draft
-4. **不違背憲章**——`~/workspace/atlas/docs/ATLAS_METHODOLOGY.md` v1.0 (2026-07-27) 為全專案唯一真理源頭;每頁必須對位:七時期(非三態)、七維錢潮雷達 3+2+2(非「七大資金勢力」混稱)、策略三分類正名「跟隨聰明錢／事件套利／資金對抗」(2026-07-30 k拍裁定)。本條由 kaecer 2026-07-30 拍板補充,對位依據見 `_methodology_alignment_audit_with_fileline.md` 附錄 H「裁決狀態」段。
-5. **派工執行前後必做備份 checkpoint**(2026-08-01 k拍)——任何 SK 頁改動**前**備份 `<檔名>.bak.<YYYY-MM-DD-HHMM>`;改動**後**再加備份一次。中間任何編輯事件需落在兩個備份之間,事後追查改動源頭時**用兩個備份 byte-perfect 對位**。**教訓**:atlas-wiki 非 git 管理(2026-08-01 確認),7/30 05:57 → 8/1 00:28 之間 19 小時無 SK 頁備份,period_system 附註/tip 源頭不可追蹤(T3-A40)。
+1. 不搬運,翻譯——每頁含論文/atlas/散戶三層
+2. 不瞎寫——tool 不確定標 `待驗`
+3. 不裝完成——L3 端點驗證沒跑 = draft
+4. 不違背憲章——`ATLAS_METHODOLOGY.md` v1.0 真理源頭;七時期+3+2+2+三分類
+5. 派工備份——改動前後各備份一次(byte-perfect 對位,§5.1 SOP)
+6. **所有 .md 檔 ≤ 9000 bytes**(kaecer v6.37 拍板)— **例外**:
+   - **SK 頁**(SK-*.md):必 ≤ 9000 bytes = 對位 CI size-check
+   - **入口檔**(_consult-index.md):≤ 9000 bytes
+   - **審計追蹤檔**(_methodology_alignment_audit*.md / _atlas_mcp_path_investigation.md):≤ 9000 bytes
+   - **規範本體**(_method.md):≤ 9000 bytes
+   - **_self-audit.md 例外**:跨 session 累積審計日誌(不入 git,對位 .gitignore),**僅要求 ≤ 9000 bytes 透過 governance-log.md 分流**;如過度膨脹需重組審計紀錄格式而非精簡內容。
+
+   對位 CI:`.github/workflows/validate-wiki.yml` `size-check` job 跑 `wc -c ≤ 9000`(SK 頁驗證)。
 
 ## 規範速查
 
@@ -103,15 +111,15 @@ Fin-Skills(5/29 入庫的 32 個學術 SK)是死的——沒人引用、沒人�
 | 2026-08-01 | k拍 B5 階段(部分) + write_file SOP 強制綁定(避免覆蓋事故) |
 | 2026-08-02 22:30 | **k拍第五條鐵律「快照值必附 timestamp」新增**(對位 SOUL §0.1 第 6 條邊界);規範 session_count / sharpe / max_drawdown 等隨時間變動的數字引用必附 timestamp + 端點名稱,區分歷史快照 vs 當下值 |
 | 2026-08-02 23:25 | kaecer 核准 B 階段 24/24 全部完成(methodology_aligned 對位率 17.9%→100% active) |
-## §6 升分綁定(v6.9)
+## §6 升分綁定(v6.34)
 
 | 維度 | 觸發 | 狀態 |
 |------|------|------|
 | M1 | 4學術+80% | ✅7 |
-| M2 | 15端點+源碼 | ⚠7.5 |
+| M2 | 全部源碼理解 | ⚠7.5 |
 | M3 | 缺口3次 | ✅6 |
 | M4 | M4驗證 | ✅5 |
-| M5 | **5模板跑通**(單軸,v6.10 再修) | 待 |
+| M5 | **5模板跑通**(v6.10 單軸) | 待 |
 | M6 | k3糾 | ✅8 |
 | M7 | 33頁合規 | ✅10 |
 | M8 | ≤800×3 | ✅6 |
@@ -127,6 +135,7 @@ Fin-Skills(5/29 入庫的 32 個學術 SK)是死的——沒人引用、沒人�
 | 2026-08-03 02:10 | ad-hoc 驗證 2.0 = 7 TEST 全過;T3-A141 |
 | 2026-08-03 02:20 | 路徑修正(`/private/tmp/`→`/private/var/folders/.../T/`);T3-A142 |
 | 2026-08-03 02:30 | **v6.0** = SK-01 加 Chan-Hameed-Tong 2000(7 框架)+ 對位率 90%+;T3-A143 |
+| 2026-08-03 | M2 升 8 完成(108 端點)+ M5 升 5(12 模板)+ SOUL §3.7.3 例外 1 擴展 = v6.28/33 |
 
 ## 索引
 
@@ -142,16 +151,10 @@ Fin-Skills(5/29 入庫的 32 個學術 SK)是死的——沒人引用、沒人�
 
 每次 session 開頭,無論之前進度到哪,執行以下三步即可回到工作狀態:
 
-```bash
-# 1. 載入 atlas-skill-inbound skill(agent 必須)
-skill_view name="atlas-skill-inbound"
-
-# 2. 讀本檔,確認規範沒變(若 SKILL.md 更新了,本檔也要同步)
-read_file path="~/workspace/atlas-wiki/skills/_method.md"
-
-# 3. 看現況:已寫幾頁、quota 還剩多少、有沒有 _inbox 待辦
-ls ~/workspace/atlas-wiki/skills/SK-*.md
-cat ~/workspace/atlas-wiki/skills/_inbox.md 2>/dev/null || echo "_inbox.md 尚未建立"
+```
+1. 載入 atlas-skill-inbound skill:skill_view name="atlas-skill-inbound"
+2. 讀本檔,確認規範沒變:read_file path="~/workspace/atlas-wiki/skills/_method.md"
+3. 看現況:ls ~/workspace/atlas-wiki/skills/SK-*.md + cat ~/workspace/atlas-wiki/skills/_inbox.md
 ```
 
 30 秒做完上面三步,所有今天拍板的決策都會自動歸位:
