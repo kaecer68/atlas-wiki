@@ -1,50 +1,79 @@
 #!/usr/bin/env bash
-# atlas-wiki commit-msg hook
-# 對位 kaecer 2026-08-04 拍板「所有更新必須經過 PR 才能 merge 到 main」
-# 對位 T3-A254 governance evidence(新規範護欄):
-# - 任何 commit message 必含可追蹤字串(PR 編號 / T3-A 編號 / refs 編號)
-# - 結構性誠實:若有 hotfix 例外,使用 --no-verify 跳過 + 在 commit body 註明理由
-# 引用先例:T3-A14 / T3-A44 / T3-A132 / T3-A176 / T3-A201 / T3-A240 → 治理日誌
+# atlas-wiki commit-msg hook v2 (T3-A258 kaecer "B" 拍板)
+# 對位 SOUL §0.1 例外 6 + v6.46 規範修改
+#
+# 對位 T3-A257 候選 B 真實描述:
+# - 「嚴格 (#N) 真實 PR 編號」(移除 (refs #N) 後門)
+# - (T3-Axxx) 編號移除(那是 governance-log 內,不是 commit message level)
+# - chore / fix 例外保持(對位既有 v6.x 模式)
+# - 文檔 / build 例外保持
+#
+# v1 vs v2 對位:
+# - v1 接受 (refs #N) / (T3-Axxx) / (#N) 三種 → v2 只接受 (#N)+ chore/fix/build 例外
+# - 對位 PR #8 commit message 含 2 次 (...(#8)) 中後者是 v1 後門造成的冗餘,v2 拒絕
+#
+# kaecer 2026-08-04 12:47 拍板 走 B = T3-A258
 
 set -e
 
 COMMIT_MSG_FILE="$1"
 COMMIT_MSG=$(cat "$COMMIT_MSG_FILE")
-FIRST_LINE=$(echo "$COMMIT_MSG" | head -n 1)
+FIRST_LINE=$(printf '%s\n' "$COMMIT_MSG" | head -n 1)
 
-# 允許跳過路徑(緊急 hotfix)
-if [ "${HUSKY:-0}" = "0" ] && git config --get hooks.allow-no-trail >/dev/null 2>&1; then
-    echo "⚠️  hooks.allow-no-trail is set,但仍嘗試驗證 commit 結構"
+# 例外跳過
+if [ "${HUSKY_SKIP_COMMIT_MSG:-0}" = "1" ]; then
+    echo "⚠️  HUSKY_SKIP_COMMIT_MSG=1(緊急 hotfix 模式,需事後 T3 evidence 補 governance-log)"
+    exit 0
 fi
 
-# 必含可追蹤字串
-# 對位 kaecer repo:以往 commit 前綴為 "feat / fix / chore / docs"
-# 對位 governance culture:commit message 必含 T3-Axxx 或 PR 編號 (#N) 或 refs #N
-TRACE_OK=0
-if echo "$FIRST_LINE" | grep -qE '\(#[0-9]+\)|\(T3-A[0-9]+\)|refs #'; then
-    TRACE_OK=1
-fi
-
-if [ $TRACE_OK -eq 0 ]; then
-    echo "❌ commit message 第一行必含可追蹤字串"
-    echo "   接受格式:"
-    echo "     - feat(atlas-wiki): <subject> (#PR_NUMBER)"
-    echo "     - fix(atlas-wiki): <subject> (T3-A240)"
-    echo "     - chore: <subject> (refs #PR_NUMBER)"
-    echo "   你的第一行:[ $FIRST_LINE ]"
+# T3-A? 對位 B 拒絕(用 #N 取代)
+if printf '%s' "$FIRST_LINE" | grep -qE '\(T3-A[0-9]+\)'; then
+    echo "❌ commit message 第一行禁止 (T3-Axxx) 編號(對位 T3-A258 + B 拍板)"
+    echo "   應改寫為 (#N) 真實 PR 編號"
+    echo "   your first line: [ $FIRST_LINE ]"
     echo ""
-    echo "⚠️  如為緊急 hotfix,請在 commit body 明確寫「hotfix 理由」+ 用 `git commit --no-verify` + 事後 T3 evidence 補治理日誌"
+    echo "⚠️  如果是 governance-log 內文變更,不是 commit message,請用 補丁檔/PATCH 寫入(不要 commit)"
     exit 1
 fi
 
-# 對位 SK 頁 / 規範本體變動:必須寫對位的 T3 evidence 編號
-if echo "$FIRST_LINE" | grep -qE '^\(feat|fix\)\(atlas-wiki\):'; then
-    # 若是 SK 頁或規範本體改動,必須含 T3-A
-    if echo "$COMMIT_MSG" | grep -qE '^\*\*T3-A[0-9]+'; then
-        :  # OK
-    else
-        echo "⚠️  feat/fix(atlas-wiki): 開頭建議在 commit body 包含 **T3-Axxx** 編號(對位 governance-log 追溯)"
-    fi
+# 後門 refs #N 拒絕
+if printf '%s' "$FIRST_LINE" | grep -qE 'refs #'; then
+    echo "❌ commit message 第一行禁止 (refs #N) 後門(對位 T3-A258 + B 拍板)"
+    echo "   應改寫為直接 (#N) 真實 PR 編號(不重複,不縮寫)"
+    echo "   your first line: [ $FIRST_LINE ]"
+    exit 1
 fi
+
+# 判斷 commit message type
+# feat(...) / fix(...) → 必須含 (#N) 真實 PR
+# chore: / docs: / build: / ci: / refactor: / style: / test: → 為例外的非 merge commit
+#   兩種格式共存:「type(scope):」與「type:」
+COMMIT_TYPE=$(printf '%s' "$FIRST_LINE" | sed -nE 's/^([a-z]+)([(: ]).*/\1/p')
+
+case "$COMMIT_TYPE" in
+    feat|fix)
+        # 嚴格要求 (#N) 形式
+        if ! printf '%s' "$FIRST_LINE" | grep -qE '\(#[0-9]+\)'; then
+            echo "❌ feat/fix commit 必須含 (#N) 真實 PR 編號(對位 T3-A258 + B 拍板)"
+            echo "   correct format:"
+            echo "     feat(atlas-wiki): <subject> (#PR_NUMBER)"
+            echo "     fix(atlas-wiki): <subject> (#PR_NUMBER)"
+            echo "   your first line: [ $FIRST_LINE ]"
+            echo ""
+            echo "⚠️  例外路徑(對位 break-glass hotfix):HUSKY_SKIP_COMMIT_MSG=1 + commit message body 註明 hotfix 理由"
+            exit 1
+        fi
+        ;;
+    chore|docs|build|ci|refactor|style|test)
+        # 例外:允許
+        ;;
+    *)
+        # 其他未識別 type 不自動放行 → 鼓勵改用正確 type
+        echo "⚠️  未識別的 commit type: '$COMMIT_TYPE'(對位 conventional commits)"
+        echo "   接受類型: feat / fix / chore / docs / build / ci / refactor / style / test"
+        echo "   your first line: [ $FIRST_LINE ]"
+        exit 1
+        ;;
+esac
 
 exit 0
