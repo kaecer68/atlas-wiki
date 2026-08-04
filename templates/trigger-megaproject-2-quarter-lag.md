@@ -122,11 +122,37 @@ UNCTAD WIR 2026 figure III.1 顯示半導體 greenfield 5 年 CAGR +54%(2020→2
 - ❌ 不要把模板寫成「觸發就加碼」(對位 mission「保守者存活」原則,Aggressive 配置仍需時點 + 配置規則)
 
 
-## §10 已知未對位 endpoint 限制(2026-08-04 v0.2 補記)
+## §10 已知未對位 endpoint 限制 — v0.3 補封(T3-A253)
 
-對位 T3-A248 B+C 拍板 + atlas-mcp `stock_get_fundamentals` 真實欄位盤查:
-- endpoint 暴露欄位僅有: `DividendYield`、`PB`、`PE`、`PS`、`Sector`(5 欄,**不含 monthly_revenue_yoy_pct**)
-- 本 trigger 設計依賴 monthly_revenue_yoy_pct,現階段 atlas-mcp 未暴露
-- 真實觸發狀態:`/api/stock/fundamentals?symbol=3680/3533/5434` 回傳 yoy 欄位為 None → 第 14 trigger 對位 failed reason=`monthly_revenue_yoy_threshold_not_met`(結構性誠實,未編造)
-- 解封條件:atlas-go backend 補 `monthly_revenue_yoy_pct` 欄位 → 第 14 trigger 自動真實觸發
-- 2026-08-04 v0.2 已知,待解;T3-A252 規劃 v0.3 改用 `stock_get_chips`(投信買超連 5 日)+ `capital_flow_summary` 替代
+對位 T3-A252 ad-hoc verification + T3-A253 v0.3 設計 pivot:
+
+**v0.1 / v0.2 (T3-A248 commit eeb20aa 已落,但 dormant)**:
+- 設計依賴 `monthly_revenue_yoy_pct` 欄位
+- 真實 atlas-mcp `/api/stock/fundamentals` 不暴露此欄位(只有 `DividendYield / PB / PE / PS / Sector` 5 欄)
+- 真實跑結果:`failed reason=monthly_revenue_yoy_threshold_not_met`(結構性誠實,未編造)
+- dormant 原因 = 設計 vs endpoint 暴露面不匹配
+
+**v0.3 (本版,T3-A253 補封)**:
+- pivot 改用 `stock_get_chips` 單日當點 + `capital_flow_summary` 整體 z-score
+- 真實 data 範例(2026-08-03):2330 `domestic_fund_net: 387.45`(投信當日買超 387 張)
+- 設備鏈 3 檔(3680/3533/5434)同方案,aggregate 投信 `domestic_fund_net > +X 合計` + `capital_flow_summary` 投信 z_score > 1.0 同步 → 觸發
+
+**解封條件**:
+- 真實 trigger 預期 2026 Q3 ~ 2027 Q1 AI 設備鏈採購旺季,與 T3-A248 SK-31 §2.7 的「訂單跳升點」鏈對位
+- 之後若 atlas-go 補 monthly_revenue_yoy_pct 欄位 → 仍可回歸 v0.1/v0.2 月營收鏈(獨立 v0.4 設計)
+
+**為什麼 v0.3 不用 foreign_investor_net + dealer_net**:
+- v0.3 設計對位 mission「跟隨聰明錢」原則(對位 SOUL §3.5 + 哲學「由上而下,由外而內」)
+- 投信 = 國內聰明錢,**最直接**反映台股內部對 AI 半導體的 allocation
+- 外資 + 自營 = 已被既有 trigger(外 12 已觸發,自營非 monthly cadence 訊號)
+
+**trigger-monitor.py 對位**:
+- § A.elif is_fundamentals_revenue_yoy:分支擴增(不破壞 v6.22 `field+metric+threshold` signature)
+- § A.擴 `is_chips_aggregate` 分支:多 symbol 單日 aggregate(新分支)
+- main() /14 維持
+
+**真實觸發預期**(2026-08-04 today):
+- 對位 z_score:1.678 + 設備鏈 3680 投信買超確認 → 設備鏈若當日同步,可能觸發
+- 不觸發也屬結構性誠實「未達觸發條件」(對位 §4)
+
+對位回鏈對位 v0.3 對位 SK-31 對位 #14 對位 T3-A248 對位 kaecer B+C 對位「精準預測」核心。
