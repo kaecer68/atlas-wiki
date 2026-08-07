@@ -23,9 +23,7 @@ amendable_by: kaecer
 
 ## 為什麼存在
 
-Fin-Skills(5/29 入庫的 32 個學術 SK)是死的——沒人引用、沒人實作、Hermes 載入不到。每天花 5 個額度把它「救活」,改寫成 atlas 可對位、可驗證、可散戶解讀的 wiki skill 頁。
-
-對位憲法 §1「金融工程根據」、mission「找信息差、找漏洞」。
+救活 32 個 Fin-Skills → atlas 可對位 wiki skill;對位憲法 §1 + mission「找信息差」。細節見 `_method_amendment_history.md` §起源。
 
 ## 六條鐵律(v6.37 kaecer 拍板:所有 .md ≤ 9000 bytes)
 
@@ -39,31 +37,13 @@ Fin-Skills(5/29 入庫的 32 個學術 SK)是死的——沒人引用、沒人�
    - **入口檔**(_consult-index.md):≤ 9000 bytes
    - **審計追蹤檔**(_methodology_alignment_audit*.md / _atlas_mcp_path_investigation.md):≤ 9000 bytes
    - **規範本體**(_method.md):≤ 9000 bytes
+   - **規範附錄**(_method_amendment_history.md):≤ 5000 bytes(本附錄承接起源與演進 + M1-M9 升分表;_method.md 瘦身後 2026-08-07 增設)
+   - **`_inbox.md`**:≤ 12000 bytes(對位第七條例外)+ size-check job 實作 warn-only 模式
+   - **`_inbox_archive.md`**:無 size 上限(歷史承接,2026-08-07 增設)
    - **_self-audit.md 例外**:跨 session 累積審計日誌(不入 git,對位 .gitignore),**僅要求 ≤ 9000 bytes 透過 governance-log.md 分流**;如過度膨脹需重組審計紀錄格式而非精簡內容。
 
    對位 CI:`.github/workflows/validate-wiki.yml` `size-check` job 跑 `wc -c ≤ 9000`(SK 頁驗證)。
 
-## 規範速查
-
-| 項目 | 規格 |
-|------|------|
-| 路徑 | `~/workspace/atlas-wiki/skills/` |
-| 命名 | `SK-<原編號>-<slug>.md` |
-| 單頁大小 | ≤ 9,000 bytes (2026-07-30 k拍:bump 自 6000→9000,涵蓋 5 個 SK + 2 個索引/字典) |
-| 結構 | 6 段(一句話定位 / 論文版 / 對位 / 散戶解讀 / 驗證 / 未消化) |
-| frontmatter | 9 欄(title / type / source / ingested_at / status / tier / confidence / atlas_go_relevance / mcp_tools_used / verification) |
-| Quota | D1 示範 1 頁 → D2+ 每日 3 頁上限（2026-07-29 k拍降標 A 方案,見 `skill-inbound-quota-decision-history.md`） |
-| 精選門檻 | 三題:對位 mission? / 有 atlas-mcp tool? / 散戶能一句話理解? |
-| 完成定義 | L1 格式 + L2 對位 + L3 端點三層全過才升 active |
-
-## 每日驗證收尾清單
-
-- [ ] 每頁 `wc -c` ≤ 9,000 bytes
-- [ ] 每頁 6 段俱全
-- [ ] frontmatter 9 欄齊全
-- [ ] 至少 1 頁 L3 真跑過
-- [ ] `_inbox.md` 已更新跨 SK 待辦
-- [ ] 對應 Fin-Skills 段落完整讀過(非略略讀)
 
 ## 第五條鐵律(2026-08-02 k拍):快照值必附 timestamp
 
@@ -78,14 +58,26 @@ Fin-Skills(5/29 入庫的 32 個學術 SK)是死的——沒人引用、沒人�
 - **降級觸發**:任何頁違反第 5 條 = M7 結算分降 1
 - **升級觸發**:全 33 頁跑 Python 結構驗證全綠(快照值都附 timestamp) = M7 結算分 +1
 
+**每日驗證收尾檢查清單(必跑 6 項)**:
+
+- [ ] 每頁 `wc -c` ≤ 9,000 bytes
+- [ ] 每頁 6 段俱全
+- [ ] frontmatter 9 欄齊全
+- [ ] 至少 1 頁 L3 真跑過
+- [ ] `_inbox.md` 已更新跨 SK 待辦
+- [ ] 對應 Fin-Skills 段落完整讀過(非略略讀)
+
 ## 跟其他 skill 互動
 
-- 寫入時 → `wiki-critic` 跑 6 項檢查
-- 三日循環 → `knowledge-harvest` 自動掃 `skills/` 變動
-- 重大決策(規範修改、退場)→ `task-governance`
-- 散戶解讀段 → 語言紀律跟 `financial-advisor-coach` 一致
+寫入時 → `wiki-critic`;三日循環 → `knowledge-harvest`;重大決策 → `task-governance`;散戶解讀 → `financial-advisor-coach`。
 
-## 卡住升級規則
+## 修改守則
+
+- 修改本檔 / SKILL.md 走 `task-governance` 流程
+- 兩檔內容必須同步(SKILL.md 為主,本檔鏡像)
+- 連續 3 天未產出 → k拍是否廢除
+
+**卡住升級規則(對應動作)**:
 
 | 情況 | 動作 |
 |------|------|
@@ -94,38 +86,6 @@ Fin-Skills(5/29 入庫的 32 個學術 SK)是死的——沒人引用、沒人�
 | 5 個湊不滿 | **不硬湊**——3 頁高品質 > 5 頁混充 |
 | L3 跑不動 | 維持 draft,絕不偽造通過 |
 
-## 修改守則
-
-- 修改本檔 / SKILL.md 走 `task-governance` 流程
-- 兩檔內容必須同步(SKILL.md 為主,本檔鏡像)
-- 連續 3 天未產出 → k拍是否廢除
-
-## 起源與演進 + 升分綁定(v6.34 整合)
-
-| 日期 | 事件 + M 升分綁定 |
-|------|------|
-| 2026-05-29 | Fin-Skills.md 入庫 |
-| 2026-07-28 | k拍「每日 5 個進修」方針 + SK-01 示範 |
-| 2026-07-30 | k拍 A 階段 + 第四條鐵律「對位 ATLAS_METHODOLOGY.md」 |
-| 2026-08-01 | write_file SOP 強制綁定 |
-| 2026-08-02 22:30 | **k拍第五條鐵律「快照值必附 timestamp」** |
-| 2026-08-02 23:25 | B 階段 24/24 全部完成(對位率 17.9%→100%) |
-| 2026-08-02 23:55-23:59 | k拍 _consult-index §0 + M6 主動糾正反向達標 |
-| 2026-08-03 02:30 | v6.0 = SK-01 加 7 框架 + 對位率 90%+;M2 升 8 + M5 升 5 + SOUL §3.7.3 例外 1 擴展 |
-| 2026-08-04 09:46 | **k拍第六條鐵律「外部權威報告週期稽核」(T3-A248)**:UNCTAD/HAI/HKS 等 annual/semi-annual 報告週期觸發 + narrative hit_rate 重置 |
-
-**§6 升分綁定表**(整合):
-| 維度 | 觸發 | 狀態 |
-|------|------|------|
-| M1 | 4學術+80% | ✅7 |
-| M2 | 全部源碼理解 | ⚠7.5 |
-| M3 | 缺口3次 | ✅6 |
-| M4 | M4驗證 | ✅5 |
-| M5 | 5模板跑通 | ⚠5 |
-| M6 | k3糾 | ✅8 |
-| M7 | 33頁合規 | ⚠10 |
-| M8 | ≤800×3 | ✅6 |
-| M9 | 盤查×3 | ✅4 |
 
 ## 第六條鐵律(2026-08-04 T3-A248 k拍「B+C」):外部權威報告週期稽核
 
@@ -143,31 +103,28 @@ Fin-Skills(5/29 入庫的 32 個學術 SK)是死的——沒人引用、沒人�
 - **降級觸發**:narrative model 對位不到外部報告來源 = M7 結算分降 1
 - **升級驗收**:2027 年 4 月 WIR + HAI 同步 release → 命中 + hit_rate 改善 ≥5% = M1 升 1
 
-## 索引
-
-- 程式本體:`~/.hermes/skills/atlas-skill-inbound/SKILL.md`
-- 人類可讀:本檔
-- 示範頁:`~/workspace/atlas-wiki/skills/SK-01-factor-library.md`
-- 跨頁總表:`~/workspace/atlas-wiki/skills/_inbox.md`
-- 來源:`~/workspace/Fin-Skills/Fin-Skills.md`
 
 ---
 
-## 重啟後 30 秒回神程序(2026-07-28 k拍「不要做了一天兩天就忘記怎麼做」)
+## 重啟 30 秒程序(2026-07-28 k拍)
 
-每次 session 開頭,無論之前進度到哪,執行以下三步即可回到工作狀態:
+每次 session 開頭執行三步:
+1. `skill_view name="atlas-skill-inbound"`
+2. 讀本檔確認規範
+3. `ls SK-*.md + cat _inbox.md` 看現況
 
-```
-1. 載入 atlas-skill-inbound skill:skill_view name="atlas-skill-inbound"
-2. 讀本檔,確認規範沒變:read_file path="~/workspace/atlas-wiki/skills/_method.md"
-3. 看現況:ls ~/workspace/atlas-wiki/skills/SK-*.md + cat ~/workspace/atlas-wiki/skills/_inbox.md
-```
+自動歸位:6 段格式 / 9 欄 frontmatter / Quota(3 頁)/ 路徑(憲法在 atlas-notes)/ 命名(atlas = atlas,不是 atlas-go)/ 精選優先序(SK-01 → 16 → 18 → 20 → 29)。
 
-30 秒做完上面三步,所有今天拍板的決策都會自動歸位:
-- 規範(6 段格式、frontmatter 9 欄、三層驗證)
-- 命名(atlas = atlas,不是 atlas-go)
-- 路徑(憲法在 `~/workspace/atlas-notes/`,不在 `~/workspace/atlas/`)
-- Quota(D1 示範 1 頁 → D2+ 每日 3 頁,2026-07-29 k拍降標)
-- 精選優先序(SK-01 → 16 → 18 → 20 → 29 第一輪)
+**權威等級 = 憲法 §1**。
 
-**這條規則的權威跟憲法 §1 同級**——可被「禮貌」「怕打擾」覆蓋的話,規範就會被破壞掉。
+---
+
+## 第七條例外(2026-08-07 kaecer 拍板):`_inbox.md` size 上限擴充
+
+- **規範**:`_inbox.md` ≤ 12000 bytes
+- **CI**:`validate-wiki.yml` size-check job = SK ≤ 9000 嚴格 fail + _inbox.md ≤ 12000 warn-only
+- **歸檔 SOP**:連 2 次 session append 後 > 12000,agent 自動評估把 §6 §6.1 §6.2 完成段落移 `_inbox_archive.md`,主檔只留最新 2 版本結算
+
+---
+
+**附錄**:起源與演進 + 升分綁定(M1-M9)見 `_method_amendment_history.md`。

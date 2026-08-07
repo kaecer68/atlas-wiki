@@ -3,7 +3,7 @@ title: SK-27 量子增強策略網路（QNN/QRWKV/QASA）
 type: skill-inbound
 source: ~/workspace/Fin-Skills/Fin-Skills.md §SK-27
 ingested_at: 2026-08-01
-status: draft
+status: archive
 tier: T3
 confidence: low
 atlas_go_relevance: low
@@ -40,3 +40,12 @@ SK-27 是論文的「實驗性附錄」——用變分量子電路(VQC)做策略
 ## 未消化 / 待補
 - [ ] 量子硬體進展(IBM Condor 等)若未來 NISQ 實用,可能改寫結論,但 2026-08-01 當下無對位必要。
 - [ ] 若學術界有新論文「量子 RL 勝過經典」,再回頭重啟本頁,否則維持 archive。
+
+
+---
+
+## 歸檔聲明(2026-08-07 對位 SK-00 §1)
+
+- **歸檔時間**:2026-08-07
+- **歸檔理由**:論文明示量子模型實務績效低於經典;atlas 無量子模擬端點,無對位 L3 驗證
+- **對位 SK-00 §1**:`archive` 標 + 一句話定位「學術展示無對位」一致

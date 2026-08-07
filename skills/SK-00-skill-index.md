@@ -3,12 +3,12 @@ title: SK-00 技能索引指南
 type: skill-inbound
 source: ~/workspace/Fin-Skills/Fin-Skills.md §SK-00
 ingested_at: 2026-08-01
-status: draft
+status: active
 tier: T3
 confidence: high
 atlas_go_relevance: high
 mcp_tools_used: []
-verification: 本檔是純索引頁,驗證方式 = `ls ~/workspace/atlas-wiki/skills/SK-*.md | wc -l` 應回 34(33 主體含 SK-33 audience-routing + SK-00 索引)。
+verification: 本檔是純索引頁,驗證方式 = `ls ~/workspace/atlas-wiki/skills/SK-*.md | wc -l` 應回 35(33 編號含 SK-27/30 archive + SK-31 二擇一衝突待 §未消化 + SK-00 索引);實際 grep 2026-08-07 = 35 個檔案。
 ---
 
 ## 一句話定位
@@ -53,4 +53,10 @@ Step 3: 對 `experiment_history` 抽一份,看其 pipeline metadata 是否含 SK
 - [x] **archive 標一致性驗證(2026-08-02)**:grep SK-00/27/30 三檔 archive 標,**三者一致**——SK-00 §未消化寫「SK-27/SK-30 已標 [ARCHIVED — 學術展示無對位]」,SK-27 frontmatter 自標 archive + §散戶解讀「主動 archive」,SK-30 frontmatter 自標 archive + §驗證方式「無 L3 端點。本頁 archive」。無引用錯誤。
 - [x] **SK-22 pipeline 標翻轉(2026-08-02 PR #1443)**:§論文 pipeline robustness 段由「對位失敗」改為「兩層分開——實驗級可用,by-factor 仍失敗」;§散戶解讀 G 段同步。`_consult-index.md` §2 Q2 + §3.1 SK-22 段 + §6.2 紀錄三處同步;`SK-22-ablation-analysis.md` 全文重寫;`SK-13-permutation-importance.md` §atlas 對位「因子刪除後效果」行同步。
 - [ ] 跨 SK 依賴圖(visualization)未實作,目前只有文字 pipeline 順序。
+
+## SK-31 衝突待解(2026-08-07)
+
+- **現況**:`SK-31-ai-investment-cycle-2026.md` 與 `SK-31-sl-vs-rl.md` 同編號,35 個檔案 ≠ 33 主體
+- **原因**:Fin-Skills 原版 SK-31 應為單一頁(待查 Fin-Skills.md §SK-31)
+- **解法**:重命名 `SK-31-sl-vs-rl.md` → `SK-XX-sl-vs-rl.md`(XX = 下一未佔編號),待你拍板
 - [x] 規範已同步(2026-08-01 v0.9 結算):SKILL.md size 6000→9000 bytes(4 處)、quota 5→3 頁(8 處);_method.md 已對齊 9,000 bytes 與 3 頁上限
