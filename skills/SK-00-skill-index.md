@@ -8,7 +8,7 @@ tier: T3
 confidence: high
 atlas_go_relevance: high
 mcp_tools_used: []
-verification: 本檔是純索引頁,驗證方式 = `ls ~/workspace/atlas-wiki/skills/SK-*.md | wc -l` 應回 33(32 主體 + SK-00 索引)。
+verification: 本檔是純索引頁,驗證方式 = `ls ~/workspace/atlas-wiki/skills/SK-*.md | wc -l` 應回 34(33 主體含 SK-33 audience-routing + SK-00 索引)。
 ---
 
 ## 一句話定位
@@ -16,7 +16,8 @@ SK-00 在 atlas 是「所有 SK 頁的目錄 + pipeline 組裝藍圖」——給
 
 ## 論文版概念（忠實還原來源）
 - **功能**:編號 + 名稱 + 功能 + 依賴關係 + 典型應用 pipeline
-- **預期輸出 JSON**:skills 陣列(33 條)+ pipelines(三條主軸:supervised / reinforcement / robustness)
+- **預期輸出 JSON**:skills 陣列(34 條)+ pipelines(三條主軸:supervised / reinforcement / robustness)
+  - **SK-33 audience-routing 例外**:不在三條 pipeline 內——它是 SK-00 同層的元能力(meta-skill),跨所有 pipeline 提供 audience 切換
 - **三條主軸 pipeline**(論文原版):
   - **supervised_learning**:`SK-01 → SK-03 → SK-09 → SK-16 → SK-18`(建因子→切時序→PLS→十分位→Alpha)
   - **reinforcement_learning**:`SK-23 → SK-03 → SK-24 → SK-26 → SK-29 → SK-18 → SK-28`(產業環境→切時序→PPO→LSTM→回測→Alpha→獎勵診斷)
@@ -24,8 +25,8 @@ SK-00 在 atlas 是「所有 SK 頁的目錄 + pipeline 組裝藍圖」——給
 
 ## atlas 對位
 | 論文概念 | atlas-mcp 對位 |
-|---------|---------------|
 | 33 個 SK 索引 | 本檔 + `~/workspace/atlas-wiki/skills/SK-*.md`(已 33 頁) |
+| 33 個 SK 索引(2026-08-07 +SK-33 → 34) | 本檔 + `~/workspace/atlas-wiki/skills/SK-*.md`(已 34 頁;SK-33 audience-routing 是元能力頁) |
 | 三條 pipeline | 對位 atlas `universe_get_sessions`(SL/RL session 結構) |
 | 跨 SK 依賴 | `experiment_history`(audit trail) |
 
@@ -43,7 +44,7 @@ SK-00 在 atlas 是「所有 SK 頁的目錄 + pipeline 組裝藍圖」——給
 - 對位 ATLAS_METHODOLOGY 七時期:三條 pipeline 在不同 regime 的可靠度不同——SL pipeline 在 RISK_ON 穩定,RL pipeline 在 regime 切換時更有適應力,robustness pipeline 是任何 regime 的必要驗證。
 
 ## 驗證方式
-Step 1: `ls ~/workspace/atlas-wiki/skills/SK-*.md | wc -l` 應回 33(32 主體 SK + SK-00 索引)。
+Step 1: `ls ~/workspace/atlas-wiki/skills/SK-*.md | wc -l` 應回 34(33 主體 SK 含 SK-33 + SK-00 索引)。
 Step 2: 對 `universe_get_sessions` 抽一份 supervised session,看其 strategy_id 對應哪些 SK。
 Step 3: 對 `experiment_history` 抽一份,看其 pipeline metadata 是否含 SK pipeline 標籤。
 
