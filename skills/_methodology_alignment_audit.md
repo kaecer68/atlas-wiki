@@ -286,7 +286,7 @@ related:
 
 **2026-08-02 20:30~20:40 端點實跑**:
 - `stock_get_quote` 503 TWSE upstream
-- `experiment_diff` 400 需真 experiment_id(atlas 端無 experiment_list 端點)
+- ~~`experiment_diff` 400 需真 experiment_id(atlas 端無 experiment_list 端點)~~ → **2026-08-07 翻正**:`GET /api/experiment/history` 200 回 18 筆真 experiment_id,`experiment_diff?experiment_id=` 200。400 根因是參數名/傳入值,非端點缺失
 - `parameters_get` 401 atlas-go auth 需 token
 - `risk_get_commentary` not_available(風險決策生成未啟動)
 - `6a96a129` 夜間研究 idle 936s LLM provider timeout

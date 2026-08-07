@@ -6,7 +6,7 @@
 
 ## Step 1:信號捕捉(對位真實 2026-08-03)
 - **geopolitical 5.07** ✅(> 4 高風險)
-- 對位端點:mcp__atlas_mcp__taiwan_stress_index(geopolitical)
+- **對位端點**:mcp__atlas_mcp__macro_get_stress_index_current(geopolitical;原 taiwan_stress_index 已改名)
 
 ## Step 2:自動跑端點
 - mcp__atlas_mcp__capital_flow_summary(外資期貨 -82515 偏空)

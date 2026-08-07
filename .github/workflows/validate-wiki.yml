@@ -188,7 +188,7 @@ jobs:
               'trigger-margin-350b.md': ['macro_get_snapshot_latest', 'risk_get_metrics'],
               'trigger-foreign-3day-inflow.md': ['capital_flow_summary', 'mcp_quickstart'],
               'trigger-sox-foreignflow.md': ['macro_get_snapshot_latest', 'capital_flow_summary'],
-              'trigger-taiwan-strait-tension.md': ['taiwan_stress_index', 'capital_flow_summary'],
+              'trigger-taiwan-strait-tension.md': ['macro_get_stress_index_current', 'capital_flow_summary'],
               'trigger-china-slowdown.md': ['macro_get_snapshot_latest', 'risk_exposure'],
               'trigger-tariff-shock.md': ['macro_get_snapshot_latest', 'capital_flow_summary'],
               'trigger-etf-rebalance.md': ['macro_get_snapshot_latest', 'event_calendar'],

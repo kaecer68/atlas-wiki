@@ -9,7 +9,7 @@ maturity: stable
 confidence: high
 atlas_go_relevance: high
 mcp_tools_used: [macro_get_stress_index_current, narrative_get_chains, narrative_get_models, stock_get_quote, stock_get_fundamentals, template_detector_status]
-verification: ground_truth — T3-A248, narrative_get_chains 2026-08-04 01:25:54Z evt-ai-capex-1785806754784870422 score 0.7343 (5 chains highest), ai_supercycle_model hit_rate 0.625, weight 0.1639
+verification: ground_truth — T3-A248, narrative_get_chains 2026-08-04 01:25:54Z evt-ai-capex-1785806754784870422 score 0.7343, ai_supercycle_model hit_rate 0.625, weight 0.1639. §3.5 6 層因果鏈框架(圖層 T2)需 6 條驗證缺口逐個勾選完成才升 active
 sources:
   - UNCTAD WIR 2026 (ISBN 978-92-1-154998-0)
   - Stanford HAI 2026 AI Index (arXiv:2606.15708)
@@ -61,6 +61,23 @@ decay_until: 2027Q1-WIR-revision
 - tech_peak_season score=0.525 / earnings_surprise score=0.58
 - 5 條中 3 條偏多 AI,1 條中性,1 條偏空 — atlas 已有 resonance 運算
 
+## §3.5 6 層因果鏈框架(圖層 T2 × 週期報告雙重驗證)
+
+> **圖層 T2**:來源為 2026-08 期間 10 張半導體敘事新聞摘要小圖卡(顧奎國 / 溫建勛 / 阮惠慈),非學術/官方數據。**當 trigger 用,當 ground truth 須獨立驗證**。
+
+| 層 | 名稱 | 對位 atlas | 圖層實例 |
+|---|---|---|---|
+| Layer 1 | 週期 | `ai_supercycle_model`(0.1639) | greenfield +54%/年 |
+| Layer 2 | 時序 | `narrative_get_chains` | 宣布 → 下單 6~18 月 |
+| Layer 3 | 技術 | **無對位** | CoWoS→EMIB→CoPoS |
+| Layer 4 | 個股 | `stock_get_quote/chips` | 3131/6187/6640/6831(fact_d72e14ee) |
+| Layer 5 | 漲停 | `narrative_get_chains` | +60~131% 回撤 |
+| Layer 6 | 風險 | `risk_get_metrics` | Singapore 4-6 年 delay |
+
+**4 條前提**:① T2 = 次級解盤 ② 6 驗證缺口逐個勾選才升 active ③ 圖卡 2026-08 收盤,**2027-02 框架本體需重寫** ④ 與 §3 不重疊,僅擴「圖層因果傳導」維度。
+
+**對位缺口**:① atlas 24 detector 缺 CoWoS/CoPoS trigger ② sector 把設備股歸「其他電子」/「電機機械」,無明確對應 ③ 圖卡訊號需自追蹤(atlas 未涵蓋 Layer 5)。
+
 ## §4 散戶解讀
 
 **這份週期頁對散戶的實際訊號**:
@@ -77,7 +94,7 @@ decay_until: 2027Q1-WIR-revision
 - **L3 端點實跑 ✅**:`macro_get_stress_index_current` 4.22 low / `narrative_get_chains` 2026-08-04 01:25:54Z 5 chains / `narrative_get_models` ai_supercycle_model hit_rate 0.625 / `stock_get_quote` 2330 (PE 30.19) + 3680 (last 427) / `system_get_health` 真實上線(2026-08-04 跑通)
 - **byte 上限 ✅**:8372 bytes < 9000 bytes
 
-## §6 未消化 + 反向鏈接
+## §6 未消化
 
 **未消化(留作後續 session)**:
 
@@ -90,7 +107,20 @@ decay_until: 2027Q1-WIR-revision
 
 **反向鏈接**:
 
-- `_consult-index.md` §Q1 已收 T3-A248 + kaecer 拍板記錄
-- `~/workspace/atlas-notes/12-ext-research/2026-un-harvard-ai-investment/README.md`(外部報告原料 dump)
-- `_method.md` 第六條鐵律(本週期拍板 — 對位 C 階段)
-- 對位 ATLAS 憲章:`docs/ATLAS_METHODOLOGY.md` v1.0 §一 + §二 因果傳導鏈第 1-2 層
+**反向鏈接**(精簡對位):
+- `_consult-index.md` §Q1 T3-A248 / `12-ext-research/2026-un-harvard-ai-investment/README.md` / `_method.md` §6 / `docs/ATLAS_METHODOLOGY.md` v1.0 §一 §二
+- 圖層 T2 來源:`telegram session 20260711_190603_a8ec0010` msg 15622 規劃 + T3-A275 結構性誠實實查 2026-08-05
+- **真實股號**(fact_d72e14ee):3131/6187/6640/6831
+
+**§3.5 6 條驗證缺口**(kaecer 2026-08 拍板,2026-08-06 實跑 T3-A275.1):
+
+| # | 驗證項 | 方式 | 狀態 |
+|---|---|---|---|
+| 1 | 設備月營收 | REST | ✅ 上線 |
+| 2 | 2408 外資 | chips | ✅ +9183 |
+| 3 | TSMC AZ | PDF | ⛔ 撤 |
+| 4 | CoPoS 2028 | 2 來源 | ⛔ 撤 |
+| 5 | 反彈型態 | chains | ✅ 4 chains |
+| 6 | 7/31 漲停 | quote | ⛔ 撤 |
+
+**狀態**:**2 ✅ + 1 ⚠️ + 3 ⛔**。

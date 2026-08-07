@@ -26,7 +26,7 @@ ENDPOINTS = [
     ("industry_sector_lookup", ["symbol"]),
     ("macro_get_snapshot_latest", []),
     ("narrative_get_events", []),
-    ("taiwan_stress_index", []),
+    ("macro_get_stress_index_current", []),  # 2026-08-07 rename: taiwan_stress_index → macro_get_stress_index_current
     ("mcp_quickstart", []),
     ("crossmarket_get_us_indices", []),
     ("backtest_signals", []),
