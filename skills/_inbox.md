@@ -151,5 +151,3 @@ issues 區)+ 在本檔留 issue link 補位~~ → 不再外推,所有落地在 a
 ### 變更記錄
 - **v6.50 / 2026-08-07 19:18**:HERMES_AUDIENCE env 提案從 `_inbox_deferred.md` v1.0 第 1 條提升至主檔 `§擱置區`(kaecer session 第 3 輪明示);size 10540 → ~13000 bytes 預期,⚠ size 警示落段末(待 task-governance 後續)
 - **v6.52 / 2026-08-07 19:35**:撤銷外推,改內部化(kaecer 第五輪訊息「我們自己把事做完,不外推」拍板);同步修 4 檔:`SK-33` frontmatter line 11/16/106/110-111(語意 + 未消化清單)、`_inbox_deferred.md` title + 全文(跨邊界移交 → 內部約定)、`_inbox.md` §擱置區表格 + 移交細節 + 規則、`_manifest_coverage_routing.md` 待修(Step 2);不再走 GitHub issue / 不再等 hermes owner 回覆;**T3-A275 預備落 governance-log**
-
-<!-- v6.53-auto-detect-test:這是測試 PR,merge_and_cleanup.sh --auto-detect 驗證用,merge 後 revert -->
