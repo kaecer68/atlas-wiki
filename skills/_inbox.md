@@ -1,20 +1,20 @@
 # atlas-skill-inbound Inbox
 
-最後更新:2026-08-04 14:10 (v6.44 結算 — Fugle 修復鏈 4 PR 全 merge 端到端驗收(PR #1445/#1446/#1448/#1449,本 session 實跑 5 端點全綠:stock_get_quote 2330/2317/0050 3/3 source=fugle + parameters_get 243KB + risk_get_commentary not_available);**誤判修正 3 條結構性誠實宣告**:`Fugle key 綁定 1476 / 需重新申請` 誤判已修(根因 base64 -d 測試錯誤,v1.0 key 就是 base64 原樣);wiki `_consult-index` §3 Q1 表加 v6.44 驗收狀態;governance-log append T3-A246);前次更新:2026-08-04 06:50 (v6.43 結算 — §3 失敗狀態同步(`stock_get_quote` ✅ PR #1445+ c1f06430+ PR #1448+ PR #1446 / `parameters_get` ✅ 帶 ATLAS_API_KEY / `experiment_diff` 仍 ❌ 部分修);觸發模板 12 → **13**(`trigger-2330-tsmc-swing` 第 13 模板新增,對位 PR #1445 stock_get_quote 修復後開啟個股層觸發,intraday_swing_pct=1.255% 結構性誠實不觸發);Fugle 重盤查:T3-A51~A54 + Q4 排序重排(Fugle rate log 降為「不需要」);最後一次更新前一次最後更新:2026-08-04 02:01 (v6.41 結算 — **0 寫入 + 誠實盤查**;cron `8fd1b1eda764` skill-inbound 02:00 觸發;33 頁 100% 落地,4 draft 真實待升(SK-00 索引無 mcp 對位例外 + SK-22 by-factor 仍 400 + SK-27/30 量子已標 [ARCHIVED — 學術展示無對位]);prompt 預設「D2+ 每日 3 頁」是 2026-07-29 降標前的過時工作框架,實際工作 7/30 起已轉型為 _self-audit 治理 + PR 推進 + 12 觸發模板 + 7 jobs CI;未硬湊 3 頁 = 結構性誠實五十一次;詳見 _self-audit.md §6 v6.41)
+最後更新:2026-08-07 02:10 (v6.45 結算 — **0 新頁 + 1 頁誤判翻正**;33 頁早已 100% 落地,本輪不硬湊 quota。**SK-22 draft → active**:L3 四步全綠(`experiment_history` 200/18 筆、`experiment_diff?experiment_id=` 200 baseline 0.0050727→candidate 0.0064193 sharpe_like、`/api/dashboard/universe-overlap` 200 29 agents/86 warnings、`backtest_signals` 200 CIRCUIT_BREAKER)。**結構性誠實**:舊 blocker「待 atlas 暴露 experiment_list」為**誤判**——端點一直都在,400 根因是參數名 `id=` vs `experiment_id=` 加傳錯值(session_id/agent_id);另**證偽** `eval_metrics` 欄位(18/18 experiment 皆無,原為未驗證推測)。by-factor ablation 仍 ❌ = 真結構性缺口,不翻轉。); 前次更新:2026-08-04 14:10 (v6.44 結算 — Fugle 修復鏈 4 PR 全 merge 端到端驗收(PR #1445/#1446/#1448/#1449,本 session 實跑 5 端點全綠:stock_get_quote 2330/2317/0050 3/3 source=fugle + parameters_get 243KB + risk_get_commentary not_available);**誤判修正 3 條結構性誠實宣告**:`Fugle key 綁定 1476 / 需重新申請` 誤判已修(根因 base64 -d 測試錯誤,v1.0 key 就是 base64 原樣);wiki `_consult-index` §3 Q1 表加 v6.44 驗收狀態;governance-log append T3-A246);前次更新:2026-08-04 06:50 (v6.43 結算 — §3 失敗狀態同步(`stock_get_quote` ✅ PR #1445+ c1f06430+ PR #1448+ PR #1446 / `parameters_get` ✅ 帶 ATLAS_API_KEY / `experiment_diff` 仍 ❌ 部分修);觸發模板 12 → **13**(`trigger-2330-tsmc-swing` 第 13 模板新增,對位 PR #1445 stock_get_quote 修復後開啟個股層觸發,intraday_swing_pct=1.255% 結構性誠實不觸發);Fugle 重盤查:T3-A51~A54 + Q4 排序重排(Fugle rate log 降為「不需要」);最後一次更新前一次2026-08-04 02:01 (v6.41 結算 — **0 寫入 + 誠實盤查**;cron `8fd1b1eda764` skill-inbound 02:00 觸發;33 頁 100% 落地,4 draft 真實待升(SK-00 索引無 mcp 對位例外 + SK-22 by-factor 仍 400 + SK-27/30 量子已標 [ARCHIVED — 學術展示無對位]);prompt 預設「D2+ 每日 3 頁」是 2026-07-29 降標前的過時工作框架,實際工作 7/30 起已轉型為 _self-audit 治理 + PR 推進 + 12 觸發模板 + 7 jobs CI;未硬湊 3 頁 = 結構性誠實五十一次;詳見 _self-audit.md §6 v6.41)
 
 ## 總體進度
 
 - 已寫 draft: 33/33 = 100%(SK-00 索引 + SK-01~32 全 32 個主體)
-- **active: 29/33 = 88% 主體**(SK-01/02/03/04/05/06/07/08/09/10/11/12/13/14/15/16/17/18/19/20/21/23/24/25/26/28/29/31/32,2026-08-02 v0.9 結算升 SK-26 + v3.1 升 SK-29)
-- **draft 主體: 4/33 = 12%**(SK-22 experiment_diff 400 + SK-27/SK-30 量子描述性 archive + 計入 SK-00 索引)
+- **active: 30/33 = 91% 主體**(SK-01~21/23/24/25/26/28/29/31/32 + **SK-22 2026-08-07 升 active**)
+- **draft 主體: 3/33 = 9%**(SK-27/SK-30 量子描述性 archive + 計入 SK-00 索引)
 - **SK-00 索引:draft**(獨立於主體 32 計)
 - L1 通過: 33/33 主體 + 1 索引 = 34/34(size ≤ 9,000 bytes,6 段全綠)
 - **L2 對位覆蓋: 30/33 主體 = 91%**（SK-00 索引、SK-27/30 量子標 [ARCHIVED — 學術展示無對位]）
-- **L3 端點實跑: 16/16 = 100%**(2026-08-02 20:30 本 session 補 4 端點一次性實跑)
+- **L3 端點實跑: 17/17 = 100%**(2026-08-07 補 `experiment_history` 首次實跑成功;`experiment_diff` 由 ❌ 翻 ✅)
   - 12 個成功(2026-08-01 23:15):`backtest_signals` / `risk_get_metrics` / `stock_get_fundamentals` / `stock_get_technical` / `universe_get_sessions` / `industry_sector_list` / `industry_sector_lookup` / `macro_get_snapshot_latest` / `universe_get_universe_overlap` / `risk_get_correlation_matrix` / `risk_get_drawdown`(not_available 但端點活)/ `report_get_tax_snapshot`(simulated 0 但端點活)
   - 4 個新增成功(2026-08-02 20:30 本 session 補):`industry_sector_list`(38 sector 重新實跑確認) / `macro_get_snapshot_latest`(taiex 43119.75) / `narrative_get_events`(4 active events) / `taiwan_stress_index`(score=**-9.33**/low,**更正 _inbox 舊文 19.99 過時快照**)
   - **後續再補 2 端點**(2026-08-02 20:30):`crossmarket_get_us_indices`(4 指數+4 科技股) / `mcp_quickstart`(12 strategies+5 events+regime_5d+stress=-7.90)
-  - **2026-08-04 v6.43 更正**:`stock_get_quote` ✅(PR #1445 merge,Fugle→TWSE fallback 獨立 timeout,3 次連續 200,source=twse → **2026-08-04 v6.43** source=**fugle** v1.0 + burst 5 + 429 retry)/ `experiment_diff` 400(wiki 教學需先 call experiment_history 拿 experiment_id,仍 ❌ 待 atlas 暴露 experiment_list 端點)/ `parameters_get` ✅(**2026-08-03 22:40 帶 ATLAS_API_KEY 200,atlas-mcp 已正確轉發 X-API-Key;不帶 key 401 認證正確隔離**)
+  - **2026-08-04 v6.43 更正**:`stock_get_quote` ✅(PR #1445 merge,Fugle→TWSE fallback 獨立 timeout,3 次連續 200,source=twse → **2026-08-04 v6.43** source=**fugle** v1.0 + burst 5 + 429 retry)/ `experiment_diff` **✅ 2026-08-07 翻正**(先 `GET /api/experiment/history` 拿真 experiment_id,再 `?experiment_id=` 呼叫 → 200;**「待 atlas 暴露 experiment_list」為誤判,端點一直都在**)/ `parameters_get` ✅(**2026-08-03 22:40 帶 ATLAS_API_KEY 200,atlas-mcp 已正確轉發 X-API-Key;不帶 key 401 認證正確隔離**)
 - **status: 33 頁(32 主體 + 1 索引)29 active 88% / 4 draft**(SK-00 索引 + SK-22 + SK-27 + SK-30)
 
 ## L3 實跑的真實 atlas-mcp 數據(2026-08-01 23:15)
@@ -53,7 +53,7 @@
 
 ### E 類(1 頁)端點失敗待 atlas 端修正
 
-- **SK-22 消去法**:`experiment_diff` 2026-08-02 重試 `session-20260720-daily` + `session-20260611-daily` 兩個真 session_id 都回 `400 experiment_id required`——**訊息暗示 atlas 端不認 session_id 格式,需真 experiment_id**——atlas 端沒暴露「列所有 experiment」端點,**升 active 需等 atlas 暴露 `experiment_list` 或類似端點**(2026-08-02 v3.3 部分翻轉:PR #1443 merge 後 `experiment_diff` 補 `acceptance_metric`/`baseline_value`/`candidate_value`,但仍需真 experiment_id,by-factor 仍 ❌ 視同 draft)
+- [x] ~~**SK-22 消去法**:等 atlas 暴露 `experiment_list` 端點~~ → **2026-08-07 解除,該 blocker 為誤判**。`GET /api/experiment/history` 一直可用(200,18 筆真 experiment_id);先前 400 的根因是**參數名 + 傳入值**:傳 `session_id`/`agent_id` 或用 `?id=` → `400 experiment_id required`,改用 `?experiment_id=<真 id>` → 200。**SK-22 已升 active**(L3 四步全綠)。**by-factor ablation 仍 ❌**,但那是結構性缺口(atlas 無 ablation 端點),與本 blocker 無關。
 - **(已撤)SK-29 滾動窗口回測**:v3.1 結算時 `risk_get_drawdown` not_available 仍視為 draft,但端點活+七時期對位已寫,**升 active**(2026-08-02 v3.1)
 
 ### 已完成(本 session 一次性 100% 落地)
@@ -76,7 +76,7 @@
 ### 待修
 
 - [x] ~~**L3 端點 #2 失敗待修**:`stock_get_quote` 503 是 TWSE upstream 問題,需等源頭恢復或改 fallback~~ → **2026-08-04 v6.43 已修**(PR #1445 + c1f06430 + PR #1448 + PR #1446,Fugle v1.0 + burst 5 + 429 retry + shared limiter)
-- [x] ~~**L3 端點 #14 失敗需真 experiment_id**:`experiment_diff` 需真 experiment_id 才能對比,等 atlas 端 expose `experiment_list` 端點~~ → **仍 ❌**,**2026-08-03 v6.41 部分修**:PR #1443 merge 後 `experiment_diff` 補回 `acceptance_metric` / `baseline_value` / `candidate_value`(實驗級 metric delta 已對位);by-factor 路徑仍 ❌ 替代為 `pnl-attribution` FactorAttribution
+- [x] ~~**L3 端點 #14 失敗需真 experiment_id**~~ → **2026-08-07 完全翻正**:`experiment_history` 200 回 18 筆 experiment_id,`experiment_diff?experiment_id=` 200 回 baseline 0.0050727 / candidate 0.0064193(sharpe_like)。**「等 atlas expose experiment_list」為誤判**。by-factor 路徑仍 ❌(結構性),替代為 `pnl-attribution` FactorAttribution
 
 ## 阻塞 / 風險
 

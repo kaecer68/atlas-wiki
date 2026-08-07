@@ -20,7 +20,7 @@ SK-00 在 atlas 是「所有 SK 頁的目錄 + pipeline 組裝藍圖」——給
 - **三條主軸 pipeline**(論文原版):
   - **supervised_learning**:`SK-01 → SK-03 → SK-09 → SK-16 → SK-18`(建因子→切時序→PLS→十分位→Alpha)
   - **reinforcement_learning**:`SK-23 → SK-03 → SK-24 → SK-26 → SK-29 → SK-18 → SK-28`(產業環境→切時序→PPO→LSTM→回測→Alpha→獎勵診斷)
-  - **robustness**:`SK-20 → SK-21`(規模分組→排除仙股);**SK-22 部分對位(PR #1443,commit 383a48b8,2026-08-02)**——實驗級 metric delta 可用(`experiment_diff` 回 acceptance_metric/baseline_value/candidate_value/+eval_metrics),by-factor 排除式邊際貢獻仍對位失敗;atlas-mission pipeline 內**實驗級可落地,by-factor 路徑不列入**
+  - **robustness**:`SK-20 → SK-21`(規模分組→排除仙股);**SK-22 部分對位(PR #1443,commit 383a48b8,2026-08-02)**——實驗級 metric delta 可用(`experiment_diff` 回 acceptance_metric/baseline_value/candidate_value;**2026-08-07 證偽 eval_metrics — 18/18 experiment 皆無此欄**),by-factor 排除式邊際貢獻仍對位失敗;atlas-mission pipeline 內**實驗級可落地,by-factor 路徑不列入**
 
 ## atlas 對位
 | 論文概念 | atlas-mcp 對位 |
