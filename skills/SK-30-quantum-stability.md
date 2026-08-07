@@ -3,7 +3,7 @@ title: SK-30 量子模型訓練穩定性分析
 type: skill-inbound
 source: ~/workspace/Fin-Skills/Fin-Skills.md §SK-30
 ingested_at: 2026-08-01
-status: draft
+status: archive
 tier: T3
 confidence: low
 atlas_go_relevance: low
@@ -39,3 +39,12 @@ SK-30 配套 SK-27——診斷量子網路的訓練穩定性(梯度消失、barr
 
 ## 未消化 / 待補
 - [ ] 與 SK-27 同等處理:等學術界有「量子勝過經典」的可重現研究再重啟。
+
+
+---
+
+## 歸檔聲明(2026-08-07 對位 SK-00 §1)
+
+- **歸檔時間**:2026-08-07
+- **歸檔理由**:配套 SK-27(已 archive);atlas 無量子模擬端點,無對位 L3 驗證
+- **對位 SK-00 §1**:`archive` 標 + 一句話定位「學術展示無對位」一致

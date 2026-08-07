@@ -55,18 +55,33 @@ jobs:
       - name: 每頁 wc -c ≤ 9000
         run: |
           python3 - <<'EOF'
-          import glob, sys
-          files = sorted(glob.glob('skills/SK-*.md'))
-          bad = []
-          for f in files:
+          import glob, os, sys
+          # SK 頁:嚴格 ≤ 9000
+          sk_files = sorted(glob.glob('skills/SK-*.md'))
+          sk_bad = []
+          for f in sk_files:
               size = len(open(f, 'rb').read())
               if size > 9000:
-                  bad.append((f, size))
-          if bad:
-              for f, s in bad:
+                  sk_bad.append((f, size))
+          # _inbox.md:警告不失敗(_method §第七條例外 2026-08-07 kaecer 拍板)
+          inbox_warn = []
+          inbox_path = 'skills/_inbox.md'
+          if os.path.exists(inbox_path):
+              inbox_size = len(open(inbox_path, 'rb').read())
+              if inbox_size > 12000:
+                  inbox_warn.append((inbox_path, inbox_size))
+          # 輸出
+          if sk_bad:
+              for f, s in sk_bad:
                   print(f'❌ {f}: {s} bytes > 9000')
               sys.exit(1)
-          print(f'✅ {len(files)} 頁全部 ≤ 9000 bytes')
+          print(f'✅ {len(sk_files)} 頁 SK 全 ≤ 9000 bytes')
+          if inbox_warn:
+              for f, s in inbox_warn:
+                  print(f'⚠️ {f}: {s} bytes > 12000(警告;不在 SK 嚴格檢查門內)')
+          else:
+              inbox_msg = len(open(inbox_path, 'rb').read()) if os.path.exists(inbox_path) else 0
+              print(f'✅ _inbox.md = {inbox_msg} bytes ≤ 12000')
           EOF
 
   frontmatter-check:
@@ -98,6 +113,26 @@ jobs:
               sys.exit(1)
           print(f'✅ {len(files)} 頁 frontmatter 核心欄位齊全')
           EOF
+
+  audit-file-index-sync:
+    name: wiki 內檔索引同步驗證(SK/concept/queries/entities/triggers/scripts)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: 跑 audit-file-index-sync.py
+        run: |
+          OUT=$(python3 skills/_scripts/audit-file-index-sync.py 2>&1)
+          echo "$OUT"
+          if echo "$OUT" | grep -q "❌"; then
+            echo "❌ audit-file-index-sync 發現未索引檔(詳見上方)"
+            exit 1
+          fi
+          if echo "$OUT" | grep -q "✅ 所有 wiki 內檔均已索引"; then
+            echo "✅ audit-file-index-sync 全綠"
+          fi
 
   trigger-template-existence:
     name: 12 觸發模板存在 + 結構合規
@@ -217,7 +252,7 @@ jobs:
 
   notify-telegram:
     name: 失敗 Telegram 通知
-    needs: [validate-timestamp-rule, audit-atlas-endpoints, size-check, frontmatter-check]
+    needs: [validate-timestamp-rule, audit-atlas-endpoints, size-check, frontmatter-check, audit-file-index-sync, trigger-template-existence, trigger-endpoint-validation]
     if: failure()
     runs-on: ubuntu-latest
     steps:
