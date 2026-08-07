@@ -10,7 +10,7 @@ related:
   - skills/_manifest_coverage_routing.md §2 題 3 + §3.3 Day 3
   - skills/_inbox.md §待辦總表(inline 條目因 size 上限已分散至此檔)
   - SOUL §3.7.3 第 6 條(規範本體邊界)+ §3.7.4(agent 自主範圍)
-  - AGENTS.md §11 內容歸檔規範
+  - AGENTS.md §10 內容歸檔規範
 ---
 
 # 內部約定登記處 — atlas-wiki audience / 跨邊界決議(v6.52 撤銷外推)

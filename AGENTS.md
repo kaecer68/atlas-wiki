@@ -138,6 +138,6 @@
 
 ## §12 對位 atlas 方法論憲章（對位記憶；詳見 `atlas-methodology-alignment` skill）
 
-**核心**：七時期真值 → 三態向下相容（PeriodToRegime）→ RiskLevel 雙維度；七維錢潮雷達 3+2+2（勿誤認七個同級法人）；策略三分類中文正本 = 跟隨聰明錢/事件套利/資金對抗（英文 Defensive/Aggressive/Tactical 是錯字）。
+**核心**：七時期真值 → 三態向下相容（PeriodToRegime）→ RiskLevel 雙維度；七維錢潮雷達 3+2+2（勿誤認七個同級法人）；策略三分類（archetype）中文正本 = 跟隨聰明錢/事件套利/資金對抗（Defensive/Aggressive/Tactical 為 E5a 策略類別分類，非本 archetype 英文名）。
 
 **對 agent 影響**：談時期用「七時期」；推薦不可繞過 `Advisor.AllowedStrategies()` 時期過濾（禁 RISK_OFF 推 growth/momentum）；審計 22 項全 ✅，治理待辦查 `audit_state`。
