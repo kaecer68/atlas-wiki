@@ -238,6 +238,6 @@ Tag 必含 commit 註明:範圍 / 對位 / 風險。
 ## 10. 參考
 
 - CLAUDE.md:分支與 PR 紀律、CI preflight gate、Binary freshness gate
-- AGENTS.md:§0 開頭必唸、§2 目錄權限、§4 報告格式、§10 改版守則、§12 對位憲章
+- AGENTS.md:§0 開頭必唸、§2 目錄權限、§10 改版守則、§12 對位憲章（報告格式見 mode-reporting skill）
 - _method.md:5 條鐵律、SK 頁 size 上限、frontmatter 10 欄
 - hermes skill `github-pr-workflow`:gh CLI 與 git+curl fallback 完整流程

@@ -15,7 +15,7 @@ related:
   - concepts/atlas-mcp-interpretation-guide.md (5 條解讀規則 + 6 個 anti-pattern)
   - skills/_scripts/handle-atlas-failures.py (現有 6 條端點級降級)
   - skills/_atlas_mcp_path_investigation.md (HTTP 路由排查)
-  - AGENTS.md §1 對位 mission + §4 報告格式 + §11 內容歸檔規範
+  - AGENTS.md §1 對位 mission + §10 內容歸檔規範
 amendable_by: kaecer
 ---
 
@@ -52,7 +52,7 @@ atlas-wiki 截至 2026-08-07 對以下 4 個面向有缺口,**全部影響服務
 
 **理由(以權威為錨,不靠我憑感覺)**:
 
-1. **內容歸檔守則**(`AGENTS.md §11` + SOUL §3.6):「找不到適合就開新 skill,不硬塞」——但只有當現有 skill **內容無關或無對位**時才開新。`data-source-decision` §1 三層架構 + §2 端點對位表 + §7 故障應變,**與本任務 90% 同源**(都是「atlas 端點背後取數的決策」)。開新 skill 會產生「兩套 skill 都談 channel」的雙重真相源,違反 wiki-critic 6 項檢查的「去重」。
+1. **內容歸檔守則**(`AGENTS.md §10` + SOUL §3.6):「找不到適合就開新 skill,不硬塞」——但只有當現有 skill **內容無關或無對位**時才開新。`data-source-decision` §1 三層架構 + §2 端點對位表 + §7 故障應變,**與本任務 90% 同源**(都是「atlas 端點背後取數的決策」)。開新 skill 會產生「兩套 skill 都談 channel」的雙重真相源,違反 wiki-critic 6 項檢查的「去重」。
 
 2. **找得到路徑**:kaecer 2026-08-01 拍板建立 `data-source-decision/SKILL.md` v1.0 已是「決策框架」歸位的典範。本次任務與 v1.0 §7「故障應變流程」是同一個決策框架的擴展。
 
@@ -138,7 +138,7 @@ atlas-wiki 截至 2026-08-07 對以下 4 個面向有缺口,**全部影響服務
 
 ---
 
-## §4 自省 — 本次推球失職的結構性根因(對位 SOUL §5 紅線 + AGENTS.md §11)
+## §4 自省 — 本次推球失職的結構性根因(對位 SOUL §5 紅線 + AGENTS.md §10)
 
 kaecer 第二輪訊息的措辭明確指出此次失職——我必須落 T3 evidence。
 
@@ -197,8 +197,8 @@ kaecer 第二輪訊息的措辭明確指出此次失職——我必須落 T3 evi
 ## §5 對位其他文件(本 manifest 不重複,僅 cross-ref)
 
 - **憲章 mission 對位**(`AGENTS.md §1`):本任務=「找信息差」+「找漏洞」——上櫃用戶服務缺口就是信息差,補強有資金工具信號的對位
-- **內容歸檔**(`AGENTS.md §11`):本 manifest 在 `skills/` 內,屬 hermes 自主範圍
-- **報告格式**(`AGENTS.md §4`):本檔格式 = 結論 / 依據 / 風險 + 粗體 bullet
+- **內容歸檔**(`AGENTS.md §10`):本 manifest 在 `skills/` 內,屬 hermes 自主範圍
+- **報告格式**(`mode-reporting` skill):本檔格式 = 結論 / 依據 / 風險 + 粗體 bullet
 - **Telegram cron gate**(`AGENTS.md §5`):本 manifest **不**走 cron Telegram,是 session 內規範,不走那條鏈
 - **`data-source-decision` 更新**:本 manifest §3.1 CR-1 為派工 ctx,實際 patch 走 task-governance
 - **`SK-00-skill-index`**:本 manifest **不入索引**(不是 SK 頁),但 cross-ref 從 `SK-33` 入口

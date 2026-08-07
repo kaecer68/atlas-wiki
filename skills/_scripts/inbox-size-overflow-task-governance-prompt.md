@@ -171,7 +171,7 @@ print(f'_inbox.md: {ibx} bytes (≤ 12000? {ibx <= 12000})')
 
 ## 第 5 段:回報格式
 
-對位 AGENTS.md §4(總監對總裁)+ `_self-audit §6 v6.x`:
+對位 mode-reporting skill（總監對總裁報告格式）+ `_self-audit §6 v6.x`:
 - 首段一句話:已 patch 完成 / 已卡 / 已退回(具體狀態)
 - 3-5 個粗體 bullet,每個附 evidence 路徑 + diff 驗證結果
 - 風險單獨列(任何 spec 偏離宣告)
