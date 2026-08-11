@@ -360,6 +360,33 @@ _data_cache = {}
 
 # web fallback 快取(對位 v0.4 is_web_fallback)
 _web_cache = {}
+# reason 分類常數(D 議題:run_triggers 改 4-list 結構性改善,對位 paste-1.md §D)
+# 顯式 set 比對(不用 substring matching):未來新增 reason 需顯式加入此 set,
+# 避免 substring 隱式誤觸發(例如 'no_data' 也會匹配到 'no_data_filter' 之類新 reason)。
+# - atlas_faults:需查 API 健康(對位 ATLAS 憲章 數據源治理 §3)
+#   - atlas HTTP 端不可達 / 401 / OHLC 殘缺
+#   - web_fetch_failed(web fallback 是 atlas 的延伸,失敗 = atlas 端也拿不到資料,結構性誠實需警報)
+#   - 例外 str(e)(未知錯誤保守視為 atlas 端,觸發警報以利排查)
+# - market_no_signal:by_design,模板對位真實市場訊號(無需警報)
+# - config_issues:設定問題(無 symbols 設定 / 設定了但無資料)
+ATLAS_FAULT_REASONS = frozenset({
+    "no_data(atlas_http_unreachable)",
+    "401_unauthorized",
+    "open_zero_or_negative",
+    "web_fetch_failed",
+})
+MARKET_NO_SIGNAL_REASONS = frozenset({
+    "threshold_not_met",
+    "chips_aggregate_threshold_not_met",
+    "web_threshold_not_met",
+    "multi_symbol_threshold_not_met",
+})
+CONFIG_ISSUE_REASONS = frozenset({
+    "no_symbols_configured",
+    "no_symbol_data",
+})
+# 例外字串前綴(D 議題:run_triggers L739 except 區塊把 str(e)[:50] 塞進 reason)
+EXCEPTION_REASON_PREFIXES = ()  # 例外已 str(e)[:50] 截斷,主程式判斷 reason 不在 3 個 set 時歸入 atlas_faults
 
 
 def is_atlas_data_complete(data: dict, http_path: str) -> bool:
@@ -551,13 +578,38 @@ import time  # 給 fetch_web 用
 
 
 def run_triggers(env):
-    """跑 14 觸發模板(12 既有 + 第 13 個股報價 + 第 14 設備鏈月營收)
+    """跑 17 觸發模板(對位 v0.4 + D 議題 4-list 結構)
 
-    第 15 模板為週期型,不走 run_triggers,即時掃描每 5 分鐘會誤觸;
-    由獨立 scripts/external-report-cycle-monitor.py + cron 觸發(T3-A248 + 第六條鐵律)
+    第 15 模板(equipment-capex-external-report-cycle)為週期型,不走 run_triggers,
+    即時掃描每 5 分鐘會誤觸;由獨立 scripts/external-report-cycle-monitor.py + cron 觸發
+    (T3-A248 + 第六條鐵律)
+
+    Returns:
+        Tuple[triggered, atlas_faults, market_no_signal, config_issues]
+        - triggered: 觸發列表(任一)
+        - atlas_faults: ATLAS 端故障 / web fallback 失敗 / 未知例外(需查 API 健康,警報)
+        - market_no_signal: by_design,模板對位真實市場訊號(無需警報)
+        - config_issues: 設定問題(無 symbols 設定 / 設定了但無資料,無需警報)
     """
     triggered = []
-    failed = []
+    atlas_faults = []
+    market_no_signal = []
+    config_issues = []
+
+    def _record_failure(reason: str, **fields) -> None:
+        """依 reason 自動分流到 3 個 failure list(D 議題:4-list 結構)
+
+        對位:ATLAS_FAULT_REASONS / MARKET_NO_SIGNAL_REASONS / CONFIG_ISSUE_REASONS
+        顯式 set 比對;未來新增 reason 必須顯式加入正確 set(避免 substring 隱式誤觸)
+        """
+        entry = {"id": t_id, "name": t["name"], "reason": reason, **fields}
+        if reason in ATLAS_FAULT_REASONS or reason not in MARKET_NO_SIGNAL_REASONS and reason not in CONFIG_ISSUE_REASONS:
+            atlas_faults.append(entry)
+        elif reason in MARKET_NO_SIGNAL_REASONS:
+            market_no_signal.append(entry)
+        else:
+            config_issues.append(entry)
+
     for t_id, t in TEMPLATES.items():
         try:
             # 自訂計算分支(個股報價觸發用,對位 PR #1445 stock_get_quote 修復)
@@ -565,17 +617,17 @@ def run_triggers(env):
                 params = {"symbol": t["field"]}
                 data = get_atlas_data(t["http_path"], params=params)
                 if data is None:
-                    failed.append({"id": t_id, "name": t["name"], "reason": "no_data(atlas_http_unreachable)"})
+                    _record_failure("no_data(atlas_http_unreachable)")
                     continue
                 if data.get("__unauthorized__"):
-                    failed.append({"id": t_id, "name": t["name"], "reason": "401_unauthorized"})
+                    _record_failure("401_unauthorized")
                     continue
                 # 計算盤中振幅(high - low) / open * 100
                 high = data.get("high", 0)
                 low = data.get("low", 0)
                 open_ = data.get("open", 0)
                 if open_ <= 0:
-                    failed.append({"id": t_id, "name": t["name"], "reason": "open_zero_or_negative"})
+                    _record_failure("open_zero_or_negative")
                     continue
                 intraday_swing_pct = (high - low) / open_ * 100
                 value = intraday_swing_pct
@@ -617,14 +669,14 @@ def run_triggers(env):
                 if triggered_flag:
                     triggered.append({"id": t_id, "name": t["name"], "value": summary_value})
                 else:
-                    failed.append({"id": t_id, "name": t["name"], "value": summary_value, "reason": "chips_aggregate_threshold_not_met"})
+                    _record_failure("chips_aggregate_threshold_not_met", value=summary_value)
                 continue  # 跳過標準 extra_check + threshold 段(本分支已有結論)
             elif t.get("is_web_only"):
                 # 純 web fallback 模板(對位 v6.58.21 Step 3c 模板 18 SEC XBRL)
                 # 無 http_path,完全靠 fetch_with_fallback 從 web_fallback 抓
                 data = fetch_with_fallback(t)
                 if data is None:
-                    failed.append({"id": t_id, "name": t["name"], "reason": "web_fetch_failed"})
+                    _record_failure("web_fetch_failed")
                     continue
                 # v0.4.2 對位 v6.58.29 B 方案:用 _yoy_pct(若有)或 field 值比對
                 # 若有 _yoy_pct(YoY%),優先用 YoY% 觸發(排除季節性)
@@ -645,14 +697,14 @@ def run_triggers(env):
                 if triggered_flag:
                     triggered.append({"id": t_id, "name": t["name"], "value": value, "_type": value_type, "_end": data.get("_end", ""), "_form": data.get("_form", "")})
                 else:
-                    failed.append({"id": t_id, "name": t["name"], "value": value, "_type": value_type, "_end": data.get("_end", ""), "_form": data.get("_form", ""), "reason": "web_threshold_not_met"})
+                    _record_failure("web_threshold_not_met", value=value, _type=value_type, _end=data.get("_end", ""), _form=data.get("_form", ""))
                 continue
             elif t.get("is_multi_symbol_quote"):
                 # 多 symbol quote 模板(對位 v6.58.21 Step 3b 模板 19 純 atlas)
                 # 對每個 symbol 抓 quote,取最低 change_pct(任一觸發)
                 symbols = t.get("symbols", [])
                 if not symbols:
-                    failed.append({"id": t_id, "name": t["name"], "reason": "no_symbols_configured"})
+                    _record_failure("no_symbols_configured")
                     continue
                 symbol_changes = {}
                 for sym in symbols:
@@ -667,7 +719,7 @@ def run_triggers(env):
                 # 取最低(最負)
                 valid_changes = [v for v in symbol_changes.values() if v is not None]
                 if not valid_changes:
-                    failed.append({"id": t_id, "name": t["name"], "value": symbol_changes, "reason": "no_symbol_data"})
+                    _record_failure("no_symbol_data", value=symbol_changes)
                     continue
                 value = min(valid_changes)
                 summary_value = f"min={value:.2f}, per={symbol_changes}"
@@ -680,13 +732,13 @@ def run_triggers(env):
                 if triggered_flag:
                     triggered.append({"id": t_id, "name": t["name"], "value": summary_value})
                 else:
-                    failed.append({"id": t_id, "name": t["name"], "value": summary_value, "reason": "multi_symbol_threshold_not_met"})
+                    _record_failure("multi_symbol_threshold_not_met", value=summary_value)
                 continue
             else:
                 # 拉真實數據(打 atlas HTTP API)
                 data = get_atlas_data(t["http_path"])
                 if data is None:
-                    failed.append({"id": t_id, "name": t["name"], "reason": "no_data(atlas_http_unreachable)"})
+                    _record_failure("no_data(atlas_http_unreachable)")
                     continue
                 # 判斷觸發
                 field_data = data.get(t["field"], {})
@@ -713,10 +765,11 @@ def run_triggers(env):
             if triggered_flag:
                 triggered.append({"id": t_id, "name": t["name"], "value": value})
             else:
-                failed.append({"id": t_id, "name": t["name"], "value": value, "reason": "threshold_not_met"})
+                _record_failure("threshold_not_met", value=value)
         except Exception as e:
-            failed.append({"id": t_id, "name": t["name"], "reason": str(e)[:50]})
-    return triggered, failed
+            # 未知錯誤:reason 不在 3 個 set,helper 自動歸入 atlas_faults(結構性誠實:觸發警報以利排查)
+            _record_failure(str(e)[:50])
+    return triggered, atlas_faults, market_no_signal, config_issues
 
 
 def main():
@@ -724,7 +777,8 @@ def main():
     print(f"atlas-mcp-trigger-monitor — {datetime.now().isoformat()}")
     print("=" * 60)
     env = get_env()
-    triggered, failed = run_triggers(env)
+    triggered, atlas_faults, market_no_signal, config_issues = run_triggers(env)
+    failed = list(market_no_signal) + list(config_issues)  # 列印用:by_design + 設定問題合併
     print(f"  觸發: {len(triggered)}/{len(TEMPLATES)}")
     print(f"  未觸發: {len(failed)}/{len(TEMPLATES)}(模板對位真實市場訊號,結構性誠實)")
     if triggered:
@@ -735,27 +789,13 @@ def main():
         print(f"\n  📊 未觸發(模板對位真實市場訊號):")
         for f in failed:
             print(f"    - {f['name']} (值={f.get('value','?')} 原因={f.get('reason','?')})")
-        # 警報邏輯:區分 by-design 未觸發 vs atlas 端故障(對位 v6.58.x 結構性誠實)
-        # reason 分類:
-        #   - by_design:not 觸發條件未達(模板對位真實市場訊號)/ 設定問題(無需警報)
-        #       {threshold_not_met, chips_aggregate_threshold_not_met,
-        #        web_threshold_not_met, multi_symbol_threshold_not_met,
-        #        no_symbols_configured, no_symbol_data}
-        #   - atlas 端故障:需查 API 健康(對位 ATLAS 憲章 數據源治理 §3)
-        #       {no_data(atlas_http_unreachable), 401_unauthorized, open_zero_or_negative}
-        # 顯式 set 比對(不用 substring matching):未來新增 reason 需顯式加入此 set,
-        # 避免 substring 隱式誤觸發(例如 'no_data' 也會匹配到 'no_data_filter' 之類新 reason)。
-        ATLAS_FAULT_REASONS = {
-            "no_data(atlas_http_unreachable)",
-            "401_unauthorized",
-            "open_zero_or_negative",
-        }
-        atlas_faults = [f for f in failed if f.get("reason") in ATLAS_FAULT_REASONS]
-        if len(atlas_faults) >= 3:
-            send_telegram(
-                env,
-                f"🚨 atlas-mcp-trigger-monitor: {len(atlas_faults)}/{len(TEMPLATES)} 模板 ATLAS 端故障,需查 API 健康",
-            )
+    # 警報邏輯:對位 PR #18 commit 2 + D 議題改用 4-list(結構性誠實)
+    # atlas_faults 是 module-level ATLAS_FAULT_REASONS 顯式分類的結果,不再於 main() 內重算
+    if len(atlas_faults) >= 3:
+        send_telegram(
+            env,
+            f"🚨 atlas-mcp-trigger-monitor: {len(atlas_faults)}/{len(TEMPLATES)} 模板 ATLAS 端故障,需查 API 健康",
+        )
     if triggered:
         summary = f"📊 [atlas-mcp-trigger] {datetime.now().strftime('%H:%M')} {len(triggered)} 觸發:\n"
         for t in triggered:

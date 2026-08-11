@@ -5,7 +5,7 @@
 SHELL := /bin/bash
 PY    := python3
 
-.PHONY: help ci-gate ci-fast ci-full check-actionlint check-timestamp check-audit check-skill-pages check-size check-frontmatter pre-commit-install uninstall-hooks verify-clean
+.PHONY: help ci-gate ci-fast ci-full check-actionlint check-timestamp check-audit check-skill-pages check-size check-frontmatter pre-commit-install uninstall-hooks verify-clean test
 
 help:                   ## 列出所有 target
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN{FS=":.*?## "}{printf "  %-22s %s\n", $$1, $$2}'
@@ -50,3 +50,6 @@ uninstall-hooks:        ## 解除 git hooks
 verify-clean:           ## 收尾前檢查(無 .bak/__pycache__/未追蹤敏感檔)
 	@echo "=== 應排除的暫存(不得出現) ==="
 	@git ls-files | grep -E "\.bak|__pycache__|\.DS_Store" || echo "✅ 無暫存污染"
+
+test:                   ## 跑 trigger-monitor pytest(對位 v0.5 F 議題 5/5 case 永久化)
+	@$(PY) -m pytest skills/_scripts/tests/ -v
