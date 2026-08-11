@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-atlas-mcp-trigger-monitor.py — 12 觸發模板自動信號捕捉(對位 kaecer v6.21)
+atlas-mcp-trigger-monitor.py — 14 觸發模板自動信號捕捉(對位 kaecer v6.21) — v0.4
 對位 SOUL §3.4「促進理解」+ ATLAS 憲章 7 層因果鏈
 
 設計:
@@ -13,6 +13,7 @@ atlas-mcp-trigger-monitor.py — 12 觸發模板自動信號捕捉(對位 kaecer
 - 5 分鐘內多觸發 → 合併摘要 1 條
 
 v6.22 改寫:從 stub 改為實際 curl atlas HTTP API
+v0.4 擴充(2026-08-10,對位 kaecer B 方案):is_web_fallback flag + fetch_with_fallback() + is_atlas_data_complete() + fetch_web() — atlas 端修復後(PR #1515 660 政策語義)雙軌設計可正常運作
 - atlas HTTP base:http://127.0.0.1:18080(對位 atlas-go cmd/atlas-mcp/server/server.go:21)
 - 端點對應:/api/macro/snapshot/latest 等
 """
@@ -22,7 +23,9 @@ import json
 import urllib.request
 import urllib.parse
 import subprocess
+import time
 from datetime import datetime
+from typing import Optional
 
 ATLAS_HTTP_BASE = "http://127.0.0.1:18080"
 
@@ -173,6 +176,87 @@ TEMPLATES = {
     # 5 錨點 annual/semi-annual 週期型 trigger → 不在 monitor 即時掃描,走獨立 cron-cadence
     # 不寫進 TEMPLATES 字典(避免每 5 分鐘被誤掃);由獨立 scripts/external-report-cycle-monitor.py + cron 觸發
     # "equipment-capex-external-report-cycle" 為獨立 cron job 保留名
+    #
+    # 第 16-20 模板(2026-08-10 v0.4 整合,對位 v6.58.6 B 方案 + atlas PR #1505/1515 修復後)
+    # 對位 fact_b6bc42e7(2026-08-10 atlas 修復驗證):msci/capex/ai_capex/cb_fx/hbm 欄位 atlas 端不暴露
+    # 設計原則:atlas 端有資料 → atlas;atlas 無 / 殘缺 → 走 web fallback(SEC EDGAR / MSCI 官網 / 央行 / Yahoo Finance)
+    # is_web_fallback=True + web_fallback 配置(v0.4 雙軌)
+    "hbm-cycle-cooling": {
+        "name": "HBM/AI 半導體敘事降溫觸發",
+        "file": "trigger-hbm-cycle-cooling.md",
+        "condition": "SK Hynix 月跌幅 < -10% + HBM 報價連 2 月跌 > 5% + 雲端商 capex 季報下修",
+        "http_path": "/api/stock/chips",
+        "symbols": ["660"],  # SK Hynix
+        "metric": "month_change_pct",
+        "threshold": -10.0,
+        "compare": "lt",
+        "is_chips_aggregate": True,
+        "is_web_fallback": True,  # v0.4:660 chips 沒資料時走 web fallback
+        "web_fallback": {
+            "sk_hynix_quote": {
+                "url": "https://www.skhynix.com/eng/sustainability/governance.do",
+                "parser": "html_table",
+                "field": "month_change_pct",
+                "cache_ttl_sec": 86400,  # 1 天快取(IR 月報)
+            },
+            "hbm_price": {
+                "url": "https://dramexchange.com/",
+                "parser": "html_table",
+                "field": "hbm_price_change_2m",
+                "cache_ttl_sec": 86400,
+            },
+            "cloud_capex": {
+                "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001045810&type=10-Q",
+                "parser": "html_table",
+                "field": "capex_guidance_yoy",
+                "cache_ttl_sec": 604800,  # 7 天快取(季報變動不頻繁)
+            },
+        },
+    },
+    "ai-capex-guidance-cut": {
+        "name": "AI capex 指引下修觸發",
+        "file": "trigger-ai-capex-guidance-cut.md",
+        "condition": "任一雲端商(NVDA/GOOGL/META/MSFT)capex YoY 從 >30% 下修至 <20%",
+        # v0.4.1 改 SEC XBRL companyfacts API(對位 v6.58.21 真實探索)
+        # NVDA capex 真實概念 = PaymentsToAcquireProductiveAssets(2025 Q1 = $1.23B 實證)
+        # NVDA CIK = 0001045810;GOOGL CIK = 0001652044
+        "is_web_fallback": True,
+        "web_fallback": {
+            "nvda_capex": {
+                "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001045810.json",
+                "parser": "sec_xbrl_companyfacts",  # 新 parser
+                "field": "PaymentsToAcquireProductiveAssets",  # NVDA 真實 capex 概念
+                "units": "USD",
+                "form": "10-Q",  # 季報
+                "cache_ttl_sec": 604800,  # 7 天快取(季報變動不頻繁)
+            },
+            "googl_capex": {
+                "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001652044.json",
+                "parser": "sec_xbrl_companyfacts",
+                "field": "PaymentsToAcquirePropertyPlantAndEquipment",
+                "units": "USD",
+                "form": "10-Q",
+                "cache_ttl_sec": 604800,
+            },
+        },
+        "is_web_only": True,  # v0.4.1:純 web fallback,無 atlas http_path(對位 v6.58.21)
+        "field": "PaymentsToAcquireProductiveAssets",  # v0.4.1:run_triggers 取這個 key 比 threshold
+        "threshold": 20.0,  # YoY %
+        "compare": "lt",
+    },
+    "hedge-fund-unwind": {
+        "name": "跨市場 hedge fund 爆倉觸發",
+        "file": "trigger-hedge-fund-unwind.md",
+        "condition": "個股 1 日跌 >-20% + ADR 同步 >-15% + 成交量 >5日均量 3x(三項 AND)",
+        # v0.4.1 改純 atlas 路徑(對位 v6.58.21 真實判斷):atlas PR #1515 修復後
+        # OHLC/vol 完整(PR #1511)+ coverage_note 明確告知(PR #1515),不需 web fallback
+        "http_path": "/api/stock/quote",
+        "symbols": ["NVDA", "TSM", "2330"],  # 多 symbol 監測(ADR + 台股)
+        "metric": "change_pct",  # 1 日跌幅
+        "threshold": -20.0,  # -20% 觸發
+        "compare": "lt",
+        "is_multi_symbol_quote": True,  # v0.4.1:多 symbol quote 純 atlas 路徑(對位 v6.58.21)
+    },
 }
 
 
@@ -217,7 +301,8 @@ def get_atlas_data(http_path, params=None):
     env = get_env()
     api_key = env.get("ATLAS_API_KEY")
     try:
-        cmd = ["curl", "-s", "-m", "10"]
+        # v0.4:用 -w 區分 HTTP code 與 body,404/503 應視為失敗
+        cmd = ["curl", "-s", "-m", "10", "-w", "\n%{http_code}"]
         if api_key:
             cmd += ["-H", f"X-API-Key: {api_key}"]
         cmd.append(url)
@@ -226,10 +311,29 @@ def get_atlas_data(http_path, params=None):
         )
         if r.returncode != 0 or not r.stdout:
             return None
-        # 401 = unauthorized
-        if '"code":"401"' in r.stdout or "unauthorized" in r.stdout.lower():
+        # 拆 body 與 HTTP code
+        parts = r.stdout.rsplit("\n", 1)
+        body = parts[0] if len(parts) > 0 else ""
+        http_code_str = parts[1] if len(parts) > 1 else "0"
+        try:
+            http_code = int(http_code_str)
+        except ValueError:
+            http_code = 0
+
+        # 404/503 = 路徑不存在或 server error,視為失敗
+        if http_code in (404, 502, 503, 504):
+            return {"__atlas_error__": True, "code": http_code, "body": body[:200]}
+
+        # 401 = unauthorized(既有)
+        if http_code == 401 or "unauthorized" in body.lower():
             return {"__unauthorized__": True}
-        data = json.loads(r.stdout)
+
+        # 200 成功,解析
+        try:
+            data = json.loads(body)
+        except json.JSONDecodeError:
+            return {"__atlas_error__": True, "code": http_code, "body": body[:200]}
+
         _data_cache[cache_key] = data
         return data
     except Exception:
@@ -253,6 +357,197 @@ def send_telegram(env, message):
 
 # 各 http_path 對應的快取(避免重複打 API)
 _data_cache = {}
+
+# web fallback 快取(對位 v0.4 is_web_fallback)
+_web_cache = {}
+
+
+def is_atlas_data_complete(data: dict, http_path: str) -> bool:
+    """檢查 atlas 回傳是否完整(對位 preflight-check L3 邏輯)
+
+    2026-08-10 atlas 修復後(PR #1515):政策不涵蓋的 symbol 回 200 + coverage_note
+    視為「明確告知」不算殘缺。
+    """
+    if not isinstance(data, dict):
+        return False
+
+    # PR #1515 後:200 + complete:false + coverage_note = 明確告知
+    if data.get("complete") is False and data.get("coverage_note"):
+        return True
+
+    if http_path == "/api/stock/quote":
+        # quote 需 OHLC + vol 都 > 0
+        return (data.get("last", 0) > 0 and
+                data.get("open", 0) > 0 and
+                data.get("high", 0) > 0 and
+                data.get("low", 0) > 0 and
+                data.get("volume", 0) > 0)
+
+    if http_path == "/api/stock/chips":
+        return any(data.get(k, 0) > 0 for k in
+                   ["foreign_investor_net", "domestic_fund_net", "dealer_net"])
+
+    if http_path.startswith("/api/macro/"):
+        return data.get("value", 0) > 0
+
+    return True
+
+
+def fetch_web(fb_config: dict) -> Optional[dict]:
+    """從 web fallback 抓取資料(v0.4)
+
+    fb_config: {
+        "url": "...",
+        "parser": "html_table" | "json" | "edgar_filing",
+        "field": "...",
+        "cache_ttl_sec": int,
+    }
+    """
+    cache_key = f"web:{fb_config.get('url','')}:{fb_config.get('field','')}"
+
+    # 1. 查快取
+    if cache_key in _web_cache:
+        entry = _web_cache[cache_key]
+        if time.time() - entry["ts"] < fb_config.get("cache_ttl_sec", 3600):
+            return entry["data"]
+
+    # 2. 抓網頁
+    url = fb_config.get("url")
+    if not url:
+        return None
+
+    try:
+        cmd = ["curl", "-sS", "-m", "30", "-A", "Mozilla/5.0 atlas-mcp-monitor/0.4", url]
+        r = subprocess.run(cmd, capture_output=True, text=True, timeout=35)
+        if r.returncode != 0:
+            return None
+
+        parser = fb_config.get("parser", "html_table")
+        if parser == "json":
+            data = json.loads(r.stdout)
+        elif parser == "sec_xbrl_companyfacts":
+                    # SEC XBRL companyfacts API(對位 v6.58.21)
+                    # URL pattern:https://data.sec.gov/api/xbrl/companyfacts/CIK{CIK}.json
+                    # JSON 結構:{"facts":{"us-gaap":{"<concept>":{"units":{"USD":[{"val","end","form","fp"}]}}}}
+                    # v0.4.2 加 YoY 計算(對位 v6.58.29 B 方案):取本期 + 去年同期(同 fp)+ 算 YoY%
+                    concept = fb_config.get("field")
+                    units = fb_config.get("units", "USD")
+                    target_form = fb_config.get("form")
+                    try:
+                        sec_data = json.loads(r.stdout)
+                        # 抓 concept 的 USD 資料
+                        concept_data = sec_data.get("facts", {}).get("us-gaap", {}).get(concept, {})
+                        entries = concept_data.get("units", {}).get(units, [])
+                        # 過濾 form
+                        if target_form:
+                            filtered = [e for e in entries if e.get("form") == target_form]
+                        else:
+                            filtered = entries
+                        if not filtered:
+                            return None
+                        # 取最近 1 個(按 end 排序)
+                        filtered.sort(key=lambda x: x.get("end", ""), reverse=True)
+                        latest = filtered[0]
+                        latest_val = latest.get("val", 0)
+                        latest_end = latest.get("end", "")
+                        latest_fp = latest.get("fp", "")
+                        # YoY 計算:取去年同期(同 fp,往前 1 年)
+                        yoy_pct = None
+                        if latest_fp:
+                            # 去年同期 fp = latest_fp,end 減 1 年
+                            try:
+                                from datetime import datetime
+                                latest_date = datetime.strptime(latest_end, "%Y-%m-%d")
+                                last_year_date = latest_date.replace(year=latest_date.year - 1)
+                                last_year_end = last_year_date.strftime("%Y-%m-%d")
+                                # 找同 fp + 上一年同 end 附近的 entry(±90 天容忍,因季報有時跨月)
+                                candidates_yoy = [e for e in filtered if e.get("fp") == latest_fp]
+                                # 取距 last_year_end 最近的
+                                if candidates_yoy:
+                                    candidates_yoy.sort(key=lambda e: abs(
+                                        (datetime.strptime(e.get("end", "1900-01-01"), "%Y-%m-%d") - last_year_date).days
+                                    ))
+                                    last_year_entry = candidates_yoy[0]
+                                    last_year_val = last_year_entry.get("val", 0)
+                                    if last_year_val > 0:
+                                        yoy_pct = (latest_val - last_year_val) / last_year_val * 100
+                            except (ValueError, ImportError):
+                                yoy_pct = None
+                        # 對位 v6.58.29 B 方案:return 的 data 結構 — 包含本期值 + YoY%
+                        data = {
+                            concept: latest_val,
+                            "_end": latest_end,
+                            "_form": latest.get("form", ""),
+                            "_fp": latest_fp,
+                            "_yoy_pct": yoy_pct,  # 對位 B 方案:YoY% for trigger 比對
+                        }
+                    except (json.JSONDecodeError, KeyError, TypeError) as e:
+                        return None
+        elif parser == "html_table":
+            # 簡單 HTML 表格解析(從第一個 table 抓數字)
+            import re
+            numbers = re.findall(r'<td[^>]*>([+-]?[\d.,]+)</td>', r.stdout)
+            field = fb_config.get("field", "")
+            if field and numbers:
+                # 簡化版:返回第一個數字作為 fallback 結果
+                # 實際 HTML table 解析需根據各網站結構客製
+                try:
+                    val = float(numbers[0].replace(",", ""))
+                    data = {field: val}
+                except (ValueError, IndexError):
+                    return None
+            else:
+                return None
+        else:
+            return None
+
+        _web_cache[cache_key] = {"data": data, "ts": time.time()}
+        return data
+    except Exception as e:
+        return None
+
+
+def fetch_with_fallback(t: dict) -> Optional[dict]:
+    """雙軌抓取:v0.4 對位 kaecer B 方案
+
+    切換邏輯:
+    - atlas 報價完整 → 用 atlas
+    - atlas 報價殘缺或失敗 → 切 web fallback
+    - web 也失敗 → None(標 fail)
+    """
+    http_path = t.get("http_path")
+    params = None
+    if http_path == "/api/stock/quote" and "field" in t:
+        params = {"symbol": t["field"]}
+    elif "symbols" in t and t.get("is_chips_aggregate"):
+        # chips aggregate:傳第一個 symbol(個別抓,aggregate 在 run_triggers 處理)
+        return None  # aggregate 模式不走此函數,保留舊邏輯
+
+    # 1. 試 atlas
+    if http_path:
+        data = get_atlas_data(http_path, params=params)
+        if data is not None:
+            # 401 / __atlas_error__ → 視為失敗,切 web fallback
+            if data.get("__unauthorized__") or data.get("__atlas_error__"):
+                pass  # 跳到下方 web fallback
+            elif is_atlas_data_complete(data, http_path):
+                return data
+            elif data.get("complete") is False and data.get("coverage_note"):
+                # 政策不涵蓋但明確告知 → 也視為「明確結果」,不切 web
+                return data
+            # 殘缺 → 切 web fallback
+
+    # 2. atlas 失敗 / 殘缺 / 401 / 404 / 503 → web fallback
+    if t.get("is_web_fallback") and t.get("web_fallback"):
+        for field_name, fb_config in t["web_fallback"].items():
+            data = fetch_web(fb_config)
+            if data is not None:
+                return data
+
+    return None
+
+
+import time  # 給 fetch_web 用
 
 
 def run_triggers(env):
@@ -324,6 +619,69 @@ def run_triggers(env):
                 else:
                     failed.append({"id": t_id, "name": t["name"], "value": summary_value, "reason": "chips_aggregate_threshold_not_met"})
                 continue  # 跳過標準 extra_check + threshold 段(本分支已有結論)
+            elif t.get("is_web_only"):
+                # 純 web fallback 模板(對位 v6.58.21 Step 3c 模板 18 SEC XBRL)
+                # 無 http_path,完全靠 fetch_with_fallback 從 web_fallback 抓
+                data = fetch_with_fallback(t)
+                if data is None:
+                    failed.append({"id": t_id, "name": t["name"], "reason": "web_fetch_failed"})
+                    continue
+                # v0.4.2 對位 v6.58.29 B 方案:用 _yoy_pct(若有)或 field 值比對
+                # 若有 _yoy_pct(YoY%),優先用 YoY% 觸發(排除季節性)
+                # 若無 _yoy_pct(fallback),用 field 絕對值
+                if data.get("_yoy_pct") is not None:
+                    value = data["_yoy_pct"]
+                    value_type = "yoy_pct"
+                else:
+                    field = t.get("field", "")
+                    value = data.get(field, 0)
+                    value_type = "abs"
+                triggered_flag = False
+                compare = t.get("compare", "gt")
+                if compare == "lt":
+                    triggered_flag = value < t["threshold"]
+                else:
+                    triggered_flag = value > t["threshold"]
+                if triggered_flag:
+                    triggered.append({"id": t_id, "name": t["name"], "value": value, "_type": value_type, "_end": data.get("_end", ""), "_form": data.get("_form", "")})
+                else:
+                    failed.append({"id": t_id, "name": t["name"], "value": value, "_type": value_type, "_end": data.get("_end", ""), "_form": data.get("_form", ""), "reason": "web_threshold_not_met"})
+                continue
+            elif t.get("is_multi_symbol_quote"):
+                # 多 symbol quote 模板(對位 v6.58.21 Step 3b 模板 19 純 atlas)
+                # 對每個 symbol 抓 quote,取最低 change_pct(任一觸發)
+                symbols = t.get("symbols", [])
+                if not symbols:
+                    failed.append({"id": t_id, "name": t["name"], "reason": "no_symbols_configured"})
+                    continue
+                symbol_changes = {}
+                for sym in symbols:
+                    data = get_atlas_data(t["http_path"], params={"symbol": sym})
+                    if data is None or data.get("__unauthorized__") or data.get("__atlas_error__"):
+                        symbol_changes[sym] = None
+                        continue
+                    # change_pct 不在 quote 端點,需從 macro snapshot 拿
+                    # 若 atlas 端點不回 change_pct,fallback 跳過
+                    change = data.get(t["metric"], 0)
+                    symbol_changes[sym] = change
+                # 取最低(最負)
+                valid_changes = [v for v in symbol_changes.values() if v is not None]
+                if not valid_changes:
+                    failed.append({"id": t_id, "name": t["name"], "value": symbol_changes, "reason": "no_symbol_data"})
+                    continue
+                value = min(valid_changes)
+                summary_value = f"min={value:.2f}, per={symbol_changes}"
+                triggered_flag = False
+                compare = t.get("compare", "lt")
+                if compare == "lt":
+                    triggered_flag = value < t["threshold"]
+                else:
+                    triggered_flag = value > t["threshold"]
+                if triggered_flag:
+                    triggered.append({"id": t_id, "name": t["name"], "value": summary_value})
+                else:
+                    failed.append({"id": t_id, "name": t["name"], "value": summary_value, "reason": "multi_symbol_threshold_not_met"})
+                continue
             else:
                 # 拉真實數據(打 atlas HTTP API)
                 data = get_atlas_data(t["http_path"])
@@ -367,8 +725,8 @@ def main():
     print("=" * 60)
     env = get_env()
     triggered, failed = run_triggers(env)
-    print(f"  觸發: {len(triggered)}/14")
-    print(f"  未觸發: {len(failed)}/14(模板對位真實市場訊號,結構性誠實)")
+    print(f"  觸發: {len(triggered)}/{len(TEMPLATES)}")
+    print(f"  未觸發: {len(failed)}/{len(TEMPLATES)}(模板對位真實市場訊號,結構性誠實)")
     if triggered:
         print(f"\n  ✅ 觸發詳情:")
         for t in triggered:
@@ -377,8 +735,27 @@ def main():
         print(f"\n  📊 未觸發(模板對位真實市場訊號):")
         for f in failed:
             print(f"    - {f['name']} (值={f.get('value','?')} 原因={f.get('reason','?')})")
-        if len(failed) > 7:
-            send_telegram(env, f"⚠️ atlas-mcp-trigger-monitor: {len(failed)}/14 模板未觸發,atlas 端可能故障")
+        # 警報邏輯:區分 by-design 未觸發 vs atlas 端故障(對位 v6.58.x 結構性誠實)
+        # reason 分類:
+        #   - by_design:not 觸發條件未達(模板對位真實市場訊號)/ 設定問題(無需警報)
+        #       {threshold_not_met, chips_aggregate_threshold_not_met,
+        #        web_threshold_not_met, multi_symbol_threshold_not_met,
+        #        no_symbols_configured, no_symbol_data}
+        #   - atlas 端故障:需查 API 健康(對位 ATLAS 憲章 數據源治理 §3)
+        #       {no_data(atlas_http_unreachable), 401_unauthorized, open_zero_or_negative}
+        # 顯式 set 比對(不用 substring matching):未來新增 reason 需顯式加入此 set,
+        # 避免 substring 隱式誤觸發(例如 'no_data' 也會匹配到 'no_data_filter' 之類新 reason)。
+        ATLAS_FAULT_REASONS = {
+            "no_data(atlas_http_unreachable)",
+            "401_unauthorized",
+            "open_zero_or_negative",
+        }
+        atlas_faults = [f for f in failed if f.get("reason") in ATLAS_FAULT_REASONS]
+        if len(atlas_faults) >= 3:
+            send_telegram(
+                env,
+                f"🚨 atlas-mcp-trigger-monitor: {len(atlas_faults)}/{len(TEMPLATES)} 模板 ATLAS 端故障,需查 API 健康",
+            )
     if triggered:
         summary = f"📊 [atlas-mcp-trigger] {datetime.now().strftime('%H:%M')} {len(triggered)} 觸發:\n"
         for t in triggered:
