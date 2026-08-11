@@ -725,8 +725,8 @@ def main():
     print("=" * 60)
     env = get_env()
     triggered, failed = run_triggers(env)
-    print(f"  觸發: {len(triggered)}/14")
-    print(f"  未觸發: {len(failed)}/14(模板對位真實市場訊號,結構性誠實)")
+    print(f"  觸發: {len(triggered)}/{len(TEMPLATES)}")
+    print(f"  未觸發: {len(failed)}/{len(TEMPLATES)}(模板對位真實市場訊號,結構性誠實)")
     if triggered:
         print(f"\n  ✅ 觸發詳情:")
         for t in triggered:
@@ -735,8 +735,27 @@ def main():
         print(f"\n  📊 未觸發(模板對位真實市場訊號):")
         for f in failed:
             print(f"    - {f['name']} (值={f.get('value','?')} 原因={f.get('reason','?')})")
-        if len(failed) > 7:
-            send_telegram(env, f"⚠️ atlas-mcp-trigger-monitor: {len(failed)}/14 模板未觸發,atlas 端可能故障")
+        # 警報邏輯:區分 by-design 未觸發 vs atlas 端故障(對位 v6.58.x 結構性誠實)
+        # reason 分類:
+        #   - by_design:not 觸發條件未達(模板對位真實市場訊號)/ 設定問題(無需警報)
+        #       {threshold_not_met, chips_aggregate_threshold_not_met,
+        #        web_threshold_not_met, multi_symbol_threshold_not_met,
+        #        no_symbols_configured, no_symbol_data}
+        #   - atlas 端故障:需查 API 健康(對位 ATLAS 憲章 數據源治理 §3)
+        #       {no_data(atlas_http_unreachable), 401_unauthorized, open_zero_or_negative}
+        # 顯式 set 比對(不用 substring matching):未來新增 reason 需顯式加入此 set,
+        # 避免 substring 隱式誤觸發(例如 'no_data' 也會匹配到 'no_data_filter' 之類新 reason)。
+        ATLAS_FAULT_REASONS = {
+            "no_data(atlas_http_unreachable)",
+            "401_unauthorized",
+            "open_zero_or_negative",
+        }
+        atlas_faults = [f for f in failed if f.get("reason") in ATLAS_FAULT_REASONS]
+        if len(atlas_faults) >= 3:
+            send_telegram(
+                env,
+                f"🚨 atlas-mcp-trigger-monitor: {len(atlas_faults)}/{len(TEMPLATES)} 模板 ATLAS 端故障,需查 API 健康",
+            )
     if triggered:
         summary = f"📊 [atlas-mcp-trigger] {datetime.now().strftime('%H:%M')} {len(triggered)} 觸發:\n"
         for t in triggered:
