@@ -1,6 +1,6 @@
 # atlas-skill-inbound Inbox
 
-最後更新:2026-08-07 D4 session 結算(`_inbox.md` size 15201B > 12000B 上限 → 啟動第七條例外歷史段歸檔 → 歷史段 5261B 移至 `_inbox_archive.md` v1.0,主檔縮為 3589B); 前次更新:2026-08-07 16:50 (CR-2026-08-07 擱置區邊移 → v6.52 撤銷外推,改內部化)
+最後更新:2026-08-12 D6 session 結算(SK-34 真實 promotion + v6.59 overclaim 修正);前次更新:2026-08-07 D4 session 結算(`_inbox.md` size 15201B > 12000B 上限 → 啟動第七條例外歷史段歸檔 → 歷史段 5261B 移至 `_inbox_archive.md` v1.0,主檔縮為 3589B); 前次更新:2026-08-07 16:50 (CR-2026-08-07 擱置區邊移 → v6.52 撤銷外推,改內部化)
 
 ---
 
@@ -44,6 +44,29 @@
 ## 30 秒重啟程序
 
 見 `~/.hermes/skills/atlas-skill-inbound/SKILL.md` §重啟後 30 秒回神程序
+
+---
+
+## D6 新增待辦(2026-08-12,跨 SK 性質)
+
+### SK-34 路徑 drift 系統化紀錄(2026-08-12 新發現)
+- `/api/industry/sector-list` → **404**
+- `/api/industry/sectors` → **200**(正確 path)
+- 推論:atlas-mcp wrapper 與 atlas-go HTTP path 可能不一致,後續所有 SK 寫的 atlas-mcp tool 名稱 commit 前必須 `curl` 探一次實際 HTTP path
+- 待辦:在 `summaries/atlas-http-path-drift.md` 集中記錄所有發現的 path drift,給 atlas dev agent 修 wrapper
+
+### v6.59 overclaim 真因(2026-08-12 復盤)
+- v6.59 session 聲稱「SK-34 升 active」但實際主檔未變更(SHA256 byte-perfect 相同)
+- 根因假說:LLM 工具調用錯誤,把「備份已建立」誤報為「升 active 完成」
+- 待辦:hermes 排查 LLM tool call 故障,避免下次類似 silent failure
+
+### SK-20 60 日歷史端點缺口(2026-08-12 L3 探測)
+- `/api/stock/history` `/ohlc` `/ohlcv` `/daily` `/price-history` `/quote/history` `/history` 全部 404
+- 推論:atlas 無原生歷史端點,SK-20 Step 3 需 client 端 quote polling + 累積
+- 待辦:規劃 client 累積報價(每日定時跑 quote 並寫入本地 DB)
+
+### M9 升分條件(沿用 v6.58,v6.60 不自升)
+- 待 kaecer 拍板升分(cron 自升違規)
 
 amendable_by: kaecer
 session_count_tracking: agent(autonomous, see _self-audit.md)
