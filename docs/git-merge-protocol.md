@@ -187,6 +187,52 @@ gh pr merge <N> --squash --delete-branch --admin
 - ci 變更(workflow 修正)
 - emergency fix(影響 main 運作;合併後需 24h 內補 incident report 到 _self-audit.md)
 
+### 6.4 合夥人制自主合併（B 方案, 2026-08-15 kaecer 拍板）
+
+> 背景: iMac hermes 已承接 atlas-wiki 日常產出 (每日 quota 3 頁 SK)。原 §6.3 自我合併條件 (200 lines + PR body 三段) 對 routine 產出過嚴, 會卡 hermes 自主運作。
+> 拍板: kaecer 2026-08-15 決策 T11-B —「合夥人制」: hermes 可自主 merge routine 產出, 重大變更走人工 review。
+
+#### 6.4.1 Routine 產出（hermes 自主 merge, 不需人工 review）
+
+符合以下**全部**條件的變更 = routine, hermes 可用 `scripts/dev/auto-commit-pr.sh` 一鍵 merge:
+
+1. **變更範圍**限: `skills/SK-*.md`（SK 頁新增/修正）或 `concepts/` 或 `templates/` 或 `scripts/_scripts/` 工具修正
+2. **CI 全綠**: 本地 `make ci-gate` + GitHub `validate-wiki` 4 job success
+3. **變更量**: < 300 lines（比 §6.3 的 200 放寬, 因 SK 頁 quota 產出）
+4. **不觸碰**: 憲法 / `_method.md` / `AGENTS.md` / `git-merge-protocol.md` / `.github/workflows/` / `SCHEMA.md`（這些是治理檔, 見 6.4.2）
+5. **SK 頁品質**: 對位 `_method.md` 六條鐵律（不搬運/不瞎寫/不裝完成/不違憲章/派工備份/size ≤9000B）
+6. **執行工具**: `scripts/dev/auto-commit-pr.sh "<msg>" main "<title>"`（自動: ci-gate → commit → push → PR → 等 CI → squash merge）
+
+#### 6.4.2 重大變更（必須人工 review, hermes 只開 PR 不等 merge）
+
+以下**任何一項**觸碰 = 重大變更, hermes **只開 PR**, 等 kaecer review 後 merge:
+
+| 類別 | 檔路徑 |
+|---|---|
+| 憲法 | `atlas-notes/02-knowledge/constitution-mission.md` (若同步) |
+| 規範本體 | `skills/_method.md` + `_method_amendment_history.md` |
+| 專案 context | `AGENTS.md` |
+| 治理 | `docs/git-merge-protocol.md` / `SCHEMA.md` |
+| CI 設定 | `.github/workflows/*` |
+| 規模 | 單 PR > 300 lines 或跨 > 5 檔案 |
+
+重大變更流程: hermes 開 PR → 填 §4.1 三段 body → **不自行 merge** → Telegram 通知 kaecer → 等 review。
+
+#### 6.4.3 合夥人制判斷速查
+
+```
+變更範圍 → 是 SK/concepts/templates/scripts 工具?
+  ├─ 是 + <300 lines + CI 綠 → routine → auto-commit-pr.sh 自主 merge
+  └─ 否 (憲法/規範/AGENTS/CI/SCHEMA) → 重大 → 開 PR 等 kaecer
+
+    或 > 300 lines / 跨 > 5 檔案 → 重大 → 開 PR 等 kaecer
+```
+
+#### 6.4.4 後合併自驗（routine 也適用）
+
+- merge 後 60 秒內: 切回 main + `git pull` 確認無衝突
+- 每日結算: `_self-audit.md` 記錄當日自主 merge 數量 + 是否有漏 review 的重大變更
+
 ## 7. 後合併規範(merge 後動作)
 
 ### 7.1 立即動作(merge 後 60 秒內)
