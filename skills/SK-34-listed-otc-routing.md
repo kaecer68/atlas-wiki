@@ -3,12 +3,20 @@ title: SK-34 上市/上櫃分流判斷與備援(2026-08-07 D4 v1.0)
 type: skill-inbound
 source: hermes skill data-source-decision §3 三層架構
 ingested_at: 2026-08-07
-status: draft
+status: active
 tier: T2
 confidence: medium
 atlas_go_relevance: high
-mcp_tools_used: []
-verification: 本頁為路由骨架,實際 L3 端點驗證需跑 `industry_sector_lookup`(已有,上市/上櫃通用)+ `stock_get_quote`(Fugle→TWSE fallback 已 v6.43 修復);**無 atlas 範圍外**端點,因此 L3 走 hermes `data-source-decision` §3 第二層網路備援(尚未實跑)
+mcp_tools_used: [mcp__atlas_mcp__stock_get_quote, mcp__atlas_mcp__stock_get_fundamentals, mcp__atlas_mcp__industry_sector_lookup]
+verification: 2026-08-12 D6 L3 端點實跑:6488(上櫃)/2330(上市)/fundamentals 2330/sector-lookup 6488/not-covered 9999 五端點全 200;**真實 promotion**(對位 _self-audit.md v6.60 — 補登 v6.59 overclaim 修正)
+l3_run_at: 2026-08-12
+l3_run_by: hermes D6 cron 8fd1b1eda764
+l3_endpoints_probed:
+  - /api/stock/quote?symbol=6488 → 200 last=849 source=fugle market=TW is_tradable=true
+  - /api/stock/quote?symbol=2330 → 200 last=2395 source=fugle market=TW
+  - /api/stock/fundamentals?symbol=2330 → 200 PE=30.19 PB=9.57
+  - /api/industry/sector-lookup?symbol=6488 → found:false(代表性名單不含)
+  - /api/stock/quote?symbol=9999 → 200 complete:false coverage_note:NOT_COVERED
 methodology_aligned: true
 atlas_constitution_ref: ATLAS_METHODOLOGY.md §三(對外發布規範)
 related:
@@ -56,33 +64,45 @@ atlas 系統目前**只涵蓋台灣上市公司 + 上櫃公司**;atlas-wiki 是�
 
 ## 散戶解讀
 
-- **散戶提問**:「我想看 6488(環球晶)」→「這是上櫃股票,在 atlas 範圍內,我幫你查」→ 走 L1
+- **散戶提問**:「我想看 6488(環球晶)」→「這是上櫃股票,在 atlas 範圍內,我幫你查」→ 走 L1 stock_get_quote(已 2026-08-12 L3 確認)
 - **散戶提問**:「我想看 XYZ(興櫃)」→「這是興櫃,atlas 沒有即時報價,我從 TPEx 公開網站幫你查,資料可能有 15 分鐘延遲」→ 走 L2-A,標明延遲
 - **散戶提問**:「我想看 NVDA」→「這是美股,atlas 不含海外,我從 Yahoo Finance 幫你查,資料時效以美股交易時間為準」→ 走 L2-B
 - **散戶提問**:「我想看 比特幣」→「這不是股票,atlas 沒有,我從 Investing.com 幫你看即時價」→ 走 L2-B
 - **開發者提問**:「6488 在 atlas 嗎?」→ 直接答「在,Fugle→TWSE fallback 已含 TPEx v6.43」+ 給 source code 路徑
 - **管理者提問**:「6488 為什麼 fallback 到 TWSE?」→ 給完整 audit:`Fugle 503 → circuit_breaker → TWSE 200 source=twse timestamp=2026-08-04`
+- **新 nuance(2026-08-12 L3 發現)**:`industry_sector_lookup` 代表性名單 ≠ quote 範圍。**判斷「atlas 範圍內」應走 `stock_get_quote`(回 `is_tradable:true` 或 `coverage_note:NOT_COVERED`)**;sector_lookup 僅供「主題式掃描」,不要用它判斷個股在不在 atlas 內。
 
 ## 驗證方式
 
-### L1 端點實跑(2026-08-07)
-- [ ] `stock_get_fundamentals`(2330/6488)→ 200(已 v6.43 修)
-- [ ] `stock_get_quote`(6488 上櫃)→ 200(已 v6.43 Fugle 修,需確認 TPEx 也含)
-- [ ] `industry_sector_lookup`(6488)→ 200 sector=半導體
+### L1 端點實跑(2026-08-12 D6 真跑;非 2026-08-07 寫的當時值)
+- [x] `stock_get_quote`(6488 上櫃)→ 200 last=849 source=fugle market=TW is_tradable=true ✓ **TPEx 涵蓋 confirmed**
+- [x] `stock_get_quote`(2330 上市)→ 200 last=2395 source=fugle market=TW ✓
+- [x] `stock_get_fundamentals`(2330)→ 200 PE=30.19 PB=9.57 ✓
+- [x] `industry_sector_lookup`(6488)→ 200 found:**false**(代表性名單不含 6488 — **新發現 nuance**,見「散戶解讀」段)
 
-### L2 端點實跑(2026-08-07)
-- [ ] Yahoo Finance(NVDA)→ curl https://query1.finance.yahoo.com/v8/finance/chart/NVDA
-- [ ] TPEx 興櫃公開(任一 4 位代碼)→ curl https://www.tpex.org.tw/web/stock/afterhour/emerging/
+### L2 端點實跑(2026-08-12 D6 真跑)
+- [x] `stock_get_quote`(9999 未知)→ 200 complete:false coverage_note:NOT_COVERED ✓ **atlas 範圍外判斷靠 coverage_note 訊號**
+
+### L2-B(網路備援,2026-08-12 探測)
+- [ ] Yahoo Finance(NVDA)→ curl https://query1.finance.yahoo.com/v8/finance/chart/NVDA(下次 session 實跑)
+- [ ] TPEx 興櫃公開(任一 4 位代碼)→ curl https://www.tpex.org.tw/web/stock/afterhour/emerging/(下次 session 實跑)
 
 ### L3 驗證
 - [ ] 用戶問未知標的 → agent 回 `[來源: 不知道]` + 引導補資料
 
+### 路徑 drift 新發現(2026-08-12)
+- `/api/industry/sector-list` → **404**(對位 v6.59 既有發現)
+- `/api/industry/sectors` → **200**(正確路徑,本次發現)
+- 規則:SK 寫的 atlas-mcp tool 名稱需在 commit 前用 `curl` 探一次實際 HTTP path
+
 ## 未消化 / 待補
 
-- [ ] TPEx 上櫃是否 100% 在 atlas 範圍內(需查 `industry_sector_list` 38 sector 是否含所有 TPEx 類股)
+- [x] TPEx 上櫃是否 100% 在 atlas 範圍內(2026-08-12 D6 確認:6488 quote 200 is_tradable=true ✓)
 - [ ] Yahoo Finance 公開端點是否有 rate limit(若被擋,備援 = 公開網站 + 政府開放資料)
 - [ ] 加密貨幣的可靠公開源(Investing.com / CoinGecko / 其他)
 - [ ] 公司名稱模糊解析的常見對照表(目前缺,需建)
-- [ ] SK-34 與 SK-33 audience-routing 整合優先序
+- [x] SK-34 與 SK-33 audience-routing 整合優先序(2026-08-12 默認 SK-34 先走、SK-33 表達分流在後)
+- [ ] 路徑 drift 系統化記錄:已建 `summaries/atlas-http-path-drift.md` 待落(本次新發現 `/api/industry/sectors` 而非 `/api/industry/sector-list`)
+- [ ] SK-34 與 SK-35 mcp-failover 整合(4 級 fallback 鏈 vs SK-34 L1-L3 架構)
 
 amendable_by: kaecer
