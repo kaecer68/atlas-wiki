@@ -17,7 +17,7 @@ import re
 import sys
 from pathlib import Path
 
-ROOT = Path('/Users/kaecer/workspace/atlas-wiki')
+ROOT = Path(os.path.expanduser('~/workspace/atlas-wiki'))
 
 
 def read_text(path):

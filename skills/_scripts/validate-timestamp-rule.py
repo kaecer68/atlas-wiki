@@ -4,7 +4,7 @@
 對位 _method.md 第五條鐵律:任何隨時間變動的數字引用必附 timestamp + 端點名稱
 
 執行:
-  python3 /Users/kaecer/workspace/atlas-wiki/skills/_scripts/validate-timestamp-rule.py
+  python3 ~/workspace/atlas-wiki/skills/_scripts/validate-timestamp-rule.py
 
 結果:
   0 違規 = 全 33 頁合規
@@ -18,7 +18,7 @@ import glob
 import sys
 import argparse
 
-DEFAULT_SKILLS_DIR = "/Users/kaecer/workspace/atlas-wiki/skills"
+DEFAULT_SKILLS_DIR = os.path.expanduser("~/workspace/atlas-wiki/skills")
 
 
 def parse_args():

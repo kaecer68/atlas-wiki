@@ -264,7 +264,7 @@ def get_env():
     """讀 .env 環境(atlas-wiki 用 ~/.config/atlas-wiki/.env)"""
     env = {}
     # 先讀 ~/.config/atlas-wiki/.env(atlas 端 API key)
-    atlas_env = "/Users/kaecer/.config/atlas-wiki/.env"
+    atlas_env = os.path.expanduser("~/.config/atlas-wiki/.env")
     if os.path.exists(atlas_env):
         with open(atlas_env) as f:
             for line in f:
@@ -273,7 +273,7 @@ def get_env():
                     val = line.split("=", 1)[1].strip()
                     env[key] = val
     # 再讀 ~/.hermes/.env(Telegram)
-    hermes_env = "/Users/kaecer/.hermes/.env"
+    hermes_env = os.path.expanduser("~/.hermes/.env")
     if os.path.exists(hermes_env):
         with open(hermes_env) as f:
             for line in f:
@@ -655,6 +655,12 @@ def run_triggers(env):
                     if net > 0:
                         hit_count += 1
                 summary_value = f"aggregate={aggregate_total:.1f} ({sum(1 for v in symbol_net_values.values() if v is not None)}/{len(symbols)} symbols hit), per={symbol_net_values}"
+                # T3 誠實修補(2026-08-16):0 個 symbol 有資料時不可判「未觸發」
+                # 舊版 aggregate_total=0.0 會被拿去跟 threshold 比,把「無資料」
+                # 偽裝成「市場無訊號」(對位 USER §7「有回傳 ≠ 資料可用」)。
+                if all(v is None for v in symbol_net_values.values()):
+                    _record_failure("no_symbol_data", value=summary_value)
+                    continue
                 aggregate_mode = t.get("aggregate_mode", "sum")
                 threshold = t["threshold"]
                 compare = t.get("compare", "gt")
@@ -712,9 +718,17 @@ def run_triggers(env):
                     if data is None or data.get("__unauthorized__") or data.get("__atlas_error__"):
                         symbol_changes[sym] = None
                         continue
-                    # change_pct 不在 quote 端點,需從 macro snapshot 拿
-                    # 若 atlas 端點不回 change_pct,fallback 跳過
-                    change = data.get(t["metric"], 0)
+                    # T3 誠實修補(2026-08-16):coverage_note=NOT_COVERED 或 metric 缺欄
+                    # 一律標 None,不可用 0 代入(對位 USER §7「有回傳 ≠ 資料可用」)
+                    # 舊版 data.get(metric, 0) 會把「沒資料」偽裝成 change_pct=0,
+                    # 導致 min=0.00 → threshold_not_met 假陰性,掩蓋真實涵蓋缺口。
+                    if data.get("coverage_note") == "NOT_COVERED" or data.get("covered") is False:
+                        symbol_changes[sym] = None
+                        continue
+                    change = data.get(t["metric"])
+                    if change is None:
+                        symbol_changes[sym] = None
+                        continue
                     symbol_changes[sym] = change
                 # 取最低(最負)
                 valid_changes = [v for v in symbol_changes.values() if v is not None]
