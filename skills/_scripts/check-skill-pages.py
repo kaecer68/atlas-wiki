@@ -17,7 +17,10 @@ import sys
 import argparse
 import os
 
-DEFAULT_SKILLS_DIR = os.path.expanduser("~/workspace/atlas-wiki/skills")
+# T3 修補(2026-08-16):預設值跟著 repo 走,不綁 home(避免 CI 掃 0 檔假綠)
+DEFAULT_SKILLS_DIR = os.environ.get("ATLAS_WIKI_SKILLS_DIR") or str(
+    __import__("pathlib").Path(__file__).resolve().parents[1]
+)
 MAX_SIZE = 9000
 REQUIRED_FM = [
     "title", "type", "source", "ingested_at", "status", "tier",
