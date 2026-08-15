@@ -21,7 +21,7 @@ import argparse
 from datetime import datetime
 from collections import defaultdict
 
-DEFAULT_ATLAS_MCP_DIR = "/Users/kaecer/workspace/atlas/cmd/atlas-mcp/server"
+DEFAULT_ATLAS_MCP_DIR = os.path.expanduser("~/workspace/atlas/cmd/atlas-mcp/server")
 
 
 def parse_args():

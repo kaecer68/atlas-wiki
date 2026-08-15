@@ -18,7 +18,7 @@ from datetime import datetime
 
 def send_telegram(message):
     """發 Telegram 通知"""
-    env_path = "/Users/kaecer/.hermes/.env"
+    env_path = os.path.expanduser("~/.hermes/.env")
     if not os.path.exists(env_path):
         return False
     with open(env_path) as f:
@@ -47,7 +47,7 @@ def main():
     print(f"cron 健康監控 — {datetime.now().isoformat()}")
     print("=" * 60)
 
-    jobs_path = "/Users/kaecer/.hermes/cron/jobs.json"
+    jobs_path = os.path.expanduser("~/.hermes/cron/jobs.json")
     if not os.path.exists(jobs_path):
         print(f"# {jobs_path} 不存在")
         return

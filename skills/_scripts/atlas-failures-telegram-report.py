@@ -52,7 +52,7 @@ def test_endpoint(name):
 def send_telegram(message):
     """發 Telegram 通知"""
     # 從 ~/.hermes/.env 讀 TELEGRAM_BOT_TOKEN + TELEGRAM_CHAT_ID
-    env_path = "/Users/kaecer/.hermes/.env"
+    env_path = os.path.expanduser("~/.hermes/.env")
     if not os.path.exists(env_path):
         return False
     with open(env_path) as f:

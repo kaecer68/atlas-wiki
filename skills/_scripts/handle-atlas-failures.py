@@ -25,8 +25,8 @@ def fallback_stock_quote(symbol):
     try:
         result = subprocess.run(
             ["python3", "-c", f"""
-import sys
-sys.path.insert(0, '/Users/kaecer/workspace/atlas-wiki/skills/_scripts')
+import os, sys
+sys.path.insert(0, os.path.expanduser('~/workspace/atlas-wiki/skills/_scripts'))
 # 直接調 mcp tool(未實作 placeholder,實際由 hermes 調用)
 print(f"# stock_get_quote 503 fallback for {symbol}:建議查 stock_get_fundamentals")
 """],
@@ -47,7 +47,7 @@ def fallback_risk_commentary():
 
 def check_atlas_api_key():
     """#3 parameters_get 401 — 檢查 .env 是否有 ATLAS_API_KEY"""
-    env_path = "/Users/kaecer/.hermes/.env"
+    env_path = os.path.expanduser("~/.hermes/.env")
     if not os.path.exists(env_path):
         return "# .env 不存在,請配 ATLAS_API_KEY"
     with open(env_path) as f:

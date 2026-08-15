@@ -17,7 +17,7 @@ import sys
 import argparse
 import os
 
-DEFAULT_SKILLS_DIR = "/Users/kaecer/workspace/atlas-wiki/skills"
+DEFAULT_SKILLS_DIR = os.path.expanduser("~/workspace/atlas-wiki/skills")
 MAX_SIZE = 9000
 REQUIRED_FM = [
     "title", "type", "source", "ingested_at", "status", "tier",
