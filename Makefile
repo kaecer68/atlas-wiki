@@ -5,7 +5,7 @@
 SHELL := /bin/bash
 PY    := python3
 
-.PHONY: help ci-gate ci-fast ci-full check-actionlint check-timestamp check-audit check-skill-pages check-size check-frontmatter pre-commit-install uninstall-hooks verify-clean test
+.PHONY: help ci-gate ci-fast ci-full check-actionlint check-timestamp check-audit check-skill-pages check-size check-frontmatter pre-commit-install uninstall-hooks verify-clean test sync-imac
 
 help:                   ## 列出所有 target
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN{FS=":.*?## "}{printf "  %-22s %s\n", $$1, $$2}'
@@ -53,3 +53,10 @@ verify-clean:           ## 收尾前檢查(無 .bak/__pycache__/未追蹤敏感�
 
 test:                   ## 跑 trigger-monitor pytest(對位 v0.5 F 議題 5/5 case 永久化)
 	@$(PY) -m pytest skills/_scripts/tests/ -v
+
+# ---- 雙機同步 (2026-08-15) ----
+
+sync-imac: ## 同步 iMac atlas-wiki clone (a2a-sync)
+	@echo "→ 同步 GitHub → iMac (atlas-wiki)"
+	@~/bin/a2a-sync
+	@echo "✓ 完成"
