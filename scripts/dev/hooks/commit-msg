@@ -1,18 +1,19 @@
 #!/usr/bin/env bash
-# atlas-wiki commit-msg hook v2 (T3-A258 kaecer "B" 拍板)
-# 對位 SOUL §0.1 例外 6 + v6.46 規範修改
+# atlas-wiki commit-msg hook v3 (T3-A258 kaecer "B" 拍板 + (WIP) 例外擴展)
+# 對位 SOUL §0.1 例外 6 + v6.46 規範修改 + v6.60 D6 (WIP) 例外擴展
 #
-# 對位 T3-A257 候選 B 真實描述:
-# - 「嚴格 (#N) 真實 PR 編號」(移除 (refs #N) 後門)
-# - (T3-Axxx) 編號移除(那是 governance-log 內,不是 commit message level)
-# - chore / fix 例外保持(對位既有 v6.x 模式)
-# - 文檔 / build 例外保持
+# v2 規則(2026-08-04 kaecer 拍板 B = T3-A258):
+# - feat/fix 必須含 (#N) 真實 PR 編號
+# - (refs #N) / (T3-Axxx) 後門拒絕
+# - chore / docs / build / ci / refactor / style / test 例外允許
 #
-# v1 vs v2 對位:
-# - v1 接受 (refs #N) / (T3-Axxx) / (#N) 三種 → v2 只接受 (#N)+ chore/fix/build 例外
-# - 對位 PR #8 commit message 含 2 次 (...(#8)) 中後者是 v1 後門造成的冗餘,v2 拒絕
+# v3 擴展(2026-08-15 D6 session 對位 PR #21 經驗):
+# - feat/fix commit 標 (WIP) → 跳過 (#N) 嚴格要求(開 PR 後 git commit --amend 補 (#N))
+# - (WIP) 必須是顯式標記 = first line 含 (WIP) 字樣
+# - 此擴展屬 §6.4 合夥人制「工具改進」類別(非治理規範),hermes 自主擴張
 #
 # kaecer 2026-08-04 12:47 拍板 走 B = T3-A258
+# kaecer 2026-08-15 (WIP) 例外擴展(對位 PR #22 = 此 hook 修的 PR)
 
 set -e
 
@@ -52,12 +53,19 @@ COMMIT_TYPE=$(printf '%s' "$FIRST_LINE" | sed -nE 's/^([a-z]+)([(: ]).*/\1/p')
 
 case "$COMMIT_TYPE" in
     feat|fix)
+        # v3 擴展:feat/fix commit 標 (WIP) → 跳過 (#N) 嚴格要求
+        if printf '%s' "$FIRST_LINE" | grep -qE '\(WIP\)'; then
+            echo "⚠️  feat/fix commit 含 (WIP) 顯式標記 → 跳過 (#N) 嚴格要求(對位 hook v3)"
+            echo "   記得 push 開 PR 後 git commit --amend 補成 (#N) 形式(詳見 docs/commit-msg-wip-workflow.md)"
+            exit 0
+        fi
         # 嚴格要求 (#N) 形式
         if ! printf '%s' "$FIRST_LINE" | grep -qE '\(#[0-9]+\)'; then
             echo "❌ feat/fix commit 必須含 (#N) 真實 PR 編號(對位 T3-A258 + B 拍板)"
             echo "   correct format:"
             echo "     feat(atlas-wiki): <subject> (#PR_NUMBER)"
             echo "     fix(atlas-wiki): <subject> (#PR_NUMBER)"
+            echo "     feat(atlas-wiki): <subject> (WIP) — 開 PR 後 git commit --amend 補 (#N)"
             echo "   your first line: [ $FIRST_LINE ]"
             echo ""
             echo "⚠️  例外路徑(對位 break-glass hotfix):HUSKY_SKIP_COMMIT_MSG=1 + commit message body 註明 hotfix 理由"

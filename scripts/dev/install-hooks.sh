@@ -23,14 +23,14 @@ install_hook() {
 }
 
 uninstall() {
-    for name in pre-commit pre-push; do
+    for name in pre-commit pre-push commit-msg; do
         rm -f "$HOOKS_DIR/$name"
     done
     echo "🗑️  hooks 已解除"
 }
 
 case "${1:-install}" in
-    install)   install_hook pre-commit; install_hook pre-push ;;
+    install)   install_hook pre-commit; install_hook pre-push; install_hook commit-msg ;;
     uninstall) uninstall ;;
     *) echo "用法: $0 [install|uninstall]"; exit 1 ;;
 esac
