@@ -2,15 +2,16 @@
 title: Fin-Skills 32 SK 預評索引（atlas-skill-inbound 第一輪決策用）
 type: skill-inbound-index
 purpose: 給 Fin-Skills 全部 32 SK 做 atlas_mcp_relevance 預評,讓 kaecer 拍下一輪選誰
-source: ~/workspace/Fin-Skills/Fin-Skills.md（33 個章節,扣 SK-00 索引指南 = 32）
+source: hermes 對學術金融工程文獻的 atlas 表達消化（**原 Fin-Skills.md 從未建立**，2026-08-21 prime-agent 探查確認: 全系統 /Users/kk + atlas-backups + atlas-notes 02-knowledge + Spotlight 索引均無 Fin-Skills.md 檔；詳見 §0 Fin-Skills.md 存在性調查）
 created: 2026-07-29
 created_by: hermes-agent
-status: active
+status: deprecated (2026-08-21 Fin-Skills.md 探查結論: 從未存在)
 owner: kaecer
+deprecation_reason: 保留為 hermes 7/29 對 32 SK 預評分類 (HIGH/MED/LOW), 仍有用於 atlas-wiki 37 SK 寫入對位
 related:
   - ~/workspace/atlas-wiki/skills/_method.md
   - ~/workspace/atlas-wiki/skills/_inbox.md
-  - ~/workspace/Fin-Skills/Fin-Skills.md
+  # Fin-Skills.md 引用已移除 (2026-08-21 prime-agent 探查)
 ---
 
 # Fin-Skills 32 SK 預評索引
@@ -77,7 +78,7 @@ LOW 留作後續 niche 主題（量子/RL）或有明確需求時補。
 | **SK-20** | 穩健 | **HIGH** | 規模分組穩健性檢驗 | 大公司 vs 小公司分組評估 |
 | SK-21 | 穩健 | MED | 排除仙股穩健性檢驗 | 剔除最低 20% 價格股票 |
 | SK-22 | 穩健 | MED | 消去法（排除特定因子集） | 移除某類因子後量化邊際貢獻 |
-| SK-31 | 比較 | LOW | 監督 vs 強化學習策略比較 | 兩篇論文的 pipeline 對比 |
+| SK-31 (→ SK-36) | 比較 | LOW | 監督 vs 強化學習策略比較 | 兩篇論文的 pipeline 對比 (原 Fin-Skills §SK-31, 2026-08-21 wiki 編號改為 SK-36) |
 | SK-32 | 比較 | LOW | 獎勵函數敏感性分析 | 不同獎勵設計對最終績效的影響 |
 
 ### relevance 統計
