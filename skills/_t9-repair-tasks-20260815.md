@@ -1,5 +1,7 @@
 # T9 修復任務清單 — hermes 可執行 (2026-08-15)
 
+> ⚠️ **已取代 (2026-08-21)**: 現行版本 = [`_t9-repair-tasks-20260821.md`](_t9-repair-tasks-20260821.md), 本檔僅作 audit trail。
+>
 > 來源: 2026-08-15 prime-agent 對 atlas-wiki skills 的 T9 技能轉化審查
 > 執行者: iMac hermes (已承接 atlas-wiki 任務)
 > 位置: /Users/kk/workspace/atlas-wiki/
