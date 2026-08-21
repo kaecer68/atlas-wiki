@@ -42,25 +42,22 @@
 
 ---
 
-## Task 2: SK-31 二擇一衝突解決 ❌ 未完成, 仍待 kaecer 拍板
+## Task 2: SK-31 二擇一衝突 ✅ 已完成 (2026-08-21 kaecer 拍板方案 b renumber, kimi-for-coding 審查 8 步執行)
 
-**狀態**:SK-00 index 仍標「**SK-31 衝突待解**」+ 解法「重命名 `SK-31-sl-vs-rl.md` → `SK-XX-sl-vs-rl.md`(XX = 下一未佔編號),**待你拍板**」。
+**狀態**:`SK-31-sl-vs-rl.md` 已重新編號為 `SK-36-sl-vs-rl.md`(2026-08-21 kaecer 拍板方案 b, kimi-for-coding 審查 8 步執行);`SK-31` 唯一對應 `SK-31-ai-investment-cycle-2026.md`(AI 投資週期)。
 
-**實證** (`grep -A8 "SK-31 衝突" skills/SK-00-skill-index.md`):
-> 「- **現況**:`SK-31-ai-investment-cycle-2026.md` 與 `SK-31-sl-vs-rl.md` 同編號,35 個檔案 ≠ 33 主體
-> - **原因**:Fin-Skills 原版 SK-31 應為單一頁(待查 Fin-Skills.md §SK-31)
-> - **解法**:重命名 `SK-31-sl-vs-rl.md` → `SK-XX-sl-vs-rl.md`(XX = 下一未佔編號),**待你拍板**」
+**執行 8 步**:
+1. `git mv SK-31-sl-vs-rl.md → SK-36-sl-vs-rl.md` (PR #32) + 修 frontmatter `renumbered_from: SK-31`
+2. 修 4 個引用: SK-32-reward-sensitivity.md / _methodology_alignment_audit.md / _index-finskills.md / SK-00-skill-index.md
+3. 修 T9 v2 Task 2 段 (本段) + 驗證 grep
 
-**三條路待 kaecer 拍板**:
-- (a) 合併為一頁 (a 方案): 兩個檔內容互補 → 合併成 `SK-31-ai-investment-cycle-and-rl.md`
-- (b) 重新編號: `SK-31-sl-vs-rl.md` → `SK-XX-sl-vs-rl.md` (XX = 36, 因 36 還沒佔)
-- (c) 保留雙頁但 index 明確說明: SK-00 加上「SK-31 兩檔並存, ai-investment-cycle 為主, sl-vs-rl 為輔」說明
+**結論**:✅ 衝突已解決, 36 個 SK-* 檔案 (原 35 + SK-36 新編號)。
 
 ---
 
 ## Task 3: L3 端點批次執行 ❌ 未完成 + 數字需 kaecer 拍板
 
-**狀態**:`_inbox.md` 主檔 line 35「30 active × 3 = **90** 個 Step」vs 8/17 [FAILED] 條目 line 129「35 active × 3 = **105** 個 Step」, 待 kaecer 拍板統一(見拍板 1)。
+**狀態**:`_inbox.md` line 35「90」(歷史) vs line 129「**105**」(現況, kaecer 拍板統一, 見拍板 1)。
 
 **注意**:Task 3 **不需 Fin-Skills.md**, 與 Fin-Skills 6 天 [FAILED] 是**獨立問題**。
 
@@ -132,7 +129,7 @@
 
 ## 待 kaecer 拍板 (7 項)
 
-1. **L3 攻堅範圍 (90 vs 105)**: `_inbox.md` 主檔 line 35「30 × 3 = 90」vs 8/17 [FAILED] 條目 line 129「35 × 3 = 105」, 統一?
+1. **L3 攻堅範圍**: ✅ **kaecer 2026-08-21 拍板 = 105** (35 active × 3 step)。
 2. **8/21 是否真的恢復**: PR #27 寫「cron 系統恢復」(對位 hermes agent.log 8/21 04:00 觸發 + 04:04:12 completed), 但 8/21 [FAILED] 條目仍標失敗 (Fin-Skills.md 找不到根因沒解)。**系統 vs 任務** 視角不同, 後續如何標記?
 3. **Task 2 SK-31 衝突**: (a) 合併 / (b) renumber → SK-36 / (c) 保留雙頁? (預設 (b))
 4. **Task 4 SK-35 論文版**: (A) 不做 / (B) 做? (8/21 評估: SK-35 屬 skill-inbound, 學術對位非必要, 預設 (A))

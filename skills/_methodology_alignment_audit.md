@@ -269,7 +269,7 @@ related:
 | SK-26 | §五(Policy Network) | 本 session 2026-08-02 23:25 |
 | SK-28 | §五(Reward Mismatch) | 本 session 2026-08-02 23:25 |
 | SK-29 | §五(回測期間依賴) | A 階段 2026-07-30 |
-| SK-31 | §五(SL vs RL) | 本 session 2026-08-02 23:25 |
+| SK-36 | §五(SL vs RL) | 2026-08-21 (renumbered from SK-31) |
 | SK-32 | §五(Reward Sensitivity) | 本 session 2026-08-02 23:25 |
 
 ### §5.3 SK-22 v3.3 重構正式記錄

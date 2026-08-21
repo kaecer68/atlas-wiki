@@ -8,7 +8,7 @@ tier: T3
 confidence: high
 atlas_go_relevance: high
 mcp_tools_used: []
-verification: 本檔是純索引頁,驗證方式 = `ls ~/workspace/atlas-wiki/skills/SK-*.md | wc -l` 應回 35(33 編號含 SK-27/30 archive + SK-31 二擇一衝突待 §未消化 + SK-00 索引);實際 grep 2026-08-07 = 35 個檔案。
+verification: 本檔是純索引頁,驗證方式 = `ls ~/workspace/atlas-wiki/skills/SK-*.md | wc -l` 應回 35(33 編號含 SK-27/30 archive + SK-31 唯一對應 AI 投資週期 + SK-00 索引);SK-36 替代原 SK-31 SL/RL 對位;實際 grep 2026-08-21 = 36 個檔案(原 35 + SK-36 新編號)。
 ---
 
 ## 一句話定位
@@ -54,9 +54,10 @@ Step 3: 對 `experiment_history` 抽一份,看其 pipeline metadata 是否含 SK
 - [x] **SK-22 pipeline 標翻轉(2026-08-02 PR #1443)**:§論文 pipeline robustness 段由「對位失敗」改為「兩層分開——實驗級可用,by-factor 仍失敗」;§散戶解讀 G 段同步。`_consult-index.md` §2 Q2 + §3.1 SK-22 段 + §6.2 紀錄三處同步;`SK-22-ablation-analysis.md` 全文重寫;`SK-13-permutation-importance.md` §atlas 對位「因子刪除後效果」行同步。
 - [ ] 跨 SK 依賴圖(visualization)未實作,目前只有文字 pipeline 順序。
 
-## SK-31 衝突待解(2026-08-07)
+## SK-31 衝突已解決(2026-08-21, 方案 b: renumber sl-vs-rl → SK-36)
 
-- **現況**:`SK-31-ai-investment-cycle-2026.md` 與 `SK-31-sl-vs-rl.md` 同編號,35 個檔案 ≠ 33 主體
-- **原因**:Fin-Skills 原版 SK-31 應為單一頁(待查 Fin-Skills.md §SK-31)
-- **解法**:重命名 `SK-31-sl-vs-rl.md` → `SK-XX-sl-vs-rl.md`(XX = 下一未佔編號),待你拍板
+- **現狀**:`SK-31-ai-investment-cycle-2026.md` 保留為 SK-31 唯一對應(AI 投資週期);原 `SK-31-sl-vs-rl.md` 重新編號為 `SK-36-sl-vs-rl.md`(2026-08-21 kaecer 拍板方案 b, kimi-for-coding 審查 8 步執行)
+- **原因**:兩個 SK-31 編號主題不同(AI 投資週期 vs SL/RL 策略比較),不互補,合併方案 a 不可行;保留雙頁方案 c 治標不治本
+- **執行**:`git mv SK-31-sl-vs-rl.md → SK-36-sl-vs-rl.md` + 修 frontmatter `renumbered_from: SK-31` + 修 5 個引用 (SK-32, _methodology_alignment_audit, _index-finskills, SK-00, T9 v2)
+- **驗證**:36 個 SK-* 檔案(原 35 + SK-36 新編號);`grep -R 'SK-31' --include='*.md' skills/ | grep -v 'SK-31-ai-investment-cycle-2026.md' | grep -v '§SK-31'` 應只出現於 _index-finskills.md 與 _methodology_alignment_audit.md 的 deprecate 註記
 - [x] 規範已同步(2026-08-01 v0.9 結算):SKILL.md size 6000→9000 bytes(4 處)、quota 5→3 頁(8 處);_method.md 已對齊 9,000 bytes 與 3 頁上限

@@ -8,7 +8,7 @@ tier: T2
 confidence: high
 atlas_go_relevance: high
 mcp_tools_used: [system_get_circuit_breaker, system_get_health, system_get_data_pipeline]
-verification: 對位 concepts/atlas-mcp-failover-policy.md §4 4 級鏈 + hermes `data-source-decision` §3 三層架構;L3 Step 1 用 `system_get_circuit_breaker` 確認熔斷狀態(已實跑,atlas-go 端);Step 2 用 `system_get_health` 確認系統層級
+verification: 對位 concepts/atlas-mcp-failover-policy.md §4 4 級鏈 + hermes `data-source-decision` §1 三層架構;L3 Step 1 用 `system_get_circuit_breaker` 確認熔斷狀態(已實跑,atlas-go 端);Step 2 用 `system_get_health` 確認系統層級
 methodology_aligned: true
 atlas_constitution_ref: ATLAS_METHODOLOGY.md §三(對外發布規範)
 related:
@@ -24,6 +24,17 @@ related:
 ## 一句話定位
 
 atlas-mcp 不在 atlas 範圍(上市/上櫃之外)或端點失敗時,**走 4 級 fallback 鏈**,任何引用強制附來源標籤 `[來源: atlas-mcp <tool_name> @ <ISO 8601>]` 或 `[來源: <站名> @ <URL> @ <ISO 8601>]`。
+
+## 論文版概念 / 起源說明（忠實還原來源）
+
+> 本 skill 屬 **skill-inbound**，原始設計來自 hermes `~/.hermes/skills/data-source-decision/SKILL.md` §1 三層架構（Layer 3 atlas-mcp → Layer 2 handler → Layer 1 HybridProvider + circuit breaker + fallback chain）。以下為其背後的工程模式對位，並非宣稱本頁源自學術論文。
+
+| 工程概念 | 對位內容 | 經典出處 |
+|---|---|---|
+| **Circuit Breaker Pattern** | L1 失敗時進入熔斷；`system_get_circuit_breaker` 檢查狀態，避免持續對故障下游施壓 | Michael T. Nygard, *Release It! Design and Deploy Production-Ready Software*, 2007 (2nd ed. 2018) |
+| **Graceful Degradation / Cascading Fallback** | L2-A/B 公開資料源 → L3 誠實標示「不知道」，逐級降級而非直接失敗 | Netflix Hystrix 設計文檔（2012）；業界 resilience pattern |
+
+**差異點**：經典模式討論的是通用分散式系統容錯；SK-35 把它具體化為 atlas-mcp 專用的 4 級決策鏈，並疊加散戶/開發者/管理者三層 audience 標籤紀律（對位 SK-33）。
 
 ## 4 級 fallback 鏈(對位 failover-policy.md §4)
 

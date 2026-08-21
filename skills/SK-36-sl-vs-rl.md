@@ -1,7 +1,8 @@
 ---
-title: SK-31 監督學習 vs. 強化學習策略比較
+title: SK-36 監督學習 vs. 強化學習策略比較
 type: skill-inbound
-source: ~/workspace/Fin-Skills/Fin-Skills.md §SK-31
+source: ~/workspace/Fin-Skills/Fin-Skills.md §SK-31 (wiki 編號已改為 SK-36, 2026-08-21 kaecer 拍板, kimi-for-coding 審查 8 步執行)
+renumbered_from: SK-31
 ingested_at: 2026-08-01
 status: active
 tier: T3
@@ -12,7 +13,7 @@ verification: 2026-08-01 v0.9 結算跑過 L3 升 active:backtest_signals sharpe
 ---
 
 ## 一句話定位
-SK-31 是論文的「論文對論文」對比——同樣的台股資料,SL(SK-16)與 RL(SK-24)哪個強?**論文結論是 RL 勝出,但這個結論需散戶親自驗證,不能照單全收**。
+SK-36 是論文的「論文對論文」對比——同樣的台股資料,SL(SK-16)與 RL(SK-24)哪個強?**論文結論是 RL 勝出,但這個結論需散戶親自驗證,不能照單全收**。
 
 ## 論文版概念
 - 輸入:sl_strategy(SK-16)、rl_strategy(SK-24 + SK-29)、test_data
@@ -36,7 +37,7 @@ SK-31 是論文的「論文對論文」對比——同樣的台股資料,SL(SK-1
 
 ## 散戶解讀
 - **G**:用戶問「SL 跟 RL 哪個好?」 → 論文的答案是 RL,散戶的答案可能不同(因為 RL 在小樣本下極不穩定)。
-- **+E**:**論文結論可參考但不可照單全收**——論文的 RL 用了 100k steps 訓練,散戶沒這個算力。**散戶若想驗證 SK-31 結論,需先有 GPU + stable-baselines3 經驗**。
+- **+E**:**論文結論可參考但不可照單全收**——論文的 RL 用了 100k steps 訓練,散戶沒這個算力。**散戶若想驗證 SK-36 結論,需先有 GPU + stable-baselines3 經驗**。
 - 對位 ATLAS_METHODOLOGY 七時期:RL 對 regime 切換的適應力是 SL 強項(因為有獎勵驅動),但訓練成本 100 倍於 SL,trade-off 真實存在。
 
 ## 驗證方式

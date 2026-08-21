@@ -401,6 +401,60 @@ mdfind -name "Fin-Skills.md" 2>/dev/null | head -5
   1. **kaecer 拍板 A/B/C 任一** → 解 cron 阻塞
   2. **若 kaecer 短期不回** → 授權 agent 自啟歸檔流程(將 5 個 [FAILED] 段合併歸檔到 `_inbox_archive.md` v1.1,主檔瘦身回 < 6000B)
 
+**🔧 [8/21 8:42 prime-agent 補登] cron 系統恢復 + 共同根因 + 修復路徑** (對位 kaecer 2026-08-21 拍板「找出根因修復」):
+
+### 事實(從 `~/.hermes/logs/agent.log` 探查)
+
+| 時間 | 事件 | 證據 |
+|---|---|---|
+| 8/21 04:00:00 | cron 觸發(session `cron_8fd1b1eda764_20260821_040000`) | agent.log INFO |
+| 8/21 04:00:30 | `execute_code` 此工具不對外開放(會員權限) | agent.log WARNING (0.00s) |
+| 8/21 04:00:19 → 04:03:19 | terminal tool timeout 180s (`[Command timed out after 180s]`) | agent.log WARNING (183.05s) |
+| 8/21 04:03:22-04:03:52 | API call #3-#7 正常完成(2-9s) | agent.log INFO |
+| 8/21 04:04:12 | cron completed successfully | agent.log INFO |
+| 8/21 整天 | ERROR/CRITICAL/Traceback = 0 | grep -E "ERROR|CRITICAL|Traceback" agent.log |
+
+### 結論
+
+- **cron 系統:恢復** (4:04:12 completed successfully, 不再卡死 24+ 小時)
+- **任務結果:仍 [FAILED]** (因 Fin-Skills.md 找不到的根因沒解, 任務結果仍是 [SILENT]+[FAILED])
+- **共同根因** (8/20 + 8/21 同模式, 8/15 grace 補跑範例驗證):
+
+| 根因 | 證據 | 修復路徑 |
+|---|---|---|
+| **A1**: LLM agent 嘗試用 `execute_code` 工具 (需 basic 以上會員權限) | 8/20 04:00:30 + 04:00:51 + 8/21 04:00:30 (3 次 WARNING) | `~/.hermes/skills/atlas-skill-inbound/SKILL.md` 加禁止行為:「不準使用 `execute_code` 工具, 會員權限不夠; 用 `terminal` 跑 bash」 |
+| **A2**: LLM agent 跑「Fin-Skills.md 三方驗證」command 觸發 `find /` 或 `mdfind ~` 全範圍掃描 | 8/20 04:00:19 → 04:03:19 + 8/21 04:00:19 → 04:03:19 (2 次 180s timeout) | `~/.hermes/skills/atlas-skill-inbound/SKILL.md` 加路徑驗證 SOP:「用 `ls /Users/kk/workspace/Fin-Skills/ 2>/dev/null` 單一目錄, 不用 `find /` 或 `mdfind ~`」 |
+
+兩根因互鎖: A1 WARNING 後 LLM 嘗試 fall back 到 terminal command (A2), terminal 又因全範圍掃描 timeout 180s → cron 卡死。
+
+### 修復任務 (給 hermes 下次 trigger 處理)
+
+- [ ] **A1 修復** (prerequisite: hermes-agent 有 skills/ 寫權限):
+  - 檔案: `~/.hermes/skills/atlas-skill-inbound/SKILL.md`
+  - 加在「禁止行為」段:「- 不準使用 `execute_code` 工具, 會員權限不夠; 用 `terminal` 跑 bash」
+  - 預期效果: 8/22 04:00 atlas-skill-inbound trigger 時不再 WARNING
+
+- [ ] **A2 修復** (prerequisite: hermes-agent 有 skills/ 寫權限):
+  - 檔案: `~/.hermes/skills/atlas-skill-inbound/SKILL.md`
+  - 加在「路徑驗證 SOP」段:「驗證 Fin-Skills.md 存在用 `ls /Users/kk/workspace/Fin-Skills/ 2>/dev/null` 單一目錄, 不用 `find /` 或 `mdfind ~`」
+  - 預期效果: 8/22 04:00 atlas-skill-inbound trigger 時不再 180s timeout
+
+- [ ] **A3 新發現建議** (kaecer 系統側, 需 atlas-go 那邊人認領):
+  - 將 hermes terminal tool default timeout 從 180s 降為 60s
+  - 預期效果: 即使 LLM 跑全範圍掃描, 60s 內 timeout + fall back, 不再 180s 卡死
+
+### 預期 cron 行為 (8/22 04:00 驗證)
+
+- A1+A2 修復後: 8/22 04:00 atlas-skill-inbound cron 應 4 分鐘內 completed successfully (8/21 是 4:04:12)
+- A3 修復後: 即使 LLM 跑慢, 60s timeout 內 fall back, 不再 180s 卡死
+
+### 誠實標記
+
+- 本條目是 prime-agent (2026-08-21 16:42 CST) 從 hermes agent.log 探查後補登
+- 8/20 + 8/21 cron session 已結束, 無法直接驗證 LLM 卡死的最終根因 (A1+A2 是基於 log 證據的合理推論)
+- 修復任務 A1+A2 是 hermes 端 (不在 atlas-wiki 範圍), 需 hermes-agent 寫入 SKILL.md
+- 修復任務 A3 是 hermes 端 + atlas-go 端 (需 kaecer 派工)
+
 **附**:source 復原指令(沿用 8/16~8/20,請 kaecer 執行後回報):
 ```
 ls -la ~/workspace/Fin-Skills/ 2>&1 | head -5

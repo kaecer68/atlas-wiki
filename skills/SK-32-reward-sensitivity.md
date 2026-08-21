@@ -47,7 +47,7 @@ Step 3: client 端彙整成 DataFrame,sort by sharpe_ratio desc,確認連續型 
 
 ## 未消化 / 待補
 - [ ] 4 種 reward 的「訓練成本」需列入:有些 reward(如 risk_penalty)訓練更慢。
-- [ ] 與 SK-31 的關係:SK-32 確認最佳 reward,SK-31 確認最佳策略族(SL vs RL),兩者交集才是「最佳實務」。
+- [ ] 與 SK-36 的關係:SK-32 確認最佳 reward,SK-36 確認最佳策略族(SL vs RL),兩者交集才是「最佳實務」。
 - [ ] 「換 reward 的邊際效益」需量化,才能判斷 A/B 測試的 ROI。
 
 methodology_aligned: true
