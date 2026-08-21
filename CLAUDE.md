@@ -15,7 +15,7 @@
 |------|---------|
 | 專案 context（憲法/目錄/權限/任務路由） | [`AGENTS.md`](AGENTS.md)（v0.8） |
 | 技能寫入規範（六條鐵律/size 上限） | [`skills/_method.md`](skills/_method.md) |
-| 技能轉化審查任務（T9） | [`skills/_t9-repair-tasks-20260815.md`](skills/_t9-repair-tasks-20260815.md) |
+| 技能轉化審查任務（T9） | [`skills/_t9-repair-tasks-20260821.md`](skills/_t9-repair-tasks-20260821.md) |
 | 雙機治理（iMac/hermes 角色、同步、衝突） | `~/workspace/a2a-dev/docs/governance/雙機治理憲章.md` |
 | iMac 運維排障 | `~/workspace/a2a-dev/docs/operations/iMac-RUNBOOK.md` |
 | git merge 協議（分支/PR/合夥人制） | [`docs/git-merge-protocol.md`](docs/git-merge-protocol.md) |
