@@ -10,10 +10,18 @@ PY    := python3
 help:                   ## 列出所有 target
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN{FS=":.*?## "}{printf "  %-22s %s\n", $$1, $$2}'
 
-ci-gate:                ## 快速門禁(對位 GitHub CI 4 job)
-ci-gate: check-timestamp check-audit check-size check-frontmatter check-actionlint
+ci-gate:                ## 快速門禁(對位 GitHub CI 4 job + skills 索引同步 R1/R3)
+ci-gate: check-timestamp check-audit check-size check-frontmatter check-actionlint check-skill-index-sync-basic
 	@echo ""
-	@echo "✅ local ci-gate: all 5 checks passed"
+	@echo "✅ local ci-gate: all 5 checks passed (R1+R3 skills 同步)"
+
+ci-strict:              ## 嚴格模式(含 R4 frontmatter 檢查,需 112 個 SKILL.md 標 status)
+ci-strict: ci-gate check-skill-index-sync
+	@echo ""
+	@echo "✅ local ci-strict: all 6 checks passed (R1+R3+R4)"
+
+check-skill-index-sync-basic: ## 5b. skills 索引同步 R1+R3(跳過 R4 frontmatter,等 Plan F Week 3 補完)
+	@$(PY) skills/_scripts/check-skill-index-sync.py --repo-root $(CURDIR) --skip-r4
 
 ci-fast: ci-gate        ## 別名
 
@@ -34,6 +42,9 @@ check-size: check-skill-pages
 
 check-frontmatter:      ## 4. frontmatter 核心 10 欄齊全
 check-frontmatter: check-skill-pages
+check-skill-index-sync: ## 6. skills 索引同步檢查(Plan F CI,kaecer 8/21 21:25 拍板)
+	@$(PY) skills/_scripts/check-skill-index-sync.py --repo-root $(CURDIR)
+
 check-actionlint:       ## 5. workflow YAML lint(本地端,可選)
 	@if command -v actionlint >/dev/null 2>&1; then \
 	  actionlint .github/workflows/validate-wiki.yml; \

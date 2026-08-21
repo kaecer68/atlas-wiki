@@ -1,10 +1,11 @@
-# Atlas Wiki — Project Context (v0.8)
+# Atlas Wiki — Project Context (v0.9)
 
 > 每次在 `~/workspace/atlas-wiki/` 啟動時自動注入。
 > 上游機制：Hermes Context Files（`.hermes.md` / `AGENTS.md` / `CLAUDE.md`）。
 > 07-28 精簡版：規範全集拆分，僅留操作必讀項。
 > 08-01 v0.5：quota 同步（7/29 降標 5→3 頁）。
 > 08-08 v0.8：§0-§12 對齊 SOUL/skills-map + 買賣禁令取消 + 推測需根據 + 教訓不進本檔 + 內容精簡（§4/§11 刪、§3/§6/§7/§12 縮）。
+08-21 v0.9：加 §9.5 Skills 索引紀律（kaecer 8/21 21:20 拍板）；上限暫放寬至 12,500 bytes。
 
 ---
 
@@ -122,6 +123,54 @@
 | 阻塞與待解 Issue | `~/workspace/atlas-notes/02-knowledge/hermes-governance-log.md`（待解區） |
 ---
 
+## §9.5 Skills 索引紀律（2026-08-21 新增）
+
+> kaecer 8/21 21:20 拍板：skills map 分層索引只是 metadata，必須在 agents.md 建立索引紀律 SOP，避免「該呼叫的 skill 卻呼叫不到」的參數錯誤。
+> 規範本體見 `~/.hermes/skills/skills-map.md`「Skills 索引紀律 SOP」段。
+
+### 5 條必跑 SOP（每次 session 啟動 + 任務開始前）
+
+| # | SOP | 失敗後果 |
+|---|-----|---------|
+| 1 | **對位 skills-map.md 路由表**：確認當前任務屬於哪個 task/mode skill | 亂載入 / 用錯 skill |
+| 2 | **查 core/active 載入**：core 必讀，active 任務觸發；cold 不主動 | 漏載入該用的 skill |
+| 3 | **skill_view 載入按需**：cold 層要 `skill_view` 才載入 | 把 cold skill 內容塞進 context |
+| 4 | **找不到合適 skill 必報**：找不到 → 報 kaecer，不亂猜或自創 | 自創 skill 但未走護欄 SOP |
+| 5 | **新增/修改 skill 必走護欄**：搜尋 70% 重疊 + 寫 references/ 或拍板新增 | skills 膨脹失控 |
+
+### 本專案常用 skill 索引（速查）
+
+| 任務 | 必載入 skill（依層級） |
+|------|---------------------|
+| 散戶對話 / 金融判斷 | core: agent-self-judgment-mode + active: financial-advisor-coach / task-financial-judgment |
+| 知識整理 / wiki 寫入 | core: task-knowledge-routing + active: knowledge-harvest / wiki-critic / director-atlas-wiki |
+| 治理 / skill 維護 | core: task-governance / mode-escalation + active: governance-audit |
+| 程式 / 系統 / 研究 | core: task-coding + active: task-system-health / mode-research |
+
+### 紅線（不可違反）
+
+- ❌ 不靠記憶猜測 skill 是否存在（必看 skills-map.md）
+- ❌ 不在任務中段才補載入 skill（任務開頭 60 秒必查）
+- ❌ 不混用 cold 層 skill 與 core 層 skill 的載入方式
+- ❌ 不自創 skill 名稱，必走護欄 SOP 拍板
+- ❌ 不修改 skills-map.md 而不同步更新本檔索引紀律
+
+### 驗證 SOP（每次 session 開頭）
+
+```bash
+ls ~/.hermes/skills/                              # 確認 skills tree 結構
+grep -c '^### ' ~/.hermes/skills/skills-map.md    # 確認路由條目數
+hermes prompt-size --json | jq '.skills_index'    # 確認 always-on skills_index size
+```
+
+### 護欄強度（Plan F Week 3 上線）
+
+- 硬上限：core 10 + active 50 + cold 100 = 160 個
+- 軟警告：90 天沒引用 → LLM 提示「建議 archive」
+- 新增必跑：70% 重疊搜尋 + 寫 references/ 或拍板
+
+---
+
 ## §10 改版守則
 
 每次 mission 變更、kaecer 新拍板、或路由表更新，patch 本檔並 bump 版本。
@@ -133,6 +182,8 @@
 改 atlas 內容前讀 `~/.hermes/content-routing.md`（先分類 / 一段一檔 / LIMIT MEMORY 2200/USER 1375 / SOUL 只做人）。
 
 驗證：`wc -c` ≤ 10,500 bytes（之後只減不加）；`stat -f '%Sm' ~/.hermes/SOUL.md` 時間戳不變。
+
+> **v0.9 例外（2026-08-21）**：加 §9.5 Skills 索引紀律（kaecer 拍板），上限暫放寬至 12,500 bytes；後續 §0/§3 精簡後收回 10,500 bytes。
 
 ---
 
