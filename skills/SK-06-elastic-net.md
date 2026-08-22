@@ -13,6 +13,7 @@ verification: 2026-08-02 v0.9 結算跑過 L3 升 active:client 端 sklearn 1.8.
 
 ## 一句話定位
 SK-06 是 OLS 的高維修正版——L1+L2 混合正則化,把不重要因子的係數壓到接近 0,解決「86 個因子但只有 60 個月樣本」的高維小樣本問題。
+> 口徑註：本頁 60/12 個月指滾動切割後單一 window 內月數；全樣本為 336 月（1994-01~2022-04,SK-01）[2026-08-22 audit-fix]
 
 ## 論文版概念
 - 結合 L1(Lasso,稀疏)+ L2(Ridge,平滑),`l1_ratio=0.5` 是平衡點
@@ -40,6 +41,7 @@ SK-06 是 OLS 的高維修正版——L1+L2 混合正則化,把不重要因子�
 Step 1: 從 `stock_get_fundamentals` + `stock_get_technical` 拉 18 欄 X,從 `backtest_signals` 拿 OOS y。
 Step 2: client 端跑 `ElasticNetCV(l1_ratio=[0.1,0.5,0.9], alphas=np.logspace(-4,0,20))`。
 Step 3: 對比 SK-05 OLS 與 SK-09 PLS 的 OOS R²,確認 ElasticNet 優於 OLS 但不優於 PLS(預期差距 5-15%)。
+> 口徑註：上述預期排名僅對小樣本弱訊號真實資料成立；本頁合成線性資料實測 OLS=1.0 最高,兩者不矛盾但不可混讀 [2026-08-22 audit-fix]
 
 ## 未消化 / 待補
 - [ ] `alpha` CV 範圍是否足夠?學術建議 logspace(-6, 2, 50)。

@@ -39,6 +39,7 @@ SK-08 用 PCA 把 86 個高共線特徵壓成 4 個無關主成分,再做 OLS—
 Step 1: 拉 14 欄 X(基本+技術),從 `backtest_signals` 拿 y。
 Step 2: client 端 `PCA(n_components=4).fit_transform(X)` → `LinearRegression().fit()`。
 Step 3: 對比 SK-05 OLS 與 SK-09 PLS 的 OOS R²(預期 PLS > PCR > OLS)。
+> 口徑註：上述預期排名僅對小樣本弱訊號真實資料成立；本頁合成線性資料實測 OLS=1.0 最高,兩者不矛盾但不可混讀 [2026-08-22 audit-fix]
 
 ## 未消化 / 待補
 - [ ] `variance_threshold=0.9` 自動選成分數的邏輯在金融數據是否合理?台股因子變異集中,可能 2 個成分就 90%。

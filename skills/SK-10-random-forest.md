@@ -41,6 +41,7 @@ SK-10 是金融 ML 的「萬用 baseline」——非線性、處理共線、給�
 Step 1: 拉 18 欄 X,從 `backtest_signals` 拿 y。
 Step 2: client 端 `RandomForestRegressor(n_estimators=500, max_depth=2)`。
 Step 3: OOS R² 對比 SK-05 OLS(預期 RF 優 10-20%);同時算 `feature_importances_`,看 top-5 是否包含 SK-13 permutation 認定的 top-5。
+> 口徑註：上述預期排名僅對小樣本弱訊號真實資料成立；本頁合成線性資料實測 OLS=1.0 最高,兩者不矛盾但不可混讀 [2026-08-22 audit-fix]
 
 ## 未消化 / 待補
 - [ ] XGBoost / LightGBM 是否在 atlas 端有對位?論文中沒用,但實務主流。

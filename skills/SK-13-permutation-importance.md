@@ -49,6 +49,7 @@ SK-13 在 atlas 是「哪個因子真有用」的黑盒問答——把每個因�
 
 ## 驗證方式
 Step 1: 從 `stock_get_fundamentals` + `stock_get_technical` 拼出 18 欄 X,從 `backtest_signals` 拿 OOS y,client 端 train/test split 8:2。
+> ⚠️ 本 Step 用隨機切分僅為演示 API；正式評估必走 SK-03 滾動時序切分,隨機切分在時間序列有前視洩漏 [2026-08-22 audit-fix]
 Step 2: client 端跑 `permutation_importance(model, X_test, y_test, n_repeats=10, scoring='r2')`。
 Step 3: 看 top-10 因子,**人工檢查是否有「冷門訊號」在前 5 名**;若 top-5 全是本益比/殖利率/MACD 這類大路貨,在 wiki 標「public alpha,實盤可能失效」。
 

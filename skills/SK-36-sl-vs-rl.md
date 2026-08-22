@@ -9,7 +9,7 @@ tier: T3
 confidence: medium
 atlas_go_relevance: high
 mcp_tools_used: [backtest_signals, risk_get_metrics, experiment_diff]
-verification: 2026-08-01 v0.9 結算跑過 L3 升 active:backtest_signals sharpe_long 0.27/sharpe_short 0.49(SL 對比基準);risk_get_metrics live session_count=147;**experiment_diff 400 need experiment_id(我帶 agent_id 不是真的 experiment_id)= 部分失敗**;論文中 RL 勝出 SL 的結論需 client 端 GPU + stable-baselines3 驗證,atlas 端只提供回測引擎不提供 RL 訓練;atlas SL/RL 都用同一 backtest_signals 端點,真實分流依 `experiment_diff` 需真 experiment_id。
+verification: 2026-08-01 v0.9 結算跑過 L3 升 active:backtest_signals sharpe_long 0.27/sharpe_short 0.49(SL 對比基準);risk_get_metrics live session_count=147;**experiment_diff 可用性更新：2026-08-07 SK-22 證實原 400 為參數名誤判（id= 應為 experiment_id=）,端點可用 [2026-08-22 audit-fix]**;論文中 RL 勝出 SL 的結論需 client 端 GPU + stable-baselines3 驗證,atlas 端只提供回測引擎不提供 RL 訓練;atlas SL/RL 都用同一 backtest_signals 端點,真實分流依 `experiment_diff` 需真 experiment_id。
 ---
 
 ## 一句話定位
