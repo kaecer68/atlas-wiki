@@ -466,7 +466,6 @@ from hermes_cli.subcommands.import_agent import build_import_agent_parser
 from hermes_cli.subcommands.config import build_config_parser
 from hermes_cli.subcommands.skin import build_skin_parser
 from hermes_cli.subcommands.console import build_console_parser
-from hermes_cli.subcommands.version import build_version_parser
 from hermes_cli.subcommands.update import build_update_parser
 from hermes_cli.subcommands.uninstall import build_uninstall_parser
 from hermes_cli.subcommands.dashboard import build_dashboard_parser
@@ -12892,11 +12891,6 @@ def main():
     # claw command  (parser built in hermes_cli/subcommands/claw.py)
     # =========================================================================
     build_claw_parser(subparsers, cmd_claw=cmd_claw)
-
-    # =========================================================================
-    # version command  (parser built in hermes_cli/subcommands/version.py)
-    # =========================================================================
-    build_version_parser(subparsers, cmd_version=cmd_version)
 
     # =========================================================================
     # update command  (parser built in hermes_cli/subcommands/update.py)

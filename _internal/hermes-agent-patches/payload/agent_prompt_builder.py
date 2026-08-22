@@ -191,6 +191,21 @@ MEMORY_GUIDANCE = (
     "workflows belong in skills, not memory."
 )
 
+USER_PROFILE_GUIDANCE = (
+    "You have a persistent user profile across sessions. Save durable facts about "
+    "the user with the memory tool (target='user'): name, role, preferences, "
+    "corrections, and communication style. The profile is injected into every turn, "
+    "so keep it compact and focused on facts that will still matter later.\n"
+    "The built-in memory notes store is disabled — write only to the user profile "
+    "(target='user'), never target='memory'.\n"
+    "Prioritize what reduces future user steering — the most valuable entry is one "
+    "that prevents the user from having to correct or remind you again.\n"
+    "Write entries as declarative facts, not instructions to yourself. "
+    "'User prefers concise responses' ✓ — 'Always respond concisely' ✗. "
+    "Imperative phrasing gets re-read as a directive in later sessions and can "
+    "cause repeated work or override the user's current request."
+)
+
 SESSION_SEARCH_GUIDANCE = (
     "When the user references something from a past conversation or you suspect "
     "relevant cross-session context exists, use session_search to recall it before "
@@ -346,6 +361,25 @@ TOOL_USE_ENFORCEMENT_GUIDANCE = (
 # Model name substrings that trigger tool-use enforcement guidance.
 # Add new patterns here when a model family needs explicit steering.
 TOOL_USE_ENFORCEMENT_MODELS = ("gpt", "codex", "gemini", "gemma", "grok", "glm", "qwen", "deepseek")
+
+# Model name substrings whose sessions receive OPENAI_MODEL_EXECUTION_GUIDANCE
+# (execution discipline: tool persistence, mandatory tool use for arithmetic,
+# external-write read-back, count reconciliation, literal preservation,
+# verification-gated completion) when agent.execution_guidance is "auto".
+#
+# gpt/codex/grok are the historical set; deepseek/kimi/qwen/glm/minimax/
+# mimo/mistral were added after Composio agentic-eval traces showed the same
+# failure modes on those families (financial math in prose, no read-back after
+# external writes, identifier "repair", completeness claims despite count
+# mismatches). GLM's tool-calls-as-plain-text stall (#53847) and MiMo (#41874)
+# are covered here too. Gemini/Gemma are excluded — they get the more specific
+# GOOGLE_MODEL_OPERATIONAL_GUIDANCE block instead. Claude is excluded because
+# it does not exhibit these failure modes; users can opt any model in via
+# config.yaml `agent.execution_guidance: true` or a substring list.
+EXECUTION_GUIDANCE_MODELS = (
+    "gpt", "codex", "grok",
+    "deepseek", "kimi", "qwen", "glm", "minimax", "mimo", "mistral",
+)
 
 # Universal "finish the job" guidance — applied to ALL models, not gated
 # by model family.  Addresses two cross-model failure modes:
