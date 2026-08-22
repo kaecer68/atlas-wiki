@@ -27,7 +27,7 @@ related:
 
 ## §0 使用規則
 
-1. 散戶進問題 → §1 找分類 → §2 找「核心 SK」 → §3 找「atlas 端點」 → §4 找「散戶語言」
+1. 散戶進問題 → §1 找分類 → §2 找「核心 SK」 → §3 找「atlas 端點」 → §4 找「散戶語言」 → 知識對位查 [[_knowledge-router]]
 2. 若問題跨多個分類,依**首要關切**入主分類,次要分類在「附加」欄標
 3. 若 §1 找不到:擴張到 §5「未分類問題」工作流,找新端點並補登
 4. 每跑完一題,於 §6「諮詢紀錄」追蹤,作為後續 SK 寫入優先序依據
@@ -91,9 +91,9 @@ related:
 
 > 詳見 [[concepts/atals-mcp-tools-reference]] [2026-08-22 audit-fix]
 
-> §3.1 方法論憲章對位表已歸檔 → [[_consult-index_archive.md]]（2026-08-22 audit-fix,對位 _inbox 第七條例外模式）
+> §3.1 方法論憲章對位表 → [[_consult-index_archive]]（2026-08-22 歸檔,對位 _inbox 例外模式）
 
-> §3.2 端點底層 channel 對位表已歸檔 → [[_consult-index_archive.md]]（2026-08-22 audit-fix,對位 _inbox 第七條例外模式）
+> §3.2 端點 channel 對位表 → [[_consult-index_archive]]（2026-08-22 歸檔）
 
 ---
 
@@ -133,11 +133,11 @@ related:
 
 ---
 
-> §6 諮詢紀錄已歸檔 → [[_consult-index_archive.md]]（2026-08-22 audit-fix,對位 _inbox 第七條例外模式）
+> §6 諮詢紀錄 → [[_consult-index_archive]]（2026-08-22 歸檔）
 
 ---
 
-> §6.4 13 觸發模板對位表已歸檔 → [[_consult-index_archive.md]]（2026-08-22 audit-fix,對位 _inbox 第七條例外模式）
+> §6.4 觸發模板對位表 → [[_consult-index_archive]]（2026-08-22 歸檔）
 
 ---
 
