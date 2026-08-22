@@ -27,7 +27,7 @@ sources:
 
 ---
 
-## 2. 對位 9 條未完成工作(manifest-2026-08-07-D4-unfinished-9)
+## 2. 對位 9 條未完成工作(manifest-2026-08-07-D4-unfinished-9,已遷移至 atlas-notes/02-knowledge/,2026-08-22 知識路由)
 
 | 條目 | 適合層 | 解法 |
 |---|---|---|

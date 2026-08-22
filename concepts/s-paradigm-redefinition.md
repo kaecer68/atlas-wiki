@@ -5,7 +5,7 @@ updated: 2026-07-15
 type: concept
 tags: [S, concept, framework, contested]
 sources:
-  - raw/articles/atlas-taiwan-trading-signals-v0.4.md
+  - ~/workspace/atlas-notes/02-knowledge/atlas-taiwan-trading-signals-v0.4.md
   - 與 kaecer 對話紀錄(2026-07-15)
 confidence: high
 contested: true
@@ -177,5 +177,5 @@ atlas-go 在 S 期間的「**真實工作**」:
 ## 來源
 
 - kaecer 2026-07-15 對話紀錄(本 wiki 整理)
-- `raw/articles/atlas-taiwan-trading-signals-v0.4.md` — v0.4 訊號燈對 S 的描述
+- `~/workspace/atlas-notes/02-knowledge/atlas-taiwan-trading-signals-v0.4.md` — v0.4 訊號燈對 S 的描述（2026-08-22 知識路由遷移）
 - 我(MiniMax-M3) v0.1 / v0.2 three-paradigms.md 寫的「錯誤詮釋」(標記為 `contradictions`)

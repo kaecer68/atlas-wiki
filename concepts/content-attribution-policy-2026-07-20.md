@@ -17,7 +17,7 @@ contradictions:
 
 # 內容歸屬守則 — wiki vs notes 邊界
 
-> **這頁存在的理由**：kaecer 2026-07-20 白班明示，hermes agent 把「盤查報告 / 待修復問題 / 真相挖掘」放在 `atlas-wiki/queries/` 會造成**知識污染**（未定型的事實被當成已成型的知識處理），同時允許接手修 atlas 的 agent 也寫到 `atlas-wiki/` 等於**越界代回填負責人專區**。
+> **這頁存在的理由**：kaecer 2026-07-20 白班明示，hermes agent 把「盤查報告 / 待修復問題 / 真相挖掘」寫進 atlas-wiki 會造成**知識污染**（未定型的事實被當成已成型的知識處理），同時允許接手修 atlas 的 agent 也寫到 `atlas-wiki/` 等於**越界代回填負責人專區**。2026-08-22 知識路由已將 wiki 盤查區（raw、queries、comparisons 等 18 檔）遷移至 atlas-notes/02-knowledge/，本守則邊界不變。
 >
 > 這頁**對位** atlas 的 `docs/documentation-standard.md`（atlas 規範「**不同內容類型歸屬不同位置**」），把它整理成 hermes + kaecer 雙專案可遵循的內容邊界。
 
@@ -39,7 +39,7 @@ contradictions:
 
 ### 2.1 「**盤查**」與「**真相挖掘**」（您點名的第一類）
 
-- ❌ **錯**：寫到 `atlas-wiki/queries/` 或 `atlas-wiki/concepts/`
+- ❌ **錯**：把盤查 / 真相挖掘寫進 `atlas-wiki/concepts/` 或任何 wiki 區（wiki 盤查區已裁撤，2026-08-22 併入 atlas-notes）
 - ✅ **對**：
   - 根因調查 → `atlas-notes/03-system-health/investigations/YYYY-MM-DD-{slug}.md`
   - 待辦但還沒動 → `atlas-notes/06-backlog/{slug}.md`
