@@ -14,11 +14,13 @@ verification: 2026-08-01 v0.9 結算跑過 L3 升 active:backtest_signals 拿 ra
 ## 一句話定位
 SK-04 在 atlas 是「異常報酬處理」——把極端市場事件(2020 疫情、2022 升息)的影響從回測序列中按比例壓低,讓長期夏普估計更貼近常態市場。
 
+> ⚠️ **警示 [2026-08-22 audit-fix]**:對回測報酬序列事後變形再算 Sharpe,衡量的是**變形後序列**,不是策略真實可實現 Sharpe。
+
 ## 論文版概念（忠實還原來源）
 - **核心**:把模型的損失函數從 MSE 換成 Huber Loss:`L_δ(y, ŷ) = 0.5(y-ŷ)² if |y-ŷ|≤δ, else δ(|y-ŷ|−0.5δ)`
 - **輸入**:閾值 `xi=0.9`、基底模型 `base_model ∈ {'linear','elasticnet','glm'}`
 - **動作**:定義 `huber_loss(y_true, y_pred, xi)` → 替換基底模型損失 → 訓練 → 返回模型
-- **適用**:異常值比例 < 50% 的回歸問題;xi 越小對異常越敏感
+- **適用**:異常值比例 < 50% 的回歸問題;δ→0 時 Huber 趨近 L1(對異常值**最穩健**),δ 越大越接近 MSE(對異常值越敏感) [2026-08-22 audit-fix]
 - **論文未提但實務重要**:Huber 處理的是「訓練時異常」,但回測序列的「異常報酬」需另處理(用 winsorize 或 shrinkage)
 
 ## atlas 對位
@@ -43,12 +45,12 @@ SK-04 在 atlas 是「異常報酬處理」——把極端市場事件(2020 疫�
 
 ## 驗證方式
 Step 1: 呼叫 `backtest_signals` 取最近一次 supervised pipeline 結果,看 raw_return 序列是否有 |return| > 3σ 的極端值(預期 2020-03、2022 年中會有)。
-Step 2: client 端實作 `huber_smooth(r, xi=0.9)`:對 |r| > xi*r_std 的部分按 (xi*r_std - 0.5*xi*r_std) 線性遞減,|r| ≤ xi*r_std 維持原值。
+Step 2: client 端實作 `huber_smooth(r, xi=0.9)` 分段 Huber:`|r|≤δ` 為二次方段 `0.5r²`;`|r|>δ` 為線性段 `δ(|r|−0.5δ)`,損失對 |r| 線性增長(相對二次方壓平極端值) [2026-08-22 audit-fix]。
 Step 3: 對比 `risk_get_metrics` 在處理前後的 Sharpe / max_drawdown 變化(預期 Sharpe 微升、drawdown 微降,但變化不應過大)。
 
 ## 未消化 / 待補
 - [ ] atlas `backtest_signals` 是否有「異常值標記」欄位?若有可省 client 端計算。
-- [ ] 論文 xi=0.9 是 90% 分位的固定閾值,但實務該用 z-score 動態閾值;atlas 是否暴露分位計算?
+- [ ] 論文 xi=0.9 的「90% 分位」表述待釐清——δ 是**尺度參數不是分位數**;實務該用 z-score 動態閾值;atlas 是否暴露分位計算? [2026-08-22 audit-fix]
 - [ ] 「實盤遇到同樣事件沒準備」風險的量化方法論:在 atlas `event_calendar` 對位?
 - [ ] Huber 與 SK-21 排除仙股的關係:兩者都是「樣本穩健性」,是否可共用 endpoint?
 

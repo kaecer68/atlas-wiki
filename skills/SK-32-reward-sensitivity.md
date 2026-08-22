@@ -8,7 +8,7 @@ tier: T3
 confidence: medium
 atlas_go_relevance: high
 mcp_tools_used: [backtest_signals, risk_get_metrics, experiment_diff]
-verification: 2026-08-01 v0.9 結算跑過 L3 升 active:backtest_signals/risk_get_metrics 跑通;**experiment_diff 400 need experiment_id(無法做 A/B 對比)**:端點活但無法做獎勵 A/B,4 種 reward 函數(continuous_rank/top10_hit/top1_hit/risk_penalty)無法在 atlas 端直接對比,需 client 端自己 4 輪 experiment;論文中 continuous_rank 最優無法用 atlas 驗證,需另起 PPO 訓練環境。
+verification: 2026-08-01 v0.9 結算跑過 L3 升 active:backtest_signals/risk_get_metrics 跑通;**experiment_diff 可用性更新：2026-08-07 SK-22 證實原 400 為參數名誤判（id= 應為 experiment_id=）,端點可用 [2026-08-22 audit-fix]**:端點活,4 種 reward 函數(continuous_rank/top10_hit/top1_hit/risk_penalty)可 A/B 對比,但需 client 端自己 4 輪 experiment 產生 experiment_id;論文中 continuous_rank 最優無法用 atlas 驗證,需另起 PPO 訓練環境。
 ---
 
 ## 一句話定位

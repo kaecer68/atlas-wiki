@@ -122,3 +122,5 @@ cycle_type: annual-semi-annual
 - ❌ 不要把 trigger 寫成「讀完報告就賣出」(對位結構性誠實 §5)
 - ❌ 不要繞過 governance-log 留痕(週期型 trigger 必須有 T3 evidence)
 - ❌ 不要 mock(本模板絕對禁止 mock 觸發:即使沒命中也誠實標「未達觸發條件」)
+
+參見:[[concepts/taiwan-export-orders-semiconductor-cycle]]（L2 台灣出口/半導體景氣——本模板外部報告數字的台灣端月頻驗證）[2026-08-22 audit-fix 接線]

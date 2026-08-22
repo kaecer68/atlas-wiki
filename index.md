@@ -2,7 +2,7 @@
 
 > 散戶 AI 實戰金融工程 知識圖譜
 > 從 2026-07-15 開始建立
-> Last updated: 2026-08-02 | Knowledge entries: 36 (this index) / Repo .md 總數: 91 / SK 知識頁: 33
+> Last updated: 2026-08-22 | Knowledge entries: 36 (this index) / Repo .md 總數: 154（2026-08-22 快照,find 實測） / SK 知識檔: 37（36 編號 + 索引,SK-27/30 已 archive）
 > 2026-08-03 repo 公開化(MIT + v1.0.0 + CI validate-wiki)
 
 ## Entities
@@ -56,6 +56,17 @@
 <!-- 跨概念比較:L vs T vs S、S1 vs S2、0050 vs 00878 等 -->
 
 - [[comparisons/l-t-s-three-paradigms-comparison]] — L/T/S 三範式對照表(Stage 1C 第二個小步,2026-07-17)
+
+## Skills
+<!-- SK 知識頁索引:SK-00 索引 + SK-01~SK-36(37 檔,SK-27/30 已 archive;2026-08-22 audit-fix 快照) -->
+
+- [[skills/SK-00-skill-index]] — SK 索引頁
+- **8/7-8/21 新增**:
+  - [[skills/SK-33-audience-routing]] — audience-routing（受眾路由）
+  - [[skills/SK-34-listed-otc-routing]] — listed-otc-routing（上市/上櫃分流,8/15 真實 promotion,PR #21）
+  - [[skills/SK-35-mcp-failover]] — mcp-failover（MCP 故障切換）
+  - [[skills/SK-36-sl-vs-rl]] — sl-vs-rl（原 SK-31 renumber,PR #31）
+  - [[skills/SK-31-ai-investment-cycle-2026]] — AI 投資週期 2026（SK-31 唯一對應）
 
 ---
 

@@ -621,3 +621,18 @@ E 不寫猜測，看 logs 或 re-test
   8. [[concepts/atals-mcp-tools-reference]] — MCP 工具參考
   9. [[concepts/atals-strategy-taxonomy]] — L1-L5 策略分類
   10. [[concepts/atals-risk-management-framework]] — 風險管理框架
+
+
+---
+
+## 2026-08-07 ~ 2026-08-22 里程碑補登 [2026-08-22 audit-fix]
+
+> 補登 8/7-8/21 期間未逐日記錄的里程碑（2026-08-22 金融審計批次一併補登,對位 _internal/audit-2026-08-22-financial/）。
+
+- SK-34 真實 promotion（PR #21,8/15）
+- Plan F 護欄 Week 1-3（PR #32/#33）
+- T9 任務清單 v1+v2（PR #28/#30）
+- _inbox 歸檔（PR #29）
+- SK-31→SK-36 renumber（PR #31）
+- hermes-agent runtime patch 管理（PR #34/#35）
+- 2026-08-22 金融審計 + audit-fix 批次（本 PR）

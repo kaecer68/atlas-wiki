@@ -299,3 +299,5 @@ related:
 
 > **最後更新**: 2026-08-02 23:45 (v2 — 規範拍板 + B 階段 24/24 + SK-22/27/30 + atlas 端 6 條移交)
 > **採納決策權**: kaecer(第五條鐵律已拍,B 階段執行已核准)
+
+> **衍生檔歸檔**：`_methodology_alignment_audit_VERBATIM.md` 與 `_methodology_alignment_audit_with_fileline.md` 已移至 `skills/_archive/`（原檔名保留）[2026-08-22 audit-fix]。

@@ -18,6 +18,7 @@ methodology_aligned: true
 atlas_constitution_ref: ATLAS_METHODOLOGY.md §五(策略矩陣:多空十分位對應「跟隨聰明錢」策略;RISK_OFF 期 Advisor.AllowedStrategies() 禁「事件套利／資金對抗」)(附註:2026-07-30 period_system 變動 — `period` 已是 PeriodDetector 真值,`source` 欄位正名 `regime_source` / `period_source`)
 related:
   - ~/workspace/atlas-wiki/skills/_methodology_alignment_audit_with_fileline.md §1.4 (TW-X4 已撤銷 — regime vs 策略分類正交,見附錄 H「裁決狀態」)
+  - ~/workspace/atlas-wiki/concepts/retail-sentiment-indicators.md（L6 散戶情緒反向指標,2026-08-22 接線）
 ---
 
 <!-- methodology_alignment_tip: 本檔術語:七時期為真值,RISK_ON/OFF 為向下相容;atlas strategy_ranker 內部 regime = BULL/BEAR/HIGH_VOL/NEUTRAL 4 分類與憲章策略三分類(跟隨聰明錢／事件套利／資金對抗)正交(2026-07-30 kaecer 裁定 TW-X4 撤銷) -->

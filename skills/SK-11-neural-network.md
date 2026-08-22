@@ -38,6 +38,7 @@ SK-11 是金融 ML 的「小心陷阱」——神經網路在影像/NLP 碾壓�
 
 ## 驗證方式
 Step 1: 拉 18 欄 X,從 `backtest_signals` 拿 y,train/valid/test 6:2:2 切。
+> ⚠️ 本 Step 用隨機切分僅為演示 API；正式評估必走 SK-03 滾動時序切分,隨機切分在時間序列有前視洩漏 [2026-08-22 audit-fix]
 Step 2: client 端 `Sequential([Dense(25, activation='relu'), Dense(25), Dense(1)])` + `EarlyStopping(patience=5)`。
 Step 3: 對比 SK-10 RF 與 SK-05 OLS 的 OOS R²(預期 NN ≈ OLS < RF,若 NN > RF 需審視過擬合風險)。
 

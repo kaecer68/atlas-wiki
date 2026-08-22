@@ -20,6 +20,7 @@ SK-09 在 atlas 是「監督式降維」——把高維股票特徵(86 因子起
 - **動作**:標準化 X 與 y → `sklearn.cross_decomposition.PLSRegression` 擬合 → 返回模型
 - **適用**:
   - 特徵數 p > 樣本數 n(典型 86 因子 vs 12 個月樣本)
+> 口徑註：本頁 60/12 個月指滾動切割後單一 window 內月數；全樣本為 336 月（1994-01~2022-04,SK-01）[2026-08-22 audit-fix]
   - 特徵間高度共線性(動量/反轉/波動高度相關)
   - 想保留與 y 相關的 latent 結構
 - **與 PCA 差別**:PCA 只看 X 的變異,PLS 同時看 X 與 y 的相關 → 對預測任務更實用
@@ -48,6 +49,7 @@ SK-09 在 atlas 是「監督式降維」——把高維股票特徵(86 因子起
 Step 1: 從 `stock_get_fundamentals` 拉 10 欄(PE、PB、殖利率、營收成長、ROE、負債比、現金比、流動比、淨利率、毛利率),從 `stock_get_technical` 拉 4 欄(SMA20、SMA50、RSI14、MACD),合計 14 欄 X。
 Step 2: 從 `universe_get_sessions` 取一份 supervised pipeline 結果,對齊 y 為「下一期月報酬」。
 Step 3: client 端跑 `PLSRegression(n_components=2)`,對比 `LinearRegression` 的 in-sample R² 與 `risk_get_metrics` 給的 OOS R²,確認 PLS 在 OOS 優於 OLS(預期差距 5-15%)。
+> 口徑註：上述預期排名僅對小樣本弱訊號真實資料成立；本頁合成線性資料實測 OLS=1.0 最高,兩者不矛盾但不可混讀 [2026-08-22 audit-fix]
 
 ## 未消化 / 待補
 - [ ] atlas `risk_get_metrics` 是否區分 in-sample / out-of-sample?若否,PLS 的「OOS 優於 OLS」敘事無法直接驗證,需在 client 端做 walk-forward 切分。

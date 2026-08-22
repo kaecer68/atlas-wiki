@@ -17,3 +17,6 @@
 - 觸發失敗 → 觀望
 
 ## Step 4:落 §6 + Telegram
+
+> 註:檔名 350b（3500 億）為舊門檻,現條件 > 5000 億（2026 市值水位校準）;檔名保留以相容引用 [2026-08-22 audit-fix]
+> 參見:[[concepts/retail-sentiment-indicators]]（L6 散戶情緒反向指標——融資水位判讀規則）[2026-08-22 audit-fix 接線]

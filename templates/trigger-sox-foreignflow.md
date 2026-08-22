@@ -1,12 +1,12 @@
 # SOX+外資買超 觸發模板(單日版)
 
-**觸發條件(單日)**:SOX change > 0%(收紅)+ 當日外資買超
+**觸發條件(單日)**:SOX 單日 > +1.5% 且站回 50 日線 + 當日外資買超 > 50 億(對位憲章 §五「SOX 在 50 日線下不做多」)[2026-08-22 audit-fix]
 **對位**:ATLAS_METHODOLOGY.md §二 Layer 2(美股科技動能)
-**對位 strategy**:sox-foreignflow-semiconductor(L2, hit_rate 0.33)
+**對位 strategy**:sox-foreignflow-semiconductor(L2, hit_rate 0.33；hit_rate 為**舊 SOX > 0% 條件快照 [2026-08-22 audit-fix]**)
 
-## Step 1:信號捕捉(對位真實 2026-08-03)
-- **SOX +0.07%** ✅(change_pct > 0)
-- **foreign_investor_net +21.83 億** ✅(當日買超)
+## Step 1:信號捕捉(對位真實 2026-08-03,舊快照)
+- **SOX +0.07%**(2026-08-03 舊快照,未達 +1.5% 新門檻 [2026-08-22 audit-fix])
+- **foreign_investor_net +21.83 億**(2026-08-03 舊快照,未達 > 50 億新門檻 [2026-08-22 audit-fix])
 - 對位端點:mcp__atlas_mcp__macro_get_snapshot_latest(sox_index/change_pct)
 
 ## Step 2:自動跑端點

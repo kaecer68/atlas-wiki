@@ -101,7 +101,7 @@ UNCTAD WIR 2026 figure III.1 顯示半導體 greenfield 5 年 CAGR +54%(2020→2
 |--------|------|
 | ATLAS_METHODOLOGY 7 層因果鏈 | Layer 1(美股科技估值:NVDA capex)→ Layer 2(台灣出口:設備鏈月營收)→ Layer 3(半導體 leader) 三層正交對位 |
 | Q1 個股 + Q3 產業 | Q3 產業輪動為主(半導體設備鏈是產業層) |
-| 策略三分類 | 對位 Aggressive(押 AI 供應鏈),不用於 Defensive / Tactical |
+| 策略 archetype 對位 | **跟隨聰明錢**(押 AI 供應鏈的聰明錢流入);E5a 策略類別 = Aggressive。archetype 三分類正本 = 跟隨聰明錢／事件套利／資金對抗(AGENTS.md §12)[2026-08-22 audit-fix] |
 | 七時期 | 黑天鵝時期(`black_swan`)+ 黑天鵝 + 7 時期對位 → trigger 不主動推(保守者存活原則) |
 | 三態向下相容 | RISK_ON 時期 trigger 信號加強,RISK_OFF 減弱,NEUTRAL 中性 |
 | 散戶語言 | 「設備鏈月營收連 3 月 YoY > 30% = 半導體接單已啟動」 |
