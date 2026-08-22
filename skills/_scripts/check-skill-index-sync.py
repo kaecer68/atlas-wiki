@@ -198,3 +198,38 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+# =============================================================================
+# Plan F Week 3 Day 4 (2026-08-22 kaecer 拍板): R5 護欄 — skill 競爭 SOP
+# 規範本體: ~/workspace/atlas-wiki/_internal/skill-competitive-sop-design-2026-08-22.md
+# 規則: 新增 SKILL.md 必含 competition_sop_decision frontmatter 欄位
+# =============================================================================
+def check_skill_competition_sop_decision(skills_dir: Path) -> List[Dict[str, Any]]:
+    """Plan F Week 3 Day 4 R5: 新增 SKILL.md 必含 competition_sop_decision frontmatter
+
+    規則:
+      - SKILL.md frontmatter 必含 competition_sop_decision 區塊
+      - 區塊必含欄位: overlap_score (0.0-1.0), decision (extend/new), proposal_ref
+      - 缺欄位 → 違規
+
+    暫不啟用 R5（auto_archive 也是 false）— 等 Plan F Week 3 Day 4 完全實作後開啟
+    目前只記錄到 governance-log，由 LLM 在 session 中提示。
+    """
+    violations = []
+    for skill_md in skills_dir.rglob("SKILL.md"):
+        if "_archive" in str(skill_md):
+            continue
+        try:
+            content = skill_md.read_text(encoding="utf-8")
+            m = re.match(r"^---\n(.+?)\n---", content, re.DOTALL)
+            if not m:
+                continue
+            fm = m.group(1)
+            # 檢查 competition_sop_decision 區塊
+            if "competition_sop_decision:" not in fm:
+                # 暫不視為違規（剛開始推 SOP）
+                logger.debug(f"R5 (soft): {skill_md.name} missing competition_sop_decision")
+        except Exception:
+            pass
+    return violations

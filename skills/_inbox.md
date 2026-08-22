@@ -96,3 +96,29 @@ archive_owner: agent(autonomous, see _inbox_archive.md)
 **執行**: prime-agent (2026-08-21 16:35 CST) 從 hermes 8/16~8/21 累積 + 8/20 探查 + PR #27 merge 後整合歸檔
 
 **誠實標記**: 本次歸檔是 hermes 8/16 起累積的 5 個 [FAILED] 條目首次 commit 後的歸檔動作 (PR #27 已 merge commit 5 個條目 + 8/20 復盤),歸檔 _inbox.md 不涉及內容修改,純結構性搬移。
+---
+
+## atlas-skill-inbound cron 2026-08-22 04:01 結算 — 無工可派,源頭失聯
+
+**狀態**:`[NOOP]` — 不是 failure,是 void state
+**T3 對位**:誰=hermes;何時=2026-08-22T04:01:00+08:00(LLM session);依據=`ls /Users/kk/workspace/Fin-Skills/ 2>/dev/null` 失敗(`FAIL: Fin-Skills.md not found`)+ ls atlas-wiki/skills = 37 個 SK-*.md(SK-00~SK-36)+ 35 active/2 archived(SK-27/SK-30 quantum)/0 draft,quota 全飽和
+
+**診斷**:
+- **源頭**:`~/workspace/Fin-Skills/Fin-Skills.md` 路徑不存在(連整個 `~/workspace/Fin-Skills/` 目錄都找不到,8/22 04:00 起 ls 失敗)
+- **已寫**:SK-00 索引 + SK-01~33 + SK-34(8/12 新增上市上櫃分流)+ SK-35(8/12 failover-policy)+ SK-36(SL vs RL),共 37/37 = 100%
+- **active 比例**:35/37 = 94.6%(SK-27/SK-30 量子標 archive);**draft:0**(待 L3 升 active 為零)
+
+**判斷**:
+- 此非 LLM 失敗,是「任務前置條件消失」:源頭檔不在了,翻譯對象不存在
+- 不寫 = 不偽造 L3 通過
+- 跳過 = 不硬湊 quota
+
+**升級 kaecer 待辦**(2026-08-22 新發現):
+- [ ] Fin-Skills 源頭檔去哪了?(~/workspace/Fin-Skills/ 整個目錄不在;macOS 26.6.2 環境;無 git log 可追;atlas-notes/02-knowledge/ 亦無對應章節)
+- [ ] 若是刻意刪除(換新來源):新 fin-skills 框架落地後再開新一輪 atlas-skill-inbound
+- [ ] 若是意外刪除:從備份恢復(`atlas-backups/` 目錄 8/15 16:13 最後寫入,有可能)
+- [ ] cron 排程暫停:無源頭期間不要每天空跑浪費 token;kaecer 拍板再啟
+- [ ] 替代方案:若有新版 fin-skills,直接補進 `atlas-notes/02-knowledge/fin-skills/§SK-XX.md` 走 knowledge-harvest 三日循環掃描,而非 atlas-skill-inbound cron
+
+**Telegram**:`[SILENT]` — 對位 Telegram gate Rule 3 + Rule 4:無新工可派就不發,避免「0/0 頁」無意義通知干擾
+**改動**:本文 append 1 段(無其他 atlas-wiki/ 治理檔被動)
