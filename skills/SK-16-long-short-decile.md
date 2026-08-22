@@ -24,6 +24,8 @@ related:
 <!-- methodology_alignment_tip: 本檔術語:七時期為真值,RISK_ON/OFF 為向下相容;atlas strategy_ranker 內部 regime = BULL/BEAR/HIGH_VOL/NEUTRAL 4 分類與憲章策略三分類(跟隨聰明錢／事件套利／資金對抗)正交(2026-07-30 kaecer 裁定 TW-X4 撤銷) -->
 <!-- methodology_alignment_tip: 2026-07-30 period_system 變動 — `period` 已是 PeriodDetector 真值;`source` 欄位正名 `regime_source` / `period_source` -->
 
+> 術語備註:atlas 後端資金面 = 七維錢潮雷達 3+2+2 分層,不可加權平均（對位憲章 §四 + product-positioning §7.1）[2026-08-22 iter2]
+
 ## 一句話定位
 
 把「做多最強 10%、做空最弱 10%」這個學術策略,翻譯成 atlas 可驗證、可對散戶解釋的「找漏洞」核心工具。
