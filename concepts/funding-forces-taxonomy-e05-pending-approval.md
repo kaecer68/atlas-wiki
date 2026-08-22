@@ -140,4 +140,4 @@ foreign_adjusted_prior = foreign_prior
 
 - [[concepts/taiwan-money-flow-seven-institutional-buckets]]
 - [[concepts/t1-t4-signal-light]]
-- [[queries/money-flow-research-card-2026-07-18]]
+- money-flow-research-card-2026-07-18（已遷移至 atlas-notes/02-knowledge/, 2026-08-22 知識路由）

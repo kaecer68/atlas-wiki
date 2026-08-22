@@ -5,8 +5,8 @@ updated: 2026-07-17
 type: entity
 tags: [L, framework, overview]
 sources:
-  - raw/papers/atlas-original-paper-v0.1-L1T-multi.md
-  - raw/papers/atlas-original-paper-v0.1-L1T3-five-chains.md
+  - ~/workspace/atlas-notes/02-knowledge/atlas-original-paper-v0.1-L1T-multi.md
+  - ~/workspace/atlas-notes/02-knowledge/atlas-original-paper-v0.1-L1T3-five-chains.md
 confidence: medium
 contested: false
 contradictions: [v0.1-L1T-multi 中部分舊詮釋]
@@ -108,7 +108,7 @@ kaecer 拍板的「**L1-T 範式**」結構中,L1 = 鐵律的「**真實驅動�
 ## Day 3 工作紀律反思
 
 **已完成**:
-- Stage 1B 把 L1-T.1~T.6 主檔 symbolic link 進 raw/papers/
+- Stage 1B 把 L1-T.1~T.6 主檔 symbolic link 進原始 paper 區（2026-08-22 知識路由：該區已遷移至 atlas-notes/02-knowledge/）
 - 寫 L1-T overview page(本 page)
 
 **沒做的事**:
@@ -151,7 +151,7 @@ kaecer 拍板的「**L1-T 範式**」結構中,L1 = 鐵律的「**真實驅動�
 ## 相關 entities / concepts
 
 - [[entities/l1-t3-five-chains]] — L1-T.3 五鏈耦合(最完整)
-- [[queries/day-2-L1T3-three-dimensions-2026-07-17]] — Day 2 三層 framework 驗證
+- day-2-L1T3-three-dimensions-2026-07-17（已遷移至 atlas-notes/02-knowledge/, 2026-08-22 知識路由）— Day 2 三層 framework 驗證
 - [[concepts/atlas-mcp-interpretation-guide]] — 三層 framework
 - [[concepts/s-paradigm-redefinition]] — L 結束後狀態
 
@@ -159,10 +159,10 @@ kaecer 拍板的「**L1-T 範式**」結構中,L1 = 鐵律的「**真實驅動�
 
 ## 來源
 
-- `raw/papers/atlas-original-paper-v0.1-L1T-multi.md`(1860 行,L1-T.1~T.6 主檔)
-- `raw/papers/atlas-original-paper-v0.1-L1T3-five-chains.md`(928 行,L1-T.3 詳細)
+- `~/workspace/atlas-notes/02-knowledge/atlas-original-paper-v0.1-L1T-multi.md`(1860 行,L1-T.1~T.6 主檔,2026-08-22 遷移)
+- `~/workspace/atlas-notes/02-knowledge/atlas-original-paper-v0.1-L1T3-five-chains.md`(928 行,L1-T.3 詳細,2026-08-22 遷移)
 - kaecer 2026-07-15 對話:三範式 + 4 層驅動結構
-- 本 wiki 的 `entities/l1-t3-five-chains.md` + `queries/day-2-L1T3-three-dimensions-2026-07-17.md`
+- 本 wiki 的 `entities/l1-t3-five-chains.md` + `~/workspace/atlas-notes/02-knowledge/day-2-L1T3-three-dimensions-2026-07-17.md`（2026-08-22 遷移）
 
 - [[entities/l1-t1-energy-transition]]
 
@@ -174,4 +174,4 @@ kaecer 拍板的「**L1-T 範式**」結構中,L1 = 鐵律的「**真實驅動�
 
 - [[entities/l1-t6-demographic-turning-point]]
 
-- [[queries/week-1-summary-2026-07-21]]
+- week-1-summary-2026-07-21（已遷移至 atlas-notes/02-knowledge/, 2026-08-22 知識路由）

@@ -5,9 +5,9 @@ updated: 2026-07-15
 type: entity
 tags: [L, event, template, paper]
 sources:
-  - raw/papers/atlas-original-paper-v0.1-L1T3-five-chains.md
-  - raw/articles/audit-DeepSeek-2026-07-15.md
-  - raw/articles/audit-kimi-2026-07-15.md
+  - ~/workspace/atlas-notes/02-knowledge/atlas-original-paper-v0.1-L1T3-five-chains.md
+  - ~/workspace/atlas-notes/02-knowledge/audit-DeepSeek-2026-07-15.md
+  - ~/workspace/atlas-notes/02-knowledge/audit-kimi-2026-07-15.md
 confidence: medium
 contested: false
 contradictions: []
@@ -135,16 +135,16 @@ L1-T.3 的「**找漏洞**」場景:
 - [[concepts/atlas-three-paradigms-v0.2-summary]] — L 範式定義
 - [[concepts/s-paradigm-redefinition]] — S 範式定義(kaecer 拍板 S 不等於盤整期)
 - [[entities/l1-t2-petrodollar-hormuz]] — 霍爾木茲封鎖(L1-T.2)
-- [[raw/articles/audit-DeepSeek-2026-07-15]] — DeepSeek audit
-- [[raw/articles/audit-kimi-2026-07-15]] — Kimi audit
+- audit-DeepSeek-2026-07-15（已遷移至 atlas-notes/02-knowledge/, 2026-08-22 知識路由）— DeepSeek audit
+- audit-kimi-2026-07-15（已遷移至 atlas-notes/02-knowledge/, 2026-08-22 知識路由）— Kimi audit
 - [[concepts/t1-t4-signal-light]] — v0.4 訊號燈
 
 ---
 
 ## 來源(完整列表)
 
-- `raw/papers/atlas-original-paper-v0.1-L1T3-five-chains.md` — 五鏈耦合核心 paper(928 行)
-- `raw/articles/audit-DeepSeek-2026-07-15.md` — DeepSeek 任務 A/B/C 回傳
-- `raw/articles/audit-kimi-2026-07-15.md` — Kimi 任務 A/B/C 回傳
-- `raw/articles/atlas-taiwan-trading-signals-v0.4.md` — v0.4 訊號燈整合版
+- `~/workspace/atlas-notes/02-knowledge/atlas-original-paper-v0.1-L1T3-five-chains.md` — 五鏈耦合核心 paper(928 行,2026-08-22 遷移)
+- `~/workspace/atlas-notes/02-knowledge/audit-DeepSeek-2026-07-15.md` — DeepSeek 任務 A/B/C 回傳(2026-08-22 遷移)
+- `~/workspace/atlas-notes/02-knowledge/audit-kimi-2026-07-15.md` — Kimi 任務 A/B/C 回傳(2026-08-22 遷移)
+- `~/workspace/atlas-notes/02-knowledge/atlas-taiwan-trading-signals-v0.4.md` — v0.4 訊號燈整合版(2026-08-22 遷移)
 - kaecer 2026-07-15 拍板:L1-T.3 升級為五鏈耦合 + 加上反向閉環

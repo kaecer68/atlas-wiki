@@ -5,9 +5,9 @@ updated: 2026-07-15
 type: concept
 tags: [signal, T, framework]
 sources:
-  - raw/articles/atlas-taiwan-trading-signals-v0.4.md
-  - raw/articles/audit-DeepSeek-2026-07-15.md
-  - raw/articles/audit-kimi-2026-07-15.md
+  - ~/workspace/atlas-notes/02-knowledge/atlas-taiwan-trading-signals-v0.4.md
+  - ~/workspace/atlas-notes/02-knowledge/audit-DeepSeek-2026-07-15.md
+  - ~/workspace/atlas-notes/02-knowledge/audit-kimi-2026-07-15.md
 confidence: medium
 contested: false
 contradictions: [v0.4 的 I1/I3 過度強調「延遲性 alpha」]
@@ -187,14 +187,14 @@ v0.4 提到:
 - [[entities/l1-t3-five-chains]] — L 範式樣板(用 T1→T4 訊號燈看)
 - [[concepts/s-paradigm-redefinition]] — S 範式(訊號紊亂狀態)
 - [[concepts/t1-t4-signal-light]] — v0.4 訊號燈完整版
-- [[raw/articles/audit-DeepSeek-2026-07-15]] — DeepSeek 對 T1→T4 的 audit
-- [[raw/articles/audit-kimi-2026-07-15]] — Kimi 對 T1→T4 的 audit
+- audit-DeepSeek-2026-07-15（已遷移至 atlas-notes/02-knowledge/, 2026-08-22 知識路由）— DeepSeek 對 T1→T4 的 audit
+- audit-kimi-2026-07-15（已遷移至 atlas-notes/02-knowledge/, 2026-08-22 知識路由）— Kimi 對 T1→T4 的 audit
 
 ---
 
 ## 來源
 
-- `raw/articles/atlas-taiwan-trading-signals-v0.4.md` — v0.4 訊號燈完整版
-- `raw/articles/audit-DeepSeek-2026-07-15.md` — DeepSeek audit
-- `raw/articles/audit-kimi-2026-07-15.md` — Kimi audit
+- `~/workspace/atlas-notes/02-knowledge/atlas-taiwan-trading-signals-v0.4.md` — v0.4 訊號燈完整版（2026-08-22 知識路由遷移）
+- `~/workspace/atlas-notes/02-knowledge/audit-DeepSeek-2026-07-15.md` — DeepSeek audit（2026-08-22 知識路由遷移）
+- `~/workspace/atlas-notes/02-knowledge/audit-kimi-2026-07-15.md` — Kimi audit（2026-08-22 知識路由遷移）
 - kaecer 2026-07-15 拍板:四層驅動結構 + S 期間「不輸就是贏」
