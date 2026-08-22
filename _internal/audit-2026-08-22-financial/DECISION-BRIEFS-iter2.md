@@ -28,6 +28,7 @@ status: E05 已裁決（發現）/ L1-L5 採 Option A 執行
 
 1. **atlas 目錄 hermes 不可動**（治理邊界,已記錄）：atlas repo 對 hermes/agent 一律唯讀,含修文件在內不可擅動。product-positioning.md §7「待業主簽核」過時標記**維持原樣**（上游文件漂移,接受現況;若要修由 kaecer 親自動）。
 2. **VIX/USD_TWD 情緒層收編**（kaecer 裁決 2026-08-22）：情緒調整層收編進 wiki 知識模型——VIX/USD_TWD 作為外資方向先驗的調整特徵,不進共振投票。**注意邊界**：此為 wiki 知識層設計裁決;atlas spec（capital-flow-seven-dimension-spec.md）未含此層且**不可改**;atlas 端是否實作屬另一軌,不假裝已實作。E05 檔殘題解除。
+3. **B 桶接線 router 設計採案 A**（kaecer 拍板 2026-08-22）：新建 `skills/_knowledge-router.md`（知識路由:Q→concepts/entities→SK,角色 GT/INT/NAR/DOC）;_consult-index 專管工具路由,加一行指標（8851B 合規）;26 檔 B-桶登記即接線。
 
 ## 一、E05 資金勢力分類 — 調查結論：裁決已存在,殘留是過時文件
 
