@@ -11,3 +11,6 @@ __pycache__/
 
 # 審計日誌(跨 session 累積,屬 atlas-notes governance-log 一類,不入 git)
 skills/_self-audit.md
+
+# 本地工具 cache（codegraph 索引 DB,不入 git）
+.codegraph/
