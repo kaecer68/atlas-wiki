@@ -6,7 +6,7 @@ type: concept
 tags: [framework, signal, contrarian, L6]
 sources:
   - docs/ATLAS_METHODOLOGY.md v1.0 §二 第六層 + §四 散戶
-  - concepts/taiwan-stock-market-structure.md（維持率現制：整戶 130% 追繳、追繳未補即處分,2022-04-01 起）
+  - concepts/taiwan-stock-market-structure.md（維持率現制：整戶 130% 追繳、追繳未補即處分,2015-05-04 起）
   - concepts/taiwan-chip-flow-analysis.md（當沖分級、集保分級）
   - concepts/taiwan-money-flow-seven-institutional-buckets.md（分點警示、門檻紀律）
 confidence: medium
@@ -33,7 +33,7 @@ contradictions: []
 ### 1.1 融資餘額與融資維持率
 
 - **意義**：融資餘額 = 散戶借錢買股金額（[[concepts/taiwan-chip-flow-analysis|籌碼面]] §5.1）；維持率 = 散戶壓力水位（憲章因果鏈第六層）。
-- **現制門檻**：整戶擔保維持率低於 130% 通知追繳,限期未補足即處分擔保品（2022-04-01 起整戶新制；市場口語的 120% 斷頭線屬舊制簡化說法 [待證交所驗證]）（[[concepts/taiwan-stock-market-structure|市場結構]] §5.2）[2026-08-22 audit-fix]；憲章「轉折下壓」訊號用 150%——非追繳線, 勿混用。
+- **現制門檻**：整戶擔保維持率低於 130% 通知追繳,限期未補足即處分擔保品（130% 自 2015-05-04 起施行,2026-08-22 官方驗證沿革:1992 訂定 140%→1996 120~140% 區間→至遲 2000 固定 120%→2015-05-04 起 130%;市場口語的 120% 斷頭線即此舊制簡化說法）（[[concepts/taiwan-stock-market-structure|市場結構]] §5.2）[2026-08-22 audit-fix]；憲章「轉折下壓」訊號用 150%——非追繳線, 勿混用。
 - **判讀**：3 個月趨勢 + 分佈百分位；急速下降（斷頭潮）≈ 底部（憲章）。atlas 對位：`margin-balance-extreme` / `margin-trend-reversal`（[[concepts/taiwan-chip-flow-analysis|籌碼面]] §9.1）、[[templates/trigger-margin-350b]]。
 
 ### 1.2 當沖佔比
