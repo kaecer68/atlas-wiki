@@ -20,3 +20,5 @@
 ## Step 4:落 §6 + Telegram
 
 **與 trigger-margin-350b 的差異**:350b 是融資高水位**過熱警訊(多頭末端)**;本檔是融資大幅縮減的**衰竭訊號(低迷末端布局參考)**。方向相反,不可混用 [2026-08-22 audit-fix]
+
+參見:[[concepts/retail-sentiment-indicators]]（L6 散戶情緒反向指標——衰竭/斷頭潮判讀）[2026-08-22 audit-fix 接線]
