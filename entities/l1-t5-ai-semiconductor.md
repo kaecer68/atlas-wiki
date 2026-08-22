@@ -10,6 +10,7 @@ confidence: medium
 contested: false
 contradictions: []
 ---
+> 命名消歧：本檔「L1-T」屬 kaecer 拍板之範式框架編號（L1=真實驅動層…L5=散戶情緒）,與 atlas strategy_techniques 策略分層 L1-L5（全球流動性…地緣政治）及憲章因果鏈第〇~六層為三套不同軸 [2026-08-22 iter2]
 
 # L1-T.5 科技奇點：AI 與半導體
 

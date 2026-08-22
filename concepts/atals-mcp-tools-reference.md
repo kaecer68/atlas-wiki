@@ -100,6 +100,8 @@ MCP（Model Context Protocol）是把工具能力以 **結構化 JSON** 形式�
 
 ### 2.7 策略訊號類（Strategy）
 
+> 對齊 atlas internal/strategy_techniques/enums.go canonical 定義（L1 全球流動性 / L2 外資行為 / L3 產業催化 / L4 匯率籌碼 / L5 地緣政治）[2026-08-22 iter2]
+
 | 工具 | 用途 |
 |------|------|
 | `strategy_list_active` | 當前啟用的 L1–L5 偵測器（含 `foreign-3day-inflow` 等） |
@@ -331,7 +333,7 @@ Step 6: mcp_anomaly_get_recent          → 最近 anomalies
 ```text
 1. mcp_quickstart
 2. 解析 regime：若 RISK_OFF → capital_flow_summary 看外資是否連賣
-3. 解析 strategy：strategy_list_active → 篩選 L2（法人流向）偵測器
+3. 解析 strategy：strategy_list_active → 篩選 L2（外資行為）偵測器
 4. 補丁：explain_market_move(format="plain") 生成中文解說
 ```
 

@@ -34,7 +34,7 @@
 - [[concepts/atals-platform-overview]] — atals 平台概覽（2026-08-02 補入）
 - [[concepts/atals-simulation-guide]] — atals 策略模擬指南（2026-08-02 補入）
 - [[concepts/atals-mcp-tools-reference]] — atals MCP 工具參考（2026-08-02 補入）
-- [[concepts/atals-strategy-taxonomy]] — atals L1-L5 策略分類體系（2026-08-02 補入）
+- [[concepts/atals-strategy-taxonomy]] — atals L1-L5 策略分類體系（2026-08-02 補入；層名對齊 atlas internal/strategy_techniques/enums.go canonical [2026-08-22 iter2]）
 - [[concepts/atals-risk-management-framework]] — atals 風險管理框架（2026-08-02 補入）
 
 - [[concepts/atlas-three-paradigms-v0.2-summary]] — L/T/S 三範式摘要(Stage 1C)

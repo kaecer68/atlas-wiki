@@ -17,7 +17,7 @@ contradictions: []
 
 # atals 策略模擬指南（Simulation Guide）
 
-> **一句話**：atals 策略模擬採用 L1（總經）→ L2（資金流向）→ L3（國際連動）→ L4（市場結構）→ L5（地緣風險）五層訊號驅動框架，搭配 Darwinian 權重動態調整與 PRISM cohort 訓練，共 12 個活躍策略。
+> **一句話**：atals 策略模擬採用 L1（全球流動性）→ L2（外資行為）→ L3（產業催化）→ L4（匯率籌碼）→ L5（地緣政治）五層訊號驅動框架，搭配 Darwinian 權重動態調整與 PRISM cohort 訓練，共 12 個活躍策略。
 
 本文件說明 atals 平台 **策略模擬、PRISM 訓練、回測驗證、Darwinian 權重、實驗管理** 的完整流程與解讀方式。LLM agent 在協助使用者做投資研究時，應先理解本指南所述的生命週期與指標語義。
 
@@ -59,28 +59,30 @@ contradictions: []
 
 > **注意**：以下層級定義係從 `strategy_get_layers`、`strategy_list_active`、`detector_registry_list` 等工具的命名與敘事觀察反推，並非官方完整公開規格。各層級下的具體偵測器請以 `strategy_list_active` 當下回傳為準。
 
-### 2.1 L1 — 總體經濟驅動（Macro Drivers）
+> 對齊 atlas internal/strategy_techniques/enums.go canonical 定義（L1 全球流動性 / L2 外資行為 / L3 產業催化 / L4 匯率籌碼 / L5 地緣政治）[2026-08-22 iter2]
+
+### 2.1 L1 — 全球流動性（Macro Drivers）
 - **核心訊號**：美元指數（DXY）、美債 10Y/2Y 殖利率、VIX、美元/台幣匯率。
 - **典型假說**：當 DXY 走弱、美債實質利率回落時，新興市場資金回流 → 台股外資偏多。
 - **對應工具**：`macro_get_snapshot_latest`、`macro_get_snapshot_history`、`narrative_get_models` 中的 regime detector。
 
-### 2.2 L2 — 法人資金流向（Institutional Flow）
+### 2.2 L2 — 外資行為（Institutional Flow）
 - **核心訊號**：外資連續買超天數、投信持股變化、自營商避險部位、費半+外資同步確認。
 - **典型假說**：外資連 3 日買超 + 投信不賣 → 短期動能延續。
 - **對應工具**：`capital_flow_daily` / `capital_flow_summary`、`stock_get_chips`、`macro_get_capital_flow_latest`。
 - **特殊觀察窗**：`synergy_get_l2_4_schedule` 揭露 L2.4 observation window（觀察期與切邊界）。
 
-### 2.3 L3 — 國際盤勢連動（Cross-Market Linkage）
+### 2.3 L3 — 產業催化（Cross-Market Linkage）
 - **核心訊號**：S&P500、NASDAQ、SOX、NVDA、TSM ADR；美股四大指數同步性。
 - **典型假說**：NVDA 與 TSM ADR 同漲 → 台積電（2330）隔日動能延續。
 - **對應工具**：`crossmarket_get_us_indices`、`crossmarket_get_correlation`、`crossmarket_get_status`。
 
-### 2.4 L4 — 市場結構與本土資金（Local Structure）
+### 2.4 L4 — 匯率籌碼（Local Structure）
 - **核心訊號**：融資餘額極端（過熱/過冷）、土洋對作訊號、央行匯市干預、VIX 結構。
 - **典型假說**：融資餘額連 5 日增加 + 當沖比例 > 30% → 短期超買訊號。
 - **對應工具**：`capital_flow_daily` 中的 retail/government 維度、`narrative_stress_index_thresholds`。
 
-### 2.5 L5 — 地緣政治與總體風險（Geopolitical Risk）
+### 2.5 L5 — 地緣政治（Geopolitical Risk）
 - **核心訊號**：台海緊張指數、中國 PMI / 放緩訊號、美國對中關稅政策、央行匯率干預。
 - **典型假說**：台海風險升溫 + 美國關稅加碼 → 防禦性配置（`get_recommendations` 中的 defensive）。
 - **對應工具**：`narrative_get_bundle` / `narrative_get_chains` / `narrative_stress_index_thresholds`、`event_calendar` / `event_flow_prediction`。
