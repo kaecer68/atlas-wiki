@@ -134,6 +134,8 @@ contradictions: []
 - **解讀注意**：斷路開啟**代表供應商或資源異常**，不是市場訊號；下游策略需正確區分「資料中斷」與「市場變化」。
 - **影響層面**：斷路期間訊號驅動策略可能缺乏即時資料，因此應在 L1–L5 訊號鏈中設計「資料陳舊容忍上限」。完整 MCP 工具清單與調用順序見 [[concepts/atals-mcp-tools-reference]]。
 
+> 對齊 atlas internal/strategy_techniques/enums.go canonical 定義（L1 全球流動性 / L2 外資行為 / L3 產業催化 / L4 匯率籌碼 / L5 地緣政治）[2026-08-22 iter2]
+
 ### 6.2 投資組合風險儀表板（risk_exposure）
 - **用途**：取得當前投資組合的多面向風險摘要。
 - **核心欄位**：

@@ -1,7 +1,7 @@
 ---
-title: 資金勢力分類學修正版：主體、觀測維度與情緒特徵
+title: 資金勢力分類學修正版（已被 3+2+2 spec 取代）
 created: 2026-07-18
-updated: 2026-07-18
+updated: 2026-08-22
 type: concept
 tags: [T, signal, framework, hypothesis, contested]
 sources:
@@ -11,11 +11,14 @@ sources:
 confidence: medium
 contested: true
 contradictions: [concepts/taiwan-money-flow-seven-institutional-buckets]
+superseded_by: ~/workspace/atlas/docs/specs/capital-flow-seven-dimension-spec.md
 ---
+
+> ⚠️ 2026-08-22 結案：本提案（5 主體共振）即 spec D-CF-03 明文拒絕之方案;業主 2026-07-17 已接受 3+2+2 分層（spec v1.0「設計已由業主接受」）。本檔保留供 audit 對照,不再 pending。唯一殘題：VIX/USD_TWD 情緒層未收編,留待 kaecer 裁。
 
 # 資金勢力分類學修正版
 
-> **狀態：待業主簽核。** 本頁先保存分類修復提案，不宣稱已是 manifest E05 的正式實作規格。
+> **狀態：已結案（2026-08-22，spec 3+2+2 取代）。** 本頁保留供 audit 對照，不宣稱已是 manifest E05 的正式實作規格。
 
 ## 核心修正
 
@@ -130,11 +133,11 @@ foreign_adjusted_prior = foreign_prior
 
 ## 待簽核項目
 
-- [ ] 業主確認 5 類主體作為正式共振集合。
-- [ ] 業主確認 TAIFEX 期貨作為外資觀測維度，而非獨立勢力。
-- [ ] 業主確認 TSM ADR／VIX／USD_TWD 只作情緒特徵。
-- [ ] 業主確認 E05 權重改由五主體共振與外資先驗分層計算。
-- [ ] 業主確認在簽核前不修改正式 manifest／生產程式。
+- [x] 業主確認 5 類主體作為正式共振集合。—— 2026-08-22 結案：spec D-CF-03 明文拒絕,已由 3+2+2 取代。
+- [x] 業主確認 TAIFEX 期貨作為外資觀測維度，而非獨立勢力。—— 2026-08-22 結案：已被 spec 3+2+2 取代。
+- [x] 業主確認 TSM ADR／VIX／USD_TWD 只作情緒特徵。—— 2026-08-22 結案：已被 spec 3+2+2 裁決取代（VIX/USD_TWD 未收編部分見上方殘題）。
+- [x] 業主確認 E05 權重改由五主體共振與外資先驗分層計算。—— 2026-08-22 結案：spec D-CF-03 明文拒絕 5 主體共振方案。
+- [x] 業主確認在簽核前不修改正式 manifest／生產程式。—— 2026-08-22 結案：時限性條款已過期（本提案已結案,不再 pending）。
 
 ## 相關頁面
 
