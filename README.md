@@ -32,9 +32,7 @@ atlas-wiki/
 │   └── audit-report.md    # 審計報告模板
 ├── concepts/              # 台股市場概念 / 領域模型
 ├── entities/              # L1 宏觀實體研究
-├── queries/               # 研究盤查記錄
-├── comparisons/           # 框架比較
-├── summaries/             # 階段總結
+├── summaries/             # 階段總結(分工藍圖)
 └── .github/workflows/
     └── validate-wiki.yml  # CI(四項檢查 + Telegram 通知)
 ```

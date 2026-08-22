@@ -621,3 +621,17 @@ E 不寫猜測，看 logs 或 re-test
   8. [[concepts/atals-mcp-tools-reference]] — MCP 工具參考
   9. [[concepts/atals-strategy-taxonomy]] — L1-L5 策略分類
   10. [[concepts/atals-risk-management-framework]] — 風險管理框架
+
+
+## [2026-08-22] migrate | 知識路由：純知識/過程工件 18 檔遷移 atlas-notes
+
+- **背景**：操作性引用掃描顯示以下檔案對 skills/templates/hermes 的引用為 0（agent 服務用戶時不會載入）＝ 純知識/過程工件；依「wiki = 技能/工具庫、notes = 原料庫」定位遷移（PR #33 前後，branch feat/20260822-knowledge-routing）
+- **A 類（notes 已有 byte-identical 副本 → wiki git rm，4 檔）**：
+  - raw/papers/atlas-original-paper-v0.1-L1T-multi.md / atlas-original-paper-v0.1-L1T3-five-chains.md
+  - raw/articles/atlas-taiwan-trading-signals-v0.4.md / atlas-trading-signals-audit-hints-v0.1.md（md5 驗證相同後刪除）
+- **B 類（git mv 至 notes，14 檔）**：
+  - 02-knowledge/：audit-kimi-2026-07-15、audit-DeepSeek-2026-07-15、queries/ 8 檔（e05-data-gap / week-1-summary / day-2-L1T3 / money-flow-research-card / atlas-mcp-capital-flow-history-truth-seeking / H1-H2-H3-replay / regime-flip-confirmation / H1-H2-H3-extending-or-distributing）、manifest-2026-08-07-D4-unfinished-9、_method_amendment_D4_oct_review_prompt、l-t-s-three-paradigms-comparison
+  - 04-daily/：summaries/handoff-2026-07-19-restart.md（session handoff 同類）
+- **目錄清理**：raw/（含空 assets/ transcripts/）、queries/、comparisons/ 整目錄自 wiki 移除；summaries/ 保留（_division_of_labor_skills_vs_agent.md 操作性檔，3 refs）
+- **引用更新**：entities/ 8 頁 + concepts/ 5 頁 frontmatter sources 改寫為 `~/workspace/atlas-notes/02-knowledge/` 絕對路徑；wiki-link 改純文字遷移註記；index.md 移除對應條目並加檔頭遷移行；README.md 目錄樹移除 raw/queries/comparisons
+- **保留不動**：log.md 歷史條目（append-only）與 skills/_self-audit.md 審計日誌（gitignored）內的歷史路徑記載

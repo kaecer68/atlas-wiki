@@ -4,6 +4,7 @@
 > 從 2026-07-15 開始建立
 > Last updated: 2026-08-02 | Knowledge entries: 36 (this index) / Repo .md 總數: 91 / SK 知識頁: 33
 > 2026-08-03 repo 公開化(MIT + v1.0.0 + CI validate-wiki)
+> 2026-08-22 知識路由：raw/queries/comparisons/summaries-handoff+manifests 共 18 檔遷移至 atlas-notes（純知識回原料庫）
 
 ## Entities
 <!-- 從 raw/ 抽取的具體實體:事件、論文、audit 報告 -->
@@ -36,26 +37,10 @@
 - [[concepts/atals-strategy-taxonomy]] — atals L1-L5 策略分類體系（2026-08-02 補入）
 - [[concepts/atals-risk-management-framework]] — atals 風險管理框架（2026-08-02 補入）
 
-## Queries
-<!-- 問過的好問題 + 答案(不是 trivial lookup,是 substantial) -->
-
-- [[queries/day-2-L1T3-three-dimensions-2026-07-17]] — Day 2 三層 framework 應用(MCP 補驗,medium/contested)
-- [[queries/week-1-summary-2026-07-21]] — Week 1 七日研究彙整
-- [[queries/money-flow-research-card-2026-07-18]] — 台灣法人錢潮追蹤研究排程卡
-- [[queries/e05-data-gap-research-2026-07-18]] — E05 五主體共振的資料斷層研究
-- [[queries/H1-H2-H3-replay-2026-07-17]] — H 假說事件回放測試(2026-07-17 TAIEX -6.47%)
-- [[queries/H1-H2-H3-extending-or-distributing-2026-07-18]] — H 假說 D+1 EXTEND 驗證(2026-07-18 對照 7/17,5 主體仍土洋對殺)
-- [[queries/regime-flip-confirmation-2026-07-19]] — 7/19 regime RISK_OFF→RISK_ON 翻多是否可信(low/contested)
-- [[queries/capital-flow-history-knowledge-gap-2026-07-19]] — atlas-mcp capital-flow/history 完全沒歷史(已知問題立案,6 條 CL)
-- [[queries/atlas-mcp-capital-flow-history-truth-seeking-2026-07-19]] — 7/20 00:03 夜間研究 cron 跑完的真相盤查(根因:refresh 排程 tradingDate 推導 + UpsertDay + capacity 60 三者組合)
-- [[queries/capital-flow-history-unresolved-2026-07-20]] — 7/20 01:48 A01+A02+A03 修復完成後的 5 條未解決 CL 交接(CL-2/3/4/5/6 + 邊界問題 + 推薦執行順序)
-- [[atlas-notes/03-system-health/investigations/2026-07-20-open-work-inventory]]（已搬到 atlas-notes，10.7KB；屬盤查類不應留在 wiki）
 - [[concepts/atlas-three-paradigms-v0.2-summary]] — L/T/S 三範式摘要(Stage 1C)
+- [[atlas-notes/03-system-health/investigations/2026-07-20-open-work-inventory]]（已搬到 atlas-notes，10.7KB；屬盤查類不應留在 wiki）
 
-## Comparisons
-<!-- 跨概念比較:L vs T vs S、S1 vs S2、0050 vs 00878 等 -->
-
-- [[comparisons/l-t-s-three-paradigms-comparison]] — L/T/S 三範式對照表(Stage 1C 第二個小步,2026-07-17)
+> 2026-08-22 知識路由：queries/ 8 檔 + comparisons/ 1 檔已遷移至 atlas-notes/02-knowledge/，此兩區從 wiki 移除（純知識回原料庫）。歷史條目見 git log 與 log.md。
 
 ---
 
@@ -63,9 +48,8 @@
 
 - **找某個事件**:到 `entities/` 用檔名搜尋
 - **找某個概念**:到 `concepts/` 用檔名搜尋
-- **找某個比較**:到 `comparisons/`
-- **找某個研究問題**:到 `queries/`
 - **看全貌**:用 Obsidian 打開這個目錄,看 Graph View
+- **研究盤查 / 比較 / 過程工件**:到 `~/workspace/atlas-notes/02-knowledge/`（原料庫，2026-08-22 知識路由遷移）
 
 ## 維護節奏(kaecer 拍板)
 
@@ -82,4 +66,4 @@
 - **Day 4-7**:L1-T.1/2/4/5/6 entity + MCP 補驗 + Week 1 summary ✅
 - **Day 8+**:Stage 1C 三範式 summary + comparison
   - Stage 1C 第一步(2026-07-17 早):[[concepts/atlas-three-paradigms-v0.2-summary]] ✅
-  - Stage 1C 第二步(2026-07-17 凌晨排程):[[comparisons/l-t-s-three-paradigms-comparison]] ✅
+  - Stage 1C 第二步(2026-07-17 凌晨排程):comparisons/l-t-s-three-paradigms-comparison（已遷移至 atlas-notes/02-knowledge/, 2026-08-22 知識路由）✅

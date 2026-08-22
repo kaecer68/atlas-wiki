@@ -5,7 +5,7 @@ updated: 2026-07-17
 type: entity
 tags: [L, time-anchor, hypothesis, event]
 sources:
-  - raw/papers/atlas-original-paper-v0.1-L1T-multi.md
+  - ~/workspace/atlas-notes/02-knowledge/atlas-original-paper-v0.1-L1T-multi.md
 confidence: medium
 contested: false
 contradictions: []
