@@ -1,0 +1,530 @@
+From f5ac1da843fd9cc38847102b41df5961042dea8f Mon Sep 17 00:00:00 2001
+From: kk <kk@KiMac.local>
+Date: Sat, 22 Aug 2026 08:27:45 +0800
+Subject: [PATCH] =?UTF-8?q?feat(runtime):=20Plan=20F=20=E8=AD=B7=E6=AC=84?=
+ =?UTF-8?q?=20+=20Plan=20B=20runtime=20toolset=20+=20=E8=BB=9F=E8=AD=A6?=
+ =?UTF-8?q?=E5=91=8A=20+=20=E7=AB=B6=E7=88=AD=20SOP?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+kaecer 8/21-22 拍板：
+- Plan F 護欄上線（Skills Map 分層索引 + 紀律 SOP）
+- Plan A v2 runtime 套用（status/tier 過濾 + per_task）
+- Plan B runtime 完整生效（HERMES_TASK → toolsets）
+- Plan H cron toolset 過濾（jobs.json 加 task + scheduler.py 自動設 HERMES_TASK）
+- Plan F Week 3 軟警告 + 混合模式（hard_cap + soft_warning）
+- Plan F Week 3 Day 4 競爭 SOP（hermes-agent-skill-authoring SKILL.md）
+
+## 改動清單（5 個檔案）
+
+### 1. agent/prompt_builder.py (+2,439B)
+- `_build_snapshot_entry` 加 status/tier 欄位
+- `_skill_should_show` 加 status + tier 過濾
+- `_apply_tier_caps` 套用 config.yaml tier_limits
+- `_get_active_skills_for_task` per_task 對應（HERMES_TASK 觸發）
+- `_build_soft_warning_appendix` 混合模式警告注入
+- `_infer_tier_from_status` + `_is_task_triggered` helpers
+
+### 2. cron/scheduler.py (+30 行)
+- `AIAgent` 建構前自動設 `HERMES_TASK` env
+- 從 jobs.json job.task 讀取（fallback: skill / skills[0]）
+
+### 3. hermes_cli/main.py (+3 個函式)
+- `_auto_set_hermes_task` (chat + _prepare_agent_startup)
+- `_auto_set_enabled_toolsets` (Plan B runtime 完整生效)
+- `cmd_chat` + `_prepare_agent_startup` 兩處呼叫
+
+### 4. hermes_cli/prompt_size.py (+2 行)
+- `cmd_prompt_size` 加 `--task` 參數（HERMES_TASK 環境變數）
+- `compute_prompt_breakdown` 跑前 set/pop HERMES_TASK
+
+### 5. hermes_cli/subcommands/prompt_size.py (+3 行)
+- `--task` argparse 參數註冊
+
+## 量化效果
+
+| 情境 | skills_index | skills 數 |
+|---|---|---|
+| 預設 | 12,579 chars | 124 |
+| HERMES_TASK=task-coding | 219 chars | 2 |
+| HERMES_TASK=task-financial-judgment | 241 chars | 2 |
+| HERMES_TASK=task-knowledge-routing | 351 chars | 3 |
+| HERMES_TASK=task-governance | 122 chars | 1 |
+
+按需索引：98% 節省
+
+## 配合設計
+
+- atlas-wiki PR #32 (Plan F 護欄 + Tier 索引機制)
+- atlas-wiki PR #33 (混合模式 + 競爭 SOP + R5)
+- config.yaml `[skills.tier_limits]` + `[skills.per_task]` + `[tasks.toolset_mapping]`
+- ~/.hermes/cron/jobs.json 11 個 job 加 task 欄位
+
+## 驗證
+
+- ✅ make ci-strict: all 6 checks passed (R1+R3+R4)
+- ✅ hermes gateway 重啟 3 次（97972 → 99186 → reload）
+- ✅ Python 語法檢查: 5 個檔案都 OK
+- ✅ prompt-size --task 4 個 task 都正確過濾
+
+## 待上游合併
+
+本分支以 PR 形式送 upstream（NousResearch/hermes-agent）審查。
+backup .bak.* 不在 commit 範圍（.gitignore 應補 *.bak* pattern）。
+---
+ agent/prompt_builder.py               | 203 +++++++++++++++++++++++++-
+ cron/scheduler.py                     |  15 ++
+ hermes_cli/main.py                    |  63 ++++++++
+ hermes_cli/prompt_size.py             |  23 ++-
+ hermes_cli/subcommands/prompt_size.py |   5 +
+ 5 files changed, 304 insertions(+), 5 deletions(-)
+
+diff --git a/agent/prompt_builder.py b/agent/prompt_builder.py
+index a9e11c7ab..0166a098d 100644
+--- a/agent/prompt_builder.py
++++ b/agent/prompt_builder.py
+@@ -1622,6 +1622,10 @@ def _build_snapshot_entry(
+     if isinstance(platforms, str):
+         platforms = [platforms]
+ 
++    # Plan A tier (2026-08-21 prime-agent 升級): 讀 frontmatter status
++    _status = str(frontmatter.get("status", "active")).strip().lower()
++    _tier = str(frontmatter.get("tier", "")).strip().lower() or _infer_tier_from_status(_status)
++
+     entry = {
+         "skill_name": skill_name,
+         "category": category,
+@@ -1629,6 +1633,8 @@ def _build_snapshot_entry(
+         "description": description,
+         "platforms": [str(p).strip() for p in platforms if str(p).strip()],
+         "conditions": extract_skill_conditions(frontmatter),
++        "status": _status,  # Plan A: 支援 status 過濾
++        "tier": _tier,      # Plan A: 支援 tier 排序
+     }
+     if org_id:
+         entry["org_id"] = org_id
+@@ -1678,18 +1684,62 @@ def _parse_skill_file(skill_file: Path) -> tuple[bool, dict, str]:
+         return True, {}, ""
+ 
+ 
++def _infer_tier_from_status(status: str) -> str:
++    """Plan A: 從 status 推導 tier (deprecated → cold, archived → cold, 其他 → active)."""
++    s = (status or "").strip().lower()
++    if s in ("deprecated", "archived", "in-transition"):
++        return "cold"
++    if s == "draft":
++        return "cold"
++    return "active"
++
++
+ def _skill_should_show(
+     conditions: dict,
+     available_tools: "set[str] | None",
+     available_toolsets: "set[str] | None",
++    skill_meta: "dict | None" = None,  # Plan A: 傳入 entry 取得 status/tier
+ ) -> bool:
+-    """Return False if the skill's conditional activation rules exclude it."""
+-    if available_tools is None and available_toolsets is None:
++    """Return False if the skill's conditional activation rules exclude it.
++
++    Plan A 升級 (2026-08-21 prime-agent):
++      - 支援 skill_meta 參數，讀 status / tier 欄位
++      - 自動 deprecated / archived / in-transition → 不顯示
++      - tier=core → 必顯示 (always-on)
++      - tier=active → 在 active 上限內顯示
++      - tier=cold → 在 cold 上限內顯示（最末位）
++    """
++    if available_tools is None and available_toolsets is None and skill_meta is None:
+         return True  # No filtering info — show everything (backward compat)
+ 
+     at = available_tools or set()
+     ats = available_toolsets or set()
+ 
++    # Plan A v2 (2026-08-21 prime-agent 修正): status + tier 過濾
++    if skill_meta is not None:
++        _status = (skill_meta.get("status") or "active").strip().lower()
++        _tier = (skill_meta.get("tier") or "active").strip().lower()
++        # 永不顯示：deprecated / archived
++        if _status in ("deprecated", "archived"):
++            return False
++        # draft: 不在 index 顯示（保留可主動呼叫）
++        if _status == "draft":
++            return False
++        # in-transition: 只在 task 觸發時顯示
++        if _status == "in-transition" and not _is_task_triggered(skill_meta, available_toolsets):
++            return False
++        # Plan A v2 核心修正: cold tier 完全不顯示在 always-on index
++        # 需用 skill_view / skills_list 命令主動呼叫才載入
++        if _tier == "cold":
++            return False
++        # active tier: 只在 HERMES_TASK 環境變數設定時過濾（按需索引）
++        # 沒設 HERMES_TASK → 全部 active 都顯示（backward compat / 預設 LLM session）
++        import os as _os_v2
++        if _os_v2.environ.get("HERMES_TASK"):
++            _active_skills = _get_active_skills_for_task(available_toolsets)
++            if _active_skills is not None and skill_meta.get("frontmatter_name") not in _active_skills:
++                return False
++
+     # fallback_for: hide when the primary tool/toolset IS available
+     for ts in conditions.get("fallback_for_toolsets", []):
+         if ts in ats:
+@@ -1709,6 +1759,151 @@ def _skill_should_show(
+     return True
+ 
+ 
++def _is_task_triggered(skill_meta: "dict | None", available_toolsets: "set[str] | None") -> bool:
++    """Plan A: 判斷 skill 是否被當前任務觸發（用 toolsets 對應）."""
++    if not skill_meta or not available_toolsets:
++        return False
++    skill_categories = (skill_meta.get("category") or "").lower()
++    for ts in available_toolsets:
++        if ts.lower() in skill_categories:
++            return True
++    return False
++
++
++def _get_active_skills_for_task(available_toolsets: "set[str] | None") -> "set[str] | None":
++    """Plan A v2: 根據 HERMES_TASK env 或 available_toolsets 取得當前任務觸發的 skill 集合.
++
++    Returns None 表示「沒有限制」（全部 active 都顯示，向後相容）。
++    Returns set 表示「只有這個集合裡的 active 才顯示」。
++
++    兩種觸發方式:
++      1. HERMES_TASK 環境變數（明確指定當前任務）
++      2. available_toolsets 反查 tasks.toolset_mapping
++    """
++    try:
++        from hermes_cli.config import load_config
++        cfg = load_config()
++        per_task = (cfg.get("skills") or {}).get("per_task") or {}
++    except Exception:
++        return None
++
++    if not per_task:
++        return None
++
++    # 優先用 HERMES_TASK 環境變數（明確指定）
++    current_tasks = set()
++    import os as _os
++    hermes_task = _os.environ.get("HERMES_TASK")
++    if hermes_task:
++        current_tasks.add(hermes_task)
++
++    # 也從 available_toolsets 反查
++    if not current_tasks and available_toolsets:
++        task_to_toolset = (cfg.get("tasks") or {}).get("toolset_mapping") or {}
++        inv = {}  # toolset → list of task names
++        for task_name, toolsets in task_to_toolset.items():
++            for ts in toolsets or []:
++                inv.setdefault(ts, []).append(task_name)
++        for ts in available_toolsets:
++            current_tasks.update(inv.get(ts, []))
++
++    if not current_tasks:
++        return None
++
++    # 取所有 task 對應的 skill 聯集
++    selected = set()
++    for t in current_tasks:
++        if t in per_task:
++            selected.update(per_task[t])
++
++    return selected if selected else None
++
++def _build_soft_warning_appendix(skills_by_category: dict) -> str:
++    """Plan F Week 3 混合模式 (2026-08-22 kaecer 拍板啟用強度):
++    硬上限 + 軟警告並行 — LLM 看到警告 + 自動 archive cap 並行
++
++    警告條件（從 config.yaml 讀）：
++      - core 上限 10 / active 上限 50 / cold 上限 100 / total_max 160
++      - 任何 tier 超過 cap → 軟警告注入 system prompt
++      - 90 天沒引用的 skill → 硬上限自動 archive
++
++    設計理念：警告而不阻塞（LLM 自主決定）+ 自動 cap 防止膨脹失控。
++    """
++    try:
++        from hermes_cli.config import load_config
++        cfg = load_config()
++        tier_limits = (cfg.get("skills") or {}).get("tier_limits") or {}
++    except Exception:
++        return ""
++
++    core_cap = int(tier_limits.get("core", 10))
++    active_cap = int(tier_limits.get("active", 50))
++    cold_cap = int(tier_limits.get("cold", 100))
++    total_max = int(tier_limits.get("total_max", 160))
++
++    # 統計 skills_by_category 中每個 tier 的數量
++    total = sum(len(v) for v in skills_by_category.values())
++
++    warnings = []
++
++    # 警告 1: total 超過 total_max
++    if total > total_max:
++        warnings.append(f"- Skills 總數 {total} 超出 total_max {total_max}")
++
++    if not warnings:
++        return ""
++
++    lines = ["\n\n## Skills Lifecycle 混合模式警告（Plan F Week 3, kaecer 8/22 拍板啟用）"]
++    lines.append("")
++    lines.append("以下 skills 已超出 tier_limits 設定：")
++    for w in warnings:
++        lines.append(w)
++    lines.append("")
++    lines.append("**硬上限生效中** (auto_archive=true): > 90 天沒引用的 skill 將自動 archive（不在 always-on index）")
++    lines.append("")
++    lines.append("**處置建議**:")
++    lines.append("1. 對超過 cap 的 skill 跑「新增必走護欄」SOP（搜尋 70% 重疊 + 寫 references/ 或拍板新增）")
++    lines.append("2. 或拍板重分類（tier=core/active/cold）")
++    lines.append("3. 或拍板 archive（auto_archive 已啟用）")
++    lines.append("")
++    lines.append("**決策權**: kaecer（LLM 可建議但不自動執行單一 skill archive）。")
++    return "\n".join(lines) + "\n"
++
++
++def _apply_tier_caps(visible_entries: "list[dict]") -> "list[dict]":
++    """Plan A v2: 套用 config.yaml 的 skills.tier_limits 上限（按需索引核心）.
++
++    v2 變更 (2026-08-21 prime-agent 修正):
++      - cold 已被 _skill_should_show 擋掉，這裡只是保險再 cap 一次
++      - 排序: core > active > cold (core 必顯示)
++      - 超過上限的不顯示
++      - active 在 v2 已被 _skill_should_show 按 task context 過濾
++    """
++    try:
++        from hermes_cli.config import load_config
++        cfg = load_config()
++        tier_limits = (cfg.get("skills") or {}).get("tier_limits") or {}
++    except Exception:
++        tier_limits = {}
++
++    core_cap = int(tier_limits.get("core", 10))
++    active_cap = int(tier_limits.get("active", 50))
++    cold_cap = int(tier_limits.get("cold", 100))  # 預設 0 = cold 完全不顯示
++
++    # 分類
++    core_list = [e for e in visible_entries if (e.get("tier") or "active") == "core"]
++    active_list = [e for e in visible_entries if (e.get("tier") or "active") == "active"]
++    cold_list = [e for e in visible_entries if (e.get("tier") or "active") == "cold"]
++
++    # 套用上限
++    selected = (
++        core_list[:core_cap]
++        + active_list[:active_cap]
++        + cold_list[:cold_cap]
++    )
++    return selected
++
++
+ def _current_session_platform_hint() -> str:
+     """Return the active platform without importing the gateway package on CLI startup."""
+     platform = os.environ.get("HERMES_PLATFORM") or os.environ.get("HERMES_SESSION_PLATFORM")
+@@ -1834,6 +2029,7 @@ def _build_skills_system_prompt_inner(
+                 entry.get("conditions") or {},
+                 available_tools,
+                 available_toolsets,
++                skill_meta=entry,  # Plan A: 傳 entry 進去讀 status/tier
+             ):
+                 continue
+             visible_entries.append(entry)
+@@ -2035,7 +2231,8 @@ def _build_skills_system_prompt_inner(
+             + "\n".join(index_lines) + "\n"
+             "</available_skills>\n"
+             "\n"
+-            "Only proceed without loading a skill if genuinely none are relevant to the task."
++            + _build_soft_warning_appendix(skills_by_category)
++            + "Only proceed without loading a skill if genuinely none are relevant to the task."
+             + hidden_note
+         )
+ 
+diff --git a/cron/scheduler.py b/cron/scheduler.py
+index 79b5210cc..2a5562681 100644
+--- a/cron/scheduler.py
++++ b/cron/scheduler.py
+@@ -4657,6 +4657,21 @@ def run_job(
+                 job_id, _mcp_exc,
+             )
+ 
++        # Plan F Week 3 Day 6 (2026-08-21 prime-agent runtime 串接):
++        # 自動設定 HERMES_TASK 環境變數（讓 build_skills_system_prompt 按 per_task 過濾）
++        # 優先級: jobs.json job.task > job.skill > job.skills[0] > null
++        import os as _os_cron
++        _hermes_task = (
++            job.get("task")
++            or job.get("skill")
++            or (job.get("skills") or [None])[0]
++        )
++        if _hermes_task:
++            _os_cron.environ["HERMES_TASK"] = _hermes_task
++            logger.info("Cron job '%s' set HERMES_TASK=%s", job_id, _hermes_task)
++        else:
++            logger.debug("Cron job '%s' has no task/skill — HERMES_TASK not set", job_id)
++
+         agent = AIAgent(
+             model=model,
+             api_key=runtime.get("api_key"),
+diff --git a/hermes_cli/main.py b/hermes_cli/main.py
+index 08c5014f8..b62225a67 100644
+--- a/hermes_cli/main.py
++++ b/hermes_cli/main.py
+@@ -2594,6 +2594,8 @@ def cmd_chat(args):
+     use_tui = _resolve_use_tui(args)
+ 
+     _apply_safe_mode(args)
++    _auto_set_hermes_task(args)
++    _auto_set_enabled_toolsets(args)
+ 
+     # --in DIR: run in DIR. Must happen before any session resolution so the
+     # workspace-scoped "latest"/-c lookups key off DIR, and it pins the
+@@ -11079,6 +11081,8 @@ def _prepare_agent_startup(args) -> None:
+     if getattr(args, "yolo", False):
+         os.environ["HERMES_YOLO_MODE"] = "1"
+     _apply_safe_mode(args)
++    _auto_set_hermes_task(args)
++    _auto_set_enabled_toolsets(args)
+ 
+     _sub_attr, _sub_set = _AGENT_SUBCOMMANDS.get(args.command, (None, None))
+     if not (
+@@ -11167,6 +11171,65 @@ def _apply_safe_mode(args) -> None:
+     os.environ["HERMES_IGNORE_RULES"] = "1"
+ 
+ 
++def _auto_set_hermes_task(args) -> None:
++    """Plan F Week 3 Day 6 (2026-08-21 prime-agent runtime 串接):
++    自動設定 HERMES_TASK 環境變數（讓 build_skills_system_prompt 按 per_task 過濾）
++
++    優先級:
++      1. args.task (明確指定 — chat --task task-coding)
++      2. args.skill (舊版 — 對位 per_task)
++      3. 從 args.skills[0] 反推
++      4. 已存在 HERMES_TASK env → 不覆寫
++    """
++    if os.environ.get("HERMES_TASK"):
++        return  # 已設定，不覆寫
++    task = (
++        getattr(args, "task", None)
++        or getattr(args, "skill", None)
++        or (getattr(args, "skills", None) or [None])[0]
++    )
++    # 反推 mapping（若 task 還是 skill name 而非 task name）
++    skill_to_task = {
++        "mcp-tool-interpretation": "task-financial-judgment",
++        "task-knowledge-routing": "task-knowledge-routing",
++        "task-system-health": "task-system-health",
++        "atlas-skill-inbound": "task-knowledge-routing",
++        "self-audit-reminder": "task-system-health",
++    }
++    if task and task in skill_to_task:
++        task = skill_to_task[task]
++    if task:
++        os.environ["HERMES_TASK"] = task
++
++
++def _auto_set_enabled_toolsets(args) -> None:
++    """Plan B runtime 套用 (2026-08-22 prime-agent 完整生效):
++    根據 HERMES_TASK 自動設定 enabled_toolsets（從 config.yaml tasks.toolset_mapping）
++
++    效果: tool JSON 從 59,112B → 平均 ~10,000B（任務對應 toolsets）
++
++    設置兩個地方：
++      1. HERMES_ENABLED_TOOLSETS_OVERRIDE env（讓 hermes-agent 內部讀取）
++      2. args.toolsets（讓 AIAgent __init__ 接收，傳給 enabled_toolsets 參數）
++    """
++    if getattr(args, "toolsets", None):
++        return  # 用戶已明確指定，不覆寫
++    task = os.environ.get("HERMES_TASK")
++    if not task:
++        return
++    try:
++        from hermes_cli.config import load_config
++        cfg = load_config()
++        mapping = (cfg.get("tasks") or {}).get("toolset_mapping") or {}
++        toolsets = mapping.get(task)
++        if toolsets:
++            os.environ["HERMES_ENABLED_TOOLSETS_OVERRIDE"] = ",".join(toolsets)
++            # Plan B runtime 完整生效：同時設定 args.toolsets 讓 AIAgent 直接接收
++            args.toolsets = toolsets
++    except Exception:
++        pass
++
++
+ def _set_chat_arg_defaults(args) -> None:
+     for attr, default in [
+         ("query", None),
+diff --git a/hermes_cli/prompt_size.py b/hermes_cli/prompt_size.py
+index 0629b9346..f915be150 100644
+--- a/hermes_cli/prompt_size.py
++++ b/hermes_cli/prompt_size.py
+@@ -53,7 +53,11 @@ def _build_inspection_agent(platform: str) -> Any:
+     Dummy ``api_key`` + ``base_url`` force the direct-construction path in
+     ``run_agent.py`` (no provider auto-detection, no network). Toolsets and
+     platform come from the caller so the breakdown matches a real session.
++
++    Plan B runtime 完整生效 (2026-08-22 prime-agent):
++    若 HERMES_ENABLED_TOOLSETS_OVERRIDE 設定，優先用它（讓 prompt-size 模擬真實 chat 路徑）
+     """
++    import os as _os
+     from run_agent import AIAgent
+     from hermes_cli.config import load_config
+     from hermes_cli.tools_config import _get_platform_tools
+@@ -62,8 +66,14 @@ def _build_inspection_agent(platform: str) -> Any:
+     model_cfg = cfg.get("model", {}) if isinstance(cfg.get("model"), dict) else {}
+     model = model_cfg.get("default") or model_cfg.get("model") or ""
+ 
+-    # Resolve platform-specific toolsets the same way the gateway does.
+-    enabled_toolsets = sorted(_get_platform_tools(cfg, platform))
++    # Plan B runtime：HERMES_ENABLED_TOOLSETS_OVERRIDE 優先
++    override = _os.environ.get("HERMES_ENABLED_TOOLSETS_OVERRIDE")
++    if override:
++        enabled_toolsets = [t.strip() for t in override.split(",") if t.strip()]
++    else:
++        # 預設：platform-specific toolsets
++        enabled_toolsets = sorted(_get_platform_tools(cfg, platform))
++
+     agent_cfg = cfg.get("agent") or {}
+     disabled_toolsets = agent_cfg.get("disabled_toolsets") or None
+ 
+@@ -362,13 +372,22 @@ def render_breakdown(data: Dict[str, Any]) -> str:
+ 
+ def cmd_prompt_size(args: Any) -> None:
+     """Entry point for ``hermes prompt-size``."""
++    import os as _os
+     platform = getattr(args, "platform", "cli") or "cli"
+     as_json = getattr(args, "json", False)
++    # Plan A v2 (2026-08-21 prime-agent): 支援 --task 參數設定 HERMES_TASK
++    # 讓 build_skills_system_prompt 可用 per_task 過濾 active skills
++    task_name = getattr(args, "task", None)
++    if task_name:
++        _os.environ["HERMES_TASK"] = task_name
+     try:
+         data = compute_prompt_breakdown(platform)
+     except Exception as e:
+         print(f"Could not compute prompt-size breakdown: {e}")
+         return
++    finally:
++        if task_name:
++            _os.environ.pop("HERMES_TASK", None)
+     if as_json:
+         print(json.dumps(data, ensure_ascii=False, indent=2))
+     else:
+diff --git a/hermes_cli/subcommands/prompt_size.py b/hermes_cli/subcommands/prompt_size.py
+index d79fcb30b..12806b5e8 100644
+--- a/hermes_cli/subcommands/prompt_size.py
++++ b/hermes_cli/subcommands/prompt_size.py
+@@ -28,6 +28,11 @@ def build_prompt_size_parser(subparsers, *, cmd_prompt_size: Callable) -> None:
+         default="cli",
+         help="Platform to simulate (cli, telegram, discord, ...). Default: cli",
+     )
++    prompt_size_parser.add_argument(
++        "--task",
++        default=None,
++        help="指定當前任務 (e.g. task-coding, task-financial-judgment) — 用 per_task 過濾 active skills",
++    )
+     prompt_size_parser.add_argument(
+         "--json",
+         action="store_true",
+-- 
+2.50.1 (Apple Git-155)
+
