@@ -9,7 +9,7 @@
 
  ## Mission
 
-atlas-wiki = 提煉成品知識層。`atlas-notes`(原料庫)→ atlas-wiki(知識引擎)流水線的輸出端。33 SK 頁、5 條鐵律、CI 自動驗證一條龍。
+atlas-wiki = 提煉成品知識層。`atlas-notes`(原料庫)→ atlas-wiki(知識引擎)流水線的輸出端。37 SK 檔（SK-00 索引 + 36 編號頁）、六條鐵律 + 第七條例外、CI 自動驗證一條龍。
 
 ## 目錄結構
 
@@ -19,9 +19,10 @@ atlas-wiki/
 ├── AGENTS.md              # 專案 context(操作必讀)
 ├── SCHEMA.md              # 知識結構 schema
 ├── index.md / log.md      # 知識索引 / 演進日誌
-├── skills/                # 33 個 SK 知識頁(SK-00~SK-32)
+├── skills/                # 37 個 SK 知識檔(SK-00~SK-36,SK-27/30 已 archive)
 │   ├── _method.md         # 寫入規範(5 條鐵律 + 格式)
 │   ├── _consult-index.md  # 跨頁查詢索引
+│   ├── _consult-index_archive.md  # 諮詢索引歷史段歸檔(2026-08-22 audit-fix)
 │   ├── _inbox.md          # 跨 SK 待辦
 │   ├── _index-finskills.md
 │   ├── _methodology_alignment_audit.md  # 對位憲章審計

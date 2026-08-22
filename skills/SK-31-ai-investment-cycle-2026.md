@@ -27,7 +27,7 @@ decay_until: 2027Q1-WIR-revision
 
 ## §1 一句話定位
 
-把 5 份 2026 權威機構的全球 AI 投資數字,**用 atlas 24 trigger detectors + 3 narrative models + 13 trigger templates 的現有機制對位台股設備鏈**,讓週期性外部報告成為 ai_supercycle_model 與 narrative_get_chains 的 ground truth 校正點,而不是「讀完歸檔在 atlas-notes/」的一次性事實層。
+把 5 份 2026 權威機構的全球 AI 投資數字,**用 atlas 24 trigger detectors + 3 narrative models + 20 trigger templates 的現有機制對位台股設備鏈**,讓週期性外部報告成為 ai_supercycle_model 與 narrative_get_chains 的 ground truth 校正點,而不是「讀完歸檔在 atlas-notes/」的一次性事實層。
 
 ## §2 論文版(外部報告對位)
 
@@ -44,7 +44,7 @@ decay_until: 2027Q1-WIR-revision
 6. **能源 / 勞動力 / 治理「三限制」**:HKS 案例 Singapore 2019→2022 數據中心 moratorium,delay 4-6 年,警示台灣 AI/data center 投資落地週期可能比報告預期長(+50-100% lead time)。對位 atlas 既有 trigger `taiwan_political_risk` (impact -0.9),但**缺一條 trigger 對位「AI capex surge + 三限制」這條雙向賽局**
 7. **2027~2028 訂單跳升點**:UNCTAD 數據 + HAI 數據 + HKS 案例綜合顯示,**AI 宣布 → 設備下單 6~18 個月,試產/量產 +12~+24 個月。對位台股:2026 Q3~Q4 設備鏈首次訂單能見度,2027 全年~2028 Q1 月營收跳升**
 
-## §3 對位 atlas(現有 24 detectors + 3 narrative models + 13 trigger templates)
+## §3 對位 atlas(現有 24 detectors + 3 narrative models + 20 trigger templates（2026-08-22 快照）)
 
 | atlas 既有機制 | hit_rate / score | 與本週期對位強度 | 缺口 |
 |----------|---------|----------|----------|
