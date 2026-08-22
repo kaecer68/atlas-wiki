@@ -19,6 +19,8 @@ related:
 <!-- methodology_alignment_tip: atlas 後端有 8+18 產業映射(B5-3 PR-A/B)與公股資金 per-broker 對位,本文未交叉引用 -->
 <!-- methodology_alignment_tip: 2026-07-30 period_system 變動 — `period` 已是 PeriodDetector 真值;`source` 欄位正名 `regime_source` / `period_source` -->
 
+> 術語備註:atlas 後端資金面 = 七維錢潮雷達 3+2+2 分層,不可加權平均（對位憲章 §四 + product-positioning §7.1）[2026-08-22 iter2]
+
 ## 一句話定位
 SK-20 是「同一策略在大股 vs 小股上是否都賺錢」的對照實驗——在 atlas 用來挑出「只在某一邊有效」的偽因子。
 > ⚠️ PB/PE 是價值因子,不能當規模代理——用估值切 Big/Small 會混淆規模效應與價值效應；正確做法是用市值本身分組 [待 atlas 暴露市值欄位] [2026-08-22 audit-fix]

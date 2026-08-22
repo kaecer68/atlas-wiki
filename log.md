@@ -651,3 +651,12 @@ E 不寫猜測，看 logs 或 re-test
 - **目錄清理**：raw/（含空 assets/ transcripts/）、queries/、comparisons/ 整目錄自 wiki 移除；summaries/ 保留（_division_of_labor_skills_vs_agent.md 操作性檔，3 refs）
 - **引用更新**：entities/ 8 頁 + concepts/ 5 頁 frontmatter sources 改寫為 `~/workspace/atlas-notes/02-knowledge/` 絕對路徑；wiki-link 改純文字遷移註記；index.md 移除對應條目並加檔頭遷移行；README.md 目錄樹移除 raw/queries/comparisons
 - **保留不動**：log.md 歷史條目（append-only）與 skills/_self-audit.md 審計日誌（gitignored）內的歷史路徑記載
+
+---
+
+## [2026-08-22] iter2 | 方法論審計結案:TW-X2 收尾 + C 階段複查 + 兩審計檔瘦身歸檔
+
+- **TW-X2 ✅**：SK-16/18/20 加術語備註「atlas 後端資金面 = 七維錢潮雷達 3+2+2 分層,不可加權平均」（對位憲章 §四 + product-positioning §7.1）[2026-08-22 iter2]
+- **C 階段複查（2026-08-22）**：M1 ✅（macro_get_snapshot_latest.current_period 已公開,#1488）+ M4 ✅（strategy_for_period 實跑 bull 驗證）→ C1 解除;C2 部分 — strategy_ranker 仍無 period 欄（atlas-go 源碼複查）,補註落地 concepts/atals-mcp-tools-reference.md §2.7（_consult-index §3 無空間 8995B）
+- **審計檔瘦身**：_methodology_alignment_audit.md 15768B → 7047B（§5 執行記錄 + §1 原文 → _archive/_methodology_alignment_audit_20260802_execution.md）;_atlas_mcp_path_investigation.md 12318B → 2921B（調查過程 → _archive/_atlas_mcp_path_investigation_history.md）;均 ≤ 9000B
+- **對位**：_inbox_archive 第七條例外模式（歷史段歸檔、主檔留現行結論）;本條目由 iter2 方法論審計結案工人落地
