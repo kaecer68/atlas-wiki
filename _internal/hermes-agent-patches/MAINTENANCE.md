@@ -151,6 +151,28 @@ bash /Users/kk/workspace/atlas-wiki/_internal/hermes-agent-patches/install.sh
 | 升級驗證 | push 後 | `sync-hermes-agent.sh` 內 ci-strict |
 | 文檔同步 | PR merge 時 | 自動 commit 文件到 atlas-wiki |
 
+### CI 前置條件：HERMES_FORK_TOKEN secret（2026-08-22 已建）
+
+`hermes-agent-sync.yml` 依賴 atlas-wiki repo 的 Actions secret **`HERMES_FORK_TOKEN`**
+（PAT with `repo` + `workflow` scope，可寫 `kaecer68/hermes-agent` fork）。
+
+**若 secret 失效 / 換 token（每月例行檢查）：**
+
+1. 開 https://github.com/kaecer68/atlas-wiki/settings/secrets/actions
+2. 編輯 `HERMES_FORK_TOKEN` → 貼上新的 `gho_` / `ghp_` token
+   - 取得方法：iMac 跑 `gh auth token`（印出目前 gh CLI token）
+   - 或 GitHub 網頁 → Settings → Developer settings → Tokens (classic) 建 PAT
+3. 按 **Update secret**
+
+**無此 secret 的影響**：workflow checkout fork 那步失敗 → 不會自動 rebase/push；
+不影響其他流程（衝突不會被誤判為無衝突——job 直接失敗並顯示在 Actions 頁面）。
+
+**驗證 secret 是否就緒：**
+
+```bash
+gh secret list -R kaecer68/atlas-wiki   # 應看到 HERMES_FORK_TOKEN
+```
+
 ## 與 NousResearch 上游的關係
 
 - 我們的改動 patch 存在 `0001-feat-runtime-Plan-F-Plan-B-runtime-toolset-SOP.patch`
