@@ -24,7 +24,12 @@ status: E05 已裁決（發現）/ L1-L5 採 Option A 執行
 2. **atlas product-positioning.md §7 仍標「⚠️ 待業主簽核」= 過時標記**（與 spec「已由業主接受」矛盾）→ atlas 目錄對 MacBook 唯讀,**移交 kaecer/iMac hermes 修**
 3. **唯一真正待裁決小題**：E05 原案的 VIX / USD_TWD「情緒調整層」概念未被 spec 收編（spec 7 維無此兩項;VIX 僅存於 janus regime 公式）。要不要情緒層 = 產品決策 → **保留給 kaecer,但可下次再議,不阻塞**
 
-## 二、L1-L5 命名衝突 — 四個命名空間,採 Option A 修復
+## 〇、2026-08-22 kaecer 追加裁決
+
+1. **atlas 目錄 hermes 不可動**（治理邊界,已記錄）：atlas repo 對 hermes/agent 一律唯讀,含修文件在內不可擅動。product-positioning.md §7「待業主簽核」過時標記**維持原樣**（上游文件漂移,接受現況;若要修由 kaecer 親自動）。
+2. **VIX/USD_TWD 情緒層收編**（kaecer 裁決 2026-08-22）：情緒調整層收編進 wiki 知識模型——VIX/USD_TWD 作為外資方向先驗的調整特徵,不進共振投票。**注意邊界**：此為 wiki 知識層設計裁決;atlas spec（capital-flow-seven-dimension-spec.md）未含此層且**不可改**;atlas 端是否實作屬另一軌,不假裝已實作。E05 檔殘題解除。
+
+## 一、E05 資金勢力分類 — 調查結論：裁決已存在,殘留是過時文件
 
 ### 證據：「L1-L5」在四處不同意義
 | # | 命名空間 | 出處 | 內容 |
