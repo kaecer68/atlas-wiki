@@ -1,0 +1,130 @@
+name: hermes-agent fork sync check
+
+# Plan F 護欄維護：每週一自動檢查 fork 與上游的衝突
+# 若有衝突 → 自動開 Issue 通知
+# 若無衝突 → 自動 rebase + push
+
+on:
+  schedule:
+    # 每週一 02:00 UTC（10:00 台北）
+    - cron: "0 2 * * 1"
+  workflow_dispatch:  # 允許手動觸發
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  check-conflicts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: kaecer68/hermes-agent
+          ref: plan-f-tier-index-runtime
+          token: ${{ secrets.HERMES_FORK_TOKEN }}
+          fetch-depth: 0
+        env:
+          HERMES_FORK_TOKEN: ${{ secrets.HERMES_FORK_TOKEN }}
+
+      - name: Set up git config
+        run: |
+          git config user.name "kaecer68-bot"
+          git config user.email "kaecer68@users.noreply.github.com"
+
+      - name: Fetch upstream
+        run: |
+          git fetch origin
+          git remote add fork https://x-access-token:${HERMES_FORK_TOKEN}@github.com/kaecer68/hermes-agent.git
+          git fetch fork
+
+      - name: Run conflict check
+        id: check
+        run: |
+          # 5 個關鍵檔案
+          FILES=(
+            "agent/prompt_builder.py"
+            "cron/scheduler.py"
+            "hermes_cli/main.py"
+            "hermes_cli/prompt_size.py"
+            "hermes_cli/subcommands/prompt_size.py"
+          )
+
+          CONFLICTED=()
+          for f in "${FILES[@]}"; do
+            OUR_HASH=$(git ls-tree HEAD -- "$f" 2>/dev/null | awk "{print \$3}")
+            ORIGIN_HASH=$(git ls-tree origin/main -- "$f" 2>/dev/null | awk "{print \$3}")
+
+            if [[ -z "$OUR_HASH" || -z "$ORIGIN_HASH" ]]; then
+              continue
+            fi
+
+            if [[ "$OUR_HASH" != "$ORIGIN_HASH" ]]; then
+              # merge-base 三方比較：只有「雙方都改了同一檔案」才算衝突
+              BASE_HASH=$(git merge-base origin/main HEAD 2>/dev/null || echo "")
+              if [[ -n "$BASE_HASH" ]]; then
+                BASE_FILE_HASH=$(git ls-tree "$BASE_HASH" -- "$f" 2>/dev/null | awk "{print \$3}")
+                # base == origin → 我們單獨改（可 rebase）；base == our → 上游單獨改（可 rebase）
+                # base 不同於兩者 → 雙方都改 = 衝突
+                if [[ -n "$BASE_FILE_HASH" && "$BASE_FILE_HASH" != "$OUR_HASH" && "$BASE_FILE_HASH" != "$ORIGIN_HASH" ]]; then
+                  CONFLICTED+=("$f")
+                fi
+              fi
+            fi
+          done
+
+          if [[ ${#CONFLICTED[@]} -gt 0 ]]; then
+            echo "CONFLICTED=${CONFLICTED[@]}" >> $GITHUB_OUTPUT
+            echo "::warning::Conflicts found: ${CONFLICTED[@]}"
+            exit 1
+          fi
+          echo "::notice::No conflicts detected"
+
+      - name: Open issue on conflict
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const conflicted = `${{ steps.check.outputs.CONFLICTED }}`.split(' ');
+            const title = `⚠️ hermes-agent fork 與上游有衝突（${new Date().toISOString().split('T')[0]}）`;
+            const body = `## 衝突清單
+
+            ${conflicted.map(f => `- \`${f}\``).join('\n')}
+
+            ## 處置步驟
+
+            1. 在本機跑 \`bash sync-hermes-agent.sh --rebase\`
+            2. 解衝突
+            3. 跑 \`bash sync-hermes-agent.sh\` 推送
+
+            參考：[FORK-PUSH-TROUBLESHOOTING.md](https://github.com/kaecer68/atlas-wiki/blob/main/_internal/hermes-agent-patches/FORK-PUSH-TROUBLESHOOTING.md)
+            `;
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: title,
+              body: body,
+              labels: ['plan-f-conflict', 'needs-decision'],
+            });
+
+      - name: Auto-rebase if no conflict
+        if: success()
+        run: |
+          # 嘗試自動 rebase
+          if git rebase origin/main; then
+            # 跑基本測試（Python syntax check）
+            python3 -c "import ast; ast.parse(open('agent/prompt_builder.py').read())"
+            python3 -c "import ast; ast.parse(open('cron/scheduler.py').read())"
+            python3 -c "import ast; ast.parse(open('hermes_cli/main.py').read())"
+            python3 -c "import ast; ast.parse(open('hermes_cli/prompt_size.py').read())"
+            python3 -c "import ast; ast.parse(open('hermes_cli/subcommands/prompt_size.py').read())"
+
+            # Force push（已通過 syntax check）
+            git push fork plan-f-tier-index-runtime --force-with-lease
+
+            echo "✅ Auto-rebase + push 成功"
+          else
+            echo "⚠️ rebase 衝突，需手動處理"
+            git rebase --abort
+            exit 1
+          fi
