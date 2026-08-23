@@ -100,6 +100,8 @@ MCP（Model Context Protocol）是把工具能力以 **結構化 JSON** 形式�
 
 ### 2.7 策略訊號類（Strategy）
 
+> 對齊 atlas internal/strategy_techniques/enums.go canonical 定義（L1 全球流動性 / L2 外資行為 / L3 產業催化 / L4 匯率籌碼 / L5 地緣政治）[2026-08-22 iter2]
+
 | 工具 | 用途 |
 |------|------|
 | `strategy_list_active` | 當前啟用的 L1–L5 偵測器（含 `foreign-3day-inflow` 等） |
@@ -110,6 +112,11 @@ MCP（Model Context Protocol）是把工具能力以 **結構化 JSON** 形式�
 | `strategy_get_layers` | L1–L5 全部層級配置 |
 | `detector_registry_list` | 24 個 template trigger detectors 啟用狀態 |
 | `get_recommendations` | 組合層策略（growth / momentum / defensive / all_weather / value） |
+
+> **時期 × 策略對位（2026-08-22 iter2 複查）**：
+> - M1 ✅：`macro_get_snapshot_latest` 已公開 `current_period` + `current_period_name_zh` 七時期欄位（audit_state M1 ⬜→✅，#1488 註記不重複實作獨立 PeriodDetector 工具）
+> - M4 ✅：`strategy_for_period`（period=downturn/turnaround_up/bull/plateau/consolidation/turnaround_down/black_swan）回傳適用策略 + category/priority，讀 `configs/methodology_rules.yaml` 同源 MethodologyAdvisor；2026-08-22 實跑 `bull` → allowed=[momentum, growth, event_arbitrage]
+> - C2 狀態：`strategy_ranker` / `strategy_get_summary` 仍無 period 欄（2026-08-22 複查 atlas-go 源碼無 period 欄位）→ 對位改用 `strategy_for_period`，不再等 ranker 加欄
 
 ### 2.8 風險與告警類（Risk & Alert）
 
@@ -326,7 +333,7 @@ Step 6: mcp_anomaly_get_recent          → 最近 anomalies
 ```text
 1. mcp_quickstart
 2. 解析 regime：若 RISK_OFF → capital_flow_summary 看外資是否連賣
-3. 解析 strategy：strategy_list_active → 篩選 L2（法人流向）偵測器
+3. 解析 strategy：strategy_list_active → 篩選 L2（外資行為）偵測器
 4. 補丁：explain_market_move(format="plain") 生成中文解說
 ```
 

@@ -8,7 +8,7 @@ tier: T3
 confidence: high
 atlas_go_relevance: high
 mcp_tools_used: [backtest_signals, risk_get_metrics, report_get_tax_snapshot]
-verification: 2026-08-01 v0.9 結算跑過 L3 升 active:backtest_signals sharpe_long=0.27/sharpe_short=0.49(交易成本前後);risk_get_metrics live session_count=147;report_get_tax_snapshot simulated 0(no positions,需真實持倉才有意義,誠實標);atlas cost model 預設 0.00654/0.003 需 parameters_get 確認(2026-08-02 20:30 實跑 `parameters_get` **401 unauthorized** atlas-go auth 問題,需 token;atlas 端問題不在我層可修);台灣 ETF 稅制:股票型 ETF 賣方證交稅 0.1%、債券型 ETF 免徵證交稅、無「配息稅」(配息走股利所得),atlas 端未對位,需 client 端修補;**2026-08-02 20:30 L3 頁面驗證 Step 2 確認:backtest_signals 回傳**無 gross_sharpe/net_sharpe 區分**(只有 sharpe_long + sharpe_short 兩欄),故 SK-19 line 49 「backtest_signals 是 gross 還是 net?」可勾 — **結論:無區分 = 預設應為 gross,需自行扣成本**。 **2026-08-22 audit-fix:修正 ETF 稅制與當沖稅率事實——股票型 ETF 賣方證交稅 0.1%(2017 起由 0.3% 調降)、債券型 ETF 免徵證交稅(落日多次延長,現行至 2026-12-31)、不存在「配息稅」(配息走股利所得:28% 分離課稅或併入綜所稅享 8.5% 抵減,每戶上限 8 萬元;單次股利給付 ≥2 萬元另扣二代健保補充保費 2.11%);0.3% 賣方證交稅為長期現制,2017-04-28 變革為當沖賣方稅率減半至 0.15%(落日多次延長,現行效期至 2027-12-31 [待財政部驗證])。**
+verification: 2026-08-01 v0.9 結算跑過 L3 升 active:backtest_signals sharpe_long=0.27/sharpe_short=0.49(交易成本前後);risk_get_metrics live session_count=147;report_get_tax_snapshot simulated 0(no positions,需真實持倉才有意義,誠實標);atlas cost model 預設 0.00654/0.003 需 parameters_get 確認(2026-08-02 20:30 實跑 `parameters_get` **401 unauthorized** atlas-go auth 問題,需 token;atlas 端問題不在我層可修);台灣 ETF 稅制:股票型 ETF 賣方證交稅 0.1%、債券型 ETF 免徵證交稅、無「配息稅」(配息走股利所得),atlas 端未對位,需 client 端修補;**2026-08-02 20:30 L3 頁面驗證 Step 2 確認:backtest_signals 回傳**無 gross_sharpe/net_sharpe 區分**(只有 sharpe_long + sharpe_short 兩欄),故 SK-19 line 49 「backtest_signals 是 gross 還是 net?」可勾 — **結論:無區分 = 預設應為 gross,需自行扣成本**。 **2026-08-22 audit-fix:修正 ETF 稅制與當沖稅率事實——股票型 ETF 賣方證交稅 0.1%(2017 起由 0.3% 調降)、債券型 ETF 免徵證交稅(落日多次延長,現行至 2026-12-31)、不存在「配息稅」(配息走股利所得:28% 分離課稅或併入綜所稅享 8.5% 抵減,每戶上限 8 萬元;單次股利給付 ≥2 萬元另扣二代健保補充保費 2.11%);0.3% 賣方證交稅為長期現制,2017-04-28 變革為當沖賣方稅率減半至 0.15%(2026-08-22 官方驗證:歷經 107/110/114 年三次延長,現行有效至 2027-12-31;稅率自始 0.15% 從無 0.25%/0.2% 中間稅率;立法依據=證交稅條例第 2-2 條,非第 2-3 條[權證避險])。**
 ---
 
 ## 一句話定位
@@ -55,7 +55,7 @@ Step 3: 呼叫 `report_get_tax_snapshot` 看實盤 realized gains 與 backtest �
 ## 未消化 / 待補
 - [x] atlas cost model 是否區分「買進 / 賣出」雙邊成本?SK-19 公式是合併計算,atlas 若單獨報買進成本會錯位。
 - [x] `backtest_signals` 回傳的 Sharpe 是 gross 還是 net?**2026-08-02 20:30 L3 頁面驗證 Step 2 確認:回傳**無 gross_sharpe/net_sharpe 區分**,只有 sharpe_long(0.27) + sharpe_short(0.49) 兩欄 = 預設 gross,需自行扣成本(對位 Fin-Skills 公式 total_cost = turnover × (avg_trading_cost + tax_rate) = 0.00954 預設)
-- [ ] 0.3% 賣方證交稅為長期現制;2017-04-28 變革為當沖賣方稅率減半至 0.15%(落日多次延長,現行效期至 2027-12-31 [待財政部驗證]),Fin-Skills 預設值是否符合 atlas 當下版本,需 `parameters_get_audit_log` 查證 [2026-08-22 audit-fix]。
+- [ ] 0.3% 賣方證交稅為長期現制;2017-04-28 變革為當沖賣方稅率減半至 0.15%(2026-08-22 官方驗證:歷經 107/110/114 年三次延長,現行有效至 2027-12-31;稅率自始 0.15% 從無 0.25%/0.2% 中間稅率;立法依據=證交稅條例第 2-2 條,非第 2-3 條[權證避險]),Fin-Skills 預設值是否符合 atlas 當下版本,需 `parameters_get_audit_log` 查證 [2026-08-22 audit-fix]。
 - [ ] 融券放空成本(借券費)沒在 SK-19 預設內,但 atlas `strategy_ranker` 可能涵蓋 short 策略,需查覆蓋率。
 
 methodology_aligned: true

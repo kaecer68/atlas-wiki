@@ -2,7 +2,7 @@
 
 > 散戶 AI 實戰金融工程 知識圖譜
 > 從 2026-07-15 開始建立
-> Last updated: 2026-08-22 | Knowledge entries: 36 (this index) / Repo .md 總數: 154（2026-08-22 快照,find 實測） / SK 知識檔: 37（36 編號 + 索引,SK-27/30 已 archive）
+> Last updated: 2026-08-22 | Knowledge entries: 36 (this index) / Repo .md 總數: 155（2026-08-22 快照,find 實測,含 _knowledge-router） / SK 知識檔: 37（36 編號 + 索引,SK-27/30 已 archive）
 > 2026-08-03 repo 公開化(MIT + v1.0.0 + CI validate-wiki)
 > 2026-08-22 知識路由：raw/queries/comparisons/summaries-handoff+manifests 共 18 檔遷移至 atlas-notes（純知識回原料庫）
 
@@ -34,7 +34,7 @@
 - [[concepts/atals-platform-overview]] — atals 平台概覽（2026-08-02 補入）
 - [[concepts/atals-simulation-guide]] — atals 策略模擬指南（2026-08-02 補入）
 - [[concepts/atals-mcp-tools-reference]] — atals MCP 工具參考（2026-08-02 補入）
-- [[concepts/atals-strategy-taxonomy]] — atals L1-L5 策略分類體系（2026-08-02 補入）
+- [[concepts/atals-strategy-taxonomy]] — atals L1-L5 策略分類體系（2026-08-02 補入；層名對齊 atlas internal/strategy_techniques/enums.go canonical [2026-08-22 iter2]）
 - [[concepts/atals-risk-management-framework]] — atals 風險管理框架（2026-08-02 補入）
 
 - [[concepts/atlas-three-paradigms-v0.2-summary]] — L/T/S 三範式摘要(Stage 1C)
@@ -60,6 +60,7 @@
 - **找某個事件**:到 `entities/` 用檔名搜尋
 - **找某個概念**:到 `concepts/` 用檔名搜尋
 - **看全貌**:用 Obsidian 打開這個目錄,看 Graph View
+- **服務散戶時找知識對位**:`skills/_knowledge-router.md`（Q→概念/研究頁→SK 角色路由,2026-08-22 案 A 建立;與 _consult-index 端點路由互補）
 - **研究盤查 / 比較 / 過程工件**:到 `~/workspace/atlas-notes/02-knowledge/`（原料庫，2026-08-22 知識路由遷移）
 
 ## 維護節奏(kaecer 拍板)

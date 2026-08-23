@@ -20,6 +20,10 @@ contradictions: []
 
 > **一句話**：這份 AI web 回答提供了很好的研究地圖，但不能直接當成「安全窗口」規則；真正要做的是把機構類型、資金目的、可觀測資料、時間延續與失效條件拆開，然後用事件回放驗證。
 
+> 對位更新：七維分層正義 = atlas spec 3+2+2（2026-07-17 業主接受）;本檔 contested/low-confidence 內容以 spec 為準 [2026-08-22 iter2]
+
+> kaecer 2026-08-22 收編：3+2+2 + **情緒調整層**（VIX / USD_TWD）為 wiki 知識模型完整版——情緒層只調整外資方向先驗置信度,不進共振投票;atlas spec 未含此層（atlas 端實作另軌）。詳見 [[concepts/funding-forces-taxonomy-e05-pending-approval|E05 檔]]「情緒調整層」節。
+
 ## 1. 先修正核心問題：不是「誰買」，而是「哪一種錢」
 
 同一個「買超」可能代表完全不同的行為：

@@ -97,6 +97,8 @@ Atlas 是專為 **台股散戶投資人** 設計的 **策略模擬與交易模�
 - **參數管理**：`parameters_get` / `parameters_get_categories` / `parameters_get_metadata` 提供 darwinian、factor、optimizer、sizing、health、garch、experiment、baseline 等分類。
 - **可解釋性**：`parameters_get_audit_log` 記錄每次參數變更（誰/為何/何時）。
 
+> 對齊 atlas internal/strategy_techniques/enums.go canonical 定義（L1 全球流動性 / L2 外資行為 / L3 產業催化 / L4 匯率籌碼 / L5 地緣政治）[2026-08-22 iter2]
+
 ### 2.4 模擬層（Simulation Layer）
 
 - **模擬 session**：`universe_get_sessions` / `universe_get_session_detail` 提供個股 universe 的歷史模擬結果。

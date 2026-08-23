@@ -6,7 +6,7 @@ type: concept
 tags: [framework, signal, contrarian, L6]
 sources:
   - docs/ATLAS_METHODOLOGY.md v1.0 §二 第六層 + §四 散戶
-  - concepts/taiwan-stock-market-structure.md（維持率現制：整戶 130% 追繳、追繳未補即處分,2022-04-01 起）
+  - concepts/taiwan-stock-market-structure.md（維持率現制：整戶 130% 追繳、追繳未補即處分,2015-05-04 起）
   - concepts/taiwan-chip-flow-analysis.md（當沖分級、集保分級）
   - concepts/taiwan-money-flow-seven-institutional-buckets.md（分點警示、門檻紀律）
 confidence: medium
@@ -17,6 +17,8 @@ contradictions: []
 # 散戶情緒指標（因果鏈第六層）
 
 > **一句話**：本頁是憲章因果鏈第六層「散戶情緒與籌碼」的補課頁——散戶情緒是**反向指標**，憲章原文：「融資高點 ≈ 市場頭部；融資斷頭潮 ≈ 市場底部。」2026-08-22 審計時 Google Trends 0 命中, 此頁補上 [2026-08-22 audit-fix]。
+
+> 層級命名對齊憲章 §二中文層名；英數 L1-L5 保留給 atlas strategy_techniques 策略分層 [2026-08-22 iter2]
 
 ## 一、五個指標總表
 
@@ -30,8 +32,8 @@ contradictions: []
 
 ### 1.1 融資餘額與融資維持率
 
-- **意義**：融資餘額 = 散戶借錢買股金額（[[concepts/taiwan-chip-flow-analysis|籌碼面]] §5.1）；維持率 = 散戶壓力水位（憲章 L6）。
-- **現制門檻**：整戶擔保維持率低於 130% 通知追繳,限期未補足即處分擔保品（2022-04-01 起整戶新制；市場口語的 120% 斷頭線屬舊制簡化說法 [待證交所驗證]）（[[concepts/taiwan-stock-market-structure|市場結構]] §5.2）[2026-08-22 audit-fix]；憲章「轉折下壓」訊號用 150%——非追繳線, 勿混用。
+- **意義**：融資餘額 = 散戶借錢買股金額（[[concepts/taiwan-chip-flow-analysis|籌碼面]] §5.1）；維持率 = 散戶壓力水位（憲章因果鏈第六層）。
+- **現制門檻**：整戶擔保維持率低於 130% 通知追繳,限期未補足即處分擔保品（130% 自 2015-05-04 起施行,2026-08-22 官方驗證沿革:1992 訂定 140%→1996 120~140% 區間→至遲 2000 固定 120%→2015-05-04 起 130%;市場口語的 120% 斷頭線即此舊制簡化說法）（[[concepts/taiwan-stock-market-structure|市場結構]] §5.2）[2026-08-22 audit-fix]；憲章「轉折下壓」訊號用 150%——非追繳線, 勿混用。
 - **判讀**：3 個月趨勢 + 分佈百分位；急速下降（斷頭潮）≈ 底部（憲章）。atlas 對位：`margin-balance-extreme` / `margin-trend-reversal`（[[concepts/taiwan-chip-flow-analysis|籌碼面]] §9.1）、[[templates/trigger-margin-350b]]。
 
 ### 1.2 當沖佔比
@@ -47,13 +49,13 @@ contradictions: []
 
 ### 1.4 Google Trends
 
-- **意義**：散戶關注熱度（反向指標, 憲章 L6）。
+- **意義**：散戶關注熱度（反向指標, 憲章因果鏈第六層）。
 - **現況**：本庫原 0 命中 [2026-08-22 audit-fix], 此頁補上；資料管道待建立 [資料管道待驗證]。既有研究註記：延遲高、PTT/Dcard 爬蟲有法律風險（raw/articles/atlas-trading-signals-audit-hints-v0.1.md）。
 - **判讀**：熱度百分位極端高 ≈ 擁擠（頭部警訊候選）；極端低 ≈ 無人問津（機會區）。
 
 ### 1.5 券商分點進出
 
-- **意義**：散戶進出結構（憲章 L6 原文）。
+- **意義**：散戶進出結構（憲章因果鏈第六層原文）。
 - **警示**：分點不是法人身份——同機構可分散多帳戶、券商可代客交易, 「前十大分點集中度 > 50% = 主力進場」不能當規則（[[concepts/taiwan-money-flow-seven-institutional-buckets|七大資金勢力]] §3）。
 - **用法**：只當個股籌碼集中度線索, 與法人/集保交叉後才下結論。
 
@@ -93,4 +95,4 @@ contradictions: []
 
 - [[concepts/taiwan-stock-market-structure]]（維持率現制：整戶 130% 追繳、未補即處分）
 - [[concepts/taiwan-money-flow-seven-institutional-buckets]]（分點警示、門檻紀律）
-- [[concepts/taiwan-export-orders-semiconductor-cycle]]（L2 基本面層）
+- [[concepts/taiwan-export-orders-semiconductor-cycle]]（因果鏈第二層基本面層）
