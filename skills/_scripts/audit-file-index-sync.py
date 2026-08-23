@@ -6,7 +6,7 @@ audit-file-index-sync.py — 驗證 wiki 內落檔是否被索引引用(2026-08-
 
 規則:
 - skills/SK-*.md 必須在 SK-00-skill-index.md 引用
-- concepts/queries/entities/summaries/comparisons/*.md 必須在 index.md 引用
+- concepts/entities/summaries/*.md 必須在 index.md 引用(queries、comparisons 兩區 2026-08-22 知識路由已遷移 atlas-notes)
 - templates/trigger-*.md 必須在 README.md §12 trigger 清單
 - skills/_scripts/*.py 必須在 README.md §CI 章節列
 
@@ -79,10 +79,8 @@ def main():
 
     # 2-6. 各目錄 → index.md
     for kind, pat in [('concepts', 'concepts/*.md'),
-                     ('queries', 'queries/*.md'),
                      ('entities', 'entities/*.md'),
-                     ('summaries', 'summaries/*.md'),
-                     ('comparisons', 'comparisons/*.md')]:
+                     ('summaries', 'summaries/*.md')]:
         files, m, miss = audit(kind, pat, ROOT / 'index.md', 'index.md')
         bad += miss
         summary.append(f'✅ {len(m)}/{len(files)} {kind}/ 在 index.md 引用')

@@ -5,10 +5,10 @@ updated: 2026-07-18
 type: concept
 tags: [T, signal, strategy, hypothesis, time-anchor]
 sources:
-  - raw/articles/atlas-taiwan-trading-signals-v0.4.md
+  - ~/workspace/atlas-notes/02-knowledge/atlas-taiwan-trading-signals-v0.4.md
   - concepts/t1-t4-signal-light.md
   - concepts/atlas-mcp-interpretation-guide.md
-  - queries/day-2-L1T3-three-dimensions-2026-07-17.md
+  - ~/workspace/atlas-notes/02-knowledge/day-2-L1T3-three-dimensions-2026-07-17.md
   - atlas-mcp:capital_flow_daily
   - atlas-mcp:narrative_get_bundle
 confidence: low
@@ -177,4 +177,4 @@ contradictions: []
 - [[concepts/t1-t4-signal-light]]
 - [[concepts/atlas-mcp-interpretation-guide]]
 - [[entities/l1-t3-five-chains]]
-- [[queries/day-2-L1T3-three-dimensions-2026-07-17]]
+- day-2-L1T3-three-dimensions-2026-07-17（已遷移至 atlas-notes/02-knowledge/, 2026-08-22 知識路由）
