@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
-# atlas-wiki commit-msg hook v3 (T3-A258 kaecer "B" 拍板 + (WIP) 例外擴展)
+# atlas-wiki commit-msg hook v4 (T3-A258 kaecer "B" 拍板 + (WIP) 例外擴展 + Merge/Revert 整合例外)
 # 對位 SOUL §0.1 例外 6 + v6.46 規範修改 + v6.60 D6 (WIP) 例外擴展
+#
+# v4 擴展(2026-08-22,對位 iter2 整合事故):Merge branch / Revert 開頭的
+# 整合/還原 commit 允許(不需 #N)——本地整合 merge 是提交已審過 PR 的歷史,
+# 不屬「新功能/修復」;此前 Merge 型第一行會落入未識別 type 被拒,
+# 導致 iter2-base 整合 commit 靜默失敗(commit 未建立但後續指令照跑)。
 #
 # v2 規則(2026-08-04 kaecer 拍板 B = T3-A258):
 # - feat/fix 必須含 (#N) 真實 PR 編號
@@ -49,7 +54,7 @@ fi
 # feat(...) / fix(...) → 必須含 (#N) 真實 PR
 # chore: / docs: / build: / ci: / refactor: / style: / test: → 為例外的非 merge commit
 #   兩種格式共存:「type(scope):」與「type:」
-COMMIT_TYPE=$(printf '%s' "$FIRST_LINE" | sed -nE 's/^([a-z]+)([(: ]).*/\1/p')
+COMMIT_TYPE=$(printf '%s' "$FIRST_LINE" | sed -nE 's/^([A-Za-z]+)([(: ]).*/\1/p')
 
 case "$COMMIT_TYPE" in
     feat|fix)
@@ -72,13 +77,13 @@ case "$COMMIT_TYPE" in
             exit 1
         fi
         ;;
-    chore|docs|build|ci|refactor|style|test)
-        # 例外:允許
+    chore|docs|build|ci|refactor|style|test|[Mm]erge|[Rr]evert)
+        # 例外:允許(chore 等 + v4 Merge/Revert 整合例外,不需 #N)
         ;;
     *)
         # 其他未識別 type 不自動放行 → 鼓勵改用正確 type
         echo "⚠️  未識別的 commit type: '$COMMIT_TYPE'(對位 conventional commits)"
-        echo "   接受類型: feat / fix / chore / docs / build / ci / refactor / style / test"
+        echo "   接受類型: feat / fix / chore / docs / build / ci / refactor / style / test / merge / revert"
         echo "   your first line: [ $FIRST_LINE ]"
         exit 1
         ;;

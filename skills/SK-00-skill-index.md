@@ -48,6 +48,13 @@ Step 1: `ls ~/workspace/atlas-wiki/skills/SK-*.md | wc -l` 應回 34(33 主體 S
 Step 2: 對 `universe_get_sessions` 抽一份 supervised session,看其 strategy_id 對應哪些 SK。
 Step 3: 對 `experiment_history` 抽一份,看其 pipeline metadata 是否含 SK pipeline 標籤。
 
+## 相關入口
+
+- `_consult-index.md` — 工具路由（Q→atlas-mcp 端點）
+- `_knowledge-router.md` — 知識路由（Q→concepts/entities 知識頁→SK,角色 GT/INT/NAR/DOC,2026-08-22 案 A 建立）
+- `_method.md` — 寫入規範（六條鐵律）
+- `_inbox.md` — 跨 SK 待辦總表
+
 ## 未消化 / 待補
 - [ ] 論文 pipeline 順序(supervised / reinforcement)是否真為「最佳實務」,需在台股資料上重跑驗證。
 - [x] **archive 標一致性驗證(2026-08-02)**:grep SK-00/27/30 三檔 archive 標,**三者一致**——SK-00 §未消化寫「SK-27/SK-30 已標 [ARCHIVED — 學術展示無對位]」,SK-27 frontmatter 自標 archive + §散戶解讀「主動 archive」,SK-30 frontmatter 自標 archive + §驗證方式「無 L3 端點。本頁 archive」。無引用錯誤。
