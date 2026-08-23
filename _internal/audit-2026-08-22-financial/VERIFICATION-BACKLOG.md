@@ -21,7 +21,7 @@ status: closed（2026-08-22 WP-8 三批 + 2026-08-23 TWSE 實跑批次：38/38 �
 | ✅ | taiwan-stock-market-structure §7.1 | 國內 ETF 總規模 >4 兆/受益人數破千萬/投信持有 5-8 兆 | 2026-08-22 WP-8 驗證：SITCA ETF 專區 2024 ETF 63,819 億(6.38 兆)/受益 1,436 萬人、2025 75,382 億(7.54 兆)/1,656 萬人,全體基金 11.38 兆。URL: https://www.sitca.org.tw/ROC/SITCA_ETF/etf-section-stats.html |
 | ✅ | taiwan-stock-market-structure §10.3 | 瞬間價格穩定試撮間隔（20 vs 30 秒） | 2026-08-22 WP-8 驗證：暫緩 2 分鐘期間揭露=每 10 秒（109.02.26 公告）;集合競價循環秒數 20→15→10→5 秒沿革,現行 5 秒;無 30 秒規定。URL: https://twse-regulation.twse.com.tw/TW/int/DAT01_print.aspx?FLCODE=FE337278 + https://www.twse.com.tw/zh/about/company/history.html |
 | ✅ | taiwan-chip-flow-analysis §6.2（backlog 誤標 §4.4） | 集保「400 張大戶/20 張散戶」分級界線 | 2026-08-22 WP-8：界線吻合 TDCC 股權分散表 15 級（400,001 股以上/20,000 股以下） |
-| ⬜ | SK-18 | Newey-West lag=12 對月頻非重疊報酬是否偏高 | 文獻/計量慣例（2026-08-22 三批驗證未涵蓋,留待下批） |
+| ✅ | SK-18 | Newey-West lag=12 對月頻非重疊報酬是否偏高 | 2026-08-23：慣例 floor(4×(T/100)^(2/9)) T=60→4/T=336→5;lag=12 偏高但保守（放大 SE 壓低 t）,SK-18 已註明 |
 | ✅ | SK-20/21/23 | 產業數口徑 18/38/47 統一 | 2026-08-22 WP-8：實數 38（20 L1+18 L2,internal/industry/sector.go）;SK-20「18」為舊口徑、論文「47」為 Fin-Skills 口徑 |
 
 ## B. 實測/實跑驗證類（atlas 端點或回測可驗）
