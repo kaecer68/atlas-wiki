@@ -13,11 +13,11 @@ contested: false
 contradictions: []
 ---
 
-# 金融領域模型字典（台股 / atals 平台）
+# 金融領域模型字典（台股 / atlas 平台）
 
-> **一句話**：本頁統整台股投資所需的 10 類核心金融術語（市場結構、交易制度、指數、法人參與者、基本面、技術面、籌碼面、總經、國際關聯、atals 平台專有名詞），作為知識庫的基礎字典，確保所有概念有一致的命名與定義。
+> **一句話**：本頁統整台股投資所需的 10 類核心金融術語（市場結構、交易制度、指數、法人參與者、基本面、技術面、籌碼面、總經、國際關聯、atlas 平台專有名詞），作為知識庫的基礎字典，確保所有概念有一致的命名與定義。
 
-> 本文件為機器人智能體（hermes agent、openclaw、codex 等）在輔助台股散戶投資人使用 atals 平台時的**領域基礎字典**。所有後續知識庫文件（指標說明、策略規則、API 契約、提示詞模板等）都應以本文件的術語定義為唯一依據。
+> 本文件為機器人智能體（hermes agent、openclaw、codex 等）在輔助台股散戶投資人使用 atlas 平台時的**領域基礎字典**。所有後續知識庫文件（指標說明、策略規則、API 契約、提示詞模板等）都應以本文件的術語定義為唯一依據。
 >
 > 命名規範：所有實體與指標以「中文名稱（英文／縮寫）」標記，便於跨文件引用與 LLM 解析。關聯欄位以 `→` 表示依賴或組成關係。
 
@@ -196,17 +196,17 @@ contradictions: []
 
 ---
 
-## 10. atals 平台專有名詞（Platform Vocabulary）
+## 10. atlas 平台專有名詞（Platform Vocabulary）
 
-atals 平台內部使用的概念，是策略、訊號、模擬相關對話的核心詞彙。
+atlas 平台內部使用的概念，是策略、訊號、模擬相關對話的核心詞彙。
 
-> 注：atals 平台為台股 AI 輔助投資工具，本節定義其內部術語，便於 LLM agent 在與平台 API 或 MCP 工具互動時精準對齊語意。
+> 注：atlas 平台為台股 AI 輔助投資工具，本節定義其內部術語，便於 LLM agent 在與平台 API 或 MCP 工具互動時精準對齊語意。
 
 > 對齊 atlas internal/strategy_techniques/enums.go canonical 定義（L1 全球流動性 / L2 外資行為 / L3 產業催化 / L4 匯率籌碼 / L5 地緣政治）[2026-08-22 iter2]
 
 | 中文名稱 | 英文／縮寫 | 簡短定義 | 關聯術語 |
 |---|---|---|---|
-| 策略 | Strategy | atals 平台對外提供的「可被啟用、評分、淘汰」的訊號組合單元；一個策略包含一組進入與退出規則 | → 策略層級、→ 回測 |
+| 策略 | Strategy | atlas 平台對外提供的「可被啟用、評分、淘汰」的訊號組合單元；一個策略包含一組進入與退出規則 | → 策略層級、→ 回測 |
 | 策略層級 L1–L5 | Strategy Layer L1–L5 | 平台將策略依「時間尺度 × 訊號來源」分為五層：L1 全球流動性、L2 外資行為、L3 產業催化、L4 匯率籌碼、L5 地緣政治 | → 策略、→ Darwinian 權重 |
 | 訊號偵測器 | Signal Detector | 從原始市場資料（價格、法人、宏觀、新聞）萃取單一訊號的最小運算單元 | → 策略、→ 模板偵測器 |
 | 模板偵測器 | Template Detector | 多個訊號偵測器組成的「主題型」觸發器（例如「外資連三買」+「融資增加」合併觸發） | → 訊號偵測器、→ 鏈式訊號 |
@@ -219,15 +219,15 @@ atals 平台內部使用的概念，是策略、訊號、模擬相關對話的�
 | 壓力指數 | Stress Index（Taiwan Stress Index） | 平台根據多項宏觀與籌碼變數綜合出的台灣市場「壓力」分數，用於判斷風險胃納 | → 風險暴露、→ 宏觀 |
 | 產業分類 | Sector | 台股產業分類，平台使用 20 大產業（如半導體、金融、塑膠等） | → ETF、→ 產業配置 |
 | 板塊配置 | Sector Allocation | 投資組合中各產業的權重分配，平台提供目標／實際／差異的快照 | → 產業、→ 風險暴露 |
-| 投資組合 | Portfolio | atals 帳號下管理的倉位，可分為模擬組合與實盤組合 | → 板塊配置、→ 風險暴露 |
+| 投資組合 | Portfolio | atlas 帳號下管理的倉位，可分為模擬組合與實盤組合 | → 板塊配置、→ 風險暴露 |
 | 訊號鏈 | Signal Chain | 多個訊號偵測器之間的因果觸發關係（例如：CPI 上升 → 央行升息 → 銀行股利多） | → 模板偵測器、→ 敘事模型 |
 | 敘事模型 | Narrative Model | 平台把多個訊號鏈組合成「為什麼現在這樣」的宏觀故事模板 | → 訊號鏈、→ 事件 |
 | 事件 | Event | 影響市場的重大事件（ETF 換股、MSCI 調權重、央行決策、財報等），平台以行事曆形式提供 | → 事件日曆、→ 預測 |
 | 事件預測 | Event Forecast | 平台針對未來事件預測的資金流向（例如 ETF 換股可能買超 / 賣超個股） | → 事件、→ 資金流 |
 | 信心分數 | Confidence Score | 訊號或預測的可信度數值，0–100；用於組合加權與否決門檻 | → 訊號、→ 風險 |
 | 滑價 | Slippage | 實際成交價與預期價格的差異，回測與模擬的常見成本項 | → 模擬、→ 交易成本 |
-| API 契約 | API Contract | atals 平台對外（HTTP 或 MCP）公開的介面定義，包含欄位、型別與意義 | → MCP、→ 工具 |
-| MCP 工具 | MCP Tool | atals 平台以 Model Context Protocol 對外暴露的工具（`atlas-mcp_*` 命名空間），LLM agent 可直接呼叫 | → API 契約、→ 工具 |
+| API 契約 | API Contract | atlas 平台對外（HTTP 或 MCP）公開的介面定義，包含欄位、型別與意義 | → MCP、→ 工具 |
+| MCP 工具 | MCP Tool | atlas 平台以 Model Context Protocol 對外暴露的工具（`atlas-mcp_*` 命名空間），LLM agent 可直接呼叫 | → API 契約、→ 工具 |
 
 ---
 
@@ -294,7 +294,7 @@ atals 平台內部使用的概念，是策略、訊號、模擬相關對話的�
 
 **說明**：基本面、技術面、籌碼面三類指標在策略中互補：基本面選股、技術面擇時、籌碼面避險。
 
-### 平台層：atals
+### 平台層：atlas
 
 ```
 原始市場資料（價格、法人、宏觀、新聞）
@@ -314,7 +314,7 @@ atals 平台內部使用的概念，是策略、訊號、模擬相關對話的�
                                           └─→ 信心分數 / VaR / 壓力指數
 ```
 
-**說明**：atals 平台以原始資料為輸入，經由「訊號偵測器 → 模板偵測器 → 訊號鏈 → 敘事模型」逐層抽象化產出市場觀點；策略層級與 Darwinian 權重把這些觀點轉換為可投資的組合；風險暴露與板塊配置則是投資組合的監控與調整介面。MCP 工具則是上述所有概念對外（對 LLM agent）暴露的介面層。
+**說明**：atlas 平台以原始資料為輸入，經由「訊號偵測器 → 模板偵測器 → 訊號鏈 → 敘事模型」逐層抽象化產出市場觀點；策略層級與 Darwinian 權重把這些觀點轉換為可投資的組合；風險暴露與板塊配置則是投資組合的監控與調整介面。MCP 工具則是上述所有概念對外（對 LLM agent）暴露的介面層。
 
 ### 跨層依賴關係速查
 
@@ -345,12 +345,12 @@ atals 平台內部使用的概念，是策略、訊號、模擬相關對話的�
 - [[concepts/taiwan-chip-flow-analysis]]
 - [[concepts/taiwan-technical-analysis-guide]]
 - [[concepts/taiwan-fundamental-analysis-guide]]
-- [[concepts/atals-platform-overview]]
-- [[concepts/atals-strategy-taxonomy]]
-- [[concepts/atals-mcp-tools-reference]]
+- [[concepts/atlas-platform-overview]]
+- [[concepts/atlas-strategy-taxonomy]]
+- [[concepts/atlas-mcp-tools-reference]]
 
 ---
 
 *本文件版本：v1.0  初稿*
 *維護者：hermes agent / openclaw / codex 協作維護*
-*適用範圍：atals 台股投資平台知識庫*
+*適用範圍：atlas 台股投資平台知識庫*

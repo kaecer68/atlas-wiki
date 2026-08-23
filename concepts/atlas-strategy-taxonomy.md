@@ -8,7 +8,7 @@ sources:
   - atlas-mcp:strategy_list_active
   - atlas-mcp:strategy_ranker
   - atlas-mcp:strategy_get_summary
-  - concepts/atals-simulation-guide.md
+  - concepts/atlas-simulation-guide.md
   - concepts/atlas-mcp-interpretation-guide.md
 confidence: high
 contested: false
@@ -52,7 +52,7 @@ contradictions: []
 - **中風險**：中型股、產業型 ETF、波段操作。
 - **高風險**：小型股、題材股、槓桿／反向 ETF、高頻或事件驅動。
 
-> 風險維度常與「曝險集中度」、「單筆最大損失占組合淨值比例」、「流動性緩衝」三個量度連動，請見 `risk-management.md`；完整風險框架參見 [[concepts/atals-risk-management-framework]]。
+> 風險維度常與「曝險集中度」、「單筆最大損失占組合淨值比例」、「流動性緩衝」三個量度連動，請見 `risk-management.md`；完整風險框架參見 [[concepts/atlas-risk-management-framework]]。
 
 ---
 
@@ -138,7 +138,7 @@ atlas 平台採「分層訊號驅動」架構，將主動策略系統化為五�
 - 訊號形式：新聞情緒分數、政策事件觸發頻率、避險資產（黃金、日圓）聯動。
 - 解讀用途：作為組合層級的尾部風險（tail risk）啟示器，不直接作為進場依據。
 
-> **注意**：L1–L5 屬於「訊號偵測」而非「策略本身」。同一條 L2 訊號可同時被趨勢策略與均值回歸策略引用，端視組合設計。完整的策略模擬流程（從訊號偵測 → 權重決策 → 組合配置 → 統計驗證）請參見 [[concepts/atals-simulation-guide]]。
+> **注意**：L1–L5 屬於「訊號偵測」而非「策略本身」。同一條 L2 訊號可同時被趨勢策略與均值回歸策略引用，端視組合設計。完整的策略模擬流程（從訊號偵測 → 權重決策 → 組合配置 → 統計驗證）請參見 [[concepts/atlas-simulation-guide]]。
 
 ---
 
@@ -153,7 +153,7 @@ atlas 平台採「分層訊號驅動」架構，將主動策略系統化為五�
 ### 5.2 策略權重配置（Darwinian Weighting）
 - **Darwinian 權重**：以各策略歷史表現（勝率、Sharpe、MDD）為基礎，依近期報酬與衰退幅度做權重升降。
 - 概念上類似「動態再平衡」，但更強調「淘汰弱勢策略、保留強勢策略」。
-- 在 atlas 平台中對應 `synergy_get_darwinian_status` 與 `synergy_get_darwinian_trend` 工具的回傳值；完整 MCP 工具清單與調用順序見 [[concepts/atals-mcp-tools-reference]]。
+- 在 atlas 平台中對應 `synergy_get_darwinian_status` 與 `synergy_get_darwinian_trend` 工具的回傳值；完整 MCP 工具清單與調用順序見 [[concepts/atlas-mcp-tools-reference]]。
 
 ### 5.3 市場狀態判斷（Regime Detection）
 - 以多維度訊號（趨勢、波動、相關性）共同判斷當前 regime，配合 `regime_get_history` 做回測樣本驗證。

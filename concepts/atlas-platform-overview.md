@@ -19,9 +19,9 @@ contradictions: []
 
 本文件供 LLM agent 理解 atlas 台股投資平台的整體定位、架構分層、對外介面與使用脈絡，作為後續策略模擬、風險控管與報告生成任務的入口導讀。
 
-相關入口：[[concepts/atals-simulation-guide]]、[[concepts/atals-mcp-tools-reference]]、[[concepts/atals-strategy-taxonomy]]、[[concepts/atlas-mcp-interpretation-guide]]
+相關入口：[[concepts/atlas-simulation-guide]]、[[concepts/atlas-mcp-tools-reference]]、[[concepts/atlas-strategy-taxonomy]]、[[concepts/atlas-mcp-interpretation-guide]]
 
-延伸主題：[[concepts/atals-mcp-tools-reference|MCP 工具]]、[[concepts/atals-strategy-taxonomy|策略層級 L1-L5]]、[[concepts/taiwan-chip-flow-analysis|籌碼流分析]]。
+延伸主題：[[concepts/atlas-mcp-tools-reference|MCP 工具]]、[[concepts/atlas-strategy-taxonomy|策略層級 L1-L5]]、[[concepts/taiwan-chip-flow-analysis|籌碼流分析]]。
 
 ---
 
@@ -263,7 +263,7 @@ Atlas 採用 **三層訂閱制**，於 `strategy_ranker` 的回傳中以 tier �
 > **本平台所有輸出皆為研究與模擬性質，不構成投資建議。** LLM agent 對外引用任何策略或風控結論時，必須同時引用對應的 `source` 與 `provenance` 欄位，並遵守 `risk_get_commentary` 的風險提示。
 ## 相關入口
 
-- [[concepts/atals-simulation-guide]] — 策略模擬與 PRISM 訓練生命週期
-- [[concepts/atals-mcp-tools-reference]] — MCP 工具速查
-- [[concepts/atals-strategy-taxonomy]] — L1-L5 訊號驅動策略分類
+- [[concepts/atlas-simulation-guide]] — 策略模擬與 PRISM 訓練生命週期
+- [[concepts/atlas-mcp-tools-reference]] — MCP 工具速查
+- [[concepts/atlas-strategy-taxonomy]] — L1-L5 訊號驅動策略分類
 - [[concepts/atlas-mcp-interpretation-guide]] — MCP 解讀紀律

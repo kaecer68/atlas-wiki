@@ -82,7 +82,7 @@ contradictions: []
 3. 把「某分點大買」當主力——分點不是法人身份。
 4. 忽略當沖結構——過熱時盤中訊號與收盤方向脫節。
 
-**驗證**：`macro_get_capital_flow_latest`、`capital_flow_daily`（散戶行為層）、`macro_get_snapshot_latest`（retail_margin_balance）[2026-08-22 audit-fix 對位 [[concepts/atals-mcp-tools-reference|MCP 參考]]]；融資原始數值以證交所為準 [通識]。
+**驗證**：`macro_get_capital_flow_latest`、`capital_flow_daily`（散戶行為層）、`macro_get_snapshot_latest`（retail_margin_balance）[2026-08-22 audit-fix 對位 [[concepts/atlas-mcp-tools-reference|MCP 參考]]]；融資原始數值以證交所為準 [通識]。
 
 **未消化**：
 

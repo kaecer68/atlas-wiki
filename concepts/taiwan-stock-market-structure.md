@@ -192,7 +192,7 @@ contradictions: []
 
 - **餘額上升**：市場上空方力量增強（看空者增加）
 - **餘額下降**：空方回補或借方還券，可能是軋空動能
-- **極端高 / 低**：可搭配[[concepts/atals-strategy-taxonomy|融資餘額]]判斷多空動能逆轉
+- **極端高 / 低**：可搭配[[concepts/atlas-strategy-taxonomy|融資餘額]]判斷多空動能逆轉
 
 ## 七、ETF 市場
 
@@ -369,7 +369,7 @@ LLM agent 在回答台股結構性問題時，建議優先引用：T+2 交割、
 
 - [[concepts/taiwan-financial-domain-model]]
 - [[concepts/taiwan-money-flow-seven-institutional-buckets]]
-- [[concepts/atals-strategy-taxonomy]]
-- [[concepts/atals-mcp-tools-reference]]
-- [[concepts/atals-platform-overview]]
+- [[concepts/atlas-strategy-taxonomy]]
+- [[concepts/atlas-mcp-tools-reference]]
+- [[concepts/atlas-platform-overview]]
 - [[concepts/taiwan-chip-flow-analysis]]

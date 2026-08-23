@@ -8,7 +8,7 @@ sources:
   - atlas-mcp:strategy_list_active
   - atlas-mcp:strategy_ranker
   - atlas-mcp:universe_get_sessions
-  - concepts/atals-strategy-taxonomy.md
+  - concepts/atlas-strategy-taxonomy.md
   - concepts/atlas-mcp-interpretation-guide.md
 confidence: medium
 contested: false
@@ -21,9 +21,9 @@ contradictions: []
 
 本文件說明 atlas 平台 **策略模擬、PRISM 訓練、回測驗證、Darwinian 權重、實驗管理** 的完整流程與解讀方式。LLM agent 在協助使用者做投資研究時，應先理解本指南所述的生命週期與指標語義。
 
-相關入口：[[concepts/atals-strategy-taxonomy]]、[[concepts/atals-risk-management-framework]]、[[concepts/atals-platform-overview]]
+相關入口：[[concepts/atlas-strategy-taxonomy]]、[[concepts/atlas-risk-management-framework]]、[[concepts/atlas-platform-overview]]
 
-延伸主題：[[concepts/atals-strategy-taxonomy|L1-L5 策略分類]]、[[concepts/atals-risk-management-framework|風險管理]]、[[concepts/atals-mcp-tools-reference|MCP 工具]]。
+延伸主題：[[concepts/atlas-strategy-taxonomy|L1-L5 策略分類]]、[[concepts/atlas-risk-management-framework|風險管理]]、[[concepts/atlas-mcp-tools-reference|MCP 工具]]。
 
 ---
 
@@ -285,6 +285,6 @@ LLM agent **不應主動呼叫 `experiment_promote` / `experiment_revert`**，�
 > **再次強調**：本平台所有回測、模擬、策略歸因結果皆為 **歷史統計**，不代表未來表現。LLM agent 對外引用時，必須附上資料時段、regime、total_tests 與 provenance。
 ## 相關入口
 
-- [[concepts/atals-strategy-taxonomy]] — L1-L5 策略分類
-- [[concepts/atals-risk-management-framework]] — 風險管理框架
-- [[concepts/atals-platform-overview]] — 平台架構
+- [[concepts/atlas-strategy-taxonomy]] — L1-L5 策略分類
+- [[concepts/atlas-risk-management-framework]] — 風險管理框架
+- [[concepts/atlas-platform-overview]] — 平台架構

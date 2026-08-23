@@ -608,19 +608,19 @@ E 不寫猜測，看 logs 或 re-test
   2. kaecer 明確指示搬遷路徑與執行意願
   3. 後續若發現重複或過期，將依 SCHEMA.md §Update Policy「保留多版本 + 標 contested」處理
 - **去重風險標記**：
-  - `atals-mcp-tools-reference.md` ↔ 現有 `atlas-mcp-interpretation-guide.md` 高度重疊（後者為解讀紀律，前者為工具速查，需區分使用情境）
-  - `atals-strategy-taxonomy.md` ↔ `atals-simulation-guide.md` 內容部分互引
+  - `atlas-mcp-tools-reference.md` ↔ 現有 `atlas-mcp-interpretation-guide.md` 高度重疊（後者為解讀紀律，前者為工具速查，需區分使用情境）
+  - `atlas-strategy-taxonomy.md` ↔ `atlas-simulation-guide.md` 內容部分互引
 - **新頁清單**：
   1. [[concepts/taiwan-financial-domain-model]] — 十類核心術語字典
   2. [[concepts/taiwan-stock-market-structure]] — 市場結構與交易制度
   3. [[concepts/taiwan-technical-analysis-guide]] — 技術分析
   4. [[concepts/taiwan-fundamental-analysis-guide]] — 基本面分析
   5. [[concepts/taiwan-chip-flow-analysis]] — 籌碼面分析
-  6. [[concepts/atals-platform-overview]] — 平台架構
-  7. [[concepts/atals-simulation-guide]] — 策略模擬流程
-  8. [[concepts/atals-mcp-tools-reference]] — MCP 工具參考
-  9. [[concepts/atals-strategy-taxonomy]] — L1-L5 策略分類
-  10. [[concepts/atals-risk-management-framework]] — 風險管理框架
+  6. [[concepts/atlas-platform-overview]] — 平台架構
+  7. [[concepts/atlas-simulation-guide]] — 策略模擬流程
+  8. [[concepts/atlas-mcp-tools-reference]] — MCP 工具參考
+  9. [[concepts/atlas-strategy-taxonomy]] — L1-L5 策略分類
+  10. [[concepts/atlas-risk-management-framework]] — 風險管理框架
 
 
 ---
@@ -657,6 +657,6 @@ E 不寫猜測，看 logs 或 re-test
 ## [2026-08-22] iter2 | 方法論審計結案:TW-X2 收尾 + C 階段複查 + 兩審計檔瘦身歸檔
 
 - **TW-X2 ✅**：SK-16/18/20 加術語備註「atlas 後端資金面 = 七維錢潮雷達 3+2+2 分層,不可加權平均」（對位憲章 §四 + product-positioning §7.1）[2026-08-22 iter2]
-- **C 階段複查（2026-08-22）**：M1 ✅（macro_get_snapshot_latest.current_period 已公開,#1488）+ M4 ✅（strategy_for_period 實跑 bull 驗證）→ C1 解除;C2 部分 — strategy_ranker 仍無 period 欄（atlas-go 源碼複查）,補註落地 concepts/atals-mcp-tools-reference.md §2.7（_consult-index §3 無空間 8995B）
+- **C 階段複查（2026-08-22）**：M1 ✅（macro_get_snapshot_latest.current_period 已公開,#1488）+ M4 ✅（strategy_for_period 實跑 bull 驗證）→ C1 解除;C2 部分 — strategy_ranker 仍無 period 欄（atlas-go 源碼複查）,補註落地 concepts/atlas-mcp-tools-reference.md §2.7（_consult-index §3 無空間 8995B）
 - **審計檔瘦身**：_methodology_alignment_audit.md 15768B → 7047B（§5 執行記錄 + §1 原文 → _archive/_methodology_alignment_audit_20260802_execution.md）;_atlas_mcp_path_investigation.md 12318B → 2921B（調查過程 → _archive/_atlas_mcp_path_investigation_history.md）;均 ≤ 9000B
 - **對位**：_inbox_archive 第七條例外模式（歷史段歸檔、主檔留現行結論）;本條目由 iter2 方法論審計結案工人落地

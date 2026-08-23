@@ -21,7 +21,7 @@ sources:
 
 | 層 | 範圍 | 文件 | 治理者 |
 |---|---|---|---|
-| **L1 工具能力** | atlas-mcp 110+ 工具的調用方式、輸入輸出、約束 | `skills/SK-*.md`(SK-01~33)+ `concepts/atals-mcp-tools-reference.md` | kaecer + atlas owner |
+| **L1 工具能力** | atlas-mcp 110+ 工具的調用方式、輸入輸出、約束 | `skills/SK-*.md`(SK-01~33)+ `concepts/atlas-mcp-tools-reference.md` | kaecer + atlas owner |
 | **L2 解讀紀律** | 工具回傳值如何解讀、何時該用、誤用警告 | `skills/SK-00-skill-index.md` + `concepts/atlas-mcp-interpretation-guide.md` + `concepts/atlas-mcp-failover-policy.md` | kaecer + agent |
 | **L3 表達口徑** | 對誰說(user/developer/admin)、怎麼說(降級口徑 vs debug 細節) | `skills/SK-33-audience-routing.md` + `AGENTS.md` §1 角色定位 + `~/.hermes/skills/financial-advisor-coach/SKILL.md` §X | kaecer + hermes/OpenClaw owner |
 

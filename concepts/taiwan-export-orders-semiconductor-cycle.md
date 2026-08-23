@@ -93,7 +93,7 @@ contradictions: []
 
 ## 參見
 
-- [[concepts/atals-mcp-tools-reference]]（MCP 工具清單）
+- [[concepts/atlas-mcp-tools-reference]]（MCP 工具清單）
 - [[concepts/taiwan-fundamental-analysis-guide]]（由上而下基本面框架）
 - [[concepts/taiwan-money-flow-seven-institutional-buckets]]（因果鏈第三層外資）
 - [[skills/SK-31-ai-investment-cycle-2026]]（AI 投資週期）

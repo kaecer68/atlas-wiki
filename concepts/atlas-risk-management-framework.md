@@ -10,7 +10,7 @@ sources:
   - atlas-mcp:risk_get_drawdown
   - atlas-mcp:risk_get_calibration
   - atlas-mcp:taiwan_stress_index
-  - concepts/atals-strategy-taxonomy.md
+  - concepts/atlas-strategy-taxonomy.md
 confidence: medium
 contested: false
 contradictions: []
@@ -120,19 +120,19 @@ contradictions: []
 - 行情斷線、券商系統異常、網路斷線等情境，需有備援機制（第二家券商、行動下單）。
 
 ### 5.3 人為判斷偏誤
-- 與 [[concepts/atals-strategy-taxonomy]] 第 7 節心理偏誤相同，常見於：損失趨避、確認偏誤、近因效應、過度自信。
+- 與 [[concepts/atlas-strategy-taxonomy]] 第 7 節心理偏誤相同，常見於：損失趨避、確認偏誤、近因效應、過度自信。
 
 ---
 
 ## 6. atlas 平台的風險管理功能
 
-以下逐一對應 atlas 平台的 MCP 工具，協助 agent 在讀取風險數據時正確解讀。平台整體架構與定位見 [[concepts/atals-platform-overview]]。
+以下逐一對應 atlas 平台的 MCP 工具，協助 agent 在讀取風險數據時正確解讀。平台整體架構與定位見 [[concepts/atlas-platform-overview]]。
 
 ### 6.1 斷路器（Circuit Breaker）
 - **用途**：當 MCP／外部呼叫異常率過高或回應延遲過長時，啟動熔斷以保護整體系統穩定性。
 - **對應工具**：`system_get_circuit_breaker`
 - **解讀注意**：斷路開啟**代表供應商或資源異常**，不是市場訊號；下游策略需正確區分「資料中斷」與「市場變化」。
-- **影響層面**：斷路期間訊號驅動策略可能缺乏即時資料，因此應在 L1–L5 訊號鏈中設計「資料陳舊容忍上限」。完整 MCP 工具清單與調用順序見 [[concepts/atals-mcp-tools-reference]]。
+- **影響層面**：斷路期間訊號驅動策略可能缺乏即時資料，因此應在 L1–L5 訊號鏈中設計「資料陳舊容忍上限」。完整 MCP 工具清單與調用順序見 [[concepts/atlas-mcp-tools-reference]]。
 
 > 對齊 atlas internal/strategy_techniques/enums.go canonical 定義（L1 全球流動性 / L2 外資行為 / L3 產業催化 / L4 匯率籌碼 / L5 地緣政治）[2026-08-22 iter2]
 
@@ -236,6 +236,6 @@ contradictions: []
 
 ## 相關入口
 
-- [[concepts/atals-strategy-taxonomy]] — 策略分類
-- [[concepts/atals-platform-overview]] — 平台架構
-- [[concepts/atals-mcp-tools-reference]] — MCP 工具速查
+- [[concepts/atlas-strategy-taxonomy]] — 策略分類
+- [[concepts/atlas-platform-overview]] — 平台架構
+- [[concepts/atlas-mcp-tools-reference]] — MCP 工具速查

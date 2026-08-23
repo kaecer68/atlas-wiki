@@ -5,7 +5,7 @@ updated: 2026-08-07
 type: concept
 tags: [framework, fallback, source-attribution, methodology]
 sources:
-  - atlas-mcp:concepts/atals-mcp-tools-reference.md §5 三層訂閱制
+  - atlas-mcp:concepts/atlas-mcp-tools-reference.md §5 三層訂閱制
   - data-source-decision ~hermes/skills/data-source-decision §1-§2 三層架構 + 端點對位
   - concepts/atlas-mcp-interpretation-guide.md §Rule 3 Proxy question
 confidence: high
@@ -95,7 +95,7 @@ Step 4: 確認 wiki _consult-index.md §3 atlas-mcp 端點字典 cross-ref 到�
 ## 相關入口(對位同源原則)
 
 - [[concepts/atlas-mcp-interpretation-guide]] — Rule 3 proxy question + 6 anti-patterns(已含失敗時「明說不可信,不膨風」紀律)
-- [[concepts/atals-mcp-tools-reference]] §5 三層訂閱制 + tier 對 audience 路由
+- [[concepts/atlas-mcp-tools-reference]] §5 三層訂閱制 + tier 對 audience 路由
 - [[concepts/taiwan-stock-market-structure]] §2.2 / §2.3 TPEx / 興櫃市場定義
 - [[skills/_manifest_coverage_routing]] §3.1 CR-2 + §2 題 2 兩段制來源標籤規範
 - [[skills/_scripts/handle-atlas-failures.py]] — 升級時加 #7「Source Unreachable → Web fallback」分支(走 task-governance)
