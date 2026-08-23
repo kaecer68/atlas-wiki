@@ -3,7 +3,7 @@ title: 審計驗證待辦清單（2026-08-22 金融審計剩餘 LOW）
 type: audit-backlog
 created: 2026-08-22
 created_by: prime-agent（kaecer 2026-08-22 拍板:驗證類併入官方驗證軌道）
-status: open
+status: open（2026-08-22 三批 WP-8 驗證執行：35/38 結案,剩 3 條待驗/待派工）
 用途: 2026-08-22 審計剩餘「需驗證/無實證」類 LOW 的活體追蹤;用 WP-7 官方驗證模式批量處理（官方來源→結論→套用）。
 ---
 
@@ -17,61 +17,61 @@ status: open
 
 | 狀態 | 檔名 | 項目 | 預期來源 |
 |------|------|------|---------|
-| ⬜ | taiwan-financial-domain-model §1 | 權證「歐式/美式」：台股掛牌是否全歐式、無美式 | 證交所營業細則/法規 |
-| ⬜ | taiwan-stock-market-structure §7.1 | 國內 ETF 總規模 >4 兆/受益人數破千萬/投信持有 5-8 兆 | 投信投顧公會/證交所月報 |
-| ⬜ | taiwan-stock-market-structure §10.3 | 瞬間價格穩定試撮間隔（20 vs 30 秒） | 證交所營業細則（W7 §4 已驗 2 分鐘主機制,此為試撮間隔殘項） |
-| ⬜ | taiwan-chip-flow-analysis §4.4 | 集保「400 張大戶/20 張散戶」分級界線 | 集保戶數統計定義 |
-| ⬜ | SK-18 | Newey-West lag=12 對月頻非重疊報酬是否偏高 | 文獻/計量慣例 |
-| ⬜ | SK-20/21/23 | 產業數口徑 18/38/47 統一（atlas industry_sector 實數） | atlas-mcp industry_sector_list 實跑 |
+| ✅ | taiwan-financial-domain-model §1 | 權證「歐式/美式」：台股掛牌是否全歐式、無美式 | 2026-08-22 WP-8 驗證：非全歐式,歐式/美式並存（TWSE 官方 FAQ「特定期間內(美式)或到期日(歐式)」;外國標的限歐式）。URL: https://www.twse.com.tw/zh/page/products/securities/warrant/faq.html |
+| ✅ | taiwan-stock-market-structure §7.1 | 國內 ETF 總規模 >4 兆/受益人數破千萬/投信持有 5-8 兆 | 2026-08-22 WP-8 驗證：SITCA ETF 專區 2024 ETF 63,819 億(6.38 兆)/受益 1,436 萬人、2025 75,382 億(7.54 兆)/1,656 萬人,全體基金 11.38 兆。URL: https://www.sitca.org.tw/ROC/SITCA_ETF/etf-section-stats.html |
+| ✅ | taiwan-stock-market-structure §10.3 | 瞬間價格穩定試撮間隔（20 vs 30 秒） | 2026-08-22 WP-8 驗證：暫緩 2 分鐘期間揭露=每 10 秒（109.02.26 公告）;集合競價循環秒數 20→15→10→5 秒沿革,現行 5 秒;無 30 秒規定。URL: https://twse-regulation.twse.com.tw/TW/int/DAT01_print.aspx?FLCODE=FE337278 + https://www.twse.com.tw/zh/about/company/history.html |
+| ✅ | taiwan-chip-flow-analysis §6.2（backlog 誤標 §4.4） | 集保「400 張大戶/20 張散戶」分級界線 | 2026-08-22 WP-8：界線吻合 TDCC 股權分散表 15 級（400,001 股以上/20,000 股以下） |
+| ⬜ | SK-18 | Newey-West lag=12 對月頻非重疊報酬是否偏高 | 文獻/計量慣例（2026-08-22 三批驗證未涵蓋,留待下批） |
+| ✅ | SK-20/21/23 | 產業數口徑 18/38/47 統一 | 2026-08-22 WP-8：實數 38（20 L1+18 L2,internal/industry/sector.go）;SK-20「18」為舊口徑、論文「47」為 Fin-Skills 口徑 |
 
 ## B. 實測/實跑驗證類（atlas 端點或回測可驗）
 
 | 狀態 | 檔名 | 項目 | 驗證方式 |
 |------|------|------|---------|
-| ⬜ | SK-01 | 樣本 340 vs 336 差額（首尾剔除？） | 原始資料期間核對 |
-| ⬜ | SK-01 | 對位率 frontmatter 60-70% vs 正文 90%+ 口徑 | 內部一致性（無需外部） |
-| ⬜ | SK-02 | 「12 個總經變數」含 AAPL/MSFT/NVDA 個股報價分類 | 端點實況對照 |
-| ⬜ | SK-05 | OLS R²_oos 台股合理範圍 -0.05~0.10 | 回測實跑 |
-| ⬜ | SK-06 | 「L1 把 86 因子縮到 ~10-20 個」是否固定 | 實跑 alpha 強度 |
-| ⬜ | SK-08 | 「2-3 主成分就 90% 變異」 | 實跑變異分解 |
-| ⬜ | SK-12 | R²_oos 公式為零均值基準變體未註明 | 文件修正（非驗證） |
-| ⬜ | SK-17 | 「value-weighted 夏普通常較高」與主流文獻相反 | 文獻對照 |
-| ⬜ | SK-18 | baseline_score -1.7483 → optimized=0 為「-40% delta」表述 | 數值計算（應 +100%） |
-| ⬜ | SK-21 | 「電子股 80% < 20 元、金融股 80% > 20 元」 | 實跑 |
-| ⬜ | SK-21 | 第 20 百分位閾值預期 10-15 元區間 | 實跑 |
-| ⬜ | SK-23 | 「電子/金融合計 > 50%（台股常態）」 | 市值統計 |
+| ❌ | SK-01 | 樣本 340 vs 336 | 無剔除說明,維持 audit-fix 註記（頁面 8996B 近上限無法增補） |
+| ❌ | SK-01 | 對位率 60-70% vs 90%+ | 兩口徑（2 paper vs 7 框架）確矛盾,維持註記（頁面近上限） |
+| ✅ | SK-02 | 12 總經變數含美股報價 | 源碼確認 AAPL/MSFT/NVDA=Yahoo 報價非總經,現行 31 條序列;檔改動隨 ext 分支 #47 |
+| ❌ | SK-05 | OLS R²_oos 範圍 | backend 未通無法實跑,維持猜測+需回測口徑註 |
+| ❌ | SK-06 | L1 縮因子數 | 非固定：合成實驗 CV 非零 37-79 個（依 l1_ratio）,已改寫+證據 |
+| ❌ | SK-08 | 2-3 PC 90% 變異 | 合成實驗前 2-3 PC 僅 12-49%,需 7-19 個,維持論文猜測+實驗註 |
+| ✅ | SK-12 | R²_oos 公式 | 已註明 uncentered 零均值基準變體（非標準 Σ(y-ȳ)²） |
+| ✅ | SK-17 | value-weighted 夏普 | 已改「不預設勝負」（主流文獻等權毛 Sharpe 較高） |
+| ✅ | SK-18 | -40% delta 表述 | 數值驗證實際 +100%（對 |baseline|）,frontmatter 已改 |
+| ❌ | SK-21 | 電子/金融 80% 價格界線 | backend 未通,維持+需實跑標註 |
+| ❌ | SK-21 | 第 20 百分位閾值 | backend 未通,維持預期值+需實跑標註 |
+| ❌ | SK-23 | 電子/金融 >50% + 產業數 | 產業數實數 38（20 L1+18 L2 源碼確認）;市值比無法統計,維持+標註 |
 
 ## C. 外部來源校準類（IRENA/USGS/公司公告等）
 
 | 狀態 | 檔名 | 項目 | 預期來源 |
 |------|------|------|---------|
-| ⬜ | l1-t1-energy-transition | 2024 再生能源 ~510 GW（IRENA 2025 = ~585） | IRENA 報告 |
-| ⬜ | l1-t1-energy-transition | COP29 vs COP28 三倍目標年份歸屬 | UNFCCC |
-| ⬜ | l1-t5-ai-semiconductor | TSMC 2027 1.4nm（A14 目標 2028?） | TSMC 法說/roadmap |
-| ⬜ | l1-t5-ai-semiconductor | Stargate 5 年 $500B（公告為 4 年?） | OpenAI/白宮公告 |
-| ⬜ | l1-t6-demographic | 日本 2024 TFR ~1.2（2023=1.20） | 厚生勞動省 |
-| ⬜ | l1-t6-demographic | 台灣 2024 出生率 0.865（2023 值?） | 內政部 |
-| ⬜ | l1-t4-critical-minerals | 鋰礦三國佔比 ~75%（USGS 85-90%?） | USGS |
-| ⬜ | l1-t4-critical-minerals | 再生銅全球佔比 ~17%（常引 ~30%?） | 國際銅業/ICSG |
-| ⬜ | taiwan-fundamental-analysis-guide §5.2 | 前十大權值股表（國巨是否前十） | 證交所市值排名 |
-| ⬜ | SK-02/20 | 2330 PE/PB 快照（時點資料標註） | 內部一致性 |
+| ✅ | l1-t1-energy-transition | 2024 再生能源 ~510 GW | 改 585 GW（IRENA 2025-03-26;光伏 +451.9 GW、總裝置 4,448 GW;原 510 為 2023 IEA 誤植） |
+| ✅ | l1-t1-energy-transition | COP29 vs COP28 三倍目標年份 | 改 COP28（UAE Consensus 2023-12-13;COP29 為氣候金融） |
+| ✅ | l1-t5-ai-semiconductor | TSMC 1.4nm 目標年 | 改 2028 量產（TSMC 2025-04-23 新聞稿 A14） |
+| ✅ | l1-t5-ai-semiconductor | Stargate 投資規模 | 改 4 年 $500B（OpenAI 2025-01-21 原文） |
+| ✅ | l1-t6-demographic | 日本 2024 TFR | 2024=1.15（厚勞省確定數;2023=1.20） |
+| ✅ | l1-t6-demographic | 台灣 2024 出生率 | 0.865 為 2023 值,2024=0.87（內政部 113 年） |
+| ✅ | l1-t4-critical-minerals | 鋰礦三國佔比 | 維持 ~75% 正確（USGS MCS 2025 精確 74.2%） |
+| ✅ | l1-t4-critical-minerals | 再生銅佔比 | 改 ~31%（ICSG Factbook 2025 Recycling Input Rate） |
+| ✅ | taiwan-fundamental-analysis-guide §5.2 | 前十大權值股表 | 重算（2026-08-21 收盤×股本;台積 ~43%、國巨非前十） |
+| ✅ | SK-02/20 | 2330 PE/PB 快照 | 標時點快照（第五條鐵律）,不改值 |
 
 ## D. 誇飾統計/無來源斷言類（優先處理:查無即刪或弱化）
 
 | 狀態 | 檔名 | 項目 | 處置 |
 |------|------|------|------|
-| ⬜ | SK-11/13/25/26/28/36 | 「99%」「9 成」「3 倍」「100 倍」無來源誇飾 | 查無 → 刪或改定性描述 |
-| ⬜ | SK-06 | 「n_estimators=500 足夠,1000 不顯著改善」 | 標內部經驗值 |
-| ⬜ | trigger-taiwan-strait-tension | stress score -7.66 與他檔 29.92-34.74 尺度不一致 | 端點實跑對照 |
+| ✅ | SK-11/13/25/26/28/36 | 誇飾統計 | 已弱化：99%→極高比例、3 倍→數倍、9 成→大多、100 倍→數量級（SK-13 無此類數字） |
+| ✅ | SK-10 | n_estimators 經驗值 | 已標內部經驗值（實際位置 SK-10 非 SK-06,backlog 已更正） |
+| ✅ | trigger-taiwan-strait-tension | stress score -7.66 與他檔 29.92-34.74 尺度不一致 | 2026-08-22 WP-8 驗證：同一指標（taiwan_calculator）不同日期觀測值；實跑 macro_get_stress_index_current 2026-08-23=7.71(low)；29.92/32.55/34.74 為 log.md 歷史值（同尺度） |
 
 ## E. 命名/一致性類（不需驗證,直接修）
 
 | 狀態 | 檔名 | 項目 | 處置 |
 |------|------|------|------|
-| ⬜ | concepts/ | atals-*（5 檔）vs atlas-*（3 檔）拼字混用 | 統一（2026-08-22 已查:atlas 端點實際名為 atals_*,留待裁決） |
-| ⬜ | templates/ | 模板自述數量 12/13/14/16 不一致 | 統一快照 |
-| ⬜ | taiwan-financial-domain-model | 興櫃「ESM」拼字 → Emerging | 直接修 |
-| ⬜ | trigger-margin-350b | 檔名 350b vs 條件 5000 億（已註記,檔名保留） | 已註記 ✅（2026-08-22 audit-fix） |
+| ✅（正文）| concepts/ | atals-*（5 檔）vs atlas-*（3 檔）拼字混用 | 2026-08-22 WP-8 修正前註記：端點實查 **無 atals_ 前綴**（server=atlas-mcp,工具=macro_*/risk_* 等功能域前綴,atals 僅為 binary 中 "fatalsignal" 子字串）,atals 為拼字錯誤。5 檔正文 atals→atlas 已統一（84 處檔名引用廣布→檔名改名留待裁決） |
+| ✅ | templates/ | 模板自述數量 12/13/14/16 不一致 | 2026-08-22 WP-8 快照：templates/*.md 實數 21 檔,8 檔自述數（第 16/17/18/19/20、現有 11-16）已加 [2026-08-22 快照:21] 註記 |
+| ✅ | taiwan-financial-domain-model | 興櫃「ESM」拼字 → Emerging | 2026-08-22 WP-8：Emerving→Emerging 已修正 |
+| ✅ | trigger-margin-350b | 檔名 350b vs 條件 5000 億（已註記,檔名保留） | 2026-08-22 WP-8 確認：註記「檔名 350b（3500 億）為舊門檻,現條件 > 5000 億;檔名保留以相容引用 [2026-08-22 audit-fix]」存在,不需再改 |
 
 ## 批次建議
 
