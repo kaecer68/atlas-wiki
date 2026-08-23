@@ -9,6 +9,7 @@
 08-22 v0.9.1：Plan F Week 1-3 護欄完成（PR #32 已 merge）+ 軟警告→混合模式（hard_cap + soft_warning 並行）。
 08-22 v0.9.3：知識路由遷移（raw、queries、comparisons 等 18 檔 → atlas-notes；wiki = 技能/工具庫，純知識回原料庫）。
 - 08-22 v0.9.4：Iter-2（_knowledge-router 知識路由建立 + _consult-index 指標行/歸檔行壓縮、方法論審計結案、L1-L5 詞彙對齊、官方驗證落地、VIX/USD_TWD 情緒層收編）。
+- 08-22 v0.9.5：_method.md 第八條「盤查修復自主權」拍板生效（三類自扛 + 三類保留 + 判準一句話）+ 審計驗證待辦清單 VERIFICATION-BACKLOG.md 建立。
 08-21 v0.9：加 §9.5 Skills 索引紀律（kaecer 8/21 21:20 拍板）；上限暫放寬至 12,500 bytes。
 08-22 v0.9.2：金融審計 audit-fix 批次（19 檔 skills/ 內容修正 + _consult-index 瘦身歸檔 + 2 檔衍生審計檔移 _archive/；SK 數 37 不變、無新增/刪除 skill、§3/§9.5 索引不變）。
 
