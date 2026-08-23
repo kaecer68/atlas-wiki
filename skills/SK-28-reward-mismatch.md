@@ -12,7 +12,7 @@ verification: 2026-08-01 v0.9 結算跑過 L3 升 active:backtest_signals/risk_g
 ---
 
 ## 一句話定位
-SK-28 是 RL 的「驗屍報告」——訓練 reward 一直漲但實盤虧錢?99% 是 reward 與 Sharpe 錯配。SK-28 量化這件事,給出「該改 reward 函數」的明確訊號。
+SK-28 是 RL 的「驗屍報告」——訓練 reward 一直漲但實盤虧錢?極高比例是 reward 與 Sharpe 錯配。 [2026-08-22 驗證:99% 無來源,弱化為定性描述]SK-28 量化這件事,給出「該改 reward 函數」的明確訊號。
 
 ## 論文版概念
 - 輸入:reward_history(每輪平均 reward)、backtest_returns(組合報酬)
@@ -34,7 +34,7 @@ SK-28 是 RL 的「驗屍報告」——訓練 reward 一直漲但實盤虧錢?9
 **沒有對位的部分**:無原生「reward-Sharpe 相關性」端點;無「rolling Sharpe」單一端點(可能需 client 端自算)。
 
 ## 散戶解讀
-- **G**:用戶問「RL 訓練 reward 漲 10 倍,實盤卻虧 5%?」 → 跑 SK-28,9 成機率 Spearman < 0.3,代表 reward 設計錯。
+- **G**:用戶問「RL 訓練 reward 漲 10 倍,實盤卻虧 5%?」 → 跑 SK-28,多數情況下 Spearman < 0.3,代表 reward 設計錯。 [2026-08-22 驗證:9 成無來源,弱化為定性描述]
 - **+E**:**散戶最常見 RL 失敗模式就是 reward 錯配**——論文把這件事量化成單一數字,讓 debug 有依據,不是「看感覺」。
 - 對位 ATLAS_METHODOLOGY 七時期:regime 切換時 reward-Sharpe 相關會掉,SK-28 觸發警告 → 改 reward 函數 → 重訓。
 

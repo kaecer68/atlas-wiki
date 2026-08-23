@@ -8,7 +8,7 @@ tier: T3
 confidence: medium
 atlas_go_relevance: medium
 mcp_tools_used: [stock_get_fundamentals, backtest_signals, risk_get_metrics]
-verification: 2026-08-02 v0.9 結算跑過 L3 升 active:client 端 sklearn 1.8.0 PCA(n_components=4) + LinearRegression 跑 **R²_oos=0.028**;台股因子變異集中,2-3 個成分可能就 90% 變異(論文 v0.9 結論);variance_threshold=0.9 自動選需 client 端跑另一次。
+verification: 2026-08-02 v0.9 結算跑過 L3 升 active:client 端 sklearn 1.8.0 PCA(n_components=4) + LinearRegression 跑 **R²_oos=0.028**;台股因子變異集中,2-3 個成分可能就 90% 變異(論文 v0.9 結論;**2026-08-22 驗證:合成 86 相關因子(組內相關 0.3-0.95)前 2-3 主成分僅解釋 12-49% 變異,需 7-19 個才達 90%,此結論缺實證,維持論文猜測標註**);variance_threshold=0.9 自動選需 client 端跑另一次。
 ---
 
 ## 一句話定位
