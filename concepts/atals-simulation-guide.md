@@ -1,5 +1,5 @@
 ---
-title: atals 策略模擬指南：L1-L5 訊號驅動框架
+title: atlas 策略模擬指南：L1-L5 訊號驅動框架
 created: 2026-08-02
 updated: 2026-08-02
 type: concept
@@ -15,11 +15,11 @@ contested: false
 contradictions: []
 ---
 
-# atals 策略模擬指南（Simulation Guide）
+# atlas 策略模擬指南（Simulation Guide）
 
-> **一句話**：atals 策略模擬採用 L1（全球流動性）→ L2（外資行為）→ L3（產業催化）→ L4（匯率籌碼）→ L5（地緣政治）五層訊號驅動框架，搭配 Darwinian 權重動態調整與 PRISM cohort 訓練，共 12 個活躍策略。
+> **一句話**：atlas 策略模擬採用 L1（全球流動性）→ L2（外資行為）→ L3（產業催化）→ L4（匯率籌碼）→ L5（地緣政治）五層訊號驅動框架，搭配 Darwinian 權重動態調整與 PRISM cohort 訓練，共 12 個活躍策略。
 
-本文件說明 atals 平台 **策略模擬、PRISM 訓練、回測驗證、Darwinian 權重、實驗管理** 的完整流程與解讀方式。LLM agent 在協助使用者做投資研究時，應先理解本指南所述的生命週期與指標語義。
+本文件說明 atlas 平台 **策略模擬、PRISM 訓練、回測驗證、Darwinian 權重、實驗管理** 的完整流程與解讀方式。LLM agent 在協助使用者做投資研究時，應先理解本指南所述的生命週期與指標語義。
 
 相關入口：[[concepts/atals-strategy-taxonomy]]、[[concepts/atals-risk-management-framework]]、[[concepts/atals-platform-overview]]
 
