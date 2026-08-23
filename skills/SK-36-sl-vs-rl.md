@@ -38,7 +38,7 @@ SK-36 是論文的「論文對論文」對比——同樣的台股資料,SL(SK-1
 ## 散戶解讀
 - **G**:用戶問「SL 跟 RL 哪個好?」 → 論文的答案是 RL,散戶的答案可能不同(因為 RL 在小樣本下極不穩定)。
 - **+E**:**論文結論可參考但不可照單全收**——論文的 RL 用了 100k steps 訓練,散戶沒這個算力。**散戶若想驗證 SK-36 結論,需先有 GPU + stable-baselines3 經驗**。
-- 對位 ATLAS_METHODOLOGY 七時期:RL 對 regime 切換的適應力是 SL 強項(因為有獎勵驅動),但訓練成本 100 倍於 SL,trade-off 真實存在。
+- 對位 ATLAS_METHODOLOGY 七時期:RL 對 regime 切換的適應力是 SL 強項(因為有獎勵驅動),但訓練成本數量級高於 SL(論文用 100k steps,未給實測倍數),trade-off 真實存在。 [2026-08-22 驗證:100 倍無來源,弱化為數量級描述]
 
 ## 驗證方式
 Step 1: 確認 SK-16 SL 策略已訓練好(client 端或 atlas 內),SK-24 RL agent 也訓練好。

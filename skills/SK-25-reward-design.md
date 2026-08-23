@@ -12,7 +12,7 @@ verification: 2026-08-01 v0.9 結算跑過 L3 升 active:backtest_signals/risk_g
 ---
 
 ## 一句話定位
-SK-25 是 RL 成功的關鍵——論文實證 **reward 函數的選擇比 PPO 架構更重要**。同一個 PPO agent 換 4 種 reward,Sharpe 可能差 3 倍。
+SK-25 是 RL 成功的關鍵——論文實證 **reward 函數的選擇比 PPO 架構更重要**。同一個 PPO agent 換 4 種 reward,Sharpe 可能差異巨大(數倍)。 [2026-08-22 驗證:3 倍無來源,弱化為定性描述]
 
 ## 論文版概念
 - 4 種 reward:
@@ -34,7 +34,7 @@ SK-25 是 RL 成功的關鍵——論文實證 **reward 函數的選擇比 PPO �
 **沒有對位的部分**:無原生 reward function 端點;無「reward-Sharpe 相關性」端點。
 
 ## 散戶解讀
-- **G**:用戶問「我的 RL 為什麼訓練 reward 高、實盤卻虧?」 → 9 成是 reward 函數設計錯。**論文實證 continuous_rank 最優**。
+- **G**:用戶問「我的 RL 為什麼訓練 reward 高、實盤卻虧?」 → 大多是 reward 函數設計錯。**論文實證 continuous_rank 最優**。 [2026-08-22 驗證:9 成無來源,弱化為定性描述]
 - **+E**:**散戶最常見錯誤:用「絕對報酬」做 reward,結果 RL 學會「all-in 單一高波動資產」,Sharpe 反倒負**。**reward 函數必須反映「風險調整後報酬」,不能只看絕對數字**。
 - 對位 ATLAS_METHODOLOGY 七時期:同一個 reward 在不同 regime 表現差異極大,需 regime-aware reward(進階題)。
 

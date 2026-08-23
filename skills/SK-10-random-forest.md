@@ -8,7 +8,7 @@ tier: T3
 confidence: high
 atlas_go_relevance: high
 mcp_tools_used: [stock_get_fundamentals, stock_get_technical, backtest_signals, risk_get_metrics]
-verification: 2026-08-02 v0.9 結算跑過 L3 升 active:client 端 sklearn 1.8.0 RandomForestRegressor(n_estimators=500, max_depth=2, min_samples_split=5, max_features="sqrt") 跑 **R²_oos=0.1248**;論文用 max_depth=2 故意淺防過擬合(台股月度資料 max_depth=2 偏弱,max_depth=4-5 可能在台股更穩);n_estimators=500 足夠(可提到 1000 不顯著改善);feature_importances_ 跑通(SK-13 互補)。
+verification: 2026-08-02 v0.9 結算跑過 L3 升 active:client 端 sklearn 1.8.0 RandomForestRegressor(n_estimators=500, max_depth=2, min_samples_split=5, max_features="sqrt") 跑 **R²_oos=0.1248**;論文用 max_depth=2 故意淺防過擬合(台股月度資料 max_depth=2 偏弱,max_depth=4-5 可能在台股更穩);n_estimators=500 足夠(內部經驗值,提到 1000 不顯著改善 [2026-08-22 驗證]);feature_importances_ 跑通(SK-13 互補)。
 ---
 
 ## 一句話定位

@@ -47,7 +47,7 @@ SK-17 在 atlas 是「組合內股票各放多少錢」——等權(1/N 散戶�
 ## 驗證方式
 Step 1: 呼叫 `universe_get_sessions` 取一份 10 檔多頭名單,呼叫 `stock_get_fundamentals` 確認有 `market_cap` 欄位(若無,需用 `shares_outstanding × close` 組裝)。
 Step 2: client 端算兩組權重 dict(equal + value),餵進 `backtest_signals` 跑兩次回測。
-Step 3: 呼叫 `risk_get_metrics` 對比兩組的 Sharpe / max_drawdown,確認 value-weighted 是否真優於 equal-weighted(預期 Sharpe 高 0.1-0.3,drawdown 略小)。
+Step 3: 呼叫 `risk_get_metrics` 對比兩組的 Sharpe / max_drawdown,不預設勝負（主流文獻多為等權毛 Sharpe 較高、value-weighted 換手低/容量大;原「預期 Sharpe 高 0.1-0.3」與文獻相反,2026-08-22 修正 [2026-08-22 驗證]）。
 
 ## 未消化 / 待補
 - [ ] atlas `stock_get_fundamentals` 是否含 `market_cap` 欄位?需 L3 實跑確認。

@@ -11,6 +11,8 @@ mcp_tools_used: [stock_get_fundamentals, backtest_signals, risk_get_metrics]
 verification: 2026-08-02 v0.9 結算跑過 L3 升 active:client 端 sklearn 1.8.0 LinearRegression 跑 make_regression(86 因子×336 樣本),**R²_oos=1.0(完美擬合—OLS 對線性資料可達此值,真實台股會因 noise<0.5 而偏低)**;對位 SK-16 SK-18 已升 active 的 backtest_signals + risk_get_metrics,atlas 端 R²_oos 需 client 端算(SOUL §3.3 誠實標)。
 ---
 
+> 口徑註：R²_oos ∈ [-0.05, 0.10] 為未實證之猜測範圍（2026-08-22 驗證時 backend :18080 未通,無法以 backtest_signals 實跑;合成線性資料實測 OLS R²=1.0 不代表真實台股,維持猜測標註,需回測確認）[2026-08-22 驗證]
+
 ## 一句話定位
 SK-05 是其他所有模型(SK-06~11)的比較基準——沒跑過 OLS 就說「我的模型好」等於沒對照組。
 

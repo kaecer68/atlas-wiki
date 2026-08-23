@@ -28,7 +28,7 @@ SK-06 是 OLS 的高維修正版——L1+L2 混合正則化,把不重要因子�
 | 評估 | `risk_get_metrics` |
 | 與 SK-04 整合 | Huber ElasticNet 在 client 端即可組合 |
 
-**差異點**:論文版是單純 sklearn 流程,atlas 端需 client 自組;**ElasticNet 的 L1 特性會把 86 個因子自動縮到 ~10-20 個,這與 SK-13 permutation importance 互補——前者看「模型覺得哪些因子有用」,後者看「打亂後掉分多少」**。
+**差異點**:論文版是單純 sklearn 流程,atlas 端需 client 自組;**ElasticNet 的 L1 特性會把 86 個因子壓縮到少數非零係數（具體個數取決於 alpha/l1_ratio,非固定 ~10-20 個;2026-08-22 驗證(合成實驗):86 相關因子×336 月,CV 選出非零 37-79 個）,這與 SK-13 permutation importance 互補——前者看「模型覺得哪些因子有用」,後者看「打亂後掉分多少」**。
 
 **沒有對位的部分**:無原生 ElasticNet 端點。
 

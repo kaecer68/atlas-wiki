@@ -11,6 +11,8 @@ mcp_tools_used: [industry_sector_list, industry_sector_lookup, stock_get_quote, 
 verification: 2026-08-01 v0.9 結算跑過 L3 升 active:industry_sector_list 38 個產業;industry_sector_lookup(2330)→半導體 12 成分股;stock_get_quote(2330 2026-08-01 23:42) last=2425/high 2425/low 2345;stock_get_fundamentals(2330) PE 30.19/PB 9.57/sector=semiconductor;**atlas 無「市值分組」端點,需 client 端用 stock_get_fundamentals 算市值後分 Big/Small**,台股 1 張=1000 股的最小交易單位需 client 端修補。
 ---
 
+> 口徑註：「電子股 80% < 20 元 / 金融股 80% > 20 元」與「第 20 百分位閾值 10-15 元」為未實證推測（2026-08-22 驗證時 backend :18080 未通,無法以 stock_get_quote 全 universe 實跑;維持原樣並標註需實跑）[2026-08-22 驗證]
+
 ## 一句話定位
 SK-21 在 atlas 是「策略會不會被仙股污染」的真值檢驗——剔除最低價 20% 股票重跑,若策略績效大幅衰退,代表 alpha 來自小股操縱/雜訊,實盤不可行。
 

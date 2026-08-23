@@ -11,6 +11,8 @@ mcp_tools_used: [industry_sector_list, industry_sector_lookup, stock_get_quote, 
 verification: 2026-08-01 v0.9 結算跑過 L3 升 active:industry_sector_list 38 個產業(ai_supply_chain/auto/biotech/electronics/semiconductor 等);industry_sector_lookup(2330→半導體 12 成分股);macro_get_snapshot_latest 確認當前 current_period=consolidation(盤整期)+ 4 大法人/產業桌 universe;**atlas 沒有「市值加權產業指數」端點,需 client 端用 stock_get_fundamentals × industry_sector_list 算**(端點活+骨架齊全);47 個產業 vs 38 個 atlas 產業對位需驗證。
 ---
 
+> 口徑註：atlas 產業數實數 = 38（20 L1 + 18 L2,internal/industry/sector.go AllSectors 2026-08-22 驗證）;SK-20「18」為 B5-3 SectorIndexReader 舊口徑、論文「47」為 Fin-Skills 口徑,三數並存各註明;「電子/金融合計 > 50%」2026-08-22 驗證時無本地市值快照,需實跑確認 [2026-08-22 驗證]
+
 ## 一句話定位
 SK-23 在 atlas 是「從個股走到產業」——把 1000+ 股票聚合成 47 個產業指數,讓強化學習(SK-24)在「選哪個產業」這個決策粒度上學習,而不是「選哪 100 檔個股」(後者維度太高學不動)。
 
