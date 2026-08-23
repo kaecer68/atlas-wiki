@@ -24,9 +24,9 @@ created_by: prime-agent (kaecer 2026-08-22 拍板案 A)
 | Q | 問題類型 | 知識頁（角色） |
 |---|---------|--------------|
 | Q1 | 個股基本判斷 | taiwan-stock-market-structure（GT）、taiwan-technical-analysis-guide（INT）、taiwan-fundamental-analysis-guide（INT）、taiwan-chip-flow-analysis（INT）、taiwan-financial-domain-model（GT） |
-| Q2 | 多空/選股策略 | atals-strategy-taxonomy（DOC）、atals-platform-overview（DOC）、taiwan-fundamental-analysis-guide（INT）、taiwan-financial-domain-model（GT） |
+| Q2 | 多空/選股策略 | atlas-strategy-taxonomy（DOC）、atlas-platform-overview（DOC）、taiwan-fundamental-analysis-guide（INT）、taiwan-financial-domain-model（GT） |
 | Q3 | 產業/類股輪動 | taiwan-chip-flow-analysis（INT）、taiwan-money-flow-seven-institutional-buckets（INT）、funding-forces-taxonomy-e05（GT）、taiwan-export-orders-semiconductor-cycle（INT）、entities/l1-t5-ai-semiconductor（NAR）、eight-banks-government-signal-reading（NAR） |
-| Q4 | 風險/回測 | atals-risk-management-framework（GT）、atals-simulation-guide（DOC）、atals-platform-overview（DOC）、retail-sentiment-indicators（INT） |
+| Q4 | 風險/回測 | atlas-risk-management-framework（GT）、atlas-simulation-guide（DOC）、atlas-platform-overview（DOC）、retail-sentiment-indicators（INT） |
 | Q5 | 宏觀/事件 | taiwan-stock-market-structure（GT）、retail-sentiment-indicators（INT）、taiwan-export-orders-semiconductor-cycle（INT）、taiwan-money-flow-seven-institutional-buckets（INT）、entities/l1-t-overview + l1-t1/t2/t3/t4/t5/t6（NAR）、s-paradigm-redefinition（NAR）、atlas-three-paradigms-v0.2-summary（NAR）、t1-t4-signal-light（NAR） |
 | Q6 | 交易實務 | taiwan-stock-market-structure（GT）、taiwan-financial-domain-model（GT）、funding-forces-taxonomy-e05（GT,收編情緒層） |
 
@@ -38,7 +38,7 @@ created_by: prime-agent (kaecer 2026-08-22 拍板案 A)
 |------|------|---------|-------|
 | concepts/taiwan-stock-market-structure.md | GT | 交易制度/稅費/維持率 ground truth | Q1/Q5/Q6 |
 | concepts/taiwan-financial-domain-model.md | GT | 金融領域詞彙表 | all |
-| concepts/atals-risk-management-framework.md | GT | 風險框架/維持率（130% 2015-05-04 已驗證） | Q4 |
+| concepts/atlas-risk-management-framework.md | GT | 風險框架/維持率（130% 2015-05-04 已驗證） | Q4 |
 | concepts/content-attribution-policy-2026-07-20.md | GT | 內容歸屬政策 | — |
 | concepts/funding-forces-taxonomy-e05-pending-approval.md | GT | 資金分類結案（3+2+2 spec + 情緒層收編） | Q3/Q6 |
 | concepts/taiwan-technical-analysis-guide.md | INT | 技術指標判讀（線型/指標） | Q1 |
@@ -47,10 +47,10 @@ created_by: prime-agent (kaecer 2026-08-22 拍板案 A)
 | concepts/taiwan-money-flow-seven-institutional-buckets.md | INT | 七維錢潮 3+2+2 + 情緒調整層 | Q3/Q5 |
 | concepts/retail-sentiment-indicators.md | INT | 散戶情緒反向指標（融資/維持率） | Q4/Q5 |
 | concepts/taiwan-export-orders-semiconductor-cycle.md | INT | 出口/半導體景氣月頻驗證（因果鏈第二層） | Q3/Q5 |
-| concepts/atals-platform-overview.md | DOC | atlas 平台架構總覽 | Q2/Q4 |
-| concepts/atals-simulation-guide.md | DOC | 模擬/回測流程 | Q4 |
-| concepts/atals-strategy-taxonomy.md | DOC | 策略分類詞彙表（L1-L5 已對齊代碼） | Q2 |
-| concepts/atals-mcp-tools-reference.md | DOC | MCP 工具參考（實跑註記） | all |
+| concepts/atlas-platform-overview.md | DOC | atlas 平台架構總覽 | Q2/Q4 |
+| concepts/atlas-simulation-guide.md | DOC | 模擬/回測流程 | Q4 |
+| concepts/atlas-strategy-taxonomy.md | DOC | 策略分類詞彙表（L1-L5 已對齊代碼） | Q2 |
+| concepts/atlas-mcp-tools-reference.md | DOC | MCP 工具參考（實跑註記） | all |
 | concepts/t1-t4-signal-light.md | NAR | 訊號燈框架（研究） | Q2/Q5 |
 | concepts/eight-banks-government-signal-reading-2026-07-22.md | NAR | 官股行庫訊號研究 | Q3 |
 | concepts/s-paradigm-redefinition.md | NAR | S 範式重定義（kaecer 拍板） | Q5 |

@@ -13,7 +13,7 @@ mcp_tools_used:
   - risk_exposure
   - risk_get_calibration
   - backtest_signals
-verification: 2026-08-01 v0.9 結算跑過 L3 升 active:risk_exposure 跑出 4 個 factor_exposure(agent 0.71/momentum -0.004/quality 0.99/value 0.05,total 0.39),portfolio_value 3M,sector 100% electronics;risk_get_calibration verdict=calibrated,30 sessions + 795 orders 評估,baseline_score=-1.7483 → optimized=0(+100% delta,對 |baseline|;原「-40% delta」數值錯誤,2026-08-22 驗證修正);Newey-West t 不直接對位(論文預期 t > 2,atlas calibration verdict=calibrated 是更強的模型驗證訊號)。
+verification: 2026-08-01 v0.9 結算跑過 L3 升 active:risk_exposure 跑出 4 個 factor_exposure(agent 0.71/momentum -0.004/quality 0.99/value 0.05,total 0.39),portfolio_value 3M,sector 100% electronics;risk_get_calibration verdict=calibrated,30 sessions + 795 orders 評估,baseline_score=-1.7483 → optimized=0(+100% delta,對 |baseline|;原「-40% delta」數值錯誤,2026-08-22 驗證修正);Newey-West t 不直接對位(論文預期 t > 2,atlas calibration verdict=calibrated 是更強的模型驗證訊號);Newey-West lag=12 對月頻非重疊報酬偏高——慣例 lag≈floor(4×(T/100)^(2/9)),T=60→4、T=336→5（Stock & Watson/Greene 通則）,12 保守但會放大 SE、壓低 t,引用時註明 [2026-08-22 驗證]。
 methodology_aligned: true
 atlas_constitution_ref: ATLAS_METHODOLOGY.md §五(策略矩陣:Alpha 在七不同時期下表現可能天差地別)(附註:2026-07-30 period_system 變動 — `period` 已是 PeriodDetector 真值,`source` 欄位正名 `regime_source` / `period_source`)
 related:

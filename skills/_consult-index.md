@@ -89,7 +89,7 @@ related:
 ### Q6 交易成本
 (無端點,套 SK-19 公式)
 
-> 詳見 [[concepts/atals-mcp-tools-reference]] [2026-08-22 audit-fix]
+> 詳見 [[concepts/atlas-mcp-tools-reference]] [2026-08-22 audit-fix]
 
 > §3.1 方法論憲章對位表 → [[_consult-index_archive]]（2026-08-22 歸檔,對位 _inbox 例外模式）
 

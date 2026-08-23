@@ -31,11 +31,11 @@
 - [[concepts/taiwan-technical-analysis-guide]] — 台股技術分析指南（2026-08-02 補入）
 - [[concepts/taiwan-fundamental-analysis-guide]] — 台股基本面分析指南（2026-08-02 補入）
 - [[concepts/taiwan-chip-flow-analysis]] — 台股籌碼面分析指南（2026-08-02 補入）
-- [[concepts/atals-platform-overview]] — atals 平台概覽（2026-08-02 補入）
-- [[concepts/atals-simulation-guide]] — atals 策略模擬指南（2026-08-02 補入）
-- [[concepts/atals-mcp-tools-reference]] — atals MCP 工具參考（2026-08-02 補入）
-- [[concepts/atals-strategy-taxonomy]] — atals L1-L5 策略分類體系（2026-08-02 補入；層名對齊 atlas internal/strategy_techniques/enums.go canonical [2026-08-22 iter2]）
-- [[concepts/atals-risk-management-framework]] — atals 風險管理框架（2026-08-02 補入）
+- [[concepts/atlas-platform-overview]] — atlas 平台概覽（2026-08-02 補入）
+- [[concepts/atlas-simulation-guide]] — atlas 策略模擬指南（2026-08-02 補入）
+- [[concepts/atlas-mcp-tools-reference]] — atlas MCP 工具參考（2026-08-02 補入）
+- [[concepts/atlas-strategy-taxonomy]] — atlas L1-L5 策略分類體系（2026-08-02 補入；層名對齊 atlas internal/strategy_techniques/enums.go canonical [2026-08-22 iter2]）
+- [[concepts/atlas-risk-management-framework]] — atlas 風險管理框架（2026-08-02 補入）
 
 - [[concepts/atlas-three-paradigms-v0.2-summary]] — L/T/S 三範式摘要(Stage 1C)
 - [[atlas-notes/03-system-health/investigations/2026-07-20-open-work-inventory]]（已搬到 atlas-notes，10.7KB；屬盤查類不應留在 wiki）

@@ -18,9 +18,9 @@ contradictions: []
 
 本文件提供 atlas 平台 **MCP（Model Context Protocol）介面的完整工具清單、調用順序、組合範例、錯誤處理與安全注意事項**，是 LLM agent 操作 atlas 的實務參考手冊。
 
-相關入口：[[concepts/atlas-mcp-interpretation-guide]]、[[concepts/atals-platform-overview]]、[[concepts/atals-simulation-guide]]
+相關入口：[[concepts/atlas-mcp-interpretation-guide]]、[[concepts/atlas-platform-overview]]、[[concepts/atlas-simulation-guide]]
 
-延伸主題：[[concepts/atlas-mcp-interpretation-guide|MCP 解讀原則]]、[[concepts/atals-platform-overview|平台架構]]、[[concepts/atals-strategy-taxonomy|模擬策略]]。
+延伸主題：[[concepts/atlas-mcp-interpretation-guide|MCP 解讀原則]]、[[concepts/atlas-platform-overview|平台架構]]、[[concepts/atlas-strategy-taxonomy|模擬策略]]。
 
 ---
 
@@ -477,5 +477,5 @@ LLM agent 在執行寫入操作前，**應先說明「這個操作會被 audit l
 ## 相關入口
 
 - [[concepts/atlas-mcp-interpretation-guide]] — MCP 解讀紀律
-- [[concepts/atals-platform-overview]] — 平台架構
-- [[concepts/atals-simulation-guide]] — 模擬流程
+- [[concepts/atlas-platform-overview]] — 平台架構
+- [[concepts/atlas-simulation-guide]] — 模擬流程

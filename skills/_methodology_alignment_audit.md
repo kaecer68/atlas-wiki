@@ -63,7 +63,7 @@ updated: 2026-08-22
 - **階段 B（✅ 2026-08-02 24/24）**：B1 SK-18 期間適用性 / B2 SK-20 雙軸 / B3 SK-16 對位承諾 / B4 SK-29 警告 / B5 SK-16/18 TW-X4 附註（後裁定撤銷）/ B6 _index-finskills §五
 - **階段 C（2026-08-22 iter2 複查）**：
   - C1「period × strategy 對位需 M1 MCP 公開」→ **解除**：M1 ✅（macro_get_snapshot_latest.current_period）+ M4 ✅（strategy_for_period）
-  - C2「strategy_ranker 加 period 欄同步補 _consult-index §3」→ **部分**：ranker 仍無 period 欄（2026-08-22 源碼複查）;改用 strategy_for_period,補註已落地 concepts/atals-mcp-tools-reference.md §2.7（_consult-index §3 無空間 8995B,指標行已存在）
+  - C2「strategy_ranker 加 period 欄同步補 _consult-index §3」→ **部分**：ranker 仍無 period 欄（2026-08-22 源碼複查）;改用 strategy_for_period,補註已落地 concepts/atlas-mcp-tools-reference.md §2.7（_consult-index §3 無空間 8995B,指標行已存在）
   - C3 cron 9a9aa3 prompt 七時期重設計 → 待 kaecer 排（已送歷史不能改）
 
 ---
@@ -103,7 +103,7 @@ updated: 2026-08-22
 - **B 階段（2026-08-02）✅**：24/24 active 頁 methodology_aligned（§5.2 對位表全文 → _archive）
 - **TW-X1 ✅ / TW-X3 ✅ / TW-X4 ✅**（A/B 階段含;TW-X4 為 kaecer 裁定正交撤銷）
 - **TW-X2 ✅（2026-08-22 iter2）**：SK-16/18/20 加「資金面 = 七維錢潮雷達 3+2+2 分層,不可加權平均」術語備註
-- **C 階段複查（2026-08-22）**：M1 ✅ + M4 ✅ → C1 解除;C2 部分（補註 → atals-mcp-tools-reference §2.7）;C3 待排
+- **C 階段複查（2026-08-22）**：M1 ✅ + M4 ✅ → C1 解除;C2 部分（補註 → atlas-mcp-tools-reference §2.7）;C3 待排
 - **執行記錄全文（§5.1-§5.5 + §1 原始違背清單）→ [[_archive/_methodology_alignment_audit_20260802_execution.md]]**
 
 > **最後更新**: 2026-08-22 (iter2 結案 — TW-X2 落地 + C 階段複查 + §5 歸檔)

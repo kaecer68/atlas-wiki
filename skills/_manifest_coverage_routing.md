@@ -89,7 +89,7 @@ atlas-wiki 截至 2026-08-07 對以下 4 個面向有缺口,**全部影響服務
 
 1. **你關於問題 3 的提問本身就指出答案**:「投資人用戶會非常害怕看到任何信息出錯或有任何問題提醒的警告」——這要求 **user 觀點必須看不到原生日誌**;「系統管理者就特別需要知道有沒有什麼地方信息不對」——這要求 admin 觀點必須看到**完整 audit 細節**。**這是 audience binary 機制的根本理由**,tier(沒權限看不到)是順便處理的副產品(沒能力看到就是看到「資料不可達」的 user 體驗)。
 
-2. **現有 tier 機制已有但碎片化**:`concepts/atals-mcp-tools-reference.md §5` 已列 free / registered / premium 三層,但**沒有**對應的 audience 表達切換。**新增 audience routing 不是重造 tier,是把 tier** 從「端點能力差異」映射到「表達差異」。
+2. **現有 tier 機制已有但碎片化**:`concepts/atlas-mcp-tools-reference.md §5` 已列 free / registered / premium 三層,但**沒有**對應的 audience 表達切換。**新增 audience routing 不是重造 tier,是把 tier** 從「端點能力差異」映射到「表達差異」。
 
 3. **為什麼不延後**:你已明示問題 3 的理由是 **安全 / 信任**——這是 mission 級風險(對位憲法 §1 mission),**不是 nice-to-have**。延後 = 散戶被 first impression 嚇退。
 

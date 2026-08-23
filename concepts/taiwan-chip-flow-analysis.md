@@ -16,7 +16,7 @@ contradictions: []
 ---
 # 台股籌碼面分析手冊
 
-> **一句話**：台股籌碼面分析追蹤外資、投信、自營商[[concepts/taiwan-money-flow-seven-institutional-buckets|三大法人]]的資金流動，配合 atals 平台的[[concepts/taiwan-money-flow-seven-institutional-buckets|七維錢潮雷達（3+2+2 分層）]]與融資融券、借券等散戶代理指標，判斷市場資金的真實方向。
+> **一句話**：台股籌碼面分析追蹤外資、投信、自營商[[concepts/taiwan-money-flow-seven-institutional-buckets|三大法人]]的資金流動，配合 atlas 平台的[[concepts/taiwan-money-flow-seven-institutional-buckets|七維錢潮雷達（3+2+2 分層）]]與融資融券、借券等散戶代理指標，判斷市場資金的真實方向。
 
 ## 一、籌碼面分析的基本概念
 
@@ -252,7 +252,7 @@ LLM agent 在引用 atlas 報告時，可標註：
 
 #### atlas 策略對應
 
-- **margin-balance-extreme**：融資餘額達到極端值（參見[[concepts/atals-strategy-taxonomy|融資餘額極端]]策略）
+- **margin-balance-extreme**：融資餘額達到極端值（參見[[concepts/atlas-strategy-taxonomy|融資餘額極端]]策略）
   - 過高 → 反轉訊號（散戶過度槓桿）
   - 過低 → 反彈訊號（散戶絕望）
 
@@ -410,7 +410,7 @@ LLM agent 在引用 atlas 報告時，可標註：
 
 ## 九、與 atlas 平台的整合
 
-### 9.1 atlas [[concepts/atals-mcp-tools-reference|MCP]] 主要偵測器 / 策略對應
+### 9.1 atlas [[concepts/atlas-mcp-tools-reference|MCP]] 主要偵測器 / 策略對應
 
 | atlas 偵測器 | 對應籌碼來源 | 訊號意義 |
 |--------------|--------------|----------|

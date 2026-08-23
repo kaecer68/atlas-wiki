@@ -12,6 +12,7 @@
 - 08-22 v0.9.5：_method.md 第八條「盤查修復自主權」拍板生效（三類自扛 + 三類保留 + 判準一句話）+ 審計驗證待辦清單 VERIFICATION-BACKLOG.md 建立。
 - 08-22 v0.9.6-ext：驗證批次 ext（外部來源校準：IRENA/USGS/ICSG/TSMC/OpenAI/厚勞省/內政部 10 條 + 權值股表重算 + 2330 快照註記）。
 - 08-22 v0.9.6-sk：驗證批次 sk（量化 SK 14 檔：公式/數值/誇飾弱化 + 合成實驗證據）。
+- 08-22 v0.9.7：收尾（SK-18 Newey-West 慣例註記 + atals→atlas 檔名改名 5 檔含 87 處引用更新 + SK-01/SK-21/SK-23 續作）。
 08-21 v0.9：加 §9.5 Skills 索引紀律（kaecer 8/21 21:20 拍板）；上限暫放寬至 12,500 bytes。
 08-22 v0.9.2：金融審計 audit-fix 批次（19 檔 skills/ 內容修正 + _consult-index 瘦身歸檔 + 2 檔衍生審計檔移 _archive/；SK 數 37 不變、無新增/刪除 skill、§3/§9.5 索引不變）。
 
