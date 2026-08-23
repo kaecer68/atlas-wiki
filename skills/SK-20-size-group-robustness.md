@@ -8,7 +8,7 @@ tier: T3
 confidence: medium
 atlas_go_relevance: high
 mcp_tools_used: [industry_sector_lookup, stock_get_quote, stock_get_fundamentals]
-verification: 2026-08-01 v0.9 結算跑過 L3 升 active:industry_sector_lookup(2330→半導體 12 成分股,7/30)+ stock_get_quote(2330 現價 2425,high 2425/low 2345,2026-08-01 23:42)+ stock_get_fundamentals(PE 30.19/PB 9.57/DividendYield 1.1%/sector=semiconductor,7/30)三端點全跑通;**atlas 端無直接「市值分組」端點,需 client 端用 stock_get_fundamentals 算市值後分組**(端點活≠論文 D1~D10 十分位結構)。
+verification: 2026-08-01 v0.9 結算跑過 L3 升 active:industry_sector_lookup(2330→半導體 12 成分股,7/30)+ stock_get_quote(2330 現價 2425,high 2425/low 2345,2026-08-01 23:42)+ stock_get_fundamentals(PE 30.19/PB 9.57/DividendYield 1.1%/sector=semiconductor,7/30)三端點全跑通;[2026-08-22 官方驗證:2425/PE30.19/PB9.57 均為 2026-07-30~08-01 時點快照,勿當當下值,對位第五條鐵律];**atlas 端無直接「市值分組」端點,需 client 端用 stock_get_fundamentals 算市值後分組**(端點活≠論文 D1~D10 十分位結構)。
 methodology_aligned: true
 atlas_constitution_ref: ATLAS_METHODOLOGY.md §四(七大資金勢力行為)+ §七(散戶可捕捉事件);對位需考慮「市值是 dimension 還是 behavior_proxy 層」(CF-INV-07 加權風險)(附註:2026-07-30 period_system 變動 — `period` 已是 PeriodDetector 真值,`source` 欄位正名 `regime_source` / `period_source`)
 related:
