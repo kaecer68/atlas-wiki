@@ -32,8 +32,8 @@ contradictions: []
 ## Step 1 現況
 
 - **2025 大模型現況**:GPT-5、Claude 4、Gemini 2 等旗艦 LLM 已跨多任務
-- **訓練算力**:OpenAI Stargate 計畫 2025 起 5 年 $5000 億;Meta + Google + Microsoft 2024 AI capex 合計 ~$2000 億
-- **半導體製程**:TSMC 2025 量產 2nm、2027 規劃 1.4nm、2030 預估 < 1nm
+- **訓練算力**:OpenAI Stargate 計畫 2025-01 宣布 4 年 $5000 億(首期 $1000 億立即部署)[2026-08-22 官方驗證:OpenAI 官網 2025-01-21「Announcing The Stargate Project」原文 invest $500 billion over the next four years;原「5 年」為誤植];Meta + Google + Microsoft 2024 AI capex 合計 ~$2000 億
+- **半導體製程**:TSMC 2025 量產 2nm(N2)、2028 規劃 1.4nm(A14 量產)[2026-08-22 官方驗證:TSMC 新聞稿 2025-04-23「A14…Planned to enter production in 2028」;原「2027」為誤植]、2030 預估 < 1nm
 - **能耗問題**:ChatGPT 單查詢 ~3 Wh,訓練 GPT-4 ~50 GWh(2023,Goldman)
 - **晶片禁令**:美對華管制 2024 起涵蓋 EUV + HBM + AI 加速器;中國 SMIC 7nm 量產突破(2024)
 - **AGI 預期**:多家前沿實驗室(Anthropic、OpenAI、Google DeepMind) 2024-2025 給出 2026-2030 AGI 預期

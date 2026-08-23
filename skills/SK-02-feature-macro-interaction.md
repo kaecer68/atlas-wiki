@@ -8,7 +8,7 @@ tier: T3
 confidence: medium
 atlas_go_relevance: high
 mcp_tools_used: [macro_get_snapshot_latest, stock_get_fundamentals, universe_get_sessions]
-verification: 2026-08-01 v0.9 結算跑過 L3 升 active:macro_get_snapshot_latest 確認當前 12 個總經變數(taiex/AAPL/MSFT/NVDA/us10y 等);stock_get_fundamentals (2330 PE 30.19/PB 9.57) 提供個股因子;universe_get_sessions 147 sessions 提供時間軸;**atlas 沒有「特徵工程 orchestrator」端點,需 client 端用 macro × stock_get_fundamentals 算出 1,118 個交互特徵欄位**;論文中 86×12=1,032 個交互項+86 原始=1,118 欄位需 client 端驗證形狀。
+verification: 2026-08-01 v0.9 結算跑過 L3 升 active:macro_get_snapshot_latest 確認當前 12 個總經變數(taiex/AAPL/MSFT/NVDA/us10y 等;**2026-08-22 驗證:AAPL/MSFT/NVDA 為 Yahoo 美股報價(us_tech_provider.go),非總經變數;現行快照已 31 條序列,12 為 2026-08-01 當下口徑**);stock_get_fundamentals (2330 PE 30.19/PB 9.57 提供個股因子;[2026-08-22 官方驗證:此為 2026-07-30 時點快照,勿當當下值,對位第五條鐵律]);universe_get_sessions 147 sessions 提供時間軸;**atlas 沒有「特徵工程 orchestrator」端點,需 client 端用 macro × stock_get_fundamentals 算出 1,118 個交互特徵欄位**;論文中 86×12=1,032 個交互項+86 原始=1,118 欄位需 client 端驗證形狀。
 methodology_aligned: true
 atlas_constitution_ref: ATLAS_METHODOLOGY.md §五(策略矩陣:特徵工程需對位 7 時期 × 策略三分類,跨 regime 表現可能天差地別)(附註:2026-07-30 period_system 變動 — `period` 已是 PeriodDetector 真值,`source` 欄位正名 `regime_source` / `period_source`)
 ---
