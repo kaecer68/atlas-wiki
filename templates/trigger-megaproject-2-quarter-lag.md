@@ -1,5 +1,7 @@
 # atlas-mcp Trigger Template #14 — trigger-megaproject-2-quarter-lag
 
+> [2026-08-22 快照:21] templates/*.md 實數 21 檔（本檔「現有 N 模板/第 N 模板」為撰寫當下歷史計數，快照統一，數字不一屬歷史演進）
+
 **對位**:B 階段 kaecer 拍板「+ 第 14 template」+ T3-A248 v6.46 governance
 **對位文獻**:UNCTAD WIR 2026 figure III.1 + Stanford HAI 2026 Chapter 4 + HKS M-RCBG WP No.213 (2026/05)
 **對位 ATLAS_METHODOLOGY.md** v1.0 §二 因果傳導鏈 第 1 層(美股科技估值)→ 第 2 層(台灣出口與半導體景氣)

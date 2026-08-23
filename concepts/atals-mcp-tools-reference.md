@@ -1,5 +1,5 @@
 ---
-title: atals MCP 工具參考：六類 40+ 工具速查
+title: atlas MCP 工具參考：六類 40+ 工具速查
 created: 2026-08-02
 updated: 2026-08-02
 type: concept
@@ -12,11 +12,11 @@ contested: false
 contradictions: []
 ---
 
-# atals MCP 工具參考（MCP Integration Guide）
+# atlas MCP 工具參考（MCP Integration Guide）
 
-> **一句話**：atals MCP 提供 6 大類 40+ 工具（市場速覽、宏觀數據、資金流向、國際市場、策略訊號、風險管理），是 agent 存取 atals 平台能力的統一介面，調用時應遵循「診斷 before fetch」的解讀紀律。
+> **一句話**：atlas MCP 提供 6 大類 40+ 工具（市場速覽、宏觀數據、資金流向、國際市場、策略訊號、風險管理），是 agent 存取 atlas 平台能力的統一介面，調用時應遵循「診斷 before fetch」的解讀紀律。
 
-本文件提供 atals 平台 **MCP（Model Context Protocol）介面的完整工具清單、調用順序、組合範例、錯誤處理與安全注意事項**，是 LLM agent 操作 atals 的實務參考手冊。
+本文件提供 atlas 平台 **MCP（Model Context Protocol）介面的完整工具清單、調用順序、組合範例、錯誤處理與安全注意事項**，是 LLM agent 操作 atlas 的實務參考手冊。
 
 相關入口：[[concepts/atlas-mcp-interpretation-guide]]、[[concepts/atals-platform-overview]]、[[concepts/atals-simulation-guide]]
 

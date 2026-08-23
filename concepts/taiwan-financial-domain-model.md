@@ -31,11 +31,11 @@ contradictions: []
 |---|---|---|---|
 | 集中市場 | TWSE（Taiwan Stock Exchange） | 台灣證券交易所掛牌的主板市場，上市公司資本規模較大、掛牌條件嚴格 | → 加權指數、→ 上市股票、→ 漲跌幅 10% |
 | 櫃檯市場 | TPEx（Taipei Exchange）／ OTC | 上櫃股票交易市場，多為中小型企業與成長型產業 | → 櫃買指數、→ 上櫃股票 |
-| 興櫃市場 | ESM（Emerving Stock Market） | 未上市上櫃公司的股票議價買賣市場，資訊揭露強度介於兩者之間 | → 議價交易、→ 登錄股票 |
+| 興櫃市場 | ESM（Emerging Stock Market） | 未上市上櫃公司的股票議價買賣市場，資訊揭露強度介於兩者之間 | → 議價交易、→ 登錄股票 | [2026-08-22 驗證:Emerving→Emerging 拼字修正]
 | 創櫃板 | Go Incubation Board | 提供微型創新企業股權籌資的板塊，掛牌門檻較低但無次級市場交易 | → 登錄股票、→ 籌資 |
 | 期貨市場 | TAIFEX（Taiwan Futures Exchange） | 提供台股期貨、選擇權、小型台指等衍生性商品的交易所 | → 台指期、→ 選擇權、→ 保證金 |
 | 權證 | Warrant（Call/Put） | 發行人（多為券商）發行的「可在到期前以約定價格買賣標的股票」的憑證 | → 標的股票、→ 發行券商、→ 行使比例 |
-| 認購（售）權證 | Call / Put Warrant | 看好標的買 Call、看空標的買 Put，分為歐式與美式 | → 權證、→ 時間價值 |
+| 認購（售）權證 | Call / Put Warrant | 看好標的買 Call、看空標的買 Put，分為歐式與美式（台股權證歐式/美式並存，非全歐式；外國標的權證限歐式） | → 權證、→ 時間價值 | [2026-08-22 驗證:TWSE 官方 FAQ「持有人有權利在特定期間內(美式)或到期日(歐式)」;https://www.twse.com.tw/zh/page/products/securities/warrant/faq.html]
 | ETF | Exchange-Traded Fund | 在交易所掛牌、被動追蹤指數或產業的基金，提供分散投資與流動性 | → 被動追蹤指數、→ 受益憑證、→ 折溢價 |
 | 特別股 | Preferred Stock | 享有固定配息、但表決權有限的股票，常見於金融業 | → 普通股、→ 配息 |
 | 普通股 | Common Stock | 標準上市公司股權，具有表決權與剩餘分配請求權 | → 每股盈餘、→ 股東會 |

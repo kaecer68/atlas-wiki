@@ -1,5 +1,5 @@
 ---
-title: atals L1-L5 策略分類體系
+title: atlas L1-L5 策略分類體系
 created: 2026-08-02
 updated: 2026-08-02
 type: concept
@@ -15,7 +15,7 @@ contested: false
 contradictions: []
 ---
 
-> **一句話**：atals 12 個活躍策略按 L1（全球流動性）→ L5（地緣政治）層級分佈，覆蓋從 DXY/美債利率、外資連續買超、NVDA+TSM ADR 同步到融資餘額極端與關稅衝擊的多維度訊號面。
+> **一句話**：atlas 12 個活躍策略按 L1（全球流動性）→ L5（地緣政治）層級分佈，覆蓋從 DXY/美債利率、外資連續買超、NVDA+TSM ADR 同步到融資餘額極端與關稅衝擊的多維度訊號面。
 
 # 投資策略分類體系（Strategy Taxonomy）
 

@@ -10,7 +10,7 @@
 
 ## Step 2:自動跑端點
 - mcp__atlas_mcp__capital_flow_summary(外資期貨 -82515 偏空)
-- mcp__atlas_mcp__mcp_quickstart(stress score -7.66 low)
+- mcp__atlas_mcp__mcp_quickstart(stress score -7.66 low)[2026-08-22 驗證:stress score 為連續值隨日變動,-7.66 為 2026-08-03 快照;實跑 macro_get_stress_index_current 2026-08-23=7.71(low),與 log.md 歷史 29.92(low)/32.55/34.74(alert) 同指標同尺度]
 
 ## Step 3:建議
 - 觸發成功 → **加碼內需/高股息/黃金/防禦性資產 5%**

@@ -1,5 +1,5 @@
 ---
-title: atals 平台概覽：台股策略模擬平台架構
+title: atlas 平台概覽：台股策略模擬平台架構
 created: 2026-08-02
 updated: 2026-08-02
 type: concept
@@ -13,11 +13,11 @@ contested: false
 contradictions: []
 ---
 
-# atals 平台概覽（Platform Overview）
+# atlas 平台概覽（Platform Overview）
 
-> **一句話**：atals 是台股散戶投資人策略模擬與交易模擬平台，採用 Go+gin 後端 + Kafka 事件流，透過 MCP 對外提供 6 大類 40+ 工具，覆蓋從宏觀數據到策略模擬的完整投資決策鏈路。
+> **一句話**：atlas 是台股散戶投資人策略模擬與交易模擬平台，採用 Go+gin 後端 + Kafka 事件流，透過 MCP 對外提供 6 大類 40+ 工具，覆蓋從宏觀數據到策略模擬的完整投資決策鏈路。
 
-本文件供 LLM agent 理解 atals 台股投資平台的整體定位、架構分層、對外介面與使用脈絡，作為後續策略模擬、風險控管與報告生成任務的入口導讀。
+本文件供 LLM agent 理解 atlas 台股投資平台的整體定位、架構分層、對外介面與使用脈絡，作為後續策略模擬、風險控管與報告生成任務的入口導讀。
 
 相關入口：[[concepts/atals-simulation-guide]]、[[concepts/atals-mcp-tools-reference]]、[[concepts/atals-strategy-taxonomy]]、[[concepts/atlas-mcp-interpretation-guide]]
 

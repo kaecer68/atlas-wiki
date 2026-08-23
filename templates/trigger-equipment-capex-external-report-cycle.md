@@ -7,6 +7,8 @@ cycle_type: annual-semi-annual
 
 # atlas-mcp Trigger Template #15 — trigger-equipment-capex-external-report-cycle
 
+> [2026-08-22 快照:21] templates/*.md 實數 21 檔（本檔「現有 N 模板/第 N 模板」為撰寫當下歷史計數，快照統一，數字不一屬歷史演進）
+
 **對位**:B 階段 kaecer 拍板「+ 第 15 template」+ T3-A248 v6.46 governance + SK-31 §6 對位
 **對位文獻**:UNCTAD WIR(5/21 announcement + 7/7 release)+ Stanford HAI AI Index(4 月 release)+ HKS M-RCBG WP(5 月 release)
 **對位 ATLAS_METHODOLOGY.md** v1.0 §一 投資哲學(由上而下,由外而內)

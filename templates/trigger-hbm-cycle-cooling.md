@@ -1,5 +1,7 @@
 # HBM/AI 半導體敘事降溫觸發模板(對位 2026 韓股崩盤教訓)
 
+> [2026-08-22 快照:21] templates/*.md 實數 21 檔（本檔「現有 N 模板/第 N 模板」為撰寫當下歷史計數，快照統一，數字不一屬歷史演進）
+
 **觸發條件(三項 AND)**:SK Hynix(000660)月跌幅 < -10% + HBM 報價連 2 月跌 < -5% + 雲端商(NVDA/GOOGL/META/MSFT)任一 capex 季報 YoY 指引下修至 < +20%
 **對位**:ATLAS_METHODOLOGY.md §二 Layer 4(產業鏈)+ Layer 5(事件觸發)
 **對位端點**:`/api/stock/chips?symbol=660`(SK Hynix chips)+ `/api/macro/snapshot/latest`(HBM 報價 + capex)
