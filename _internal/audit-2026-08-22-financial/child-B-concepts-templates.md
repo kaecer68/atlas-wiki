@@ -80,7 +80,7 @@ note: taiwan-stock-market-structure.md 由主 agent 深審，本檔只記錄它�
 | C4 | concepts/taiwan-stock-market-structure.md | 「2026/8 加權指數 43,119，市場處於 RISK_ON 盤整格局」 | 通過（雙層使用合法）：七時期（盤整）為真值、RISK_ON 為向下相容層，並列表述符合憲章。 |
 | C5 | 七時期 | 本範圍 19+7 檔中幾乎沒有檔直接用七時期七名（低迷/轉折開高/上升/高原/盤整/轉折下壓/黑天鵝）；多用 RISK_ON/OFF/NEUTRAL/TRANSITIONAL 平台標籤 | 通過（未違背，但覆蓋不足）：平台檔使用向下相容層標籤可接受；trigger-megaproject §7 有「black_swan 時期 trigger 不主動推」的七時期對位，方向正確。 |
 | C6 | 七維錢潮雷達 3+2+2 | taiwan-chip-flow-analysis §2、atals-mcp-tools-reference、atals-platform-overview §2.2/§6 均正確使用「3 官方 + 2 行為代理 + 2 領先訊號」且用「共識投票」非加權平均 | 通過。 |
-| C7 | 六大觀測指標 | 模板群覆蓋：美台資金開關（DXY/US10Y/usd-twd）、美股科技動能（SOX/NVDA/TSM）、外資期現貨（foreign-3day、外資期貨 OI）、內資抗衡（投信/自營/官股）、散戶情緒（margin/retail）、事件觸發（MSCI/ETF/關稅/台海） | 通過，無衝突。 |
+| C7 | 六大觀測指標 | 模板群覆蓋：美台資金開關（DXY/US10Y/usd-twd）、美股科技動能（SOX/NVDA/TSM）、外資期現貨（foreign-3day、外資期貨 OI）、內資抗衡（投信/自營/官股）、散戶情緒（margin/retail）、事件觸發（MSCI/ETF/關稅/台海） | 通過，無衝突。 | **v1.1 對位(2026-08-25)**:六大觀測指標角色對位 ATLAS_METHODOLOGY.md §5(寬鬆觀測,非 §3 權威判別);事件觸發含台海,改用 GeoIntensity 0-100 + 4 級制 |
 
 ---
 

@@ -28,7 +28,7 @@ amendable_by: kaecer
 | 2026-08-03 | **觸發模板 4:融資 3500 億模板(單日版)**:retail_margin 5074.63 億 > 5000 ✅ 觸發成功 | Q4 風險 | macro_get_snapshot_latest + risk_get_metrics | §6 觸發模板第 4 觸 |
 | 2026-08-03 | **觸發模板 5:外資買超模板(單日版)**:foreign_investor_net +21.83 億 > +20 ✅ 觸發成功 | Q2 選股 | capital_flow_summary + regime_get_history | §6 觸發模板第 5 觸 |
 | 2026-08-03 | **觸發模板 6:SOX+外資買超模板(單日版)**:SOX +0.07% > 0 + 外資 +21.83 億 ✅ 觸發成功 | Q2 選股 | macro_get_snapshot_latest + capital_flow_summary | §6 觸發模板第 6 觸 |
-| 2026-08-03 | **觸發模板 7:台海緊張模板(單日版)**:geopolitical 5.07 > 4 ✅ 觸發成功 | Q5 宏觀 | taiwan_stress_index + capital_flow_summary | §6 觸發模板第 7 觸 |
+| 2026-08-03 | **觸發模板 7:台海緊張模板(單日版)**:geopolitical 5.07 > 4 ✅ 觸發成功 | Q5 宏觀 | taiwan_stress_index + capital_flow_summary | §6 觸發模板第 7 觸 | **v1.1 對位註記(2026-08-25)**:舊刻度「geopolitical 元件值 > 4」屬台灣壓力指數元件污染;v1.1 起改用 GeoIntensity 0-100 + 4 級制,觸發條件 ≥ 40(升溫級 2,觸發轉折下壓候選);component→GeoIntensity 換算公式待 §3 對位延伸派工 |
 | 2026-08-03 | **觸發模板 8:中國經濟放緩模板(單日版)**:copper +1.63% > 0.5% ❌ 觸發失敗(中國需求強,放緩訊號未觸發;**結構性誠實標**) | Q5 宏觀 | macro_get_snapshot_latest + risk_exposure | §6 觸發模板第 8 觸 |
 | 2026-08-03 | **觸發模板 9:對中/台晶片關稅模板(單日版)**:USD_TWD 32.38 > 32 + export_electronics +14.96% > 0 ✅ 觸發成功 | Q5 宏觀 | macro_get_snapshot_latest + capital_flow_summary | §6 觸發模板第 9 觸 |
 | 2026-08-03 | **觸發模板 10:ETF 換股 / MSCI 調整模板(單日版)**:market_volume 7253 億 > 0 ✅ 觸發成功 | Q5 宏觀 | macro_get_snapshot_latest + event_calendar | §6 觸發模板第 10 觸 |

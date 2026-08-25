@@ -15,6 +15,7 @@
 - 08-22 v0.9.7：收尾（SK-18 Newey-West 慣例註記 + atals→atlas 檔名改名 5 檔含 87 處引用更新 + SK-01/SK-21/SK-23 續作）。
 - 08-23 v0.9.8：TWSE 公開資料實跑（SK-21 電子<20 元僅 12.6% 修正 80% 斷言、金融>20 元 71.1%、P20=19.70 元;SK-23 電子+金融市值 87.4% 成立）;VERIFICATION-BACKLOG 38/38 全結案。
 - 08-25 v0.9.9：對齊 atlas docs 瘦身（ATLAS_SYSTEM_STATE.md 移出 docs/ → .omo/audit/ 私有非版本控制，§2 移除該列；SK-20/audit 引用同步，PR #1691）。
+- 08-25 v0.9.10: 憲章 v1.1 對位 (PR #1692/#1693 已合 origin/main); 15 wiki 檔 + AGENTS.md v1.1 bump.
 08-21 v0.9：加 §9.5 Skills 索引紀律（kaecer 8/21 21:20 拍板）；上限暫放寬至 12,500 bytes。
 08-22 v0.9.2：金融審計 audit-fix 批次（19 檔 skills/ 內容修正 + _consult-index 瘦身歸檔 + 2 檔衍生審計檔移 _archive/；SK 數 37 不變、無新增/刪除 skill、§3/§9.5 索引不變）。
 
@@ -52,7 +53,7 @@
 | `atlas-wiki/` | 讀寫 | 知識引擎，我的主責產出 |
 | `atlas-notes/` | 讀寫 | 原料庫，收集與篩選 |
 | `~/workspace/atlas/` | 唯讀 | atlas-mcp 工具，不可擅改 |
-| `~/workspace/atlas/docs/ATLAS_METHODOLOGY.md` | 唯讀 | **散戶方法論憲章 v1.0 (2026-07-27)**，全專案真理源頭，七時期 + 因果鏈 + 策略矩陣 |
+| `~/workspace/atlas/docs/ATLAS_METHODOLOGY.md` | 唯讀 | 散戶方法論憲章 v1.1 (PR #1692/#1693 已合 origin/main)，七時期 + 三態向下相容 + GeoIntensity 4 級制 + §3 判別聚合規則表 |
 | `~/workspace/atlas/docs/ATLAS_CONSTITUTION_AUDIT.md` | 唯讀 | 憲章實施審計追蹤表，22 項全 ✅（v1.1，0⚠️/0⬜） |
 | `~/workspace/atlas/docs/reference/product-positioning.md` | 唯讀 | 產品定位最高仲裁（散戶 3+2+2 錢潮雷達分層） |
 
@@ -99,7 +100,7 @@
 ## §7 kaecer 關鍵決策（載入即可用；行為鐵律正本在 SOUL §2/§3）
 
 - Mission：散戶 AI 實戰金融工程（2026-07-15）
-- 散戶方法論憲章：`~/workspace/atlas/docs/ATLAS_METHODOLOGY.md` v1.0（2026-07-27）；真值源頭 = 七時期 + 三態向下相容；詳見 §12
+- 散戶方法論憲章: ~/workspace/atlas/docs/ATLAS_METHODOLOGY.md v1.1 (PR #1692/#1693 已合); 七時期 + 三態向下相容 + GeoIntensity 4 級制 + §3 判別聚合規則表 + §3↔§5 角色對位
 - 壞的工具 kaecer 修，修好通知，agent 重抓驗證
 - Telegram 必送達：chat_id 8387647295，不可 local 當藉口
 

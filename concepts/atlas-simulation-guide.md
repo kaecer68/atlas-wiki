@@ -83,9 +83,10 @@ contradictions: []
 - **對應工具**：`capital_flow_daily` 中的 retail/government 維度、`narrative_stress_index_thresholds`。
 
 ### 2.5 L5 — 地緣政治（Geopolitical Risk）
-- **核心訊號**：台海緊張指數、中國 PMI / 放緩訊號、美國對中關稅政策、央行匯率干預。
-- **典型假說**：台海風險升溫 + 美國關稅加碼 → 防禦性配置（`get_recommendations` 中的 defensive）。
-- **對應工具**：`narrative_get_bundle` / `narrative_get_chains` / `narrative_stress_index_thresholds`、`event_calendar` / `event_flow_prediction`。
+- **核心訊號**：台海緊張（GeoIntensity 0-100，4 級制：平靜 0-25 / 升溫 26-50 / 高張 51-75 / 危機 76-100）、中國 PMI / 放緩訊號、美國對中關稅政策、央行匯率干預。
+- **對位憲章**：§5 #1 美台資金開關觀測框架之延伸元件（v1.1）；§3 判別條件（轉折下壓 / 黑天鵝）以 GeoIntensity 為權威判別：≥ 40 觸發轉折下壓候選，≥ 60 觸發黑天鵝候選（v1.1 §3 判別聚合規則表）。
+- **典型假說**：GeoIntensity 升溫（≥ 26，2 級）+ 美國關稅加碼 → 防禦性配置（`get_recommendations` 中的 defensive）。
+- **對應工具**：`narrative_get_bundle` / `narrative_get_chains` / `narrative_stress_index_thresholds`、`event_calendar` / `event_flow_prediction`、台海緊張觸發模板 `templates/trigger-taiwan-strait-tension.md`。
 
 ### 2.6 跨層組合
 `get_recommendations` 回傳的 **portfolio-level 策略**（growth、momentum、defensive、all_weather、value）為跨 L1–L5 的最終配置組合；`strategy_list_active` 則回傳 **個別 signal detector**（如 `foreign-3day-inflow`、`margin-balance-extreme`）。兩者層級不同，不宜直接混用。
