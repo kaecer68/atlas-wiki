@@ -7,7 +7,7 @@ created_by: hermes-agent
 ground_truth_basis:
   - ~/workspace/atlas/docs/ATLAS_METHODOLOGY.md v1.0 (2026-07-27)
   - ~/workspace/atlas/docs/ATLAS_CONSTITUTION_AUDIT.md v1.0 (22 項差距,19✅/1⚠️/2⬜)
-  - ~/workspace/atlas/docs/ATLAS_SYSTEM_STATE.md (21 Wave 全 ✅)
+  # ATLAS_SYSTEM_STATE.md 已移出 docs/ → .omo/audit/（私有非版本控制，2026-08-15 瘦身；PR #1691 確立 docs/ 不引用非版本控制檔）；「21 Wave 全 ✅」為 2026-07-30 當下快照，非現行權威
   - ~/workspace/atlas/docs/reference/product-positioning.md v1.0
   - atlas-mcp mcp_quickstart (2026-07-30 實跑回傳,7/28 consolidation/RISK_ON,7/29 bull/RISK_ON)
 status: draft (待 kaecer 拍板 → 落地為各頁 transformation)

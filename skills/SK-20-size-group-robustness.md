@@ -41,7 +41,7 @@ SK-20 是「同一策略在大股 vs 小股上是否都賺錢」的對照實驗�
 | 論文概念 | atlas-mcp 對位 | tool_name | 對位憲章 |
 |---------|---------------|-----------|---------|
 | 月度市值排序 | 單次取市值快照 → 用 `stock_get_fundamentals` 拿 PE/PB 後用 PB 估值反推市值分組 | `stock_get_fundamentals` | §七維錢潮雷達 3+2+2(市值是 dimension 還是 behavior_proxy 層需釐清) |
-| **產業歸屬(必加)** | 用 `industry_sector_lookup` 取個股歸屬,**雙軸分組** = 產業(18) × 市值(Big/Small/tercile) = 54 組 | `industry_sector_lookup` | ATLAS_SYSTEM_STATE.md:192 B5-3 PR-A W4 `SectorIndexReader` 已建立 8/18 產業映射 |
+| **產業歸屬(必加)** | 用 `industry_sector_lookup` 取個股歸屬,**雙軸分組** = 產業(18) × 市值(Big/Small/tercile) = 54 組 | `industry_sector_lookup` | `internal/marketdata/sector_index_reader.go`（B5-3 PR-A W4, PR #1421）已建立 8/18 產業映射 |
 | 切 Big/Small 兩組 | `industry_sector_list` 拿到 TWSE/TPEx 完整 universe,再用市值分位切 | `industry_sector_list` | §七維錢潮雷達 3+2+2 |
 | 兩組獨立做策略 | 對每組 symbol list 跑 `stock_get_quote` 拿近 60 日收盤,自算夏普 | `stock_get_quote` | 同上 |
 | 累積報酬 / Alpha 對比 | `risk_get_metrics` 拿到策略層級夏普,搭配 `risk_get_calibration` 看分組後是否仍校準 | `risk_get_metrics` | §五策略矩陣 |
