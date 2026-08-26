@@ -46,7 +46,7 @@ contradictions: []
 ### Rule 2 — 引用改變判斷的數字,其他不搬
 只有這 3 種數字該出現:
 - **(a) 定錨判斷的數字**(「stress index 17 = regime low,不是 moderate」)
-- **(b) 反直覺的數字**(「地緣 component 13 = 主導風險不是 selloff 是 tail event」)
+- **(b) 反直覺的數字**(「地緣 component 13 = 主導風險不是 selloff 是 tail event」→ v1.1 對位 GeoIntensity 0-100 + 4 級制;component 13 屬舊 stress index 元件刻度,v1.1 起改用 GeoIntensity)
 - **(c) 用戶實際想要的數字**(具體日期、具體代號)
 
 其他「看起來厲害但不改變決策」的數字 → audit log,不要 response。

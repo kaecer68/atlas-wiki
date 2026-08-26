@@ -84,9 +84,9 @@ Atlas 是專為 **台股散戶投資人** 設計的 **策略模擬與交易模�
 
 ### 2.2 分析層（Analytics Layer）
 
-- **宏觀快照**：`macro_get_snapshot_latest` / `macro_get_snapshot_history` 整合 DXY、美債殖利率、VIX、美元指數、台幣匯率等。
+- **宏觀快照**：`macro_get_snapshot_latest` / `macro_get_snapshot_history` 整合 DXY、美債殖利率、VIX、美元指數、台幣匯率等。**v1.1 對位**：DXY 屬 §5 #1 美台資金開關觀測 4 元件之一，屬寬鬆觀測框架，非 §3 權威判別條件。
 - **籌碼流**：`capital_flow_daily` / `capital_flow_summary` 提供七維錢潮雷達（3 官方 + 2 行為代理 + 2 領先訊號）。
-- **壓力指數**：`macro_get_stress_index_current` / `taiwan_stress_index` 量化市場恐慌程度，驅動 regime 切換。
+- **壓力指數**：`macro_get_stress_index_current` / `taiwan_stress_index` 量化市場恐慌程度，驅動 regime 切換。**v1.1 對位**：地緣元件需改用 GeoIntensity 0-100 + 4 級制（台灣壓力指數的 geopolitical 元件 v1.1 起以 GeoIntensity 為輸入,scale=1.0, weight=0.13）— 見 ATLAS_METHODOLOGY.md §3 判別聚合規則 / 台海緊張 4 級制段。
 - **敘事引擎**：`narrative_get_bundle` / `narrative_get_events` / `narrative_get_chains` 把事件組裝成因果鏈。
 - **跨市場**：`crossmarket_get_us_indices` / `crossmarket_get_correlation` 監看 S&P500、NASDAQ、SOX、NVDA、TSM ADR。
 
