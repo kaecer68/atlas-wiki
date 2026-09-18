@@ -51,3 +51,7 @@ python3 skills/_scripts/new-skill-page.py --id SK-37 --title "..."   # 產生合
 - `_method.md` 第九條＝**規則**（禁空殼補丁／歸屬判斷／最小重構／收尾義務）
 - 本檔＝**機械配套**（SSOT、守衛、處方、產生器、偵測、PR 模板、量測）
 - `_manifest_coverage_routing.md §3.2`＝**歸屬判準表**（哪一層寫什麼、不寫什麼）
+
+## CI 觸發條件（2026-09-18 實測）
+
+`validate-wiki.yml` 只在 **`push → main`** 與 **`pull_request → main`** 觸發——stacked PR（base 指向功能分支）**不會**跑 CI；把 base 改成 main 也**不會**重跑（`edited` 不在預設事件內），需再推一次 commit。
