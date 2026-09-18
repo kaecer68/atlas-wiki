@@ -30,7 +30,7 @@ amendable_by: kaecer
 | M6 | **骨架產生器** | `skills/_scripts/new-skill-page.py` | 輸出合規骨架（段名段序取自 schema），手寫段名不再是必要風險 |
 | M5 | **未提交偵測** | `skills/_scripts/check-stale-worktree.py`（`make check-stale`） | `skills/` 未提交內容 > `--hours`（預設 48）告警 |
 | M4 | **歸屬判斷強制化** | `.github/pull_request_template.md` | 「內容歸屬判斷」必填區塊（引用 `_manifest_coverage_routing.md §3.2`） |
-| M7 | **量測** | 本檔＋結算 | 指標：結構守衛通過率、補丁標記數（目標 0）、未消化已結項數、髒檔時長 |
+| M7 | **量測** | `skills/_scripts/structure-health-metrics.py`（`make structure-metrics`） | 指標：結構守衛通過率、補丁標記數（目標 0）、未消化已結項數、髒檔時長 |
 
 ## 禁用標記（schema 為準）
 
@@ -55,3 +55,7 @@ python3 skills/_scripts/new-skill-page.py --id SK-37 --title "..."   # 產生合
 ## CI 觸發條件（2026-09-18 實測）
 
 `validate-wiki.yml` 只在 **`push → main`** 與 **`pull_request → main`** 觸發——stacked PR（base 指向功能分支）**不會**跑 CI；把 base 改成 main 也**不會**重跑（`edited` 不在預設事件內），需再推一次 commit。
+
+## M7 結構健康度基線（2026-09-18，納入結算）
+
+`make structure-metrics` 輸出可直接貼進結算的 Markdown 區塊（`--json` 供程式消費）。基線（37 頁）：結構硬違規 **0**、禁用標記 **0**、超 size **0**、frontmatter 缺欄 **0**、未提交 **0 檔 >48h**；唯一非零＝**未消化含已結項 16 項（跨 7 頁）** → 判定 **DRIFT**（warn 級；依第九條於下次動到該頁時收斂）。
