@@ -5,6 +5,7 @@
 > **版本沿革(節錄;完整沿革見 git log——依 §10「本檔只放現行操作規則」,歷史不進本檔)**：
 > 08-21 v0.9 加 §9.5 Skills 索引紀律 + §10 v0.9 例外條款;08-22 v0.9.1-0.9.7 Plan F 護欄完成／知識路由遷移（raw/queries/comparisons 等 18 檔 → atlas-notes）／_method 第八條拍板／驗證批次 ext+sk 收尾。
 > 08-23 v0.9.8 TWSE 實跑(SK-21/SK-23)＋VERIFICATION-BACKLOG 38/38 結案;08-25 v0.9.9-0.9.10 atlas docs 瘦身＋憲章 v1.1 對位(PR #1691-#1693)。
+> **09-18 v0.9.16：trigger-monitor 加 `--dry-run`／`--no-notify`**——原無參數解析，手動執行（含誤用 --help）會在觸發時送 Telegram；cron 預設行為不變。
 > **09-18 v0.9.15：M7 常態化**——`scripts/structure-health-settle.py` 把結構健康度自動追加進結算（`_structure-health-log.md` ＋ `_self-audit.md`）；launchd `com.goluck.atlas-wiki-structure-health` 每日 09:05 執行（機器層，可 unload 移除）。
 > **09-18 v0.9.14：未消化已結項結清＋strict 開啟**——16 項結清（13 刪／2 改未結／4 折入驗證段）；schema 未消化規則升 hard（新增 [x] 即 CI 紅）。
 > **09-18 v0.9.13：結構健康度量測（M7）**——`make structure-metrics` 輸出結算用 Markdown／JSON（結構硬違規、禁用標記、未消化已結項、size、frontmatter、未提交時長）；基線＝0／0／16 項／0／0／0。

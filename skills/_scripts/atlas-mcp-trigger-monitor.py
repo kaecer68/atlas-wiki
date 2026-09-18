@@ -26,6 +26,7 @@ import subprocess
 import time
 from datetime import datetime
 from typing import Optional
+import argparse
 
 ATLAS_HTTP_BASE = "http://127.0.0.1:18080"
 
@@ -823,6 +824,17 @@ def run_triggers(env):
 
 
 def main():
+    """主流程。--dry-run／--no-notify 只抑制 Telegram，不動觸發判定（2026-09-18 加）。
+
+    為什麼要加：腳本原本沒有參數解析，任何手動執行（含誤用 --help）都會在「有觸發」時
+    無條件 send_telegram → 手動驗證/除錯會意外對正式 Telegram 頻道發訊。
+    cron 的預設行為不變（不帶旗標＝照舊通知）。
+    """
+    ap = argparse.ArgumentParser(description="atlas-mcp-trigger-monitor")
+    ap.add_argument("--dry-run", action="store_true", help="跑完只印出，不送 Telegram")
+    ap.add_argument("--no-notify", action="store_true", help="跑完靜默（不送 Telegram）")
+    args = ap.parse_args()
+    notify = not (args.dry_run or args.no_notify)
     print("=" * 60)
     print(f"atlas-mcp-trigger-monitor — {datetime.now().isoformat()}")
     print("=" * 60)
@@ -842,6 +854,12 @@ def main():
     # 警報邏輯:對位 PR #18 commit 2 + D 議題改用 4-list(結構性誠實)
     # atlas_faults 是 module-level ATLAS_FAULT_REASONS 顯式分類的結果,不再於 main() 內重算
     if len(atlas_faults) >= 3:
+        _fault_msg = "atlas-mcp-trigger-monitor: " + str(len(atlas_faults)) + "/" + str(len(TEMPLATES)) + " 模板 ATLAS 端故障,需查 API 健康"
+        if notify:
+            send_telegram(env, _fault_msg)
+        else:
+            print("  [SILENT] 已抑制 Telegram: " + _fault_msg)
+    if False:
         send_telegram(
             env,
             f"🚨 atlas-mcp-trigger-monitor: {len(atlas_faults)}/{len(TEMPLATES)} 模板 ATLAS 端故障,需查 API 健康",
@@ -850,7 +868,10 @@ def main():
         summary = f"📊 [atlas-mcp-trigger] {datetime.now().strftime('%H:%M')} {len(triggered)} 觸發:\n"
         for t in triggered:
             summary += f"  - {t['name']} (值={t['value']})\n"
-        send_telegram(env, summary)
+        if notify:
+            send_telegram(env, summary)
+        else:
+            print("  [SILENT] 已抑制 Telegram 摘要:" + chr(10) + summary)
     print(f"\n  ✅ monitor 完成")
 
 
