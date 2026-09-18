@@ -5,13 +5,13 @@
 SHELL := /bin/bash
 PY    := python3
 
-.PHONY: help ci-gate ci-fast ci-full check-actionlint check-timestamp check-audit check-skill-pages check-size check-frontmatter pre-commit-install uninstall-hooks verify-clean test sync-imac
+.PHONY: help ci-gate ci-fast ci-full check-actionlint check-timestamp check-audit check-skill-pages check-skill-structure check-stale check-size check-frontmatter pre-commit-install uninstall-hooks verify-clean test sync-imac
 
 help:                   ## 列出所有 target
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN{FS=":.*?## "}{printf "  %-22s %s\n", $$1, $$2}'
 
 ci-gate:                ## 快速門禁(對位 GitHub CI 4 job + skills 索引同步 R1/R3)
-ci-gate: check-timestamp check-audit check-size check-frontmatter check-actionlint check-skill-index-sync-basic
+ci-gate: check-timestamp check-audit check-size check-skill-structure check-frontmatter check-actionlint check-skill-index-sync-basic
 	@echo ""
 	@echo "✅ local ci-gate: all 5 checks passed (R1+R3 skills 同步)"
 
@@ -39,6 +39,12 @@ check-skill-pages:      ## 內部 target:一次跑 size + frontmatter(被 size/f
 
 check-size:             ## 3. SK 頁大小 ≤ 9000 bytes
 check-size: check-skill-pages
+
+check-skill-structure:  ## 3b. SK 頁結構（SSOT: skills/_scripts/skill-page-schema.json；失敗輸出最小重構處方）
+	@$(PY) skills/_scripts/check-skill-structure.py --skills-dir skills
+
+check-stale:            ## 3c. skills/ 未提交內容偵測（session 開頭建議跑；>48h 告警）
+	@$(PY) skills/_scripts/check-stale-worktree.py --hours 48
 
 check-frontmatter:      ## 4. frontmatter 核心 10 欄齊全
 check-frontmatter: check-skill-pages

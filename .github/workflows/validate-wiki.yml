@@ -47,6 +47,13 @@ jobs:
             exit 1
           fi
 
+  skill-structure-check:
+    name: "SK 結構檢查（SSOT: skill-page-schema.json）"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: 段名／段序／重複段／禁用標記（失敗輸出最小重構處方）
+        run: python3 skills/_scripts/check-skill-structure.py --skills-dir skills
   size-check:
     name: SK 頁大小檢查(≤ 9000 bytes)
     runs-on: ubuntu-latest
