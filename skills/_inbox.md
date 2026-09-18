@@ -35,11 +35,9 @@
 - L3 待驗端點(每頁 Step 1~3):30 active 頁 × 3 step = 90 個 Step 待跑(給 02:00 每日 cron)
 
 ---
-## 對位 `_method.md` 第七條例外(2026-08-07 kaecer 拍板)
+## 對位 `_method.md` 第七條例外
 
-`_inbox.md` ≤ 12000 bytes 例外上線;本檔 size 監控由 agent 每次 append 前 `wc -c` 確認 ≤ 12000;超限觸發歸檔(本檔本次即觸發)。
-
----
+規範**唯一來源**＝`_method.md` 第七條例外（v1.0，2026-09-02 拍板更新）：本檔上限 ≤ 12000 bytes，append 前 `wc -c` 自查，超限即依該條歸檔 SOP 移 `_inbox_archive.md`。
 
 ## 30 秒重啟程序
 
