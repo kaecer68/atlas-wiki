@@ -10,7 +10,7 @@ maturity: stable
 confidence: high
 atlas_go_relevance: high
 mcp_tools_used: [macro_get_stress_index_current, narrative_get_chains, narrative_get_models, stock_get_quote, stock_get_fundamentals, template_detector_status]
-verification: ground_truth — T3-A248,narrative_get_chains 2026-08-04 01:25:54Z evt-ai-capex-1785806754784870422 score 0.7343,ai_supercycle_model hit_rate 0.625,weight 0.1639。§6 層因果鏈框架(圖層 T2)需 6 條驗證缺口逐個勾選完成才升 active
+verification: ground_truth — T3-A248,narrative_get_chains 2026-08-04 01:25:54Z evt-ai-capex-1785806754784870422 score 0.7343,ai_supercycle_model hit_rate 0.625,weight 0.1639。6 層因果鏈框架(圖層 T2)需 6 條驗證缺口逐個勾選完成才升 active
 sources:
   - UNCTAD WIR 2026 (ISBN 978-92-1-154998-0)
   - Stanford HAI 2026 AI Index (arXiv:2606.15708)
@@ -107,7 +107,7 @@ decay_until: 2027Q1-WIR-revision
 - [ ] 落模板:**`templates/trigger-megaproject-2-quarter-lag.md`**(本週期 #14,對位 AI 宣布 → 設備下單 6~18 月 → 試產 / 量產 +12~24 月 鏈)
 - [ ] 落模板:**`templates/trigger-equipment-capex-external-report-cycle.md`**(本週期 #15,對位外部權威報告週期重置 narrative hit_rate)
 - [ ] 散戶解讀段原引用之 CAPE 具體數值缺端點與 timestamp(鐵律五),已改定性表述;若要回填數字,須附 `risk_get_metrics` snapshot + 時間
-- [ ] §6 層因果鏈框架 6 條驗證缺口尚未全勾(2 ✅ + 1 ⚠️ + 3 ⛔)→ 未達升 active 條件
+- [ ] 6 層因果鏈框架 6 條驗證缺口尚未全勾(2 ✅ + 1 ⚠️ + 3 ⛔)→ 未達升 active 條件
 
 ## 反向鏈接
 
