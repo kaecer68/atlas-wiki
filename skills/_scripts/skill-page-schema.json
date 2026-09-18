@@ -1,7 +1,7 @@
 {
   "version": 1,
   "updated": "2026-09-18",
-  "updated_by": "kaecer 2026-09-18 拍板（反補丁機制 M1/M2；對位 _method.md 第九條）",
+  "updated_by": "kaecer 2026-09-18 拍板（M1/M2）＋ 同日開啟 strict（16 項結清後）",
   "purpose": "SK 頁結構的單一真相來源（SSOT）：段名、段序、補充段上限、frontmatter 必要欄、禁用標記。所有守衛與 cron 一律讀本檔，不得各自發明判準。",
   "size_limit_bytes": 9000,
   "frontmatter_required": [
@@ -98,7 +98,7 @@
   ],
   "rules": {
     "unconsumed_must_be_open": {
-      "severity": "warn",
+      "severity": "hard",
       "why": "「未消化」只放未結項；已結項的精華應落對位/驗證段，敘事屬歷史（不進 SK 頁）"
     }
   }

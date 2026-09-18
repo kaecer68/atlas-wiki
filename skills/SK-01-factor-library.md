@@ -97,10 +97,10 @@ atlas-mcp 沒有單一「build factor library」端點,但對位的底層數據�
 | 其他 | 16 | regime/momentum/value/quality 四類保守激進變體 |
 
 **結論**:86 因子中 value/momentum/quality/size **結構對位存在**,atlas 後端用 `factor_weight_*` 與 `factor_score_max_age_days` 表達「因子權重配置」與「老化期」,但學術命名 (`mom12m`) 與 atlas 命名 (`momentum_20d`) **不一致**——保留學術命名 + 在每頁加 atlas 對應欄。
+- `data_get_field_contract` 回傳欄位驗證（2026-07-30）：**41 個因子欄位**已對位。
 
 ## 未消化 / 待補
 
-- [x] `data_get_field_contract` 實際回傳欄位驗證 ✅(2026-07-30 04:10,41 個因子欄位已對位)
 - [ ] 行業中位數填補橫斷面邏輯未確認存在
 - [ ] 量子 / RL pipeline 是否也用同一因子庫(SK-23/26/27 引用 SK-01?)未交叉驗證
 - [ ] Fin-Skills 的「依據論文」兩篇具體 paper title 沒在 wiki 入庫,僅有引用
