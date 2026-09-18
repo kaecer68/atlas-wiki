@@ -89,11 +89,31 @@ TEMPLATES = {
     "taiwan-strait-tension": {
         "name": "台海緊張觸發",
         "file": "trigger-taiwan-strait-tension.md",
-        "condition": "geopolitical > 4",
+        # 2026-08-26 改:對位 ATLAS_METHODOLOGY.md §3 v1.1 GeoIntensity 4 級制
+        # 從舊「> 4 直覺刻度」(與 stress-index components.geopolitical 0-13 浮動值混用)改為 atlas 官方 0-100 刻度
+        # 換算公式:GeoIntensity = components.geopolitical / 0.13 (weight,scale=1.0)
+        # 觸發條件:GeoIntensity ≥ 40 = 4 級制 ≥ 升溫(2)
+        #
+        # 🐛 2026-08-27 修(unit mismatch 假陰性,T3-A818):
+        # 8/26 那版只改 threshold 4→40,卻沒改讀值單位 — generic 分支取的
+        # components.geopolitical 是「已乘 0.13 的元件值」(理論上限 100×0.13=13),
+        # 拿它跟 40 比 → **任何市況都不可能觸發**(13 > 40 恆為 False),
+        # 連 GeoIntensity=100 的台海危機也不會報 = 結構性死觸發。
+        # 實證(2026-08-27T03:16 curl /api/taiwan/stress-index):
+        #   components.geopolitical=6.24 → GeoIntensity=6.24/0.13=48.0 ≥ 40 應觸發,
+        #   但腳本判 6.24 > 40 = False → 假陰性。
+        # 交叉驗證:atlas 自己的 /api/regime/history 同時回 current_period=
+        #   turnaround_down(轉折下壓),而 §3 轉折下壓的地緣條件正是 GeoIntensity ≥ 40
+        #   → atlas 端認定地緣條件已命中,trigger-monitor 卻報未觸發,兩者矛盾。
+        # 修法:加 metric_divisor,把元件值還原成 0-100 GeoIntensity 再跟 threshold 比,
+        #   讓 log/Telegram 顯示的值本身就是 GeoIntensity(48.0)而非元件值(6.24)。
+        # 對位 SOUL §5「驗證鐵律」+ USER §7「有回傳 ≠ 資料可用」
+        "condition": "GeoIntensity > 40",  # 0-100 GeoIntensity,≥ 升溫(2)
         "http_path": "/api/taiwan/stress-index",
         "field": "components",
-        "metric": "geopolitical",
-        "threshold": 4,
+        "metric": "geopolitical",  # 原始元件值(= GeoIntensity × scale 1.0 × weight 0.13)
+        "metric_divisor": 0.13,  # 還原 0-100 GeoIntensity:GeoIntensity = 元件值 ÷ 0.13
+        "threshold": 40,  # 0-100 GeoIntensity,≥ 升溫(2)
         "compare": "gt",
     },
     "china-slowdown": {
@@ -384,6 +404,10 @@ MARKET_NO_SIGNAL_REASONS = frozenset({
 CONFIG_ISSUE_REASONS = frozenset({
     "no_symbols_configured",
     "no_symbol_data",
+    # 2026-08-27 T3-A818:metric_divisor 拿到非數值(atlas 欄位缺 / None)
+    # 歸 config_issues 而非 atlas_faults — 元件缺值屬資料涵蓋問題,不是 API 不健康,
+    # 若不顯式登錄,_record_failure 會 fallthrough 到 atlas_faults 觸發假故障警報。
+    "metric_not_numeric",
 })
 # 例外字串前綴(D 議題:run_triggers L739 except 區塊把 str(e)[:50] 塞進 reason)
 EXCEPTION_REASON_PREFIXES = ()  # 例外已 str(e)[:50] 截斷,主程式判斷 reason 不在 3 個 set 時歸入 atlas_faults
@@ -759,6 +783,18 @@ def run_triggers(env):
                 value = field_data.get(t["metric"], 0) if isinstance(field_data, dict) else field_data
                 if isinstance(value, dict):
                     value = value.get(t["metric"], 0)
+                # metric_divisor(2026-08-27 T3-A818):把 atlas 元件值還原成模板宣告的刻度
+                # 用途:stress-index components.geopolitical 是 GeoIntensity × weight 0.13,
+                # threshold 用 0-100 GeoIntensity 刻度時必須先還原,否則 unit mismatch 恆不觸發。
+                # 對位 ATLAS_METHODOLOGY.md §3「反向換算 GeoIntensity = 元件值 ÷ 0.13」
+                divisor = t.get("metric_divisor")
+                if divisor:
+                    if isinstance(value, (int, float)):
+                        value = value / divisor
+                    else:
+                        # 非數值(None / 缺欄)不可代 0 硬算(對位 USER §7「有回傳 ≠ 資料可用」)
+                        _record_failure("metric_not_numeric", value=value)
+                        continue
             triggered_flag = False
             compare = t.get("compare", "gt")  # gt 或 lt
             if compare == "lt":
