@@ -53,6 +53,16 @@ atlas 系統目前**只涵蓋台灣上市公司 + 上櫃公司**;atlas-wiki 是�
 | **公司名稱模糊**(用戶說「台積電」而非代碼) | L0 名稱解析 | 先解析為代號 2330(可調 `industry_sector_lookup` 對位名單 + 常見對照表),再走 L1/L2 |
 | **無對應資料** | L3 不知道 | 標 `[來源: 不知道]`,引導用戶補代碼 / 補來源 |
 
+## 論文版概念（忠實還原 data-source-decision §3 三層架構）
+
+| 層 | 概念 | 對位內容 | 出處 |
+|---|---|---|---|
+| L1 | atlas-mcp 直接命中 | 範圍內(上市/上櫃)低延遲結構化回傳 | atlas-go / hermes data-source-decision §3.1 |
+| L2 | 網路備援 | 範圍外(興櫃/海外)走 TPEx / Yahoo Finance 公開站 | hermes data-source-decision §3.2 + SK-35 4 級 fallback |
+| L3 | 誠實標示「不知道」 | 無對應資料時引導用戶補代碼/來源 | hermes data-source-decision §3.3 |
+
+**差異點**:經典模式討論通用資料源決策;SK-34 把它具體化為台股上市/上櫃的範圍判斷,**判斷錨點 = `stock_get_quote` 回 `is_tradable` 或 `coverage_note`**(2026-08-12 L3 發現:sector_lookup 不可作範圍判斷)。
+
 ## 4 級 fallback 鏈(對位 failover-policy.md §4)
 
 1. **L1 atlas-mcp**(上市/上櫃,範圍內)

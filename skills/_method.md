@@ -137,11 +137,17 @@ amendable_by: kaecer
 
 對位:SOUL §0.1 例外 6(規範修改需拍板——本條即經 2026-08-22 拍板)。
 
-## 第七條例外(2026-08-07 kaecer 拍板):`_inbox.md` size 上限擴充
+## 第七條例外（2026-09-02 kaecer 拍板，v1.0 修訂）：精確化
 
-- **規範**:`_inbox.md` ≤ 12000 bytes
-- **CI**:`validate-wiki.yml` size-check job = SK ≤ 9000 嚴格 fail + _inbox.md ≤ 12000 warn-only
-- **歸檔 SOP**:連 2 次 session append 後 > 12000,agent 自動評估把 §6 §6.1 §6.2 完成段落移 `_inbox_archive.md`,主檔只留最新 2 版本結算
+**v1.0 修訂要點**：原第七條例外只針對 `_inbox.md` size 上限，**但 v1.0 結算時新增 M10 健康度觸發「size 持續擴張」模糊地帶**。本條 v1.0 修訂**精確化 size 例外邊界**：
+
+- **規範**：`_inbox.md` ≤ 12000 bytes（size 上限例外**只針對**§3 結算頻率 / §5.3 觸發器 / M10 健康度子項事實紀錄，**不適用於評分維度新增**）
+- **CI**：`validate-wiki.yml` size-check job = SK ≤ 9000 嚴格 fail + _inbox.md ≤ 12000 warn-only
+- **歸檔 SOP**：連 2 次 session append 後 > 12000，agent 自動評估把 §6 §6.1 §6.2 完成段落移 `_inbox_archive.md`，主檔只留最新 2 版本結算
+- **v1.0 新增**：評分維度新增 = §2 結構變更，**需走 §2 修訂 SOP + kaecer 拍板**，**不適用第七條例外**
+- **v1.0 新增**：M10 健康度評分所需 evidence**不算** size 例外範圍（仍按 §6 標準 SOP 紀錄）
+
+對位：SOUL §0.1 例外 6（規範修改需拍板——本條即經 2026-09-02 拍板）。
 
 ---
 

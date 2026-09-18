@@ -14,3 +14,6 @@ skills/_self-audit.md
 
 # 本地工具 cache（codegraph 索引 DB,不入 git）
 .codegraph/
+
+# 2026-09-18:依 _method.md 鐵律六「_self-audit 例外(跨 session 審計日誌,不入 git)」擴及同家族檔
+skills/_self-audit*.md

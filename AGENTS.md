@@ -2,20 +2,10 @@
 
 > 每次在 `~/workspace/atlas-wiki/` 啟動時自動注入。
 > 上游機制：Hermes Context Files（`.hermes.md` / `AGENTS.md` / `CLAUDE.md`）。
-> 07-28 精簡版：規範全集拆分，僅留操作必讀項。
-> 08-01 v0.5：quota 同步（7/29 降標 5→3 頁）。
-> 08-08 v0.8：§0-§12 對齊 SOUL/skills-map + 買賣禁令取消 + 推測需根據 + 教訓不進本檔 + 內容精簡（§4/§11 刪、§3/§6/§7/§12 縮）。
-08-21 v0.9：加 §9.5 Skills 索引紀律（kaecer 8/21 21:20 拍板）+ §10 v0.9 例外條款（上限暫放寬至 12,500B）。
-08-22 v0.9.1：Plan F Week 1-3 護欄完成（PR #32 已 merge）+ 軟警告→混合模式（hard_cap + soft_warning 並行）。
-08-22 v0.9.3：知識路由遷移（raw、queries、comparisons 等 18 檔 → atlas-notes；wiki = 技能/工具庫，純知識回原料庫）。
-- 08-22 v0.9.4：Iter-2（_knowledge-router 知識路由建立 + _consult-index 指標行/歸檔行壓縮、方法論審計結案、L1-L5 詞彙對齊、官方驗證落地、VIX/USD_TWD 情緒層收編）。
-- 08-22 v0.9.5：_method.md 第八條「盤查修復自主權」拍板生效（三類自扛 + 三類保留 + 判準一句話）+ 審計驗證待辦清單 VERIFICATION-BACKLOG.md 建立。
-- 08-22 v0.9.6-ext：驗證批次 ext（外部來源校準：IRENA/USGS/ICSG/TSMC/OpenAI/厚勞省/內政部 10 條 + 權值股表重算 + 2330 快照註記）。
-- 08-22 v0.9.6-sk：驗證批次 sk（量化 SK 14 檔：公式/數值/誇飾弱化 + 合成實驗證據）。
-- 08-22 v0.9.7：收尾（SK-18 Newey-West 慣例註記 + atals→atlas 檔名改名 5 檔含 87 處引用更新 + SK-01/SK-21/SK-23 續作）。
-- 08-23 v0.9.8：TWSE 公開資料實跑（SK-21 電子<20 元僅 12.6% 修正 80% 斷言、金融>20 元 71.1%、P20=19.70 元;SK-23 電子+金融市值 87.4% 成立）;VERIFICATION-BACKLOG 38/38 全結案。
-- 08-25 v0.9.9：對齊 atlas docs 瘦身（ATLAS_SYSTEM_STATE.md 移出 docs/ → .omo/audit/ 私有非版本控制，§2 移除該列；SK-20/audit 引用同步，PR #1691）。
-- 08-25 v0.9.10: 憲章 v1.1 對位 (PR #1692/#1693 已合 origin/main); 15 wiki 檔 + AGENTS.md v1.1 bump.
+> **版本沿革(節錄;完整沿革見 git log——依 §10「本檔只放現行操作規則」,歷史不進本檔)**：
+> 08-21 v0.9 加 §9.5 Skills 索引紀律 + §10 v0.9 例外條款;08-22 v0.9.1-0.9.7 Plan F 護欄完成／知識路由遷移（raw/queries/comparisons 等 18 檔 → atlas-notes）／_method 第八條拍板／驗證批次 ext+sk 收尾。
+> 08-23 v0.9.8 TWSE 實跑(SK-21/SK-23)＋VERIFICATION-BACKLOG 38/38 結案;08-25 v0.9.9-0.9.10 atlas docs 瘦身＋憲章 v1.1 對位(PR #1691-#1693)。
+> **09-18 v0.9.11：skills/ 內容治理**——SK-22／SK-31 補丁疊加內容重構（移除 alias 補強段與版本史、標準 6 段就位、描述性敘事移出）、SK-34 補「論文版概念」段、`_inbox.md` 依第七條歸檔 SOP 瘦身（>12000 → 11042）、`_self-audit*` 家族排除版控、AGENTS.md 依 §10 收斂歷史沿革。
 08-21 v0.9：加 §9.5 Skills 索引紀律（kaecer 8/21 21:20 拍板）；上限暫放寬至 12,500 bytes。
 08-22 v0.9.2：金融審計 audit-fix 批次（19 檔 skills/ 內容修正 + _consult-index 瘦身歸檔 + 2 檔衍生審計檔移 _archive/；SK 數 37 不變、無新增/刪除 skill、§3/§9.5 索引不變）。
 
