@@ -1,0 +1,105 @@
+{
+  "version": 1,
+  "updated": "2026-09-18",
+  "updated_by": "kaecer 2026-09-18 拍板（反補丁機制 M1/M2；對位 _method.md 第九條）",
+  "purpose": "SK 頁結構的單一真相來源（SSOT）：段名、段序、補充段上限、frontmatter 必要欄、禁用標記。所有守衛與 cron 一律讀本檔，不得各自發明判準。",
+  "size_limit_bytes": 9000,
+  "frontmatter_required": [
+    "title",
+    "type",
+    "source",
+    "ingested_at",
+    "status",
+    "tier",
+    "confidence",
+    "atlas_go_relevance",
+    "mcp_tools_used",
+    "verification"
+  ],
+  "canonical_sections": [
+    {
+      "key": "一句話定位",
+      "aliases": [
+        "一句話定位",
+        "定位"
+      ]
+    },
+    {
+      "key": "論文版概念",
+      "aliases": [
+        "論文版概念",
+        "論文版"
+      ]
+    },
+    {
+      "key": "atlas 對位",
+      "aliases": [
+        "atlas 對位",
+        "對位 atlas",
+        "對位atlas",
+        "對位"
+      ]
+    },
+    {
+      "key": "散戶解讀",
+      "aliases": [
+        "散戶解讀",
+        "散戶"
+      ]
+    },
+    {
+      "key": "驗證方式",
+      "aliases": [
+        "驗證方式",
+        "驗證"
+      ]
+    },
+    {
+      "key": "未消化",
+      "aliases": [
+        "未消化",
+        "未消化 / 待補",
+        "未消化/待補",
+        "待補"
+      ]
+    }
+  ],
+  "order": "strict",
+  "max_extra_sections": 3,
+  "extra_sections_allowed": [
+    "反向鏈接"
+  ],
+  "forbidden_markers": [
+    {
+      "regex": "alias\\s*→",
+      "why": "別名補丁段（以滿足檢查器為目的的空殼，非內容）",
+      "fix": "刪除空殼段；把正段標題改為標準段名（見 rename plan）"
+    },
+    {
+      "regex": "補強備註",
+      "why": "cron 補丁段（2026-09-06 事故型態）",
+      "fix": "刪除補丁段；改以標準段名與行內註記承載資訊"
+    },
+    {
+      "regex": "（壓縮版）|\\(壓縮版\\)",
+      "why": "壓縮補丁標籤（代表未做結構重構）",
+      "fix": "移除標籤；內容依歸屬重排或 cross-ref 到正確檔案"
+    },
+    {
+      "regex": "^## \\[INTERNAL\\]",
+      "why": "非標準段名前綴（破壞段名檢查，且全 repo 僅個位數頁使用）",
+      "fix": "段名改 plain 標準名；讀者分流資訊改放段內註記"
+    },
+    {
+      "regex": "\\bL\\d{2,}(?:[-–]\\d+)?\\b",
+      "why": "行號指路（一編輯即失效的脆弱引用；L1-L3 為備援層級術語，不在此列）",
+      "fix": "改引用段名（§<段名>）或檔名，不引用行號"
+    }
+  ],
+  "rules": {
+    "unconsumed_must_be_open": {
+      "severity": "warn",
+      "why": "「未消化」只放未結項；已結項的精華應落對位/驗證段，敘事屬歷史（不進 SK 頁）"
+    }
+  }
+}
