@@ -14,11 +14,26 @@
 
 <!-- 為什麼需要這個變更?引用 T3 evidence / issue / 對話節錄。 -->
 
+## 內容歸屬判斷（依 `_method.md` 第九條；**必填**）
+
+- [ ] 我判斷過每段新內容的**歸屬層級**，並放在正確位置：
+      SK 段（純靜態決策／對位）／`concepts/`／`entities/`／`_atlas-endpoint-cards/`／`templates/`／`skills/_inbox.md`／`_self-audit*`（**不入 git**）／治理鏈
+      （判準表＝`_manifest_coverage_routing.md §3.2`）
+- [ ] 未以「滿足檢查器」為目的新增空殼內容（別名段／重複標題／行號指路／佔位段）
+- [ ] 若改動 `skills/`，已同步 `AGENTS.md`（R3）
+
+## 收尾義務（第九條）
+
+- [ ] 為通過檢查而做的變更，已在本 PR 完成**結構修正**（否則已在 `skills/_inbox.md` 立待辦：根因＋期限）
+- [ ] 工作區無殘留未提交的 `skills/` 變更（`make check-stale`）
+
 ## Verification
 
 <!-- 必勾 + 填寫證據。對位 _method.md 完成定義 + 第 5 條鐵律。 -->
 
 - [ ] 本地 `make ci-gate` 風格手動驗證 4 項(timestamp / audit / size / frontmatter)全綠
+  - 結果:
+- [ ] **結構守衛**：`make check-skill-structure`（SSOT＝`skills/_scripts/skill-page-schema.json`；失敗會輸出「最小重構處方」）
   - 結果:
 - [ ] 新增頁/變更頁的 frontmatter 10 欄齊全
 - [ ] 單頁大小 ≤ 9,000 bytes

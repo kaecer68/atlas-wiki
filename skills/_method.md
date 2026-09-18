@@ -151,4 +151,10 @@ amendable_by: kaecer
 
 ---
 
+## 第九條（2026-09-18 kaecer 拍板）：反補丁與內容歸屬
+
+對位 SOUL §0.1 例外 6（配套見 `_skill-structure-guard.md`）。① **不得以滿足檢查器為目的新增空殼內容**（別名段／重複標題／行號指路／佔位段）——檢查器抓不到＝結構要重構（正名／重排），不是加標題。② **填入前先判歸屬層級**（SK 段／concepts／entities／endpoint card／templates／_inbox／_self-audit 等；判準＝`_manifest_coverage_routing.md §3.2`）。③ **落地＝語意最小重構**，不得貼上後不處理。④ **收尾義務**：須同 PR 完成結構修正，否則在 `_inbox.md` 立待辦（根因＋期限），不得留髒檔。
+
+---
+
 **附錄**:起源與演進 + 升分綁定(M1-M9)見 `_method_amendment_history.md`。
