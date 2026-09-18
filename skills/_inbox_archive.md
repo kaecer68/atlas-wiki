@@ -465,3 +465,188 @@ mdfind -name "Fin-Skills.md" 2>/dev/null | head -5
 
 amendable_by: kaecer
 archive_owner: agent(autonomous)
+
+---
+
+## 4. cron 結算記錄(2026-08-22 ~ 2026-09-01)
+
+> 2026-09-18 依 `_method.md` 第七條 v1.0 歸檔 SOP(主檔 > 12000 bytes → 只留最新 2 版本結算)移入;內容 byte 級保留,未改寫。
+
+## atlas-skill-inbound cron 2026-08-22 04:01 結算 — 無工可派,源頭失聯
+
+**狀態**:`[NOOP]` — 不是 failure,是 void state
+**T3 對位**:誰=hermes;何時=2026-08-22T04:01:00+08:00(LLM session);依據=`ls /Users/kk/workspace/Fin-Skills/ 2>/dev/null` 失敗(`FAIL: Fin-Skills.md not found`)+ ls atlas-wiki/skills = 37 個 SK-*.md(SK-00~SK-36)+ 35 active/2 archived(SK-27/SK-30 quantum)/0 draft,quota 全飽和
+
+**診斷**:
+- **源頭**:`~/workspace/Fin-Skills/Fin-Skills.md` 路徑不存在(連整個 `~/workspace/Fin-Skills/` 目錄都找不到,8/22 04:00 起 ls 失敗)
+- **已寫**:SK-00 索引 + SK-01~33 + SK-34(8/12 新增上市上櫃分流)+ SK-35(8/12 failover-policy)+ SK-36(SL vs RL),共 37/37 = 100%
+- **active 比例**:35/37 = 94.6%(SK-27/SK-30 量子標 archive);**draft:0**(待 L3 升 active 為零)
+
+**判斷**:
+- 此非 LLM 失敗,是「任務前置條件消失」:源頭檔不在了,翻譯對象不存在
+- 不寫 = 不偽造 L3 通過
+- 跳過 = 不硬湊 quota
+
+**升級 kaecer 待辦**(2026-08-22 新發現):
+- [ ] Fin-Skills 源頭檔去哪了?(~/workspace/Fin-Skills/ 整個目錄不在;macOS 26.6.2 環境;無 git log 可追;atlas-notes/02-knowledge/ 亦無對應章節)
+- [ ] 若是刻意刪除(換新來源):新 fin-skills 框架落地後再開新一輪 atlas-skill-inbound
+- [ ] 若是意外刪除:從備份恢復(`atlas-backups/` 目錄 8/15 16:13 最後寫入,有可能)
+- [ ] cron 排程暫停:無源頭期間不要每天空跑浪費 token;kaecer 拍板再啟
+- [ ] 替代方案:若有新版 fin-skills,直接補進 `atlas-notes/02-knowledge/fin-skills/§SK-XX.md` 走 knowledge-harvest 三日循環掃描,而非 atlas-skill-inbound cron
+
+**Telegram**:`[SILENT]` — 對位 Telegram gate Rule 3 + Rule 4:無新工可派就不發,避免「0/0 頁」無意義通知干擾
+**改動**:本文 append 1 段(無其他 atlas-wiki/ 治理檔被動)
+
+---
+
+## atlas-skill-inbound cron 2026-08-24 04:00 結算 — NOOP 延續(源頭持續失聯 D3)
+
+**狀態**:`[NOOP]` — 連續第 2 天 void state,非 failure
+
+**T3 對位**:誰=hermes;何時=2026-08-24T04:00:00+08:00(LLM session, D3 after 8/22/8/23);依據=`ls /Users/kk/workspace/Fin-Skills/` 失敗(整個目錄不在,連續第 2 天) + ls atlas-wiki/skills = 37 個 SK-*.md(SK-00~SK-36) + 35 active/2 archived(SK-27/SK-30 quantum)/0 draft,quota 全飽和
+
+**驗證證據**:
+- `ls /Users/kk/workspace/Fin-Skills/ 2>/dev/null && ls .../Fin-Skills.md 2>/dev/null && echo OK || echo FAIL` → 輸出 `FAIL: 找不到 Fin-Skills.md`
+- `ls /Users/kk/workspace/atlas-wiki/skills/SK-*.md | wc -l` → 37(無新頁)
+- 8/22 04:00 已記錄同樣 NOOP,8/24 仍持續 = D3
+
+**判斷**(沿用 8/22 模板):
+- 此非 LLM 失敗,是「任務前置條件消失」:源頭檔不在,翻譯對象不存在
+- 不寫 = 不偽造 L3 通過
+- 跳過 = 不硬湊 quota
+- 連續 2 天 NOOP → 已升級為「源頭失聯」待辦,等 kaecer 拍板
+
+**升級 kaecer 待辦(沿用 8/22)**:見前段 §升級 kaecer 待辦 4 條 + 替代方案 1 條
+
+**Telegram**:`[SILENT]` — 對位 Telegram gate Rule 3 + Rule 4:連續 NOOP 不通知,避免「0/0 頁」無意義通知干擾(8/22 已 SILENT,8/24 同)
+
+**改動**:本文 append 1 段(無其他 atlas-wiki/ 治理檔被動,僅備份 .bak.<時戳> 留 §5.1 SOP 痕跡)
+
+## atlas-skill-inbound cron 2026-08-25 04:02 結算 — NOOP 延續(源頭持續失聯 D4)
+
+**狀態**:`[NOOP]` — 連續第 3 次 NOOP(8/22 / 8/24 / 8/25),非 failure(8/23 為隱性跳過,本日曆未觸發)
+
+**T3 對位**:誰=hermes;何時=2026-08-25T04:02:12+08:00(LLM session, D4 after 8/22);依據=`ls /Users/kk/workspace/Fin-Skills/` 失敗(整個目錄不在,連續第 4 天含 8/23 隱性跳過) + ls atlas-wiki/skills = 37 個 SK-*.md(SK-00~SK-36) + 35 active / 2 archived(SK-27 / SK-30 量子)/ 0 draft,quota 全飽和
+
+**驗證證據**:
+- `ls /Users/kk/workspace/Fin-Skills/ 2>/dev/null && ls .../Fin-Skills.md 2>/dev/null && echo OK || echo FAIL` → 輸出 `FAIL: 找不到 Fin-Skills.md`
+- `ls /Users/kk/workspace/atlas-wiki/skills/SK-*.md | wc -l` → 37(無新頁,對位 8/24 結算)
+- `grep -l '^status: active' /Users/kk/workspace/atlas-wiki/skills/SK-*.md | wc -l` → 35(active)
+- `grep -rl 'archived' /Users/kk/workspace/atlas-wiki/skills/SK-27-*.md /Users/kk/workspace/atlas-wiki/skills/SK-30-*.md` → SK-27 + SK-30 各 1 條 hit(frontmatter 未自標,內容段自標 archive)
+
+**判斷**(沿用 8/22 + 8/24 模板):
+- 此非 LLM 失敗,是「任務前置條件消失」:源頭檔不在,翻譯對象不存在
+- 不寫 = 不偽造 L3 通過
+- 跳過 = 不硬湊 quota
+- 連續 3 次 NOOP → 已升級為「源頭失聯」待辦,等 kaecer 拍板
+
+**升級 kaecer 待辦(沿用 8/22)**:見前段 §升級 kaecer 待辦 4 條 + 替代方案 1 條
+
+**Telegram**:`[SILENT]` — 對位 Telegram gate Rule 3 + Rule 4:連續 NOOP 不通知,避免「0/0 頁」無意義通知干擾(8/22 / 8/24 已 SILENT,8/25 同)
+
+**改動**:本文 append 1 段(無其他 atlas-wiki/ 治理檔被動,僅備份 `_inbox.md.bak.20260825T040212-cron-noop` 留 §5.1 SOP 痕跡)
+
+## atlas-skill-inbound cron 2026-08-25 18:28 結算 — Fin-Skills 失聯根因追查 + cron 暫停(hermes 自扛)
+
+**狀態**:本段為 8/22~8/25 NOOP 鏈的後續根因追查,**新增發現**
+
+**T3 對位**:誰=hermes;何時=2026-08-25T18:28:00+08:00(LLM session,「重新跑一遍」深度盤查派生);依據=
+- `ls /Users/kk/workspace/Fin-Skills/` 雙驗 fail(沿用 8/22 模板,持續 fail)
+- `ls /Users/kk/workspace/Fin-Skills.md` 雙驗 fail
+- `find /Users/kk -maxdepth 4 -iname "*Fin-Skills*"` 0 命中(全樹搜尋)
+- `find /Users/kk/.Trash -maxdepth 1 -iname "*fin-skill*"` → 1 命中 = `~/.Trash/_index-finskills.md` 1334 bytes(8/22 00:43 刪除)
+- `atlas-backups/notes/atlas-notes-20260818-033001.tar.gz` 解壓查 `fin-skill` 0 命中(備份不含 Fin-Skills)
+- `atlas-backups` 最早備份 8/15 01:16 開始就沒 Fin-Skills
+- 對位 `atlas-wiki/skills/_index-finskills.md.bak.20260822-0043-redirect`(8/22 00:35 備份,8 分鐘前 = 00:43 刪除到 Trash)
+
+**根因**:
+- **`~/workspace/Fin-Skills/Fin-Skills.md` 8/15 之前已永久消失**(Trash 沒有,備份沒有)
+- `atlas-wiki/skills/_index-finskills.md` 仍存在但不是源頭(只是索引)
+- 失聯時間在 **2026-08-15 之前**(早於 8/15 首次備份)
+- 8/22 04:01 cron 第一次 NOOP 時已失聯,但 8/22 _inbox 寫「`atlas-backups/` 8/15 16:13 最後寫入,有可能恢復」是**推測錯誤**(備份實際不含 Fin-Skills)
+- 8/22 00:43 `_index-finskills.md` 被刪到 Trash,時間點與 NOOP 觸發接近,**可能是同一次清理動作誤刪 Fin-Skills 源頭**(待查)
+
+**已動**(hermes 自主,SOUL §0 身份 3 iMac 運維員):
+- 暫停 `~/.hermes/cron/jobs.json` 中 `8fd1b1eda764` atlas-skill-inbound cron job:`enabled: true → false`(備份 `.bak.2026-08-25T1528-inbound-pause` 469 行 byte-perfect)
+- 改動範圍:僅 enabled 單一欄位
+- 對位:`atlas-notes/AGENTS.md` §2 權限表 = 對 `~/workspace/` 內檔案的運維動作,屬 hermes 自主範圍
+
+**已動**(hermes 自主,atlas-notes 端):
+- 寫派工 prompt `~/workspace/atlas-notes/05-decisions/atlas-current-period-calc-discrepancy-2026-08-25.md` 6026B(待辦 3 派生,等開發 agent 盤查 atlas 端 period_history 表的真實 triggered_indicators)
+
+**判斷**(對位 8/22 _inbox 5 條升級待辦):
+- A 從 `atlas-backups/` 恢復 → **不適用**(備份不含 Fin-Skills)
+- B 新 fin-skills 框架 → 等 kaecer 拍板(長期方案)
+- C 走 knowledge-harvest 三日循環 → **可啟動**,但需 kaecer 拍板(影響 mission 規劃)
+- D 暫停 cron → **已做**(避免每天空跑)
+- **新增 E**:查 macOS Spotlight 索引或 Time Machine 備份看 8/15 之前 Fin-Skills 是否還有(超出 hermes 自主範圍,需 kaecer 在 MacBook 操作)
+
+**Telegram**:`[SILENT]` — 沿用 8/22~8/25 慣例,連續 NOOP 不通知
+**改動**:
+- `_inbox.md` 173→append 後 N 行(僅備份 `.bak.2026-08-25T1528-fin-skills-trace` 留 §5.1 SOP 痕跡)
+- `~/.hermes/cron/jobs.json` 469 行,僅 8fd1b1eda764.enabled 變更 true→false
+- 未動 atlas backend / SOUL / AGENTS / 憲法 / _method / _self-audit 第 6 段以外的內容(§2 表格 M9: 2→4 ✅ 已在前面 session 完成)
+- 未 commit wiki(屬 hermes 內部運維動作,等 kaecer 拍板)
+
+## atlas-skill-inbound cron 2026-09-01 04:01 結算 — NOOP 延續(源頭持續失聯 D5+,jobs.json 已重整)
+
+**狀態**:`[NOOP]` — 連續 NOOP 鏈第 5 次觸發(8/22 D2 / 8/24 D3 / 8/25 D4 / 8/26-31 隱性跳過 / 9/1 D5),非 failure
+
+**T3 對位**:誰=hermes;何時=2026-09-01T04:01:41+08:00(LLM session, D5 after 8/22);依據=沿用 8/22/8/24/8/25 模板 + 新發現 8/31 jobs.json 已重整 8fd1b1eda764 已從 jobs.json 移除(目前 jobs.json 只剩 75c32411080e hermes-agent#76457 followup 一個 job)
+
+**驗證證據**:
+- `ls /Users/kk/workspace/Fin-Skills/ 2>/dev/null && ls .../Fin-Skills.md 2>/dev/null && echo OK || echo FAIL` → 輸出 `FAIL: 找不到 Fin-Skills.md`(源頭持續失聯)
+- `ls /Users/kk/workspace/atlas-wiki/skills/SK-*.md | wc -l` → 37(SK-00~SK-36,無新頁)
+- `grep -l '^status: active' /Users/kk/workspace/atlas-wiki/skills/SK-*.md | wc -l` → 35(active)
+- `grep -l '^status: archived' /Users/kk/workspace/atlas-wiki/skills/SK-*.md | wc -l` → 2(SK-27/SK-30 量子)
+- `grep -c '^status: draft' /Users/kk/workspace/atlas-wiki/skills/SK-*.md` → 0(quota 全飽和)
+- `python3` 查 `~/.hermes/cron/jobs.json` 內 8fd1b1eda764 → 0 命中(已從 jobs.json 移除,8/31 17:59 jobs.json 重整時一併移除,目前 jobs.json 只剩 75c32411080e 一個 job)
+
+**判斷**(沿用 8/22 + 8/24 + 8/25 模板):
+- 此非 LLM 失敗,是「任務前置條件消失」:源頭檔不在,翻譯對象不存在
+- 不寫 = 不偽造 L3 通過
+- 跳過 = 不硬湊 quota
+- 連續 5+ 次 NOOP → 升級 kaecer 待辦持續,本 cron 觸發源頭已非 jobs.json(8/31 6-bot 重新上線後,jobs.json 結構改為 specialist bot 持有,本 cron 為 default Hub 的 fallback 兜底,8/31 17:59 jobs.json 已重整時把 8fd1b1eda764 一併移除 — 但 fallback 觸發仍可能從其他渠道送達)
+- 35 active / 2 archived / 0 draft,quota 全飽和 → 即使源頭恢復,SK-37+ 仍未拍板,新一輪進修需 kaecer 拍板新優先序
+- 兩條硬約束同時存在:**Fin-Skills.md 不在 + 優先序表 5 個全 active 寫完** → 任務在雙重意義上無法推進
+
+**升級 kaecer 待辦**(沿用 8/22 模板,本 session 無新增項):
+- [ ] Fin-Skills 源頭檔去哪了?(~/workspace/Fin-Skills/ 整個目錄不在;macOS 26.6.2 環境;無 git log 可追;atlas-notes/02-knowledge/ 亦無對應章節)
+- [ ] 若是刻意刪除(換新來源):新 fin-skills 框架落地後再開新一輪 atlas-skill-inbound
+- [ ] 若是意外刪除:從備份恢復(`atlas-backups/` 目錄 8/15 16:13 最後寫入,有可能)
+- [ ] 新一輪進修優先序:SK-37+ 待 kaecer 拍板(35 active / 2 archived / 0 draft,quota 全飽和 → 即使源頭恢復也需新優先序)
+- [ ] 替代方案:若有新版 fin-skills,直接補進 `atlas-notes/02-knowledge/fin-skills/§SK-XX.md` 走 knowledge-harvest 三日循環掃描,而非 atlas-skill-inbound cron
+
+**Telegram**:`[SILENT]` — 對位 Telegram gate Rule 3 + Rule 4:連續 NOOP 不通知,避免「0/0 頁」無意義通知干擾(8/22 / 8/24 / 8/25 / 8/26-31 / 9/1 全 SILENT)
+
+**改動**:本文 append 1 段(無其他 atlas-wiki/ 治理檔被動,僅備份 `_inbox.md.bak.20260901T040141-cron-noop` 留 §5.1 SOP 痕跡)
+
+---
+
+## 5. 歸檔記錄(2026-08-21 v1.1)
+
+> 2026-09-18 依第七條歸檔 SOP 移入(歷史歸檔紀錄,非現行待辦)。
+
+## 歸檔記錄(2026-08-21 v1.1)
+
+**觸發**:連 6 天 [FAILED] 累積 (8/16, 8/17, 8/18, 8/19, 8/21) + 8/20 cron 卡死復盤 → `_inbox.md` = 22282B 超 12000B 上限 86%
+
+**搬移** (對位 `_method.md` §第七條例外 + `_inbox_archive.md` 歸檔觸發 SOP):
+- 6 個 `[FAILED*]` 條目 (5 個 [FAILED] + 1 個 [FAILED—復盤]) → `_inbox_archive.md` §6
+- `_inbox.md` 從 22282B → 瘦身 (目標 < 6000B)
+- 變更量: 淨變更 0 (搬移),但 `_inbox.md` 結構性縮短
+
+**對位** (對位 `docs/git-merge-protocol.md` §6.4.1 routine merge):
+- 變更範圍: `skills/_inbox.md` + `skills/_inbox_archive.md` (限 SK 頁)
+- 不觸碰治理檔
+- 變更量: +243/-243 (淨 0,邊緣 case 仍 routine)
+- CI 全綠 (本地 ci-gate 5 項 + GitHub CI 4 job)
+
+**對位** (對位 `_method.md` §5 SOP 備份):
+- `_inbox.md.bak.20260821T-pr29-prearchive` (md5 byte-perfect)
+- `_inbox_archive.md.bak.20260821T-pr29-prearchive` (md5 byte-perfect)
+
+**執行**: prime-agent (2026-08-21 16:35 CST) 從 hermes 8/16~8/21 累積 + 8/20 探查 + PR #27 merge 後整合歸檔
+
+**誠實標記**: 本次歸檔是 hermes 8/16 起累積的 5 個 [FAILED] 條目首次 commit 後的歸檔動作 (PR #27 已 merge commit 5 個條目 + 8/20 復盤),歸檔 _inbox.md 不涉及內容修改,純結構性搬移。
+---
