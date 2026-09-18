@@ -102,15 +102,13 @@ atlas 沒有單一「long_short_decile」端點,但對位的核心數據 + 驗�
 - ✅ `universe_get_sessions` 2026-07-30 實跑 + 2026-08-01 重驗:147 筆 sessions(2026-01-01~2026-07-20),RISK_ON 為主,7/4~7/9 NEUTRAL 期 outcome_count=0 對位 §七時期表「Consolidation 不可信」;**atlas session 結構是「signal count」非「monthly decile return」,不直接對位 SK-16 論文 D1~D10 十分位結構**
 
 **升 active 完成**(2026-08-01 v0.9 結算):sharpe_long 0.27 + sharpe_short 0.49 皆 > 0.2、var_95 -0.0225 > -0.05,三項閾值通過。Frontmatter 已改 status: active。
+- 升 active 判準（2026-08-01 結算）：`sharpe_long` 0.27＋`sharpe_short` 0.49 皆 **> 0.2** 門檻通過。
 
 ## 未消化 / 待補
 
-- [x] `universe_get_sessions` 實跑驗證 — 2026-08-01 跑完,insufficient_data=1 對位 7/4~7/9 NEUTRAL 期(已標 active)
 - [ ] 台股實務:融券限額與流動性折扣,Fin-Skills 沒論及,atlas 也沒對位
-- [x] SK-16 升 active 完成(2026-08-01 v0.9 結算),sharpe_long 0.27 + sharpe_short 0.49 皆 > 0.2 通過閾值
 - [ ] paper 1 vs atlas session 的時間軸對齊問題——Fin-Skills 用 1994–2022 學術數據,atlas session 從何起算需查
 - [ ] SK-17 加權公式與 atlas `risk_get_metrics` 暴露權重的口徑差異
-- [x] 反向鏈:`_consult-index.md` §Q2 已記錄,本檔 frontmatter `consult_category: Q2` 對齊
 
 ## 反向鏈接
 

@@ -106,8 +106,5 @@ related:
 
 ## 未消化 / 待補
 
-- [x] tier → audience 對位表 + 觸發情境 + 表達紀律落地 ✅(本檔 v1.0)
-- [x] ~~HERMES_AUDIENCE env 提案已落 `_inbox_deferred.md §ENV-CR-2026-08-07`,待 hermes owner 回覆(≤ 14 天)~~ → **2026-08-07 v6.52 撤銷外推**:kaecer 拍板「我們自己把事做完,不外推」,改為**內部約定**(agent 從 session context 讀 audience,預設 `user`);`_inbox_deferred.md` 改為「內部約定登記處」而非「跨邊界移交」;若未來 hermes runtime 提供 env,再升級為雙層架構
-- [x] `financial-advisor-coach/SKILL.md` §X 對 user audience 的 atlas-mcp 降級口徑 — **2026-08-07 v6.52 自扛落地**(kaecer「quota 不含直接指令」+ 「我們自己做完」拍板),不走 task-governance
 - [ ] Step 3 跨 audience 實跑腳本,待寫(`scripts/dev/verify-audience-routing.py`)
 - [ ] 與 `concepts/atlas-mcp-failover-policy.md` v1.0 L4 源不可達散戶表達紀律銜接——L4 觸發時由 user audience 表達,不需要降級審批

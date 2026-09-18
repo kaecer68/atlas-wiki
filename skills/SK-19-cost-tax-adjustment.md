@@ -43,6 +43,7 @@ SK-19 在 atlas 是「回測報酬 → 實盤淨報酬」的最後一公里,把�
 Step 1: 呼叫 `parameters_get` 確認 atlas cost model 預設是否為 `avg_trading_cost=0.00654` 與 `tax_rate=0.003`。
 Step 2: 呼叫 `backtest_signals` 抽一條 active signal,看回傳欄位是否區分 gross_sharpe 與 net_sharpe。
 Step 3: 呼叫 `report_get_tax_snapshot` 看實盤 realized gains 與 backtest 推算的 net return 是否在 10% 區間內(若差距過大代表 turnover 預期錯了)。
+- `backtest_signals` 的 Sharpe **無 gross/net 之分**：只回 `sharpe_long`／`sharpe_short`（= 預設 gross）→ 扣成本須自行處理（2026-08-02 L3 確認）。
 
 ## 散戶稅後淨報酬三塊 [2026-08-22 audit-fix]
 
@@ -53,8 +54,7 @@ Step 3: 呼叫 `report_get_tax_snapshot` 看實盤 realized gains 與 backtest �
 (3) **股利稅 + 二代健保**：高股息策略必扣——28% 分離課稅或併入綜所稅享 8.5% 抵減（每戶上限 8 萬元）；單次股利給付 ≥2 萬元另扣補充保費 2.11%。
 
 ## 未消化 / 待補
-- [x] atlas cost model 是否區分「買進 / 賣出」雙邊成本?SK-19 公式是合併計算,atlas 若單獨報買進成本會錯位。
-- [x] `backtest_signals` 回傳的 Sharpe 是 gross 還是 net?**2026-08-02 20:30 L3 頁面驗證 Step 2 確認:回傳**無 gross_sharpe/net_sharpe 區分**,只有 sharpe_long(0.27) + sharpe_short(0.49) 兩欄 = 預設 gross,需自行扣成本(對位 Fin-Skills 公式 total_cost = turnover × (avg_trading_cost + tax_rate) = 0.00954 預設)
+- [ ] atlas cost model 是否區分「買進 / 賣出」雙邊成本?SK-19 公式是合併計算,atlas 若單獨報買進成本會錯位。
 - [ ] 0.3% 賣方證交稅為長期現制;2017-04-28 變革為當沖賣方稅率減半至 0.15%(2026-08-22 官方驗證:歷經 107/110/114 年三次延長,現行有效至 2027-12-31;稅率自始 0.15% 從無 0.25%/0.2% 中間稅率;立法依據=證交稅條例第 2-2 條,非第 2-3 條[權證避險]),Fin-Skills 預設值是否符合 atlas 當下版本,需 `parameters_get_audit_log` 查證 [2026-08-22 audit-fix]。
 - [ ] 融券放空成本(借券費)沒在 SK-19 預設內,但 atlas `strategy_ranker` 可能涵蓋 short 策略,需查覆蓋率。
 

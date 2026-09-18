@@ -84,6 +84,7 @@ SK-29 定義用 sliding window（預設 252 天 = 1 年）對歷史數據做滾�
 2. risk_get_drawdown 確認 max_drawdown_pct 字段含括號內範圍（如「1%」是 1 還是 0.01 需查）
 3. risk_get_calibration 確認預測 vs 實測對齊的門檻值
 4. 三項齊備後 draft → active
+- 風險引擎已跑通（2026-08-03 v6.2）：`risk_get_drawdown` 回真實 `max_drawdown=0.9235`。
 
 ## 期間依賴性警告
 
@@ -105,11 +106,10 @@ SK-29 定義用 sliding window（預設 252 天 = 1 年）對歷史數據做滾�
 ## 未消化 / 待補
 
 - [ ] atlas 的 `session_count` 與 Fin-Skills 的「滾動次數」是否口徑一致——atlas session 是「事件」不是「窗口」
-- [x] **`max_drawdown_pct=1` 單位已查**:`risk_exposure` 端點用 `map[string]any` 接收,單位由 atlas-go 後端 `/api/dashboard/risk-exposure` 決定(atlas-mcp 無硬編碼);**真正單位需查後端 API 或實跑端點確認**(2026-08-03 02:55 v6.2 結構性誠實標)
+- [ ] **`max_drawdown_pct=1` 單位已查**:`risk_exposure` 端點用 `map[string]any` 接收,單位由 atlas-go 後端 `/api/dashboard/risk-exposure` 決定(atlas-mcp 無硬編碼);**真正單位需查後端 API 或實跑端點確認**(2026-08-03 02:55 v6.2 結構性誠實標)
 - [ ] `insufficient_data=1` 標記的內部邏輯——是不是 atlas 已內建 Fin-Skills 強調的「資料不足不報價」紀律?
 - [ ] paper 1 vs paper 2 的回測窗口差異(預測策略 vs RL 策略)對 atlas 同一個 universe_get_sessions 怎麼分流?
-- [x] 反向鏈已設:`consult_category: Q4` 對齊 _consult-index.md §Q4
-- [x] **L3 升 active 已修(2026-08-03 v6.2)**:kaecer v3.1 親修 RunDailyStressTests bug 後風險引擎已跑通,risk_get_drawdown 已回真實數據 `max_drawdown=0.9235`;**window_size=252 仍需確認 atlas 端是否暴露**(留未來);**SK-29 已升 active**(2026-08-01 v0.9 結算)
+- [ ] `window_size=252` 是否由 atlas 端暴露仍未確認（2026-08-03 v6.2 原項殘留之未結子題）
 
 ## 反向鏈接
 

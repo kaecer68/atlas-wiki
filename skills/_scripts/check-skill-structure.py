@@ -117,7 +117,13 @@ def analyse(path, schema):
             body = rest[:nxt.start()] if nxt else rest
             done = len(re.findall(r"^\s*-\s*\[x\]", body, re.M))
             if done:
-                res["warn"].append(f"「未消化」含 {done} 個已結項（- [x]）——{rule['why']}")
+                sev = rule.get("severity", "warn")
+                if sev == "hard":
+                    res["forbidden"].append((src[:m.start()].count(chr(10)) + 1, "- [x] 於未消化",
+                                             rule["why"],
+                                             "已完成項：精華併入對位／驗證段後刪除；未結者改 - [ ]（strict 已開啟）"))
+                else:
+                    res["warn"].append(f"「未消化」含 {done} 個已結項（- [x]）——{rule['why']}")
     if res["size"] > schema["size_limit_bytes"]:
         res["warn"].append(f"超過 {schema['size_limit_bytes']} bytes（{res['size']}）")
     return res
