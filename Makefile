@@ -5,7 +5,7 @@
 SHELL := /bin/bash
 PY    := python3
 
-.PHONY: help ci-gate ci-fast ci-full check-actionlint check-timestamp check-audit check-skill-pages check-skill-structure check-stale check-size check-frontmatter pre-commit-install uninstall-hooks verify-clean test sync-imac
+.PHONY: help ci-gate ci-fast ci-full check-actionlint check-timestamp check-audit check-skill-pages check-skill-structure check-stale structure-metrics check-size check-frontmatter pre-commit-install uninstall-hooks verify-clean test sync-imac
 
 help:                   ## 列出所有 target
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN{FS=":.*?## "}{printf "  %-22s %s\n", $$1, $$2}'
@@ -43,6 +43,8 @@ check-size: check-skill-pages
 check-skill-structure:  ## 3b. SK 頁結構（SSOT: skills/_scripts/skill-page-schema.json；失敗輸出最小重構處方）
 	@$(PY) skills/_scripts/check-skill-structure.py --skills-dir skills
 
+structure-metrics:      ## 3d. 結構健康度量測（M7；輸出可直接貼進結算的 Markdown）
+	@$(PY) skills/_scripts/structure-health-metrics.py --skills-dir skills
 check-stale:            ## 3c. skills/ 未提交內容偵測（session 開頭建議跑；>48h 告警）
 	@$(PY) skills/_scripts/check-stale-worktree.py --hours 48
 
