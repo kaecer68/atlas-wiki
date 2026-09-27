@@ -1,6 +1,6 @@
 # atlas-skill-inbound Inbox
 
-最後更新:2026-09-27 模板類 quota 拍板結案(不計入;條文入 `_method.md:121`);前次更新:2026-09-27 模板狀態校正 ＋ templates quota 條文查核（同日另段:結清兩項長期待辦）;前次更新:2026-08-21 v2 session 修補(8/21 補登（見 T9 v2）— 共同根因: A1 execute_code 會員權限 + A2 terminal 180s timeout, 修復任務 A1+A2 已寫入 hermes-governance-log T3-A493 條目請 hermes 下次 trigger 處理, 詳見 _inbox_archive.md §6 8/21 條目);前次更新:2026-08-21 歸檔 session(PR #29);前前次更新:2026-08-12 D6 session 結算(SK-34 真實 promotion + v6.59 overclaim 修正);前前前次更新:2026-08-07 D4 session 結算(`_inbox.md` size 15201B > 12000B 上限 → 啟動第七條例外歷史段歸檔 → 歷史段 5261B 移至 `_inbox_archive.md` v1.0,主檔縮為 3589B); 前前次更新:2026-08-07 16:50 (CR-2026-08-07 擱置區邊移 → v6.52 撤銷外推,改內部化)
+最後更新:2026-09-27 S6 時效宣告補完(18 頁未宣告 → 0)＋ `待複驗` 工作佇列 9 頁;前次更新:2026-09-27 模板類 quota 拍板結案(不計入;條文入 `_method.md:121`);前次更新:2026-09-27 模板狀態校正 ＋ templates quota 條文查核（同日另段:結清兩項長期待辦）;前次更新:2026-08-21 v2 session 修補(8/21 補登（見 T9 v2）— 共同根因: A1 execute_code 會員權限 + A2 terminal 180s timeout, 修復任務 A1+A2 已寫入 hermes-governance-log T3-A493 條目請 hermes 下次 trigger 處理, 詳見 _inbox_archive.md §6 8/21 條目);前次更新:2026-08-21 歸檔 session(PR #29);前前次更新:2026-08-12 D6 session 結算(SK-34 真實 promotion + v6.59 overclaim 修正);前前前次更新:2026-08-07 D4 session 結算(`_inbox.md` size 15201B > 12000B 上限 → 啟動第七條例外歷史段歸檔 → 歷史段 5261B 移至 `_inbox_archive.md` v1.0,主檔縮為 3589B); 前前次更新:2026-08-07 16:50 (CR-2026-08-07 擱置區邊移 → v6.52 撤銷外推,改內部化)
 
 > 2026-08-07 D4 結算段（總體進度 ＋ 最後更新對位事實,2,816B）已於 2026-09-27 依 `_method.md` 第七條例外移入 `_inbox_archive.md`。
 
@@ -18,12 +18,6 @@
 
 ## D6 新增待辦(2026-08-12,跨 SK 性質)
 
-### SK-34 路徑 drift 系統化紀錄(2026-08-12 新發現)
-- `/api/industry/sector-list` → **404**
-- `/api/industry/sectors` → **200**(正確 path)
-- 推論:atlas-mcp wrapper 與 atlas-go HTTP path 可能不一致,後續所有 SK 寫的 atlas-mcp tool 名稱 commit 前必須 `curl` 探一次實際 HTTP path
-- 待辦:在 `summaries/atlas-http-path-drift.md` 集中記錄所有發現的 path drift,給 atlas dev agent 修 wrapper
-
 ### v6.59 overclaim 真因(2026-08-12 復盤)
 - v6.59 session 聲稱「SK-34 升 active」但實際主檔未變更(SHA256 byte-perfect 相同)
 - 根因假說:LLM 工具調用錯誤,把「備份已建立」誤報為「升 active 完成」
@@ -40,19 +34,6 @@
 amendable_by: kaecer
 session_count_tracking: agent(autonomous, see _self-audit.md)
 archive_owner: agent(autonomous, see _inbox_archive.md)
-
----
-
-## 2026-09-27 prime-agent 查核結算（幽靈 SSOT 落地／T9 Task 3／CI 假綠）
-
-**1. 幽靈 SSOT 已落地**：`summaries/atlas-http-path-drift.md`（2026-09-27 建；本檔 `:54`／`SK-34:113` 長期指向但從未存在）。當日實測：**`/api/system/health` 已 404**（8/29 日誌記 200）⇒ 無時間戳的「正確路徑」不可信；判 route 必帶 key（不帶回 401）。`SK-29` 另有死引用 `docs/archive/2026-07-20-…-drift.md`（未修）。
-
-**2. T9 Task 3 = 從未執行**：37 頁僅 SK-34 有 `l3_*`（2026-08-12）；`git log --since=2026-08-21 -- skills/SK-` 空；cron `atlas-skill-inbound` job 已移除。詳見 `_t9-repair-tasks-20260821.md`。
-
-**3. 🚨 CI 假綠**：`audit-file-index-sync.py:19` 的 `ROOT` 硬編 `~/workspace/atlas-wiki` ⇒ runner 上 glob 全空、恆印 `✅ 0/0`；本機實跑真相 = **rc=1、64 檔未索引**。
-
-**Telegram**：`[SILENT]`（人工查核）
-
 
 ---
 
@@ -122,3 +103,19 @@ archive_owner: agent(autonomous, see _inbox_archive.md)
 **改動**:本檔 append 本段;為容納本段,原 **2026-08-07 D4 結算段（`## 總體進度` ＋ `## 最後更新對位事實`,2,816B）原文移入 `_inbox_archive.md`**（append,含出處標頭）;實測 11,792 B ≤ 12,000B。
 **改動(quota 結案)**:B 小節改寫（**−113B**）,無新歸檔;實測 **11,965 B ≤ 12,000B**。
 **移段時仍 OPEN 的項**:D4 段「L3 待驗端點 90 個 Step」為 2026-08-07 快照,實際範圍已於 T9 Task 3 更新為 105 步且查核為「從未執行」（未消失）。
+
+---
+
+## 2026-09-27 S6 `待複驗` 佇列(9 頁;check-freshness 18→0)
+
+下列 9 頁的日期＋量化快照行只有**資料日／舊快照／負面查核**,查無可引核對事件 ⇒ 標 `last_verified: "待複驗（2026-09-27）"` ＋ `verify_by: pending`。**關閉＝真跑來源或端點並把結果寫回該頁證據段**,才可改實日期(另 9 頁有頁內核對事件,已寫實日期)。
+
+- `concepts/t1-t4-signal-light.md`:4 成 vs 25–35% 待查;09-27 實測僅負面(無該欄位)
+- `concepts/taiwan-chip-flow-analysis.md`:標記行只有 audit-fix／實務慣例註,40–45% 未附來源
+- `templates/trigger-etf-rebalance.md`:08-03 舊快照,僅 audit-fix
+- `templates/trigger-foreign-3day-inflow.md`:08-03 舊快照 `+21.83 億`,hit_rate 為舊條件
+- `templates/trigger-hbm-cycle-cooling.md`:08-04／08-09 舊資料日;08-09 unreachable
+- `templates/trigger-margin-350b.md`:08-03 舊快照;「> 5000 億」無核對事件
+- `templates/trigger-msci-rebalance-pressure.md`:04-30 權重資料日;08-09 unreachable
+- `templates/trigger-retail-margin-decrease.md`:08-03 舊高水位 5074.63 億
+- `templates/trigger-sox-foreignflow.md`:08-03 舊快照(SOX +0.07%)

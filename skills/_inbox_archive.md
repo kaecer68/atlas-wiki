@@ -778,3 +778,41 @@ archive_owner: agent(autonomous)
 
 ---
 
+---
+
+## 歸檔記錄(2026-09-27 第三次,依 `_method.md` 第七條例外歸檔 SOP 移入)
+
+**觸發**:`_inbox.md` 11,965B,append 本次 S6 `待複驗` 工作佇列前已近 12,000B 上限(agent 自查觸發)。
+
+**搬移(原文,未改字)**:
+
+1. `## 2026-09-27 prime-agent 查核結算（幽靈 SSOT 落地／T9 Task 3／CI 假綠）` 整段(937B)——移入當下**最舊結算段**;三項皆已完成(幽靈 SSOT 已落地 `summaries/atlas-http-path-drift.md`、T9 Task 3 查核已結案、`audit-file-index-sync.py` 的硬編 ROOT 已改可攜 ⇒ CI 假綠已修)。
+2. `## D6 新增待辦` 的 `### SK-34 路徑 drift 系統化紀錄(2026-08-12 新發現)` 子項——**已解**:`summaries/atlas-http-path-drift.md` 於 2026-09-27 建立(該檔 `sources:` 自引 `skills/_inbox.md:50-54` 為其出處),依第七條「完成段落移入」移出;D6 其餘三項(v6.59 overclaim 根因、SK-20 60 日歷史端點、M9 升分條件)**仍 OPEN,留在主檔**。
+
+**依據**:第七條「主檔只留最新 2 版本結算」⇒ 主檔保留 2026-09-27 結案段(Fin-Skills)＋ 2026-09-27 模板狀態校正段 ＋ 本次 2026-09-27 S6 佇列段。
+
+**執行**:prime-agent(2026-09-27,`fix/20260927-s6-freshness`)。
+
+**移段時仍 OPEN 的項**:prime-agent 段內「`SK-29` 另有死引用 `docs/archive/2026-07-20-…-drift.md`（未修）」仍未結（未隨段消失）;T9 Task 3「L3 批次 105 步」進度追蹤在 `_t9-repair-tasks-20260821.md`。
+
+**搬移後**:`_inbox.md` = **11,876B ≤ 12,000B**(實測)。
+
+---
+
+## 2026-09-27 prime-agent 查核結算（幽靈 SSOT 落地／T9 Task 3／CI 假綠）
+
+**1. 幽靈 SSOT 已落地**：`summaries/atlas-http-path-drift.md`（2026-09-27 建；本檔 `:54`／`SK-34:113` 長期指向但從未存在）。當日實測：**`/api/system/health` 已 404**（8/29 日誌記 200）⇒ 無時間戳的「正確路徑」不可信；判 route 必帶 key（不帶回 401）。`SK-29` 另有死引用 `docs/archive/2026-07-20-…-drift.md`（未修）。
+
+**2. T9 Task 3 = 從未執行**：37 頁僅 SK-34 有 `l3_*`（2026-08-12）；`git log --since=2026-08-21 -- skills/SK-` 空；cron `atlas-skill-inbound` job 已移除。詳見 `_t9-repair-tasks-20260821.md`。
+
+**3. 🚨 CI 假綠**：`audit-file-index-sync.py:19` 的 `ROOT` 硬編 `~/workspace/atlas-wiki` ⇒ runner 上 glob 全空、恆印 `✅ 0/0`；本機實跑真相 = **rc=1、64 檔未索引**。
+
+**Telegram**：`[SILENT]`（人工查核）
+
+---
+
+### SK-34 路徑 drift 系統化紀錄(2026-08-12 新發現)
+- `/api/industry/sector-list` → **404**
+- `/api/industry/sectors` → **200**(正確 path)
+- 推論:atlas-mcp wrapper 與 atlas-go HTTP path 可能不一致,後續所有 SK 寫的 atlas-mcp tool 名稱 commit 前必須 `curl` 探一次實際 HTTP path
+- 待辦:在 `summaries/atlas-http-path-drift.md` 集中記錄所有發現的 path drift,給 atlas dev agent 修 wrapper

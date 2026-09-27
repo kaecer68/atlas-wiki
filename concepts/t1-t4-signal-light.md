@@ -1,6 +1,8 @@
 ---
 title: T1→T4 訊號燈四層驅動結構
 description: 要判斷「這一波是美股、外資、其他法人還是散戶在帶方向」時載入。
+last_verified: "待複驗（2026-09-27）"
+verify_by: pending
 created: 2026-07-15
 updated: 2026-09-27
 type: concept

@@ -3,6 +3,8 @@ title: L1-T.1 能源轉型
 description: 討論能源轉型、綠電政策或電力瓶頸對台股的長期傳導時載入。
 created: 2026-07-17
 updated: 2026-09-27
+last_verified: 2026-08-22
+verify_by: 未知
 type: entity
 tags: [L, time-anchor, hypothesis, event]
 sources:

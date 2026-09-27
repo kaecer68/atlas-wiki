@@ -3,6 +3,8 @@ title: atlas 風險管理框架
 description: 散戶問「這筆部位可以放多大、最壞會虧多少、停損怎麼設」時載入。
 created: 2026-08-02
 updated: 2026-09-27
+last_verified: 2026-08-22
+verify_by: 未知
 type: concept
 tags: [framework, methodology]
 sources:

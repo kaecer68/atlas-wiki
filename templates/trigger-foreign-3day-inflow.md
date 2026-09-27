@@ -1,5 +1,7 @@
 ---
 description: 外資現貨連續 3 日累計買超 >+100 億台幣時載入本模板。
+last_verified: "待複驗（2026-09-27）"
+verify_by: pending
 ---
 
 # 外資買超觸發模板(3日版)[2026-08-22 audit-fix]

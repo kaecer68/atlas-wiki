@@ -1,5 +1,7 @@
 ---
 description: SK Hynix 月跌幅 <-10%、HBM 報價連 2 月跌 <-5%、雲端商 capex 指引下修至 <+20% 三項同時成立時載入本模板。
+last_verified: "待複驗（2026-09-27）"
+verify_by: pending
 ---
 
 # HBM/AI 半導體敘事降溫觸發模板(對位 2026 韓股崩盤教訓)

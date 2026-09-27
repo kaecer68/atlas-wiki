@@ -1,6 +1,8 @@
 ---
 title: 台股籌碼面分析指南：法人資金流向觀測
 description: 散戶問「外資／投信／自營商買賣超怎麼看、籌碼面訊號怎麼判」時載入。
+last_verified: "待複驗（2026-09-27）"
+verify_by: pending
 created: 2026-08-02
 updated: 2026-09-27
 type: concept

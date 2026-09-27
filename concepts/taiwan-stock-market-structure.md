@@ -3,6 +3,8 @@ title: 台灣證券市場結構與交易制度
 description: 散戶問「T+2、漲跌停、當沖、融資融券、借券制度怎麼運作」時載入。
 created: 2026-08-02
 updated: 2026-09-27
+last_verified: 2026-08-22
+verify_by: 未知
 type: concept
 tags: [framework, signal]
 sources:
