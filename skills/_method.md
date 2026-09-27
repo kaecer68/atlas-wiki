@@ -23,31 +23,35 @@ amendable_by: kaecer
 
 ## 為什麼存在
 
-救活 32 個 Fin-Skills → atlas 可對位 wiki skill;對位憲法 §1 + mission「找信息差」。細節見 `_method_amendment_history.md` §起源。
+救活 32 個 Fin-Skills → atlas 可對位 wiki skill(對位憲法 §1 + mission「找信息差」);起源見 `_method_amendment_history.md`。
 
-## 六條鐵律(v6.37 kaecer 拍板:所有 .md ≤ 9000 bytes)
+## 六條鐵律(v6.37 拍板;第 6 條 2026-09-27 改為類別制)
 
 1. 不搬運,翻譯——每頁含論文/atlas/散戶三層
 2. 不瞎寫——tool 不確定標 `待驗`
 3. 不裝完成——L3 端點驗證沒跑 = draft
 4. 不違背憲章——`ATLAS_METHODOLOGY.md` v1.0 真理源頭;七時期+3+2+2+三分類
 5. 派工備份——改動前後各備份一次(byte-perfect 對位,§5.1 SOP)
-6. **所有 .md 檔 ≤ 9000 bytes**(kaecer v6.37 拍板)— **例外**:
-   - **SK 頁**(SK-*.md):必 ≤ 9000 bytes = 對位 CI size-check
-   - **入口檔**(_consult-index.md):≤ 9000 bytes
-   - **審計追蹤檔**(_methodology_alignment_audit*.md / _atlas_mcp_path_investigation.md):≤ 9000 bytes
-   - **規範本體**(_method.md):≤ 9000 bytes
-   - **規範附錄**(_method_amendment_history.md):≤ 5000 bytes(本附錄承接起源與演進 + M1-M9 升分表;_method.md 瘦身後 2026-08-07 增設)
-   - **`_inbox.md`**:≤ 12000 bytes(對位第七條例外)+ size-check job 實作 warn-only 模式
-   - **`_inbox_archive.md`**:無 size 上限(歷史承接,2026-08-07 增設)
-   - **_self-audit.md 例外**:跨 session 累積審計日誌(不入 git,對位 .gitignore),**僅要求 ≤ 9000 bytes 透過 governance-log.md 分流**;如過度膨脹需重組審計紀錄格式而非精簡內容。
+6. **size 上限依類別**(2026-09-27 kaecer 拍板,取代 v6.37「所有 .md ≤ 9000」):
 
-   對位 CI:`.github/workflows/validate-wiki.yml` `size-check` job 跑 `wc -c ≤ 9000`(SK 頁驗證)。
+| 類別 | 上限 | 理由(量測 2026-09-27) |
+|---|---|---|
+| `skills/SK-*.md` | 9,000 B | CI **實檢**;最大 8,989 |
+| 入口/索引 `SK-00`/`_knowledge-router`/`_consult-index`/`index.md`/`README.md`/`SCHEMA.md` | 9,000 B | 只導向不承載內容;最大 8,851 |
+| `AGENTS.md` | 12,500 B | §10 自訂(注入檔 token 預算);現 11,027 |
+| `concepts/**`、`entities/**` | 30,000 B | 參考字典/指南勿硬砍;最大 28,029 |
+| `docs/**` | 12,000 B | 治理文件;最大 11,190(舊制誤判為違規) |
+| `_method.md`/`_method_amendment_history.md` | 9,000/5,000 B | 規範本體自限 |
+| append-only `log.md`/`_self-audit*.md`/`_inbox.md`/`*_archive.md` | 無上限 | 超門檻即歸檔/切月;`_inbox.md` ≤ 12,000,`_self-audit*.md` 不入 git(膨脹時重組格式) |
+| `_internal/**` | 無上限 | 結案即瘦身(2026-09-27 示範 16→4 檔) |
+| 未列 `*.md`(templates/summaries/`skills/_*.md`) | 9,000 B | 舊制沿用,未逐類量測 |
+
+**強制**:CI `size-check` 只硬檢 SK 頁(`_inbox.md` warn-only);餘類別 advisory。明細/落差/驗收見 `_skill-structure-guard.md §size 分類上限`。
 
 
 ## 第五條鐵律(2026-08-02 k拍):快照值必附 timestamp
 
-對位 SOUL §0.1 第 6 條邊界「_method 規範修改需拍板」,本條由 kaecer 2026-08-02 22:30 拍板新增:
+對位 SOUL §0.1 例外 6(規範修改需拍板),2026-08-02 22:30 kaecer 拍板新增:
 
 - **觸發條件**:任何數字引用(session_count / sharpe / max_drawdown / universe_overlap 等)若**隨時間變動** = 必須附 `timestamp + 端點名稱`
 - **正確格式**:`2026-08-01 23:15 結算 snapshot,risk_get_metrics session_count=147`(歷史快照)vs `2026-08-02 20:40 當下,risk_get_metrics session_count=150`(當下值)
@@ -56,11 +60,11 @@ amendable_by: kaecer
 - **教訓**:2026-08-02 20:40 重跑確認 universe_get_sessions 150 sessions 後,SK-16/17/29 + _inbox 已修當下值,但 14+ 條 2026-08-01 23:15 結算時點的 session_count=147 殘留是**歷史快照,保留不修**(修壞會失真)
 - **本條與第 4 條對位**:第 4 條「不違背憲章」是**內容對位**,第 5 條「快照值必附 timestamp」是**形式紀律**,兩條並列
 - **降級觸發**:任何頁違反第 5 條 = M7 結算分降 1
-- **升級觸發**:全 33 頁跑 Python 結構驗證全綠(快照值都附 timestamp) = M7 結算分 +1
+- **升級觸發**:全 SK 頁跑結構驗證全綠(快照值都附 timestamp) = M7 結算分 +1
 
 **每日驗證收尾檢查清單(必跑 6 項)**:
 
-- [ ] 每頁 `wc -c` ≤ 9,000 bytes
+- [ ] 每頁 `wc -c` ≤ 六條鐵律 6 類別上限
 - [ ] 每頁 6 段俱全
 - [ ] frontmatter 9 欄齊全
 - [ ] 至少 1 頁 L3 真跑過
@@ -99,7 +103,7 @@ amendable_by: kaecer
   4. IMF WEO(semi-annual,4/10 月)
   5. HKS M-RCBG WP(irregular)
 - **正確格式**:`UCTAD WIR 2026 (5/21/2026 release, ISBN 978-92-1-154998-0): 5 年半導體 greenfield CAGR +54%`;未命中即標「未達觸發條件」,**禁止編造**
-- **與第 5 條對位**:第 5 條「快照值必附 timestamp」= 形式紀律;第 6 條「外部權威報告週期稽核」= 內容紀律(雙層)
+- **與第 5 條對位**:第 5 條=形式紀律,本條=內容紀律(雙層)
 - **降級觸發**:narrative model 對位不到外部報告來源 = M7 結算分降 1
 - **升級驗收**:2027 年 4 月 WIR + HAI 同步 release → 命中 + hit_rate 改善 ≥5% = M1 升 1
 
@@ -113,7 +117,7 @@ amendable_by: kaecer
 2. 讀本檔確認規範
 3. `ls SK-*.md + cat _inbox.md` 看現況
 
-自動歸位:6 段格式 / 9 欄 frontmatter / Quota(3 頁)/ 路徑(憲法在 atlas-notes)/ 命名(atlas = atlas,不是 atlas-go)/ 精選優先序(SK-01 → 16 → 18 → 20 → 29)。
+自動歸位:6 段格式 / 9 欄 frontmatter / Quota(3 頁)/ 路徑(憲法在 atlas-notes)/ 命名(atlas≠atlas-go)/ 精選序(SK-01→16→18→20→29)。
 
 **權威等級 = 憲法 §1**。
 
@@ -139,13 +143,13 @@ amendable_by: kaecer
 
 ## 第七條例外（2026-09-02 kaecer 拍板，v1.0 修訂）：精確化
 
-**v1.0 修訂要點**：原第七條例外只針對 `_inbox.md` size 上限，**但 v1.0 結算時新增 M10 健康度觸發「size 持續擴張」模糊地帶**。本條 v1.0 修訂**精確化 size 例外邊界**：
+**v1.0 修訂要點**：原第七條例外只管 `_inbox.md` size 上限，但 M10 觸發「size 持續擴張」模糊地帶 → 本次**精確化 size 例外邊界**：
 
 - **規範**：`_inbox.md` ≤ 12000 bytes（size 上限例外**只針對**§3 結算頻率 / §5.3 觸發器 / M10 健康度子項事實紀錄，**不適用於評分維度新增**）
-- **CI**：`validate-wiki.yml` size-check job = SK ≤ 9000 嚴格 fail + _inbox.md ≤ 12000 warn-only
+- **CI**：強制範圍見六條鐵律 6（SK 頁硬檢／`_inbox.md` warn-only）
 - **歸檔 SOP**：連 2 次 session append 後 > 12000，agent 自動評估把 §6 §6.1 §6.2 完成段落移 `_inbox_archive.md`，主檔只留最新 2 版本結算
 - **v1.0 新增**：評分維度新增 = §2 結構變更，**需走 §2 修訂 SOP + kaecer 拍板**，**不適用第七條例外**
-- **v1.0 新增**：M10 健康度評分所需 evidence**不算** size 例外範圍（仍按 §6 標準 SOP 紀錄）
+- **v1.0 新增**：M10 評分所需 evidence 不算 size 例外（仍按 §6 SOP）
 
 對位：SOUL §0.1 例外 6（規範修改需拍板——本條即經 2026-09-02 拍板）。
 

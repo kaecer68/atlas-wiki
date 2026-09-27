@@ -41,9 +41,9 @@ atlas-wiki/
 
 ## 規範速查(詳見 `skills/_method.md`)
 
-- 單頁大小 ≤ 9,000 bytes(2026-07-30 kaecer 拍板 bump 自 6000)
+- 單頁大小 **依類別**(2026-09-27 kaecer 拍板,取代「所有 .md ≤ 9,000」):SK 頁/入口檔 ≤ 9,000、`concepts/**`+`entities/**` ≤ 30,000、`docs/**` ≤ 12,000、append-only(log/_self-audit/_inbox/_archive)無硬上限但需分流歸檔、`_internal/**` 無硬上限但結案即瘦身(表見 `_method.md` 六條鐵律 6)
 - frontmatter 核心欄位:title / type / source / ingested_at / status / tier / confidence / atlas_go_relevance / mcp_tools_used / verification
-- 六條鐵律(2026-09-27 校正:原記 5 條;正本 `_method.md` §六條鐵律):① 不搬運,翻譯 ② 不瞎寫 ③ 不裝完成 ④ 不違背憲章 ⑤ 派工備份 ⑥ 所有 .md ≤ 9,000 bytes
+- 六條鐵律(2026-09-27 校正:原記 5 條;正本 `_method.md` §六條鐵律):① 不搬運,翻譯 ② 不瞎寫 ③ 不裝完成 ④ 不違背憲章 ⑤ 派工備份 ⑥ size **依類別**(SK 頁 9,000 / 參考 `concepts`+`entities` 30,000 / `docs` 12,000 / append-only＋`_internal` 無硬上限)
 - 另見 `_method.md` §第五條鐵律(快照值必附 timestamp)+ §第六條鐵律(外部權威報告週期稽核)
 - 每日 quota:D1 示範 1 頁 → D2+ 每日 3 頁上限(2026-07-29 降標)
 
@@ -62,7 +62,7 @@ push / PR 到 `main` 觸發 `validate-wiki`（2026-09-27 實測 9 個 job:8 個�
 1. **validate-timestamp-rule** — 第 5 條鐵律(快照值必附 timestamp)
 2. **audit-atlas-endpoints** — 掃描 atlas-mcp 端點(2026-09-27 實測 **115** 端點;舊記 109。對位 `kaecer68/atlas-go`)
 3. **skill-structure-check** — SK 頁段名/段序/禁用標記(SSOT `skill-page-schema.json`)
-4. **size-check** — SK 頁 ≤ 9,000 bytes（`_inbox.md` > 12,000 僅警告）
+4. **size-check** — SK 頁 ≤ 9,000 bytes（`_inbox.md` > 12,000 僅警告;類別表見 `_method.md` 六條鐵律 6）
 5. **frontmatter-check** — frontmatter 核心 10 欄齊全
 6. **audit-file-index-sync** — SK/concepts/entities/triggers/scripts 索引同步
 7. **trigger-template-existence** — 12 核心觸發模板存在 + 結構關鍵字

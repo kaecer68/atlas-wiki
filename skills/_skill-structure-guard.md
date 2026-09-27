@@ -41,10 +41,41 @@ amendable_by: kaecer
 
 ```bash
 make check-skill-structure          # 結構自查（失敗附最小重構處方）
-make check-skill-pages              # size ≤ 9000 + frontmatter
+make check-skill-pages              # SK 頁 size ≤ 9000 + frontmatter
 make check-stale                    # skills/ 未提交內容偵測（session 開頭建議跑）
 python3 skills/_scripts/new-skill-page.py --id SK-37 --title "..."   # 產生合規骨架
 ```
+
+## size 分類上限（配套 `_method.md` 六條鐵律 6；2026-09-27 kaecer 拍板）
+
+**為什麼改**：舊制「所有 .md ≤ 9000 bytes」與現實脫節——基準 `main b4f9524`（PR #75 後）tracked `.md` 138 檔 / 1,081,291 B，其中 **32 檔 / 556,389 B（51.5%）> 9,000**。抽樣證明超標不是冗餘：`concepts/` 13 個超標檔兩兩 line-set **Jaccard < 5%**；`entities/` 重疊 5–10% 且只來自頁面樣板（`未消化` / `atlas 對位` / `散戶解讀`）⇒ **錯的是規則文字，不是內容**。
+
+| 類別 | 上限 | 量測（2026-09-27） | 強制 |
+|---|---|---|---|
+| `skills/SK-*.md`（39 檔 / 204,123 B，含 `SK-00`） | 9,000 B | 最大 `SK-01-factor-library.md` **8,989**；違規 0 | **CI `size-check` 硬檢** |
+| 入口/索引（6 檔 / 52,234 B） | 9,000 B | 最大非 `AGENTS.md` 者 `_consult-index.md` **8,851**；`AGENTS.md` 走專屬上限 | advisory |
+| `AGENTS.md` | 12,500 B | **11,027**（§10 自訂：注入檔 token 預算） | advisory |
+| `concepts/**`（21 檔 / 255,936 B） | 30,000 B | 最大 `taiwan-financial-domain-model.md` **28,029** | advisory |
+| `entities/**`（7 檔 / 86,003 B） | 30,000 B | 最大 `l1-t2-petrodollar-hormuz.md` **25,016** | advisory |
+| `docs/**`（2 檔 / 15,526 B） | 12,000 B | 最大 `git-merge-protocol.md` **11,190** | advisory |
+| `_method.md` / `_method_amendment_history.md` | 9,000 / 5,000 B | **8,968** / 2,783 | advisory |
+| append-only（9 檔 / 205,664 B） | 無硬上限 | `log.md` 46,017、`_inbox.md` 11,792、`_inbox_archive.md` 50,331；**需分流**（超門檻即歸檔/切月） | — |
+| `_internal/**`（14 檔 / 81,195 B） | 無硬上限 | **結案即瘦身**（2026-09-27 示範 16 → 4 檔，−133,433 B） | — |
+| 未列 `*.md`（templates / summaries / `skills/_*.md`） | 9,000 B（舊制沿用） | 最大 `skills/_manifest_coverage_routing.md` 19,810 | advisory |
+
+**理由欄**：`concepts/**`、`entities/**` 是參考字典/指南（領域模型、工具參考、市場結構），硬砍到 9,000 B 會毀損完整條目——上限的目的是擋膨脹，不是逼人刪事實。`docs/**` 是治理文件（協定/流程），比 SK 決策卡長是常態。append-only 日誌只受**分流紀律**管（歸檔/切月），不受硬上限管。
+
+**誤判更正**：`docs/git-merge-protocol.md` 先前被記為違規，只因舊規則寫「所有 .md ≤ 9000」；依類別制上限 12,000 B，該檔（本 PR 11,190 B，前值 11,018）**本來就合規**。
+
+**已知落差（advisory，不擋 CI）**：`skills/_manifest_coverage_routing.md` 19,810 B（未列類別）、`SCHEMA.md` 9,580 B（入口/索引 9,000）、`templates/trigger-megaproject-2-quarter-lag.md` 9,996 B（未列類別）。處理方式：歸類或瘦身，另案。
+
+**驗收（本機唯讀）**：
+
+```bash
+git ls-files '*.md' | xargs wc -c | sort -n | tail -40   # 逐檔 size，對照上表類別
+make check-skill-pages                                    # CI 唯一硬檢項：SK 頁 ≤ 9000 + frontmatter
+```
+
 
 ## 與其他規範的關係
 

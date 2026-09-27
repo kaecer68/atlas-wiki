@@ -36,14 +36,14 @@
 - [ ] **結構守衛**：`make check-skill-structure`（SSOT＝`skills/_scripts/skill-page-schema.json`；失敗會輸出「最小重構處方」）
   - 結果:
 - [ ] 新增頁/變更頁的 frontmatter 10 欄齊全
-- [ ] 單頁大小 ≤ 9,000 bytes
+- [ ] SK 頁大小 ≤ 9,000 bytes(其他類別見 `_method.md` 六條鐵律 6 類別表：參考類 ≤30,000 / `docs` ≤12,000 / append-only 無硬上限需分流)
 - [ ] L3 端點驗證(若 status 升 active):tool_name + timestamp 引用
 - [ ] 第 5 條鐵律:快照值附 timestamp + 端點名稱
 
 ## 對位檢查(每頁變更必填)
 
 - 憲章:`~/workspace/atlas/docs/ATLAS_METHODOLOGY.md` v1.0 對位項:
-- 5 條鐵律:①②③④⑤
+- 六條鐵律:①②③④⑤⑥(size 依類別)
 - 散戶語言錨:是否影響 §_consult-index §6
 
 ## 風險與回滾
