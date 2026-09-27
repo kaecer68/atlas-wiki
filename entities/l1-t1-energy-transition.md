@@ -2,11 +2,18 @@
 title: L1-T.1 能源轉型
 description: 討論能源轉型、綠電政策或電力瓶頸對台股的長期傳導時載入。
 created: 2026-07-17
-updated: 2026-07-17
+updated: 2026-09-27
 type: entity
 tags: [L, time-anchor, hypothesis, event]
 sources:
   - ~/workspace/atlas-notes/02-knowledge/atlas-original-paper-v0.1-L1T-multi.md
+  - 外部報告／數據（頁內已載明者，2026-09-27 補登）
+  - IRENA Renewable Capacity Statistics 2025（2025-03-26 新聞稿；2026-08-22 官方驗證）
+  - IEA World Energy Outlook 2024（NZE 更新；頁內 §1）
+  - IAEA 核電機組統計（頁內 §1、§Step 6）
+  - UNFCCC COP28 全球盤點決議（2023-12-13；2026-08-22 官方驗證，再生能源三倍目標）
+  - IEA＋OPEC 月報／BloombergNEF 全球 EV 銷售月報／Wood Mackenzie 金屬 forward curve（頁內 §Step 6 監控指標）
+  - IMF 區域電力需求（頁內 §4）／IRENA LCOE 數據（頁內 §2）
 confidence: medium
 contested: false
 contradictions: []

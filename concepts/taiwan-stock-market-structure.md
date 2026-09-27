@@ -9,6 +9,13 @@ sources:
   - atlas-mcp:macro_get_snapshot_latest
   - atlas-mcp:taiwan_stress_index
   - concepts/taiwan-financial-domain-model.md
+  - 外部法規／官方統計（頁內已載明者，2026-09-27 補登）
+  - 證交所營業細則第 57 條（T+2 交割；2026-08-22 官方驗證）
+  - 金管會 1140382475 號令（2026-05-26 生效；融資 6 成／融券保證金 9 成）
+  - 證券交易稅條例第 2-2 條（現股當沖賣方 0.15%；現行有效至 2027-12-31）
+  - 臺證交字第 1090200551 號函（暫緩撮合；https://twse-regulation.twse.com.tw/TW/int/DAT01_print.aspx?FLCODE=FE337278，http 200）
+  - SITCA ETF 專區統計（https://www.sitca.org.tw/ROC/SITCA_ETF/etf-section-stats.html，http 200；2026-08-22 驗證）
+  - TWSE 公司沿革（https://www.twse.com.tw/zh/about/company/history.html，http 200）
 confidence: medium
 contested: false
 contradictions: []

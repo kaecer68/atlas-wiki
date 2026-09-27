@@ -9,6 +9,12 @@ sources:
   - atlas-mcp:macro_get_snapshot_latest
   - atlas-mcp:stock_get_fundamentals
   - concepts/taiwan-financial-domain-model.md
+  - 外部事實來源（頁內已載明者，2026-09-27 補登）
+  - 行政院主計總處 國民所得統計（實質 GDP 季更新）— 頁內 §2.1
+  - 中華經濟研究院 台灣 PMI（每月發布）— 頁內 §2.2
+  - TWSE 開放資料 https://openapi.twse.com.tw（BWIBBU_d + t187ap03_L；市值排名 2026-08-21 實抓，http 200）— 頁內 §8
+  - 公開資訊觀測站（MOPS）月營收／季報公布規定 — 頁內 §6.1–6.2
+  - 本益比區間與 VIX 門檻 25／30／40 — 實務慣例（CBOE 無官方定義）；2026-09-27 標示
 confidence: medium
 contested: false
 contradictions: []

@@ -2,11 +2,17 @@
 title: L1-T.6 人口轉折
 description: 要評估人口結構（少子化、高齡化）對台股長期需求與勞動供給的影響時載入。
 created: 2026-07-17
-updated: 2026-07-17
+updated: 2026-09-27
 type: entity
 tags: [L, time-anchor, hypothesis, event]
 sources:
   - ~/workspace/atlas-notes/02-knowledge/atlas-original-paper-v0.1-L1T-multi.md
+  - 外部報告／官方統計（頁內已載明者，2026-09-27 補登）
+  - UN World Population Prospects（中位數推估；頁內 §1）
+  - 厚生労働省 令和6年（2024）人口動態統計（2026-08-22 官方驗證）
+  - 內政部統計年報 113 年（2026-08-22 官方驗證）／國發會人口推估中位數（頁內 §Step 5）
+  - OECD Family Database／ILO＋IMF 勞動參與率／UN DESA＋IOM 移民報告（頁內 §Step 6）
+  - 世界銀行 氣候移民推估（頁內 §1）
 confidence: medium
 contested: false
 contradictions: []

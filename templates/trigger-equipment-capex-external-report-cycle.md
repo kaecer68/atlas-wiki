@@ -1,5 +1,11 @@
 ---
 description: UNCTAD WIR、Stanford HAI、BIS、IMF WEO 等外部權威報告發布或宣布時載入本模板。
+sources:
+  - UNCTAD World Investment Report（annual；5/21 announcement + 7/7 release；頁內 §3 錨點表）
+  - Stanford HAI AI Index Report（annual，4 月 release；頁內 §3）
+  - BIS Annual Economic Report（annual，6 月；頁內 §3）
+  - IMF World Economic Outlook（4 月 + 10 月；頁內 §3）
+  - HKS M-RCBG WP（5 月 release；頁內 §對位文獻）
 template_id: trigger-equipment-capex-external-report-cycle
 template_number: 15
 type: cron-cadence-trigger(週期型)

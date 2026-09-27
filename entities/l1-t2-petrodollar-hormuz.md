@@ -2,11 +2,20 @@
 title: L1-T.2 石油美元與霍爾木茲
 description: 油價急動或中東（霍爾木茲）衝突升溫，要判斷對台股與通膨的傳導時載入。
 created: 2026-07-17
-updated: 2026-07-17
+updated: 2026-09-27
 type: entity
 tags: [L, time-anchor, hypothesis, event]
 sources:
   - ~/workspace/atlas-notes/02-knowledge/atlas-original-paper-v0.1-L1T-multi.md
+  - 外部報告／數據（頁內已載明者，2026-09-27 補登）
+  - CSIS 2026/3/11「Chokepoint」（霍爾木茲流量占比；頁內 §4.2）
+  - IFPRI 2026/4 多作者分析／Bloomberg 2026/3/29 油市衝擊報導（頁內 §4.2）
+  - 美 EIA 2026/2 Q1 流量統計／聯合國 AFCAS 農糧體系報告（頁內 §4.2）
+  - IMF COFER 季報（美元儲備占比；頁內 §3、§4.3）
+  - WGC 央行黃金月報告／美國 TIC（頁內 §4.3）
+  - CNBC 2026/3/18（Ras Laffan LNG）／TankerTrackers（VLCC 運費；頁內 §4.2）
+  - Trading Economics・Reuters・Argus・JLinvilleFert（尿素價；頁內 §4.2 表列）
+  - IPCC AR6 報告（糧食單產；頁內 §節點 11）
 confidence: medium
 contested: false
 contradictions: []

@@ -2,13 +2,16 @@
 title: L1-T.3 五鏈耦合鐵律
 description: 要判斷多條供應鏈同時鬆動（跨鏈耦合）而非單一事件時載入。
 created: 2026-07-15
-updated: 2026-07-15
+updated: 2026-09-27
 type: entity
 tags: [L, event, template, paper]
 sources:
   - ~/workspace/atlas-notes/02-knowledge/atlas-original-paper-v0.1-L1T3-five-chains.md
   - ~/workspace/atlas-notes/02-knowledge/audit-DeepSeek-2026-07-15.md
   - ~/workspace/atlas-notes/02-knowledge/audit-kimi-2026-07-15.md
+  - 外部來源（頁內已載明者，2026-09-27 補登）
+  - 多源驗證（頁內 §Confidence）：CSIS 報告／Bloomberg／IFPRI／WMO／IPCC AR6 報告／印度官方／歐洲氣象（2026-07-15 撰寫時點）
+  - IEA 霍爾木茲 −1100 萬桶/日 供給衝擊（頁內五鏈表；對位 entities/l1-t2-petrodollar-hormuz.md 2026/3 事件）
 confidence: medium
 contested: false
 contradictions: []
