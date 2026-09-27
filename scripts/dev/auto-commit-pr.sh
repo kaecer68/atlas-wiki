@@ -103,13 +103,62 @@ for i in $(seq 1 30); do
     sleep 10
 done
 
-# === Step 7: Squash merge(若設定 enforce_admins,加 --admin) ===
+# === Step 6.5: 治理檔／規模閘門（2026-09-27 kaecer 拍板；對位 git-merge-protocol §6.4.2）===
+# 觸碰治理檔、或規模超標（>5 檔 / >300 行）⇒ 只開 PR，**不自動 merge**，等 kaecer review。
+GOV_RE='^(AGENTS\.md|SCHEMA\.md|skills/_method\.md|skills/_method_amendment_history\.md|docs/git-merge-protocol\.md|\.github/workflows/)'
+# BASE 以「遠端」為準：本地 main 可能落後 origin/main，用本地名會把別人的 commit 算進本 PR
+# （2026-09-27 實測：本地落後 3 個 commit 時，真實 2 檔的 routine PR 被判成 24 檔 + 治理檔）
+if ! git fetch -q origin "$BASE" 2>/dev/null; then
+    echo "⚠️  無法 fetch origin/${BASE}（離線或遠端不可用）⇒ 以本地既有的 origin/${BASE} 判斷；若它已過期，規模判定可能失真。"
+fi
+BASE_REF="origin/$BASE"
+if ! git rev-parse --verify -q "$BASE_REF" >/dev/null 2>&1; then BASE_REF="$BASE"; fi
+# base 解析不到就 fail-closed（否則 diff 為空 ⇒ 會被誤判成 routine 而自動 merge）
+if ! git rev-parse --verify -q "$BASE_REF" >/dev/null 2>&1; then
+    echo "❌ 找不到可比較的 base ref（試過 origin/${BASE} 與 ${BASE}）— 無法判定變更規模，停止，不 merge。"
+    exit 1
+fi
+# 用 --name-status -M：rename 會同時給出舊路徑與新路徑（--name-only 只給新路徑 ⇒ 可繞過閘門）
+if ! CHANGED_FILES="$(git diff --name-status -M "$BASE_REF...HEAD" 2>/dev/null \
+                       | awk -F'\t' 'NF>1 {for (i=2; i<=NF; i++) print $i}')"; then
+    echo "❌ git diff 失敗（BASE_REF=${BASE_REF}）— 停止，不 merge。"
+    exit 1
+fi
+N_FILES="$(printf '%s\n' "$CHANGED_FILES" | grep -c . || true)"
+N_LINES="$(git diff --numstat -M "$BASE_REF...HEAD" 2>/dev/null | awk '{a+=$1; d+=$2} END {print a+d+0}')"
+if ! printf '%s' "${N_FILES:-}" | grep -qE '^[0-9]+$' || ! printf '%s' "${N_LINES:-}" | grep -qE '^[0-9]+$'; then
+    echo "❌ 無法判定變更規模（BASE_REF=${BASE_REF}，N_FILES='${N_FILES:-}' N_LINES='${N_LINES:-}'）— 停止，不 merge。"
+    exit 1
+fi
+if [ "${N_FILES:-0}" -eq 0 ]; then
+    echo "❌ diff 為空（BASE_REF=${BASE_REF}）— base 可能選錯或分支無變更；停止，不 merge。"
+    exit 1
+fi
+GOV_HITS="$(printf '%s\n' "$CHANGED_FILES" | grep -E "$GOV_RE" || true)"
+MAJOR=0
+[ -n "$GOV_HITS" ] && MAJOR=1
+[ "${N_FILES:-0}" -gt 5 ] && MAJOR=1
+[ "${N_LINES:-0}" -gt 300 ] && MAJOR=1
+
+if [ "$MAJOR" = "1" ]; then
+    echo ""
+    echo "🛑 偵測到「重大變更」（§6.4.2）— 只開 PR，不自動 merge："
+    if [ -n "$GOV_HITS" ]; then
+        echo "   治理檔："
+        printf '     - %s\n' $GOV_HITS
+    fi
+    echo "   規模：${N_FILES} 檔 / ${N_LINES} 行（門檻 5 檔、300 行）"
+    echo "   PR：$(gh pr view "$PR_NUM" --json url --jq .url 2>/dev/null || echo "#$PR_NUM")"
+    echo "   ⇒ 請 kaecer review 後人工 merge（本腳本不再自動 merge 治理檔 PR）。"
+    exit 0
+fi
+
+# === Step 7: Squash merge（2026-09-27 起移除 --admin：必須 required checks 全綠才可 merge）===
 echo "🔀 squash merge PR #$PR_NUM"
-ENFORCE="$(gh api repos/kaecer68/atlas-wiki/branches/main/protection --jq '.enforce_admins.enabled' 2>/dev/null || echo false)"
-if [ "$ENFORCE" = "true" ]; then
-    gh pr merge "$PR_NUM" --squash --delete-branch --admin
-else
-    gh pr merge "$PR_NUM" --squash --delete-branch
+if ! gh pr merge "$PR_NUM" --squash --delete-branch; then
+    echo "❌ merge 失敗（required checks 未過／遭 branch protection 阻擋，或需要 review）。"
+    echo "   PR 保持開啟，請人工處理：$(gh pr view "$PR_NUM" --json url --jq .url 2>/dev/null || echo "#$PR_NUM")"
+    exit 1
 fi
 
 # === Step 8: 切回 base + pull ===

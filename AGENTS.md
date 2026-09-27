@@ -136,7 +136,7 @@
 | 計數 | SSOT 指令 | 2026-09-27 實測 |
 |------|-----------|----------------|
 | SK 頁 | `ls skills/SK-*.md \| wc -l` | **40**（39 編號 + SK-00） |
-| repo `.md` | `git ls-files '*.md' \| wc -l` | **138**（另有 3 檔未追蹤） |
+| repo `.md` | `git ls-files '*.md' \| wc -l` | **139**（未追蹤 0 檔） |
 | trigger 模板 | `ls templates/trigger-*.md \| wc -l` | **21**（monitor 實際 wire **17**；核心 **12**） |
 
 改到 skills/ 或上述任一計數時，`README.md`／`index.md`／`skills/SK-00-skill-index.md` 三處同步；版本段寫的數字須標明為「首發當時」歷史值。
@@ -155,8 +155,8 @@
 
 ### 品質護欄（S1–S8，2026-09-27）
 
-`make ci-gate` 全跑。**strict（違規即紅燈）**：結構／size／frontmatter＋YAML／L3 ≥90%＋文法／S2 schema／S5 檢索性／S7 句型／**S3 來源可追溯**／R1+R3+R4／detector 數（29）。
-**S6 時效**（`check-freshness.py`：含日期快照頁須有 `last_verified`／`l3_run_at`／`待複驗`，禁用 `updated` 冒充）2026-09-27 由 18 頁補完並升 strict。細節見 `atlas-wiki-quality` skill。
+`make ci-gate` 全跑。**strict（違規即紅燈）**：結構／size／frontmatter＋YAML／L3 ≥90%＋文法／S2 schema／S5 檢索性／S7 句型／**S3 來源可追溯**／**S6 時效**（含日期快照頁須有 `last_verified`／`l3_run_at`／`待複驗`；禁用 `updated` 冒充）／R1+R3+R4／detector 數（29）。
+**治理檔護欄**：觸碰 `AGENTS.md`／`.github/workflows/`／`_method.md`／`_method_amendment_history.md`／`SCHEMA.md`／`git-merge-protocol.md` 屬重大變更 ⇒ CI `governance-review-gate` 需 `kaecer-reviewed` 標籤、`auto-commit-pr.sh` 只開 PR 不 merge。
 
 ### 紅線（不可違反）
 
@@ -192,9 +192,9 @@ hermes prompt-size --json | jq '.skills_index'    # 確認 always-on skills_inde
 
 改 atlas 內容前讀 `~/.hermes/content-routing.md`（先分類 / 一段一檔 / LIMIT MEMORY 2200/USER 1375 / SOUL 只做人）。
 
-驗證：`wc -c AGENTS.md` ≤ **12,500 bytes**（§10 自訂上限；六條鐵律 6 的類別表把 `AGENTS.md` 單列此上限，不併入 9,000 入口檔）；`stat -f '%Sm' ~/.hermes/SOUL.md` 時間戳不變。
+驗證：`wc -c AGENTS.md` ≤ **12,500 bytes**（§10 上限；鐵律 6 類別表單列，不併入 9,000）；`stat -f '%Sm' ~/.hermes/SOUL.md` 時間戳不變。
 
-> **上限沿革**：10,500（原始）→ 2026-08-21 v0.9 例外放寬至 12,500（加 §9.5）。逐次 byte 數以 `git log -- AGENTS.md` ＋ `_self-audit.md` 為準（不在本檔留易失準的快照值）。
+> **上限沿革**：10,500 → 2026-08-21 放寬至 12,500（加 §9.5）。逐次 byte 數以 `git log -- AGENTS.md` 為準（不留易失準的快照值）。
 > 目前仍高於原 10,500：缺口在 §9.5／§9 與外部正本（`~/.hermes/skills/skills-map.md`）的重複敘述，去重後即可收回原上限。
 
 ---

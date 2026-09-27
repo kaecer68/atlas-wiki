@@ -8,7 +8,7 @@ check-skill-index-sync.py — 強制 skills 建立/修改時索引同步更新
 規則:
   R1: hermes SKILL.md 新建/修改 → ~/.hermes/skills/skills-map.md 必同步修改
   R2: skills-map.md 修改 → 對應 agents.md 必同步修改
-  R3: atlas-wiki skills/ 修改 → atlas-wiki/AGENTS.md 必同步修改
+  R3: atlas-wiki SK 頁新增/刪除 → skills/SK-00-skill-index.md 必同步（2026-09-27 收窄）
   R4: SKILL.md frontmatter 必含 status 欄位
 
 執行:
@@ -102,25 +102,30 @@ def check_skill_index_sync(repo_root: Path, dry_run: bool = False) -> list:
                 "fix": f"編輯 {HERMES_SKILLS_MAP} 加新 skill 到分層索引或更新現有"
             })
 
-    # === R3: atlas-wiki skills/ 變更 → atlas-wiki/AGENTS.md 必同步 ===
-    if (repo_root / "AGENTS.md").exists():
-        atlas_changes = get_git_changes(repo_root, ["skills/", "AGENTS.md"])
-        atlas_skills_changed = (
-            [f for f in atlas_changes["A"] if f.startswith("skills/")] +
-            [f for f in atlas_changes["M"] if f.startswith("skills/")]
-        )
-        agents_md_changed = bool(
-            [f for f in atlas_changes["A"] if f == "AGENTS.md"] +
-            [f for f in atlas_changes["M"] if f == "AGENTS.md"]
-        )
+    # === R3（2026-09-27 收窄）: atlas-wiki SK 頁「新增/刪除」→ SK 索引頁必同步 ===
+    # 舊版（至 2026-09-27）：任何 skills/ 變更都要求 AGENTS.md 同步 ⇒ 把 routine PR
+    #   強制變成 git-merge-protocol §6.4.2 的「重大變更」（須人工 review），而
+    #   auto-commit-pr.sh 又會自動 merge ⇒ 規則互撞（見 PR #133 前的 incident）。
+    # 新版：索引紀律的對象是「SK 頁清單」⇒ 只在 SK 頁新增/刪除時要求索引頁同步；
+    #   工具（skills/_scripts/**）、schema、_method 等變更不再觸發本規則。
+    SK_INDEX = "skills/SK-00-skill-index.md"
+    atlas_changes = get_git_changes(repo_root, ["skills/"])
+    sk_page_added_or_deleted = [
+        f for f in (atlas_changes["A"] + atlas_changes["D"])
+        if re.match(r"^skills/SK-(?!00)\d", f)
+    ]
+    sk_index_changed = bool(
+        [f for f in atlas_changes["A"] if f == SK_INDEX] +
+        [f for f in atlas_changes["M"] if f == SK_INDEX]
+    )
 
-        if atlas_skills_changed and not agents_md_changed:
-            violations.append({
-                "rule": "R3: atlas-wiki/skills/ 變更 → atlas-wiki/AGENTS.md 必同步",
-                "details": f"{len(atlas_skills_changed)} skills/ 變更但 AGENTS.md 未動",
-                "files": atlas_skills_changed[:5],
-                "fix": f"編輯 {repo_root}/AGENTS.md §9.5 Skills 索引紀律 + §3 任務路由速查"
-            })
+    if sk_page_added_or_deleted and not sk_index_changed:
+        violations.append({
+            "rule": f"R3: SK 頁新增/刪除 → {SK_INDEX} 必同步",
+            "details": f"{len(sk_page_added_or_deleted)} 個 SK 頁新增/刪除但索引頁未動",
+            "files": sk_page_added_or_deleted[:5],
+            "fix": f"在 {SK_INDEX} 登錄/移除該 SK 頁（並同步 README.md／index.md 的計數 SSOT）"
+        })
 
     # === R4: SKILL.md frontmatter 必含 status 欄位 ===
     if HERMES_SKILLS_DIR.exists():

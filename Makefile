@@ -10,7 +10,7 @@ PY    := python3
 help:                   ## 列出所有 target
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN{FS=":.*?## "}{printf "  %-22s %s\n", $$1, $$2}'
 
-ci-gate:                ## 快速門禁(對位 GitHub CI 9 job=8 驗證+notify(2026-09-27 實測) + skills 索引同步 R1+R3+R4)
+ci-gate:                ## 快速門禁(對位 GitHub CI 10 job=9 驗證+notify(2026-09-27 實測) + skills 索引同步 R1+R3+R4)
 ci-gate: check-timestamp check-audit check-size check-skill-structure check-frontmatter check-actionlint check-skill-index-sync check-retrieval check-wiki-pages check-detector-count check-claim-rules check-source-tiers check-freshness
 	@echo ""
 	@echo "✅ local ci-gate passed（結構／size／frontmatter／YAML／L3 覆蓋率＋文法／S2 非 SK schema／S5 檢索性／S7 禁用句型／R1+R3+R4）"

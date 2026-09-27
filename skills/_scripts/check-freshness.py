@@ -5,7 +5,7 @@
   - 「這一頁的數字是哪一天驗的」是**可機械驗證**的事 ⇒ 沒宣告就是**違規**（硬）。
   - 「宣告的日期之後數字還是不是真的」不是機械可驗的事 ⇒ 超過 90 天只**警告**（warn），
     交由第六條鐵律的週期稽核處理。
-  - 禁止把 `updated:`（改過字）當成驗證日；SK 頁例外允許用 `l3_run_at`（L3 實跑即驗證行為）。
+  - 禁止把 `updated:`（改過字）當成驗證日；**有 L3 實跑記錄者**可用 `l3_run_at` 代替（L3 實跑＝驗證行為；實作對所有頁型一視同仁，非僅 SK 頁）。
 
 規則：
   1. 頁面若含「日期＋量化」的快照行（`20YY-MM-DD` 與 %／億／兆／pp／倍／萬元 同行），
@@ -48,7 +48,8 @@ def main():
         rel = os.path.relpath(f, a.repo_root)
         lv = re.search(r"^last_verified:\s*(\d{4}-\d{2}-\d{2})", fm, re.MULTILINE)
         l3 = re.search(r"^l3_run_at:\s*(\d{4}-\d{2}-\d{2})", fm, re.MULTILINE)
-        pending = "待複驗" in fm
+        # 2026-09-27 收緊：`待複驗` 必須出現在 `last_verified`／`freshness` 欄位值（原本是 frontmatter 全文 substring，寫在 description 也會放行）
+        pending = bool(re.search(r"^(?:last_verified|freshness):\s*[\"']?待複驗", fm, re.MULTILINE))
         if not (lv or l3 or pending):
             undeclared.append(rel); continue
         eff = lv or l3
