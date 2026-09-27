@@ -14,6 +14,8 @@ l3_run_by: prime-agent（PR feat/20260927-sk39-short-cost）
 l3_endpoints_probed:
   - "/api/parameters → 200 (11:30:42Z)｜/api/parameters/audit-log → 200 (11:31:04Z)"
   - /api/dashboard/tax-snapshot → 200 (11:30:42Z)｜/api/backtest/signals → 200 (11:30:42Z)｜/api/dashboard/risk → 200 (11:30:42Z)
+methodology_aligned: true
+atlas_constitution_ref: ATLAS_METHODOLOGY.md §五(策略矩陣:交易成本需對位 regime 切換,高波動期成本更高)(附註:2026-07-30 period_system 變動 — `period` 已是 PeriodDetector 真值,`source` 欄位正名 `regime_source` / `period_source`)
 ---
 
 ## 一句話定位
@@ -67,6 +69,3 @@ Step 3: 呼叫 `report_get_tax_snapshot` 看實盤 realized gains 與 backtest �
 ## 未消化 / 待補
 - [ ] 當沖／ETF 稅制的**較低稅率**（當沖賣出 0.15%、股票型 ETF 賣方 0.1%）在 atlas 端**沒有欄位**：1669 key 只有單一 `tax.transaction_tax_rate`=0.003，tax snapshot 亦只帶 0.003 ⇒ 策略含當沖或 ETF 時，**client 端必須自行覆蓋稅率**（2026-09-27 實跑，見 §驗證方式）。
 - [ ] `parameters_get_audit_log` 回 `{"changes":null}`（2026-09-27 實跑）⇒ `tax.transaction_tax_rate` 的設定／變更史**無法查證**，只能用當日快照值（第五條鐵律：附時點）。
-
-methodology_aligned: true
-atlas_constitution_ref: ATLAS_METHODOLOGY.md §五(策略矩陣:交易成本需對位 regime 切換,高波動期成本更高)(附註:2026-07-30 period_system 變動 — `period` 已是 PeriodDetector 真值,`source` 欄位正名 `regime_source` / `period_source`)

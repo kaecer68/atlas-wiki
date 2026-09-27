@@ -18,6 +18,8 @@ l3_endpoints_probed:
   - "/api/dashboard/correlation-matrix → 200（20 個策略／類股標的,非特徵層）（2026-09-27T20:12:13+08:00）"
   - "/api/experiment/history → 200（空）;diff 缺 id／不存在 id → 400／404（2026-09-27T20:12:13+08:00）"
   - 源碼代理（無 HTTP 端點）＝ internal/eval/importance.go ＋ internal/experiment/importance.go ＋ judge 掛載;`go test ./internal/eval/` → 22 PASS／0 FAIL（含 TestPermutationImportance）（2026-09-27T20:12:14+08:00）
+methodology_aligned: true
+atlas_constitution_ref: ATLAS_METHODOLOGY.md §五(策略矩陣:Permutation Importance 排列重要性需對位 regime 內 vs 跨 regime 差異)(附註:2026-07-30 period_system 變動 — `period` 已是 PeriodDetector 真值,`source` 欄位正名 `regime_source` / `period_source`)
 ---
 
 ## 一句話定位
@@ -80,6 +82,3 @@ Step 3: 看 top-10 因子,**人工檢查是否有「冷門訊號」在前 5 名*
 > **2026-09-27 已解並移出本段（2 項）**:①「atlas 沒有『特徵排名』端點,需提案」→ **評估完成**:原生實作已存在（`internal/eval/importance.go`）並已掛進 judge;提案縮小為「暴露既有實作」。②「共線性能否用相關矩陣篩冗餘」→ **端點不可行**:`risk_get_correlation_matrix` 是策略／類股層（今日 20 個標的）。另註:atlas 原生 judge 用 `nRepeats=5`,與本頁建議 30-50 有落差（2026-09-27 實證）。
 
 > **2026-09-27 校正**:原「與 SHAP / LIME 的差異…atlas 端缺」已實測結案(atlas 0 命中),移出本段;結論併入 §atlas 對位。
-
-methodology_aligned: true
-atlas_constitution_ref: ATLAS_METHODOLOGY.md §五(策略矩陣:Permutation Importance 排列重要性需對位 regime 內 vs 跨 regime 差異)(附註:2026-07-30 period_system 變動 — `period` 已是 PeriodDetector 真值,`source` 欄位正名 `regime_source` / `period_source`)

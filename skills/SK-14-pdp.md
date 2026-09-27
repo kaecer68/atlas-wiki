@@ -18,6 +18,8 @@ l3_endpoints_probed:
   - "/api/dashboard/risk → 200（session_count 210;無 sharpe／R² 欄位）（2026-09-27T20:12:12+08:00）"
   - "/api/regime/history?days=7 → 200（5 sessions;regime 全 RISK_ON;period consolidation／turnaround_up／turnaround_down）（2026-09-27T20:12:13+08:00）"
   - 源碼代理（無 HTTP 端點）＝ internal/eval/pdp.go 的 PartialDependence;`go test ./internal/eval/` → 22 PASS／0 FAIL（含 TestPartialDependence）（2026-09-27T20:12:14+08:00）
+methodology_aligned: true
+atlas_constitution_ref: ATLAS_METHODOLOGY.md §五(策略矩陣:PDP 部分依賴圖需對位跨 regime 因子效應)(附註:2026-07-30 period_system 變動 — `period` 已是 PeriodDetector 真值,`source` 欄位正名 `regime_source` / `period_source`)
 ---
 
 ## 一句話定位
@@ -72,6 +74,3 @@ Step 3: 對比 SK-13 permutation importance 排名,確認 PDP top-3 與 permutat
 - [ ] PDP 計算成本高(每網格點都跑一次模型),金融樣本大時需採樣。
 
 > **2026-09-27 補充**:本段三項今日皆**未解**。今日新增的是**已驗證負面**（ICE 0 實作）與**實作面更正**（原生 PDP 存在,缺端點與繪圖）,兩者已寫進 §atlas 對位 與 §驗證方式,不再重複列為待補。
-
-methodology_aligned: true
-atlas_constitution_ref: ATLAS_METHODOLOGY.md §五(策略矩陣:PDP 部分依賴圖需對位跨 regime 因子效應)(附註:2026-07-30 period_system 變動 — `period` 已是 PeriodDetector 真值,`source` 欄位正名 `regime_source` / `period_source`)

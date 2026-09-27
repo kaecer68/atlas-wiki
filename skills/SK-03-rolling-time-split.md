@@ -21,7 +21,8 @@ l3_endpoints_probed:
   - "/api/parameters → 200（1669 keys;step_year/valid_length/first_train/test_end 皆 0 命中）（2026-09-27T19:27:54+08:00）"
   - "/api/backtest/snapshots → 200（20 筆日快照 2026-08-25~09-23,17 筆 sharpe_short 非 0）（2026-09-27T19:30:53+08:00）"
   - "源碼級代理（無 HTTP 端點）: atlas/internal/backtest/rolling_split.go + atlas/cmd/backtest-pipeline（2026-09-27T19:30:33+08:00）"
-
+methodology_aligned: true
+atlas_constitution_ref: ATLAS_METHODOLOGY.md §五(策略矩陣:時序切分需對位 7 時期切換,不同時期最佳滾動窗口不同)(附註:2026-07-30 period_system 變動 — `period` 已是 PeriodDetector 真值,`source` 欄位正名 `regime_source` / `period_source`)
 ---
 
 ## 一句話定位
@@ -82,6 +83,3 @@ Step 3: 呼叫 `risk_get_metrics` 比對該 session 樣本外指標(drawdown、S
 ## 未消化 / 待補
 - [ ] `universe_get_session_detail` 對 valid 段是否有獨立的 metrics(不是 test 段的子集)?若無,「valid 沒過就停下」的 SOP 在 atlas 沒有對位工具。
 - [ ] SK-03 預設 `first_train_end=2007-12-31` 對台股是否太舊?散戶資料深度通常不到 2007,需評估是否下修到 2015（2026-09-27 實測:atlas `rolling_split.go` 預設同為 2007-12-31,故此問同樣適用 atlas）。
-
-methodology_aligned: true
-atlas_constitution_ref: ATLAS_METHODOLOGY.md §五(策略矩陣:時序切分需對位 7 時期切換,不同時期最佳滾動窗口不同)(附註:2026-07-30 period_system 變動 — `period` 已是 PeriodDetector 真值,`source` 欄位正名 `regime_source` / `period_source`)

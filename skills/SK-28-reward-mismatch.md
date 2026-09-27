@@ -20,6 +20,8 @@ l3_endpoints_probed:
   - "/api/experiment/diff → 400 experiment_id required (2026-09-27T20:27:16+08:00)"
   - "/api/experiment/diff?experiment_id=nonexistent → 404 (2026-09-27T20:27:16+08:00)"
   - "/api/scheduler/status → 200（110 jobs） (2026-09-27T20:26:25+08:00)"
+methodology_aligned: true
+atlas_constitution_ref: ATLAS_METHODOLOGY.md §五(策略矩陣:Reward Mismatch 獎勵錯位需對位 regime 切換下的策略失效)(附註:2026-07-30 period_system 變動 — `period` 已是 PeriodDetector 真值,`source` 欄位正名 `regime_source` / `period_source`)
 ---
 
 ## 一句話定位
@@ -77,6 +79,3 @@ Step 3: 算 Spearman(reward_history, rolling_sharpe),預期 continuous_rank 最�
 - [ ] rolling Sharpe 視窗(60 日)是論文預設,需驗證台股月度資料下的最佳視窗。
 - [ ] Spearman 0.5 閾值是經驗值,可能偏嚴或偏鬆。
 - [ ] 與 SK-22 消去法的關係:SK-22 驗「因子重要性」,SK-28 驗「reward 重要性」,可共用 experiment_diff 框架。
-
-methodology_aligned: true
-atlas_constitution_ref: ATLAS_METHODOLOGY.md §五(策略矩陣:Reward Mismatch 獎勵錯位需對位 regime 切換下的策略失效)(附註:2026-07-30 period_system 變動 — `period` 已是 PeriodDetector 真值,`source` 欄位正名 `regime_source` / `period_source`)

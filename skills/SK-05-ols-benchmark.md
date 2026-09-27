@@ -18,7 +18,8 @@ l3_endpoints_probed:
   - "/api/field-contract → 200（2262 欄；r2/r_squared 0 命中）（2026-09-27T19:27:52+08:00）"
   - "/api/parameters → 200（`experiment.oos_window_days`=30、`experiment.walk_forward_embargo_days`=5）（2026-09-27T19:27:54+08:00）"
   - "CLI 代理（無 HTTP 端點）: go run ./cmd/backtest-pipeline -synthetic -model ols → R²_OOS +0.9993（實為 in-sample,非 OOS）（2026-09-27T19:30:33+08:00）"
-
+methodology_aligned: true
+atlas_constitution_ref: ATLAS_METHODOLOGY.md §五(策略矩陣:OLS 基準需對位 7 時期,R² 在不同 regime 表現可能差異大)(附註:2026-07-30 period_system 變動 — `period` 已是 PeriodDetector 真值,`source` 欄位正名 `regime_source` / `period_source`)
 ---
 
 > 口徑註：R²_oos ∈ [-0.05, 0.10] 為未實證之猜測範圍（2026-08-22:backend :18080 未通,無法以 backtest_signals 實跑;合成線性資料 OLS R²=1.0 不代表真實台股）。**2026-09-27 複驗:backend 通了、4 端點全 200,但沒有任何端點回 R²_oos（`field-contract` 2262 欄中 r2/r_squared 0 命中）→ 範圍維持猜測標註,只能由 client 端回測確認。** [2026-08-22 驗證;2026-09-27 複驗]
@@ -70,6 +71,3 @@ Step 3: 對比 `risk_get_metrics` 給的 R²,確認 OLS R²_oos 範圍在 -0.05 
 - [ ] `spec='three_factors'` 的 Fama-French 在台股的等效因子需驗證(SMB/HML/MOM 是否真有效)。（2026-09-27 實測:`/api/field-contract` 2262 欄中 `smb`/`hml` **0 命中**,只有 `momentum`/`momentum_20d`/`mom_pct` 與 `market`/`market_value` → atlas 端目前只能對位三因子中的 MOM 與 size 代理,無 HML/SMB 欄位）
 - [ ] OLS 與 SK-22 消去法的關係:跑完 OLS 看哪些係數顯著,再用 SK-22 驗證刪掉後是否真掉分。
 - [ ] OLS 不處理共線性,SK-09 PLS 與 SK-08 PCR 是降維替代方案。
-
-methodology_aligned: true
-atlas_constitution_ref: ATLAS_METHODOLOGY.md §五(策略矩陣:OLS 基準需對位 7 時期,R² 在不同 regime 表現可能差異大)(附註:2026-07-30 period_system 變動 — `period` 已是 PeriodDetector 真值,`source` 欄位正名 `regime_source` / `period_source`)

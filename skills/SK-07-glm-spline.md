@@ -16,6 +16,8 @@ l3_endpoints_probed:
   - "/api/backtest/signals → 200（active_signals null;無 OOS y）（2026-09-27T20:02:26+08:00）"
   - "/api/dashboard/risk → 200（session_count 210;無 R² 欄位）（2026-09-27T20:02:26+08:00）"
   - "CLI 代理（無 HTTP 端點）: atlas repo `-synthetic -model glm` → R²_OOS +0.9992（PASS;實為 in-sample,非 OOS）（2026-09-27T20:02:28+08:00）"
+methodology_aligned: true
+atlas_constitution_ref: ATLAS_METHODOLOGY.md §五(策略矩陣:GLM Spline 需對位非線性關係跨 regime 表現)(附註:2026-07-30 period_system 變動 — `period` 已是 PeriodDetector 真值,`source` 欄位正名 `regime_source` / `period_source`)
 ---
 
 ## 一句話定位
@@ -65,6 +67,3 @@ Step 3: 對比 OLS / ElasticNet 的 OOS R²,確認 SK-07 優於線性模型(預�
 - [ ] Group Lasso 在 sklearn 沒有原生,需自寫或用 `celer` 套件。（2026-09-27 實測:atlas repo 亦無 Group Lasso,`git grep -i grouplasso` 0 命中 → 兩端都缺,此項無 atlas 對位可借）
 - [ ] 樣條節點位置 [0.25, 0.5, 0.75] 是論文的預設,台股分位可能不同(如 PE 分位高度右偏)。（2026-09-27 實測:atlas 原生 `GLMSpline` 的 `computeKnots` 直接從資料取等距分位數(degree 3 → 2 個內節點),不需硬編 → 「固定節點是否合台股」這個問題在 atlas 原生路徑不存在;但要驗證的是「分位數節點 vs 論文節點」何者在台股更穩,仍需真實資料）
 - [ ] 與 SK-14 PDP 的關係:SK-07 學完後用 SK-14 視覺化「PE vs 預期報酬」曲線,確認 U 型假設。
-
-methodology_aligned: true
-atlas_constitution_ref: ATLAS_METHODOLOGY.md §五(策略矩陣:GLM Spline 需對位非線性關係跨 regime 表現)(附註:2026-07-30 period_system 變動 — `period` 已是 PeriodDetector 真值,`source` 欄位正名 `regime_source` / `period_source`)

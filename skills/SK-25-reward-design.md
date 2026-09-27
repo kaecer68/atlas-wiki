@@ -19,6 +19,8 @@ l3_endpoints_probed:
   - "/api/dashboard/risk → 200（無 Sharpe 欄位） (2026-09-27T20:26:19+08:00)"
   - "/api/dashboard/agent-observatory → 200（5 scorecards） (2026-09-27T20:26:24+08:00)"
   - "/api/scheduler/status → 200（110 jobs,0 個 reward/policy） (2026-09-27T20:26:25+08:00)"
+methodology_aligned: true
+atlas_constitution_ref: ATLAS_METHODOLOGY.md §五(策略矩陣:Reward 函數設計需對位 regime × 策略三分類對位)(附註:2026-07-30 period_system 變動 — `period` 已是 PeriodDetector 真值,`source` 欄位正名 `regime_source` / `period_source`)
 ---
 
 ## 一句話定位
@@ -77,6 +79,3 @@ Step 3: 4 個 Sharpe 對比,預期 continuous_rank 最優(論文結論);若 top1
 已解（2026-09-27）:「RL 沒有 R² 概念」**不成立**——atlas 原生失配偵測 `CheckSLRLAlignment`（`internal/eval/mismatch.go`）就是用 `prediction_r2`（`OOSR2`）＋ `rank_correlation`＋`trading_sharpe` 三件套判級,RL 路徑在 atlas 語意裡有 R²（作為預測品質代理）。
 - [ ] 4 種 reward 的 hyperparameter(penalty=-0.1 等)需 tune,非開箱即用。
 - [ ] regime-aware reward 是進階題,需 SK-22 消去法思路結合 SK-28 錯配診斷。
-
-methodology_aligned: true
-atlas_constitution_ref: ATLAS_METHODOLOGY.md §五(策略矩陣:Reward 函數設計需對位 regime × 策略三分類對位)(附註:2026-07-30 period_system 變動 — `period` 已是 PeriodDetector 真值,`source` 欄位正名 `regime_source` / `period_source`)

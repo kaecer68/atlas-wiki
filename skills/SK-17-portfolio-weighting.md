@@ -19,6 +19,8 @@ l3_endpoints_probed:
   - /api/backtest/signals → 200 (2026-09-27T20:13:25+08:00)
   - /api/field-contract → 200 (2026-09-27T20:13:26+08:00)
   - /api/parameters → 200 (2026-09-27T20:13:26+08:00)
+methodology_aligned: true
+atlas_constitution_ref: ATLAS_METHODOLOGY.md §五(策略矩陣:加權方式需對位 7 時期 × 策略三分類,等權 vs 價值加權跨 regime 表現)(附註:2026-07-30 period_system 變動 — `period` 已是 PeriodDetector 真值,`source` 欄位正名 `regime_source` / `period_source`)
 ---
 
 ## 一句話定位
@@ -86,6 +88,3 @@ Step 3: 呼叫 `risk_get_metrics` 對比回測的 Sharpe / max_drawdown,不預�
 
 > **2026-09-27 batch#4 結案（移出本段）**:①「1 張 = 1000 股約束是否處理」→ **NO**（源碼有 lot 常數但 0 生產呼叫者;live `min_trade_size=1` 股且標 unused）,見 §驗證方式 第 2 點;②「與 SK-20 規模分組的關係」→ 同日兩頁皆實跑,value-weighted 與 SK-20 市值分組**共用同一 blocker**（atlas 無市值欄位）⇒ 現階段都不成立,非「待一起驗證」。
 > **2026-09-27 結案（移出本段,結論併入 §atlas 對位）**:①「`stock_get_fundamentals` 是否含 `market_cap`」→ **NO**;②「`min_var`/`max_div`/`risk_parity` 變體」→ 實測三者皆無可驗證實作（risk_parity 僅策略層）。皆屬已驗證的否定,非待辦。
-
-methodology_aligned: true
-atlas_constitution_ref: ATLAS_METHODOLOGY.md §五(策略矩陣:加權方式需對位 7 時期 × 策略三分類,等權 vs 價值加權跨 regime 表現)(附註:2026-07-30 period_system 變動 — `period` 已是 PeriodDetector 真值,`source` 欄位正名 `regime_source` / `period_source`)

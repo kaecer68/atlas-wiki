@@ -17,6 +17,8 @@ l3_endpoints_probed:
   - "/api/dashboard/agent-observatory → 200（5 scorecards） (2026-09-27T20:26:24+08:00)"
   - "/api/scheduler/status → 200（110 jobs） (2026-09-27T20:26:25+08:00)"
   - "/api/rl/status → 404 route not found (2026-09-27T20:26:25+08:00)"
+methodology_aligned: true
+atlas_constitution_ref: ATLAS_METHODOLOGY.md §五(策略矩陣:Policy Network 策略網絡需對位 7 時期切換)(附註:2026-07-30 period_system 變動 — `period` 已是 PeriodDetector 真值,`source` 欄位正名 `regime_source` / `period_source`)
 ---
 
 ## 一句話定位
@@ -70,6 +72,3 @@ Step 3: 對比 SK-11 MLP-based PPO 的 Sharpe,若 LSTM 沒顯著優於 MLP,代�
 - [ ] Transformer 在金融樣本下的最優 num_heads、hidden_size 需 tune。
 - [ ] 與 SK-27 量子網路對比:論文已警告量子實務效能更差,SK-26 不引入量子。
 - [ ] LSTM hidden_size=128 是論文預設,可能太大,實務 32-64 較穩。
-
-methodology_aligned: true
-atlas_constitution_ref: ATLAS_METHODOLOGY.md §五(策略矩陣:Policy Network 策略網絡需對位 7 時期切換)(附註:2026-07-30 period_system 變動 — `period` 已是 PeriodDetector 真值,`source` 欄位正名 `regime_source` / `period_source`)

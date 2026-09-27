@@ -21,6 +21,8 @@ l3_endpoints_probed:
   - "/api/strategies/layers → 200（L1:1/L2:2/L3:2/L4:4/L5:3）（2026-09-27T20:02:48+08:00）"
   - "CLI（非 HTTP）: `-synthetic -model pls` → R²_OOS +0.9993（PASS;實為 in-sample,非 OOS）（2026-09-27T20:02:28+08:00）"
   - "CLI 真實資料（負面）: `-model pls -data data/replay/merged.csv -symbol 0050.TW` → EXIT 1（stop_year=2020 / empty training data）（2026-09-27T20:05:30+08:00）"
+methodology_aligned: true
+atlas_constitution_ref: ATLAS_METHODOLOGY.md §五(策略矩陣:PLS 偏最小二乘需對位 7 時期 × 策略三分類)(附註:2026-07-30 period_system 變動 — `period` 已是 PeriodDetector 真值,`source` 欄位正名 `regime_source` / `period_source`)
 ---
 
 ## 一句話定位
@@ -86,6 +88,3 @@ Step 3: client 端跑 `PLSRegression(n_components=2)`,對比 `LinearRegression` 
 - [ ] 跟 SK-08 PCR 差異:PCR 不看 y → PLS 更適合預測任務。（2026-09-27 更正:「atlas 端兩者都缺」只對 MCP／HTTP 面成立,repo 內 `-model pcr` / `-model pls` 都可跑 → 兩者可直接對比）
 
 已解（2026-09-27）:IS/OOS 區分、L1–L5 重疊 → 見 L3 表第 4–7 列。
-
-methodology_aligned: true
-atlas_constitution_ref: ATLAS_METHODOLOGY.md §五(策略矩陣:PLS 偏最小二乘需對位 7 時期 × 策略三分類)(附註:2026-07-30 period_system 變動 — `period` 已是 PeriodDetector 真值,`source` 欄位正名 `regime_source` / `period_source`)

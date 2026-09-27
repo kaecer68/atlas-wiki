@@ -18,6 +18,8 @@ l3_endpoints_probed:
   - "/api/dashboard/risk → 200（session_count 210;無 sharpe／R² 欄位）（2026-09-27T20:12:12+08:00）"
   - "/api/stock/fundamentals?symbol=2330 與 /api/stock/technical?symbol=2330&days=10 → 皆 200（fundamentals 4 欄;rsi14／sma20／sma50 皆 0）（2026-09-27T20:12:12+08:00）"
   - 源碼代理（無 HTTP 端點）＝ internal/eval/interaction.go 的 FriedmanH 與 partialDependence2D;`go test ./internal/eval/` → 22 PASS／0 FAIL（含 6 支 FriedmanH 測試）（2026-09-27T20:12:14+08:00）
+methodology_aligned: true
+atlas_constitution_ref: ATLAS_METHODOLOGY.md §五(策略矩陣:特徵交互需對位 regime 切換下的交互效應變化)(附註:2026-07-30 period_system 變動 — `period` 已是 PeriodDetector 真值,`source` 欄位正名 `regime_source` / `period_source`)
 ---
 
 ## 一句話定位
@@ -70,6 +72,3 @@ Step 3: 把「最暖格子對應的股票池」實際丟進 backtest_signals 跑
 - [ ] 與 SK-02 特徵擴充的對應:SK-02 自動生成所有交互特徵,SK-15 是事後診斷「哪個交互值得保留」。
 
 > **2026-09-27 已解並移出本段（1 項）**:「三特徵交互(3D)…實務上用 SHAP interaction values 替代」→ **atlas 無 SHAP**（`git grep` 0 命中,2026-09-27 於 SK-13 已驗證）,原生只有 pairwise `FriedmanH` ⇒ 3D 交互在 atlas 對位下**沒有替代路徑**,該項結案。
-
-methodology_aligned: true
-atlas_constitution_ref: ATLAS_METHODOLOGY.md §五(策略矩陣:特徵交互需對位 regime 切換下的交互效應變化)(附註:2026-07-30 period_system 變動 — `period` 已是 PeriodDetector 真值,`source` 欄位正名 `regime_source` / `period_source`)
