@@ -82,6 +82,7 @@ push / PR 到 `main` 觸發 `validate-wiki`（2026-09-27 實測 9 個 job:8 個�
 | `check-wiki-pages.py` | 非 SK 類 schema S2 |
 | `check-detector-count-sync.py` | detector 數對齊(wiki ↔ atlas-go) |
 | `check-claim-rules.py` | 禁用句型 S7(3 條規則) |
+| `check-source-tiers.py` | 外部事實來源 S3(warn) |
 | `check-skill-index-sync.py` | 強制 skills 建立/修改時索引同步更新 |
 | `new-skill-page.py` | SK 頁骨架產生器(反補丁 M6) |
 | `structure-health-metrics.py` | 結構健康度量測(M7;含 L3 覆蓋率＋watch list) |

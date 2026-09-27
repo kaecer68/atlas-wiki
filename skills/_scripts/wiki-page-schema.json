@@ -76,6 +76,7 @@
     "size ≤ size_limit_bytes（對位 _method.md 鐵律 6 分類制）",
     "created/updated 必須是 YYYY-MM-DD 且 updated ≥ created",
     "contested: true ⇒ contradictions 必須非空（避免標了 contested 卻沒寫爭議點）",
-    "每個知識頁必須有 description（載入條件，S5）"
+    "每個知識頁必須有 description（載入條件，S5）",
+    "外部事實可追溯性（S3）：內文引用外部權威機構（IMF/BIS/UNCTAD/金管會/證交所/TWSE/TPEx/央行/CBOE/OECD/FSC…）＋量化主張時，frontmatter `sources:` 必須含可追溯來源（URL／法規名／報告名），或明寫『實務慣例』／『待查（YYYY-MM-DD）』。檢查器：`check-source-tiers.py`（2026-09-27 起，warn → 待 25 頁補完後 --strict）"
   ]
 }

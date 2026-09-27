@@ -65,6 +65,8 @@ jobs:
         run: python3 skills/_scripts/check-wiki-pages.py
       - name: 禁用句型（S7；synthetic→in-sample／零值須說明／401 須提 key）
         run: python3 skills/_scripts/check-claim-rules.py
+      - name: 外部事實來源可追溯性（S3；warn）
+        run: python3 skills/_scripts/check-source-tiers.py
   size-check:
     name: SK 頁大小檢查(≤ 9000 bytes)
     runs-on: ubuntu-latest
