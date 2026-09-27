@@ -135,3 +135,15 @@ archive_owner: agent(autonomous, see _inbox_archive.md)
 **Telegram**:`[NORMAL REPORT]` — 對位 Telegram gate Rule 3:本日非 NOOP(無 LLM 失敗 / 無 4xx-5xx / 無 context overflow / 無 MCP unreachable),為「主任務完成,0/3 段無結構性缺口」正常收斂報告 → 與 8/22-9/2 NOOP 鏈不同型,**不 SILENT**
 
 **改動**:本文 append 1 段 + governance-log.md append §CIO-350 1 段(無其他 atlas-wiki/ 治理檔被動);`_inbox.md` 本次 20,922B > 12,000B 上限,延續 _inbox_archive.md 歸檔路徑,本段僅 append 不觸發歸檔(沿用 9/2 模式)
+
+---
+
+## 2026-09-27 prime-agent 查核結算（幽靈 SSOT 落地／T9 Task 3／CI 假綠）
+
+**1. 幽靈 SSOT 已落地**：`summaries/atlas-http-path-drift.md`（2026-09-27 建；本檔 `:54`／`SK-34:113` 長期指向但從未存在）。當日實測：**`/api/system/health` 已 404**（8/29 日誌記 200）⇒ 無時間戳的「正確路徑」不可信；判 route 必帶 key（不帶回 401）。`SK-29` 另有死引用 `docs/archive/2026-07-20-…-drift.md`（未修）。
+
+**2. T9 Task 3 = 從未執行**：37 頁僅 SK-34 有 `l3_*`（2026-08-12）；`git log --since=2026-08-21 -- skills/SK-` 空；cron `atlas-skill-inbound` job 已移除。詳見 `_t9-repair-tasks-20260821.md`。
+
+**3. 🚨 CI 假綠**：`audit-file-index-sync.py:19` 的 `ROOT` 硬編 `~/workspace/atlas-wiki` ⇒ runner 上 glob 全空、恆印 `✅ 0/0`；本機實跑真相 = **rc=1、64 檔未索引**。
+
+**Telegram**：`[SILENT]`（人工查核）

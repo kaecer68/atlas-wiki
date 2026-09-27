@@ -42,6 +42,12 @@
 
 > 2026-08-22 知識路由：queries/ 8 檔 + comparisons/ 1 檔已遷移至 atlas-notes/02-knowledge/，此兩區從 wiki 移除（純知識回原料庫）。歷史條目見 git log 與 log.md。
 
+## Summaries
+<!-- 階段總結／操作性參考（2026-09-27 補列:本區原本未被 index.md 引用） -->
+
+- [[summaries/_division_of_labor_skills_vs_agent]] — skills vs agent 系統文件分工（2026-08-07 D4）。檔案:`summaries/_division_of_labor_skills_vs_agent.md`
+- [[summaries/atlas-http-path-drift]] — atlas HTTP path drift 集中記錄（2026-09-27 建立,含當日實測 404/200）。檔案:`summaries/atlas-http-path-drift.md`
+
 ## Skills
 <!-- SK 知識頁索引:SK-00 索引 + SK-01~SK-36(37 檔,SK-27/30 已 archive;2026-08-22 audit-fix 快照) -->
 
