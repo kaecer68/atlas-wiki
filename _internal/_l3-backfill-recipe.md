@@ -51,11 +51,16 @@
 | — (detector 歸屬判斷) | `/api/detector/registry/list`（2026-09-27 實測 **29** themes,非文件寫的 24） |
 | — (**唯一權重出口**) | `/api/dashboard/risk-exposure`（`concentration[].weight = market_value/portfolio_value`，**現金入分母**；`cash_ratio` 可對帳。實測 3 檔 0.1618/0.1613/0.1540，合計 0.4771 = 1 − cash_ratio 0.5228） |
 | — (IS/OOS＋顯著性) | `/api/dashboard/agent-observatory` 同時給 `is_sharpe/oos_sharpe/is_oos_ratio/overfit_warning` **＋ `t_stat/statistically_significant/regime_breakdown`**（SK-18 靠它翻案） |
-| — (產業桶) | `/api/industry/sectors`（2026-09-27 實測 **38** 產業，其中 20 有代表股；舊文件「18/24」皆 stale） |
+| — (產業桶) | `/api/industry/sectors`（2026-09-27 雙證 **38 = 20 L1 + 18 L2**，20 個 L1 有代表股；舊文件「18/24」皆 stale） |
+| — (**產業層訊號品質**) | `/api/stock/industry_winrate?condition_id=momentum-20d-positive`（20 個 L1：obs/symbols/hits/win_rate/Wilson 上下界/net forward return，全 `calibration_status=eligible`；另附 `coverage`：total_observations 28829、mapped 14.11%、symbol_coverage 11.24%） |
+| — (**端點在但今日未生效**的新陷阱類) | `/api/dashboard/sector-allocation-plan` 200 但 `target/current/delta` 全 null、`fallback_reason: no_simulation_session` |
+| — (rolling Sharpe 代理) | `/api/dashboard/agent-observatory` 每筆 scorecard 另有 **`rolling_sharpe_trend`**（非只 IS/OOS/t_stat） |
 | — (排程有無) | `/api/scheduler/status`（110 jobs；可回答「有沒有某排程」的否定題） |
 | — (**實驗端點死掉時的替代證據**) | `/api/strategy-ranker/rank`、`/api/regime/history`、`/api/synergy/darwinian/status`（2026-09-27 全 200，SK-22 首次用） |
 
-**原生測試槓桿（batch #3 補,最便宜的一招）**:`cd ~/workspace/atlas && go test ./internal/eval/ -count=1 -v` ⇒ **22 PASS / 0 FAIL（~0.1 s）**。`internal/eval` 是 SK-12~15 的原生實作正本（`metrics.go`:OOSR2/SharpeRatio/CumulativeReturn/MaxDrawdown；`importance.go`:PermutationImportance；`pdp.go`:PartialDependence；`interaction.go`:FriedmanH + 2D joint PD），且 `internal/experiment/judge.go` 把它們接進 `eval_metrics`/`importance_result`。**實作層答案用跑的比讀源碼強**。
+**訓練層問答錨點（batch #5,batch #3 補）**：PRISM（`prism_training` enabled、last_run 2026-09-27T09:29Z）是 **regime 分群樣本佇列（非 RL）**；`ml_retrain` 明寫「D2 決策暫停：無消費端」且 disabled ⇒ 被問「atlas 有沒有訓練層／RL」可一句話定案。**產業指數時序資料層存在**（`internal/apigateway/adapter_twse_sector_index.go` + `cmd/backfill-sector-index -source twse|finmind` → `data/state/sector_index/` 106 檔、每檔 20 個 L1 key；排程 `macro_cache_twse_sector_index` 900 s）但**無對外端點** ⇒ 產業類頁面最便宜的實跑槓桿。
+
+**原生測試槓桿（batch #3 補,最便宜的一招）**:`cd ~/workspace/atlas && go test ./internal/eval/ -count=1 -v` ⇒ **22 PASS / 0 FAIL（~0.1 s；含子測共 72 個）**。除 SK-12~15 外**也承載 SK-28**（`internal/eval/mismatch.go` 的 `CheckSLRLAlignment`,含 7 個 mismatch 測試）。`internal/eval` 是 SK-12~15 的原生實作正本（`metrics.go`:OOSR2/SharpeRatio/CumulativeReturn/MaxDrawdown；`importance.go`:PermutationImportance；`pdp.go`:PartialDependence；`interaction.go`:FriedmanH + 2D joint PD），且 `internal/experiment/judge.go` 把它們接進 `eval_metrics`/`importance_result`。**實作層答案用跑的比讀源碼強**。
 
 **CLI 模型白名單（2026-09-27 實測,batch #2 補）**:`cmd/backtest-pipeline` 的 `-model` 只接受 `ols/pcr/pls/elasticnet/glm/rf`（`newModel()` 白名單,`xgboost` 會報錯）。**每個都能當模型層 L3 代理**,不只 `ols`。
 > ⚠️ **CLI 印出的 `R²_OOS` 一律視為 in-sample**（`runSynthetic` 對同一份 X `Fit`→`Predict`,RNG 未設 seed ⇒ 不可重現）:本檔 §9/§9b 表的 `R²_OOS` 數字皆屬此類,只能當「模型可跑」的存在性檢查。詳見 §10。
@@ -64,7 +69,8 @@
 
 1. **`universe_get_session_detail` 的 canary 值 `/api/dashboard/sessions/latest` 回 404**（`{"error":"session not found","session_id":"latest"}`;SK-37 與本批同日各驗一次）。真實路徑是 `/api/dashboard/sessions/{session_id}`,id 從 `/api/dashboard/sessions` 取（如 `session-20260927-daily` → 200）。
 2. **canary 沒有 ≠ 端點不存在**。`/api/backtest/snapshots` 不在 `canaryRoutes`、也沒有 MCP tool（`grep` `cmd/atlas-mcp` 0 命中）,但 **HTTP 200 可用**。反向亦然:有些工具沒有 HTTP 端點（見第 3 節）。
-3. **本地快取端點會回 0 不代表壞掉**。`/api/stock/technical?symbol=2330&days=10` 今日 200 但 `rsi14/sma20/sma50` 皆 0;`/api/dashboard/risk` 今日 200 但 `sharpe_short/long`、`var_95` 皆 0。**記錄觀測值,不要推論成「壞」**。
+3. **本地快取／未生效端點會回 0 或 null 不代表壞掉**。`/api/stock/technical?symbol=2330&days=10` 今日 200 但 `rsi14/sma20/sma50` 皆 0;`/api/dashboard/risk` 今日 200 但無 Sharpe 欄位、`var_95=0`（且 `insufficient_data=1`）。**記錄觀測值,不要推論成「壞」**。
+4. **端點活著但今日不生效（batch #5 新增類）**：`/api/dashboard/sector-allocation-plan` 200 但 `target/current/delta` 全 null、`fallback_reason: no_simulation_session`。判「有沒有這功能」時,要區分 **route 404**（`{"code":"404","error":"route not found","path":…}`,例 `/api/rl/status`、`/api/agent/status`）與 **資源 404**（`{"error":"experiment result not found"}`,例 `/api/experiment/diff`）—— 前者答「功能面不存在」,後者只答「這筆資料不在」。
 
 **沒有 HTTP 端點時**（近例:`audit_state`、`mcp_roots_read_file` 為 local-only）:在 frontmatter 明寫「源碼級代理（無 HTTP 端點）」,改用最近的**可驗證代理**並註明其性質:
 - CLI 實跑:`cd ~/workspace/atlas && go run ./cmd/backtest-pipeline -synthetic -model ols`（本批 SK-05 用,exit 0、`R²_OOS +0.9993`）。
@@ -186,8 +192,21 @@ make structure-metrics                          # 前後對照 L3 覆蓋率與 w
 
 覆蓋率:21/38 → **26/38（68.4%）**,watch list 17 → 12 頁。
 
+## 9e. 本批（batch #5,2026-09-27,PR #102）實跑成果
+
+| 頁 | 今日結果 | 主要更正 |
+|---|---|---|
+| SK-23 sector-environment | 9 端點全 200；產業數**雙證 38 = 20 L1 + 18 L2**；`industry_winrate` 首次實跑（20 個 L1 ＋ Wilson） | 「macro 可確認 `current_period=consolidation`」**不成立**（43 條序列無 period/regime 欄位）；「fundamentals 可算市值加權」不成立；**產業指數時序資料層已存在但無端點**（106 檔） |
+| SK-24 ppo-rl | 5×200／2×404（`/api/rl/status`、`/api/agent/status` 皆 route not found）；110 jobs 0 個 rl/ppo/reward/policy；源碼 `\bppo\b|\blstm\b|\btransformer\b` 0 命中 | 「atlas 無 RL 訓練面」**三路成立**；更正舊記 `sharpe 0.27/0.49`（今日全 0/null）；新增 PRISM（regime 分群樣本層，非 RL）＋`ml_retrain` disabled |
+| SK-25 reward-design | 5×200／1×400／1×404 | 「4 reward 需 4 experiment 做 A/B」今日**不可行**（history 空）；但「atlas 完全沒有 reward 邏輯」**過強**（原生 `CheckSLRLAlignment` 即 reward/績效錯配評分） |
+| SK-26 policy-network | 4×200／1×404＋CLI `-model nn` exit 1 | 「無原生 LSTM/Transformer、無 PyTorch」**成立**（0 命中）；2026-08-02 的 `R²_oos 0.1747/0.2419` 今日**不可重現**（腳本不在 repo）⇒ 降級為 client 快照 |
+| SK-28 reward-mismatch | `go test ./internal/eval/` 22 PASS（含 7 mismatch 測試）；`agent-observatory` 每筆有 `rolling_sharpe_trend` | 「atlas 不暴露 rolling Sharpe + Spearman」**只對一半**：`internal/eval/mismatch.go` 的 `CheckSLRLAlignment` 原生存在但 **0 生產呼叫者**（只有函式沒有端點）；atlas 門檻 0.2/0.1 **比論文 0.5 寬鬆**，不可當同一把尺 |
+
+覆蓋率:26/38 → **31/38（81.6%）**,watch list 12 → 7（SK-00 索引頁不計；剩 SK-29/31/32/33/35/36）。
+
 ## 10. 已知未解（下一批可接手）
 
+- **時期真值不可由 `/api/macro/snapshot/latest` 反推（batch #5）**：該端點回 **43 條序列**，**無 `current_period`／`period`／`regime`** 欄位（推翻 SK-23 舊註）。要時期／regime 請走 `/api/regime/history` 或 `agent-observatory` 的 `regime_breakdown`。
 - **「源碼有 ≠ 路徑生效」新例（batch #4）**:`internal/tax/tax_aware_sizing.go` 有 `TaiwanLotSize=1000`，但 `NewTaxAwareSizer` **0 個生產呼叫者**（`optimizer.min_trade_size=1` 標 unused）⇒ 台股 1 張=1000 股在模擬路徑**未生效**；`detectMarketCapGaps` 是回空 slice 的 stub。
 - **資料品質觀察（勿據此推論）**:`financials-desk-01` 的 `oos_sharpe = -2.4e15`（哨兵值/溢位）；`/api/stock/technical` 的 rsi/sma 今日皆 0（快取未算）。
 - **第 5 條鐵律小坑**:`cvar_95=0` 這類快照數字，**時戳必須在同一行**，否則 `validate-timestamp-rule.py` 會判違規（batch #4 踩過一次）。
