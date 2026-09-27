@@ -17,7 +17,7 @@ l3_endpoints_probed:
   - "/api/backtest/signals → 200（active_signals null ⇒ 無 OOS y 可取）（2026-09-27T20:12:12+08:00）"
   - "/api/dashboard/risk → 200（session_count 210;無 NN／R² 欄位）（2026-09-27T20:12:12+08:00）"
   - "源碼代理（無 HTTP 端點）＝ atlas `git grep -i` neural／MLP／hidden_layer／backprop／relu → 0 命中;`ls internal/ml/` ＝ ols／pcr／pls／elasticnet／randomforest／spline／trainer（2026-09-27T20:12:14+08:00）"
-  - CLI 代理 ＝ `go run ./cmd/backtest-pipeline -synthetic -model nn` → exit 1 被拒;-model ols R²_OOS +0.9992、-model rf +0.9909（2026-09-27T20:12:13+08:00）
+  - CLI 代理 ＝ `go run ./cmd/backtest-pipeline -synthetic -model nn` → exit 1 被拒;-model ols R²_OOS +0.9992、-model rf +0.9909（**實為 in-sample**）（2026-09-27T20:12:13+08:00）
 ---
 
 ## 一句話定位
@@ -62,7 +62,7 @@ Step 3: 對比 SK-10 RF 與 SK-05 OLS 的 OOS R²(預期 NN ≈ OLS < RF,若 NN 
 | 5 | 源碼代理（無 HTTP 端點）:NN 識別字 `git grep -i` | **0 命中** | neural／MLP／hidden_layer／backprop／relu 皆無 → 原生 NN **已驗證負面** | 2026-09-27T20:12:14+08:00 |
 | 6 | 源碼代理:`ls internal/ml/` | — | ols／pcr／pls／elasticnet／randomforest／spline ＋ `trainer.go` → **原生 ML 層存在** | 2026-09-27T20:12:14+08:00 |
 | 7 | CLI 代理:`-synthetic -model nn` | **exit 1** | `unknown model "nn"; choose: ols, pcr, pls, elasticnet, glm, rf` | 2026-09-27T20:12:13+08:00 |
-| 8 | CLI 代理:同指令 `-model ols` / `-model rf` | exit 0 | R²_OOS **+0.9992** / **+0.9909**（模型層檢查,非市場結論） | 2026-09-27T20:12:13+08:00 |
+| 8 | CLI 代理:同指令 `-model ols` / `-model rf` | exit 0 | R²_OOS **+0.9992** / **+0.9909**（**實為 in-sample**,模型層檢查,非市場結論） | 2026-09-27T20:12:13+08:00 |
 
 - **更正（2026-09-27）**:第 5／6／7 列合起來推翻原句「atlas 完全沒 ML 訓練層」。正確講法:atlas 有**原生非 NN 的 ML 層**,但**沒有 NN**。
 - **不可當市場結論（合成路徑的兩個坑）**:`-synthetic` 用 500×2 合成線性資料,其 `R²_OOS` 實為**對同一批 `X` 的擬合分數**（原始碼是 `model.Fit(X, y)` 後 `Predict(X)`）,且 `math/rand` **未固定種子** ⇒ 同日重跑 rf 得 +0.9909／+0.9919／+0.9920／+0.9928。此欄只能證明「模型路徑可跑」,末位數字不可跨日比較。

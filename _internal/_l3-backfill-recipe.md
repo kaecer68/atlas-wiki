@@ -58,6 +58,7 @@
 **原生測試槓桿（batch #3 補,最便宜的一招）**:`cd ~/workspace/atlas && go test ./internal/eval/ -count=1 -v` ⇒ **22 PASS / 0 FAIL（~0.1 s）**。`internal/eval` 是 SK-12~15 的原生實作正本（`metrics.go`:OOSR2/SharpeRatio/CumulativeReturn/MaxDrawdown；`importance.go`:PermutationImportance；`pdp.go`:PartialDependence；`interaction.go`:FriedmanH + 2D joint PD），且 `internal/experiment/judge.go` 把它們接進 `eval_metrics`/`importance_result`。**實作層答案用跑的比讀源碼強**。
 
 **CLI 模型白名單（2026-09-27 實測,batch #2 補）**:`cmd/backtest-pipeline` 的 `-model` 只接受 `ols/pcr/pls/elasticnet/glm/rf`（`newModel()` 白名單,`xgboost` 會報錯）。**每個都能當模型層 L3 代理**,不只 `ols`。
+> ⚠️ **CLI 印出的 `R²_OOS` 一律視為 in-sample**（`runSynthetic` 對同一份 X `Fit`→`Predict`,RNG 未設 seed ⇒ 不可重現）:本檔 §9/§9b 表的 `R²_OOS` 數字皆屬此類,只能當「模型可跑」的存在性檢查。詳見 §10。
 
 ### 三個必知陷阱
 
@@ -135,6 +136,8 @@ make structure-metrics                          # 前後對照 L3 覆蓋率與 w
 - **紅線**:探測 repo 時只在 repo 內用 `git grep` 或 `grep -rn --include='*.md' . | head`;`~/.hermes` 有 50 GB,遞迴 grep 會拖垮 session（2026-09-27 已發生 3 次）。
 
 ## 9. 本批（batch #1,2026-09-27）實跑成果
+
+> ⚠️ **本節與 §9b/§9c/§9d 所有 CLI `R²_OOS` 值皆為 in-sample**（非 OOS;見 §10 更正）。
 
 | 頁 | 端點 | 今日結果 | 主要更正 |
 |---|---|---|---|
