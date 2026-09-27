@@ -105,10 +105,12 @@ done
 
 # === Step 6.5: 治理檔／規模閘門（2026-09-27 kaecer 拍板；對位 git-merge-protocol §6.4.2）===
 # 觸碰治理檔、或規模超標（>5 檔 / >300 行）⇒ 只開 PR，**不自動 merge**，等 kaecer review。
-GOV_RE='^(AGENTS\.md|SCHEMA\.md|skills/_method\.md|docs/git-merge-protocol\.md|\.github/workflows/)'
+GOV_RE='^(AGENTS\.md|SCHEMA\.md|skills/_method\.md|skills/_method_amendment_history\.md|docs/git-merge-protocol\.md|\.github/workflows/)'
 # BASE 以「遠端」為準：本地 main 可能落後 origin/main，用本地名會把別人的 commit 算進本 PR
 # （2026-09-27 實測：本地落後 3 個 commit 時，真實 2 檔的 routine PR 被判成 24 檔 + 治理檔）
-git fetch -q origin "$BASE" 2>/dev/null || true
+if ! git fetch -q origin "$BASE" 2>/dev/null; then
+    echo "⚠️  無法 fetch origin/$BASE（離線或遠端不可用）⇒ 以本地既有的 origin/$BASE 判斷；若它已過期，規模判定可能失真。"
+fi
 BASE_REF="origin/$BASE"
 if ! git rev-parse --verify -q "$BASE_REF" >/dev/null 2>&1; then BASE_REF="$BASE"; fi
 # base 解析不到就 fail-closed（否則 diff 為空 ⇒ 會被誤判成 routine 而自動 merge）
@@ -126,6 +128,10 @@ N_FILES="$(printf '%s\n' "$CHANGED_FILES" | grep -c . || true)"
 N_LINES="$(git diff --numstat -M "$BASE_REF...HEAD" 2>/dev/null | awk '{a+=$1; d+=$2} END {print a+d+0}')"
 if ! printf '%s' "${N_FILES:-}" | grep -qE '^[0-9]+$' || ! printf '%s' "${N_LINES:-}" | grep -qE '^[0-9]+$'; then
     echo "❌ 無法判定變更規模（BASE_REF=${BASE_REF}，N_FILES='${N_FILES:-}' N_LINES='${N_LINES:-}'）— 停止，不 merge。"
+    exit 1
+fi
+if [ "${N_FILES:-0}" -eq 0 ]; then
+    echo "❌ diff 為空（BASE_REF=${BASE_REF}）— base 可能選錯或分支無變更；停止，不 merge。"
     exit 1
 fi
 GOV_HITS="$(printf '%s\n' "$CHANGED_FILES" | grep -E "$GOV_RE" || true)"

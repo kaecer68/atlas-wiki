@@ -132,7 +132,7 @@ PR 建立後 **不可停留**在「compare & pull request」未完成狀態。�
 
 ### 5.3 Branch protection
 
-- `required_status_checks`:目前設為 null(因 GitHub 對 workflow job name 與 status check context name 解析限制——見 §7)
+- `required_status_checks`:**9 條**(2026-09-27 實測;含 `governance-review-gate`)；`enforce_admins=true`
 - `enforce_admins: true` — admin 也要守 linear history
 - `required_linear_history: true` — 禁止 merge commit 製造非線性歷史
 - `allow_force_pushes: false` — 禁止 force push
@@ -181,7 +181,7 @@ gh pr merge <N> --squash --delete-branch --admin
 符合以下**全部**條件的變更 = routine, hermes 可用 `scripts/dev/auto-commit-pr.sh` 一鍵 merge:
 
 1. **變更範圍**限: `skills/SK-*.md`（SK 頁新增/修正）或 `concepts/` 或 `templates/` 或 `skills/_scripts/` 工具修正（**2026-09-27 修正路徑 typo**：舊記 `scripts/_scripts/` 不存在）
-2. **CI 全綠**: 本地 `make ci-gate` + GitHub `validate-wiki` 9 job success
+2. **CI 全綠**: 本地 `make ci-gate` + GitHub `validate-wiki` 10 job success
 3. **變更量**: < 300 lines（比 §6.3 的 200 放寬, 因 SK 頁 quota 產出）
 4. **不觸碰**: 憲法 / `_method.md` / `AGENTS.md` / `git-merge-protocol.md` / `.github/workflows/` / `SCHEMA.md`（這些是治理檔, 見 6.4.2）
 5. **SK 頁品質**: 對位 `_method.md` 六條鐵律；size **依類別**（SK 9,000B／concepts+entities 30,000B／docs 12,000B／append-only 無硬上限）

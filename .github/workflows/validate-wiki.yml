@@ -24,15 +24,22 @@ jobs:
         env:
           LABELS: ${{ join(github.event.pull_request.labels.*.name, ',') }}
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          MERGED: ${{ github.event.pull_request.merged }}
         run: |
           set -euo pipefail
+          # 已合併的 PR（例如合併後移除標籤觸發）⇒ 早退，避免無意義的紅燈與通知
+          if [ "${MERGED:-}" = "true" ]; then
+            echo "ℹ️  PR 已合併 ⇒ 本閘門不再適用，通過"
+            exit 0
+          fi
           # 非 PR 事件（push 到 main）⇒ 本閘門不適用；仍回報成功狀態，避免 required check 卡住
           if [ -z "${BASE_SHA:-}" ]; then
             echo "ℹ️  非 PR 事件 ⇒ 治理檔 review 閘門不適用，通過"
             exit 0
           fi
-          GOV_RE='^(AGENTS\.md|SCHEMA\.md|skills/_method\.md|docs/git-merge-protocol\.md|\.github/workflows/)'
-          CHANGED="$(git diff --name-only "$BASE_SHA" HEAD)"
+          GOV_RE='^(AGENTS\.md|SCHEMA\.md|skills/_method\.md|skills/_method_amendment_history\.md|docs/git-merge-protocol\.md|\.github/workflows/)'
+          # --name-status -M：rename 同時給舊路徑與新路徑（--name-only 只給新路徑 ⇒ 改名可繞過）
+          CHANGED="$(git diff --name-status -M "$BASE_SHA" HEAD | awk -F'\t' 'NF>1 {for (i=2; i<=NF; i++) print $i}')"
           GOV="$(printf '%s\n' "$CHANGED" | grep -E "$GOV_RE" || true)"
           if [ -z "$GOV" ]; then
             echo "✅ 未觸碰治理檔 ⇒ 免標籤"
