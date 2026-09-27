@@ -309,7 +309,7 @@ jobs:
 
   notify-telegram:
     name: 失敗 Telegram 通知
-    needs: [validate-timestamp-rule, audit-atlas-endpoints, size-check, frontmatter-check, audit-file-index-sync, trigger-template-existence, trigger-endpoint-validation, skill-structure-check]
+    needs: [governance-review-gate, validate-timestamp-rule, audit-atlas-endpoints, size-check, frontmatter-check, audit-file-index-sync, trigger-template-existence, trigger-endpoint-validation, skill-structure-check]
     if: failure()
     runs-on: ubuntu-latest
     steps:

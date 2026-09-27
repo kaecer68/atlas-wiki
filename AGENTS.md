@@ -136,7 +136,7 @@
 | 計數 | SSOT 指令 | 2026-09-27 實測 |
 |------|-----------|----------------|
 | SK 頁 | `ls skills/SK-*.md \| wc -l` | **40**（39 編號 + SK-00） |
-| repo `.md` | `git ls-files '*.md' \| wc -l` | **138**（另有 3 檔未追蹤） |
+| repo `.md` | `git ls-files '*.md' \| wc -l` | **139**（未追蹤 0 檔） |
 | trigger 模板 | `ls templates/trigger-*.md \| wc -l` | **21**（monitor 實際 wire **17**；核心 **12**） |
 
 改到 skills/ 或上述任一計數時，`README.md`／`index.md`／`skills/SK-00-skill-index.md` 三處同步；版本段寫的數字須標明為「首發當時」歷史值。
