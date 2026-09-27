@@ -13,7 +13,19 @@ mcp_tools_used:
   - risk_get_metrics
   - risk_get_drawdown
   - risk_get_calibration
-verification: 2026-08-02 v0.9 結算跑過 L3 升 active:**risk_get_drawdown 2026-08-02 06:40:13Z 真實數據 max_drawdown=0.9235/var_95=-0.0046**(kaecer 2026-08-02 修 RunDailyStressTests 沒接 drawdownReporter 的 bug 後,重跑 5 步驗證的第 1 步通過);universe_get_sessions **150 sessions** 確認時間軸;risk_get_metrics live session_count=**150**;risk_get_calibration verdict=calibrated;**修復時間軸**:3 次重試(8/01 23:44 / 8/02 00:24 / 8/02 02:57)均 not_available → kaecer 親修 dashboard 報接線 → 8/02 06:40 真實數據;**對位 docs/archive/2026-07-20-stress-api-ledger-drift.md A03 同型 bug**,本次修復關閉。
+verification: "歷史快照(2026-08-02 升 active)：drawdown max_drawdown=0.9235/var_95=-0.0046、sessions 150、session_count 150、verdict=calibrated(修復時間軸對位 docs/archive/2026-07-20-stress-api-ledger-drift.md A03 同型 bug)。**2026-09-27 L3**：sessions 90(只有 regime)、session_count 210、max_drawdown_pct 0.7220/insufficient_data 1、drawdown 0.9229/var_95 -0.0048158、verdict=stable、backtest_signals 全 0/null；三欄交叉只在 /api/regime/history。單位與閘門以源碼定案：drawdown=0–1 分數、insufficient_data=MinObservationsForVaR 252 樣本閘門、risk_get_metrics 無 Sharpe、window_size=252 不在回測路徑。見 §驗證方式。"
+l3_run_at: 2026-09-27
+l3_run_by: prime-agent（PR feat/20260927-l3-backfill-b6）
+l3_endpoints_probed:
+  - "/api/dashboard/sessions → 200（90 筆,只有 regime 欄） (2026-09-27T20:33:10+08:00)"
+  - "/api/dashboard/sessions/session-20260926-daily → 200 (2026-09-27T20:34:31+08:00)"
+  - "/api/dashboard/risk → 200（session_count 210,無 Sharpe 欄位） (2026-09-27T20:33:10+08:00)"
+  - "/api/dashboard/drawdown → 200（max_drawdown 0.9229） (2026-09-27T20:33:10+08:00)"
+  - "/api/dashboard/risk-calibration → 200（verdict stable） (2026-09-27T20:33:10+08:00)"
+  - "/api/backtest/signals → 200（active_signals null） (2026-09-27T20:33:10+08:00)"
+  - "/api/regime/history?days=7 → 200（period/period_name_zh 唯一出口） (2026-09-27T20:34:31+08:00)"
+  - "源碼 internal/backtest/rolling_split.go（stopYear=2020,窗粒度=年） (2026-09-27T20:35+08:00)"
+  - "源碼 internal/risk/var_calculator.go（MinObservationsForVaR=252） (2026-09-27T20:35+08:00)"
 methodology_aligned: true
 atlas_constitution_ref: ATLAS_METHODOLOGY.md §五(策略矩陣:回測績效強烈依賴當期,高原期 OK 不代表轉折下壓期 OK)(附註:2026-07-30 period_system 變動 — `period` 已是 PeriodDetector 真值,`source` 欄位正名 `regime_source` / `period_source`)
 related:
@@ -21,7 +33,6 @@ related:
 ---
 
 <!-- methodology_alignment_tip: 本檔術語:七時期為真值;session 落在七不同時期結論可能差很多,需交叉看 period/regime 兩欄 -->
-<!-- methodology_alignment_tip: 2026-07-30 period_system 變動 — `period` 已是 PeriodDetector 真值;`source` 欄位正名 `regime_source` / `period_source` -->
 
 ## 一句話定位
 
@@ -29,87 +40,61 @@ related:
 
 ## 論文版概念（忠實還原 Fin-Skills）
 
-SK-29 定義用 sliding window（預設 252 天 = 1 年）對歷史數據做滾動回測,每月再平衡,逐步納入新數據,模擬真實時間序列決策。
-
-**關鍵設計**:
-- window_size: 252（一天為單位,1 年）
-- rebalance_freq: 'M'（月度）
-- 策略介接:任何帶 `.predict()` 或 `.act()` 的策略物件
-- 輸出:權重、報酬、績效指標的時間序列
-
-**為什麼重要**:
-- 任何超額報酬聲稱都需先過滾動回測
-- 靜態 train/test split 容易過擬合 → window rolling 模擬真實「資料陸續進來」的情境
-- Newey-West 校正自動校正序列相關性,給 t 統計量
+sliding window(預設 252 天)、月度再平衡、逐步納入新數據,模擬「資料陸續進來」的時序決策;介接任何有 `.predict()`／`.act()` 的策略物件,輸出權重-報酬-指標時序。為何重要:超額報酬聲稱需先過滾動回測、靜態 split 易過擬合、Newey-West 校正序列相關並給 t 統計量。
 
 ## atlas 對位
 
-| 論文概念 | atlas-mcp 對位 | tool_name |
+| 論文概念 | atlas 對位 | tool_name |
 |---------|---------------|-----------|
-| 滾動 session | 模擬 session 時間序列 | `universe_get_sessions` |
-| 風險指標 | VaR / Drawdown / Sharpe | `risk_get_metrics`(**2026-08-01 23:15 結算 snapshot**:已實跑,session_count=147、insufficient_data=1) |
-| 最大回撤 | drawdown_pct 細節 | `risk_get_drawdown` |
-| 校正驗證 | 預測 vs 實測 VaR 對齊 | `risk_get_calibration` |
-| 信號回測 | 多空訊號源 | `backtest_signals` |
+| 滾動 session | 每日模擬 session 序列(今日 90 筆滾動窗,**只有 `regime`**) | `universe_get_sessions` |
+| 風險指標 | VaR / Drawdown(**無 Sharpe**) | `risk_get_metrics`、`risk_get_drawdown` |
+| 最大回撤 | `max_drawdown` / `max_drawdown_pct`(0–1 分數) | `risk_get_drawdown`、`risk_get_metrics` |
+| 校正驗證 | 預測 vs 實測對齊門檻(sanity floor) | `risk_get_calibration` |
+| 信號回測 | 多空訊號源(今日 null) | `backtest_signals` |
+| 時期／regime 交叉 | 三欄交叉的**唯一出口** | `/api/regime/history` |
 
-**差異點**:
-- 論文版自定義 window_size → atlas session 用固定 252 + session_count 控制
-- 論文版 Newey-West 顯式 → atlas 透過 calibration tool 隱含
-- 論文版 train/validate/test 三段 → atlas session 通常無此 split
+**差異點**:論文版 window 以「日」計(252)→ atlas 滾動窗以**年**計(`-valid-years` 2／`-step-years` 1,且 `stopYear := 2020` 硬編);Newey-West 顯式 → atlas 走 calibration sanity floor;train/valid/test 三段 → atlas session 無此 split。
 
 ## 散戶解讀（GROW+ 引用點）
 
-**對應 §Q4 一句話**（consult-index §4）:
-> 「單筆最大能虧多少（回撤）比賺多少更重要。先求不破產,再求賺錢。」
-
-**教練框架的 O（Options）段會用到**:
-- 「如果這策略最大回撤過去是 30%,你能接受帳面 -30% 嗎?」
-- 「回測漂亮但 max_drawdown > 30% 的策略,實務上散戶通常撐不到最後——這條 mission 的『找漏洞』就是要在這裡抓人」
-
-**散戶最常踩的坑**:
-- 看「年化 30%」就信,沒看 max_drawdown 是 40%
-- 看 Sharpe 2.0 就嗨,但那是 sample period 偏誤——backtest_signals 回的 sharpe 0.27/0.49 才是相對真實的
-- 忽略 insufficient_data 標記——atlas 已經在守門,看到這標記要停下來想
-
-## 驗證方式
-
-**L1 格式**:frontmatter 9 欄齊全 ✅ / 6 段俱全 ✅ / 路徑正確 ✅
-**L2 對位**:上述 5 個 atlas-mcp tool 對位已標 ✅
-**L3 端點**（ground truth,2026-07-29 部分實跑）:
-- ✅ `risk_get_metrics` 實跑確認,**2026-08-01 23:15 結算 snapshot**:session_count=147(當下)、max_drawdown_pct=1、insufficient_data=1
-- ⏳ `universe_get_sessions` / `risk_get_drawdown` / `risk_get_calibration` 待實跑
-
-**升 active 的條件**:
-1. universe_get_sessions 實跑拿到最近一個月 session 內部結構
-2. risk_get_drawdown 確認 max_drawdown_pct 字段含括號內範圍（如「1%」是 1 還是 0.01 需查）
-3. risk_get_calibration 確認預測 vs 實測對齊的門檻值
-4. 三項齊備後 draft → active
-- 風險引擎已跑通（2026-08-03 v6.2）：`risk_get_drawdown` 回真實 `max_drawdown=0.9235`。
+**對應 §Q4 一句話**:「單筆最大能虧多少(回撤)比賺多少更重要。先求不破產,再求賺錢。」O 段用回撤當門檻(「過去最大回撤 30%,帳面 -30% 撐得住嗎?」)。**常見坑**:看年化 30% 不看 max_drawdown;把 sample-period 偏誤當 Sharpe 2.0;忽略 `insufficient_data`(今日 209 筆 < 252 閘門 ⇒ VaR=0 是「資料不足」不是「零風險」)。
 
 ## 期間依賴性警告
 
-引:ATLAS_METHODOLOGY.md §三七時期定義 + §五策略矩陣。
-**同一個 `risk_get_metrics` 數值,在七不同時期下意義完全不同:**
+引:ATLAS_METHODOLOGY.md §三 + §五。同一回撤數字在七時期意義不同:高原／盤整「1% 可能正常」(盤整下無風險=無機會)、上升期可能**低估**、轉折下壓／低迷可能正常或低估(斷頭爆量未反映)、黑天鵝若仍報 1% 即**過低**。
 
-| 七時期 | 對 SK-29 滾動回測數值解讀 |
-|--------|-------------------------|
-| **高原（Plateau）** | max_drawdown=1% **可能正常**(波動溫和) |
-| **上升（Bull）** | max_drawdown=1% **可能低估**(市場自有上漲掩蓋風險) |
-| **轉折下壓（Turnaround Down）** | max_drawdown=1% **可能正常**(回撤是預期內) |
-| **盤整（Consolidation）** | max_drawdown=1% **可能問題**(無風險 = 無機會) |
-| **黑天鵝（Black Swan）** | 7/28 事件確認 TAIEX 偏離 MA20 -5.93%,session 應改判為黑天鵝;若仍報 max_drawdown=1% 即**過低估計** |
-| **低迷（Downturn）** | max_drawdown=1% **可能低估**(融資斷頭爆量未反映) |
+**對位操作**:三欄交叉(`market_period` + `period_name_zh` + `regime`)今日**不在** `universe_get_sessions`,要走 `/api/regime/history?days=7`(2026-09-27 實測)。只給 `risk_get_metrics` 數字是「死數字」。
 
-**對位操作**:查 session 時**一定要交叉看 `market_period` + `period_name_zh` + `regime` 三欄**(atlas-mcp `mcp_quickstart` 已暴露)。只給 `risk_get_metrics` 數字是「死數字」,必須搭配當期才有完整意義。
-**atlas-mcp 補強**:近 5 日 `recent_regime_5_days` 實跑顯示 7/29 = `market_period=bull` / `period_name_zh=上升（多頭）` / `regime=RISK_ON`,與 7/28 `consolidation` 不同 — 證明**七時期向下相容映射生效**。
+## 驗證方式
+
+**L1 格式** ✅ / **L2 對位** ✅(6 個 atlas 出口已標)/ **升 active 條件(4 項)**:2026-08-02 與 2026-09-27 兩批實跑結清。
+
+### L3 端點實跑（2026-09-27,本 PR）
+
+| 端點／命令 | http_code | 實測結果 | timestamp |
+|---|---|---|---|
+| `/api/dashboard/sessions` | 200 | **90** sessions(2026-06-25→2026-09-27 每日);每筆只有 `regime`,**無 `market_period`/`period_name_zh`**;regime 分佈 RISK_ON 49／RISK_OFF 40／NEUTRAL 1 | 2026-09-27T20:33:10+08:00 |
+| `/api/dashboard/sessions/session-20260926-daily` | 200 | 150 KB;`summary.portfolio_value`=3,097,172.40、`position_count`=3、`order_count`=0(可逐 session 展開) | 2026-09-27T20:34:31+08:00 |
+| `/api/dashboard/risk` | 200 | `session_count`=**210**、`max_drawdown_pct`=**0.7220**、`data_points`=209、`insufficient_data`=1、VaR/CVaR 全 0、keys 只有 `degraded/gate_mode/risk_snapshot/session_count/source/var_gate` | 2026-09-27T20:33:10+08:00 |
+| `/api/dashboard/drawdown` | 200 | `max_drawdown`=**0.9229**、`var_95`=**-0.00481588029711588**(全站唯一非零 `var_95`) | 2026-09-27T20:33:10+08:00 |
+| `/api/dashboard/risk-calibration` | 200 | `verdict`=**stable**(非 2026-08-02 的 calibrated)、`orders_evaluated`=2926、2 提案被 sanity floor 拒(`risk_max_position_size` floor 0.12／`risk_max_daily_loss_pct` floor 0.03) | 2026-09-27T20:33:10+08:00 |
+| `/api/backtest/signals` | 200 | `active_signals`=null、`sharpe_short`/`sharpe_long`/`drawdown_pct` 全 0 ⇒ 報酬序列今日取不到 | 2026-09-27T20:33:10+08:00 |
+| `/api/regime/history?days=7` | 200 | **三欄交叉唯一出口**:`regime`=RISK_ON + `period`/`market_period`=consolidation + `period_name_zh`=盤整 + `regime_source`/`period_source` | 2026-09-27T20:34:31+08:00 |
+| 源碼 `internal/backtest/rolling_split.go` + `internal/risk/var_calculator.go` | — | 前者 `stopYear := 2020` 硬編、窗粒度=年、**無 252 日窗參數**;後者 `const MinObservationsForVaR = 252`,不足時 VaR/CVaR 歸 0 只留 drawdown | 2026-09-27T20:35+08:00 |
+
+**更正（2026-09-27）**
+
+1. **`max_drawdown_pct` 單位已定案**:`risk` 0.7220 與 `drawdown` 0.9229 **皆為 0–1 分數**(不是「1 = 1%」)。數字不同是**端點不同源**(前者 `ComputeRiskSnapshot` 吃 PG session summary,後者 `CalculateMaxDrawdown` 吃 portfolio 序列)⇒ 引用必須寫端點名。
+2. **`insufficient_data` 邏輯已定案**:不是模糊標記,而是 `MinObservationsForVaR=252` 硬閘門(源碼註記「never surface a provisional VaR value」)。`data_points`=209 < 252 ⇒ VaR=CVaR=0(2026-09-27T20:33:10+08:00);**此狀態下 `var_95=0` 不可當零風險**。
+3. **`risk_get_metrics` 沒有 Sharpe**:原表把 Sharpe 掛在它身上,不成立;IS/OOS Sharpe 走 `/api/dashboard/agent-observatory`。
+4. **三欄交叉不靠 `universe_get_sessions`**:`market_period`/`period_name_zh` 今日不在 sessions payload(2026-08 的 `recent_regime_5_days` 也不在),須走 `/api/regime/history`。
+5. **`window_size=252` 不在回測路徑**:252 只作統計常數出現(最小 VaR 樣本、`/api/capital-flow/daily` 校準 `sample_count`、ff5 √252 年化)。
 
 ## 未消化 / 待補
 
-- [ ] atlas 的 `session_count` 與 Fin-Skills 的「滾動次數」是否口徑一致——atlas session 是「事件」不是「窗口」
-- [ ] **`max_drawdown_pct=1` 單位已查**:`risk_exposure` 端點用 `map[string]any` 接收,單位由 atlas-go 後端 `/api/dashboard/risk-exposure` 決定(atlas-mcp 無硬編碼);**真正單位需查後端 API 或實跑端點確認**(2026-08-03 02:55 v6.2 結構性誠實標)
-- [ ] `insufficient_data=1` 標記的內部邏輯——是不是 atlas 已內建 Fin-Skills 強調的「資料不足不報價」紀律?
 - [ ] paper 1 vs paper 2 的回測窗口差異(預測策略 vs RL 策略)對 atlas 同一個 universe_get_sessions 怎麼分流?
-- [ ] `window_size=252` 是否由 atlas 端暴露仍未確認（2026-08-03 v6.2 原項殘留之未結子題）
+
+> **2026-09-27 已解(移出本段)**:①`max_drawdown_pct` 單位=0–1 分數②`insufficient_data=1`=252 筆樣本閘門③`window_size=252` 未由 atlas 暴露(窗以年計)④`session_count` 口徑:atlas session 是**每交易日一筆事件**(今日 90 筆滾動窗),非模型重訓次數。
 
 ## 反向鏈接
 
