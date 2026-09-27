@@ -8,13 +8,13 @@ tier: T3
 confidence: high
 atlas_go_relevance: high
 mcp_tools_used: []
-verification: 本檔是純索引頁,驗證方式 = `ls ~/workspace/atlas-wiki/skills/SK-*.md | wc -l`; **2026-09-27 實測 = 39**(38 編號 + SK-00 索引;SK-27/30 已 archive)。歷史值:同日稍早 = 37(新增 SK-37/38 前);2026-08-21 = 36(原 35 + SK-36 新編號)。
+verification: 本檔是純索引頁,驗證方式 = `ls ~/workspace/atlas-wiki/skills/SK-*.md | wc -l`; **2026-09-27 實測 = 40**(39 編號 + SK-00 索引;SK-27/30 已 archive)。歷史值:同日稍早 = 39(新增 SK-39 前)、37(新增 SK-37/38 前);2026-08-21 = 36(原 35 + SK-36 新編號)。
 ---
 
 ## 一句話定位
 SK-00 在 atlas 是「所有 SK 頁的目錄 + pipeline 組裝藍圖」——給散戶一句話看完整套體系怎麼用,不需逐頁翻。
 
-## SK 全表（39 檔;2026-09-27 `ls skills/SK-*.md | wc -l` 實測）
+## SK 全表（40 檔;2026-09-27 `ls skills/SK-*.md | wc -l` 實測）
 
 > 2026-09-27 補:本節補列 17 檔原本未被本索引引用的 SK 頁（audit-file-index-sync.py 實測）。名稱取自各頁 frontmatter `title`。
 
@@ -24,6 +24,7 @@ SK-00 在 atlas 是「所有 SK 頁的目錄 + pipeline 組裝藍圖」——給
 - **SK-20~29 穩健性與強化學習**:SK-20 規模分組穩健性檢驗｜SK-21 排除仙股穩健性檢驗｜SK-22 消去法(排除特定因子集)｜SK-23 產業輪動環境建構｜SK-24 PPO 強化學習訓練框架｜SK-25 獎勵函數設計與評估｜SK-26 經典策略網路(LSTM/Transformer)｜SK-27 量子增強策略網路(已 archive)｜SK-28 獎勵-績效錯配診斷｜SK-29 滾動窗口回測模擬
 - **SK-30~36 治理・判斷・備援**:SK-30 量子模型訓練穩定性分析(已 archive)｜SK-31 2026 AI 投資週期對位台股｜SK-32 獎勵函數敏感性分析｜SK-33 三 audience 表達口徑切換｜SK-34 上市/上櫃分流判斷與備援｜SK-35 atlas-mcp 失敗時 4 級 fallback 鏈｜SK-36 監督學習 vs. 強化學習策略比較
 - **SK-37~38 流動性・歸因(2026-09-27 新增)**:SK-37 流動性分位與買賣價差篩選｜SK-38 PnL 歸因工作流(描述性歸因 vs 消去法)
+- **SK-39 放空成本模型(2026-09-27 新增)**:借券費/標借費/平盤下規則的外部制度面＋atlas 端四個已驗證的否定(無借券費參數、SBL 欄位不可達、`sharpe_short` 非可實現報酬、可行性 0 對位)
 
 ## 論文版概念（忠實還原來源）
 - **功能**:編號 + 名稱 + 功能 + 依賴關係 + 典型應用 pipeline
@@ -38,7 +39,7 @@ SK-00 在 atlas 是「所有 SK 頁的目錄 + pipeline 組裝藍圖」——給
 | 論文概念 | atlas-mcp 對位 |
 | 33 個 SK 索引 | 本檔 + `~/workspace/atlas-wiki/skills/SK-*.md`(已 33 頁) |
 | 33 個 SK 索引(2026-08-07 +SK-33 → 34) | 本檔 + `~/workspace/atlas-wiki/skills/SK-*.md`(已 34 頁;SK-33 audience-routing 是元能力頁) |
-| **39 個 SK 索引(2026-09-27 實測)** | 本檔 + `skills/SK-*.md`(39 頁,含本索引頁;SK-27/30 已 archive) |
+| **40 個 SK 索引(2026-09-27 實測)** | 本檔 + `skills/SK-*.md`(40 頁,含本索引頁;SK-27/30 已 archive) |
 | 三條 pipeline | 對位 atlas `universe_get_sessions`(SL/RL session 結構) |
 | 跨 SK 依賴 | `experiment_history`(audit trail) |
 
@@ -56,7 +57,7 @@ SK-00 在 atlas 是「所有 SK 頁的目錄 + pipeline 組裝藍圖」——給
 - 對位 ATLAS_METHODOLOGY 七時期:三條 pipeline 在不同 regime 的可靠度不同——SL pipeline 在 RISK_ON 穩定,RL pipeline 在 regime 切換時更有適應力,robustness pipeline 是任何 regime 的必要驗證。
 
 ## 驗證方式
-Step 1: `ls ~/workspace/atlas-wiki/skills/SK-*.md | wc -l` 應回 **39**(2026-09-27 實測;38 編號 + SK-00 索引,SK-27/30 已 archive)。
+Step 1: `ls ~/workspace/atlas-wiki/skills/SK-*.md | wc -l` 應回 **40**(2026-09-27 實測;39 編號 + SK-00 索引,SK-27/30 已 archive)。
 Step 2: 對 `universe_get_sessions` 抽一份 supervised session,看其 strategy_id 對應哪些 SK。
 Step 3: 對 `experiment_history` 抽一份,看其 pipeline metadata 是否含 SK pipeline 標籤。
 
@@ -76,5 +77,5 @@ Step 3: 對 `experiment_history` 抽一份,看其 pipeline metadata 是否含 SK
 - **現狀**:`SK-31-ai-investment-cycle-2026.md` 保留為 SK-31 唯一對應(AI 投資週期);原 `SK-31-sl-vs-rl.md` 重新編號為 `SK-36-sl-vs-rl.md`(2026-08-21 kaecer 拍板方案 b, kimi-for-coding 審查 8 步執行)
 - **原因**:兩個 SK-31 編號主題不同(AI 投資週期 vs SL/RL 策略比較),不互補,合併方案 a 不可行;保留雙頁方案 c 治標不治本
 - **執行**:`git mv SK-31-sl-vs-rl.md → SK-36-sl-vs-rl.md` + 修 frontmatter `renumbered_from: SK-31` + 修 5 個引用 (SK-32, _methodology_alignment_audit, _index-finskills, SK-00, T9 v2)
-- **驗證**:2026-08-21 當日 36 個 SK-* 檔案(原 35 + SK-36 新編號);**2026-09-27 實測 37**(+SK-31/SK-36 以外之後續編號,以 `ls skills/SK-*.md | wc -l` 為準);`grep -R 'SK-31' --include='*.md' skills/ | grep -v 'SK-31-ai-investment-cycle-2026.md' | grep -v '§SK-31'` 應只出現於 _index-finskills.md 與 _methodology_alignment_audit.md 的 deprecate 註記
+- **驗證**:2026-08-21 當日 36 個 SK-* 檔案(原 35 + SK-36 新編號);**2026-09-27 實測 40**(以 `ls skills/SK-*.md | wc -l` 為準);`grep -R 'SK-31' --include='*.md' skills/ | grep -v 'SK-31-ai-investment-cycle-2026.md' | grep -v '§SK-31'` 應只出現於 _index-finskills.md 與 _methodology_alignment_audit.md 的 deprecate 註記
 - [x] 規範已同步(2026-08-01 v0.9 結算):SKILL.md size 6000→9000 bytes(4 處)、quota 5→3 頁(8 處);_method.md 已對齊 9,000 bytes 與 3 頁上限
