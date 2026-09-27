@@ -42,7 +42,7 @@ atlas-wiki/
 ## 規範速查(詳見 `skills/_method.md`)
 
 - 單頁大小 **依類別**(2026-09-27 拍板,取代「所有 .md ≤ 9,000」):SK 頁/入口檔 ≤ 9,000、`concepts/**`+`entities/**` ≤ 30,000、`docs/**` ≤ 12,000、append-only(log/_self-audit/_inbox/_archive)無硬上限但需分流歸檔、`_internal/**` 無硬上限但結案即瘦身(表見 `_method.md` 六條鐵律 6)
-- frontmatter 核心欄位:title / type / source / ingested_at / status / tier / confidence / atlas_go_relevance / mcp_tools_used / verification
+- frontmatter 核心欄位:10 欄(見 `skills/_scripts/skill-page-schema.json`)
 - 六條鐵律(2026-09-27 校正:原記 5 條;正本 `_method.md` §六條鐵律):① 不搬運,翻譯 ② 不瞎寫 ③ 不裝完成 ④ 不違背憲章 ⑤ 派工備份 ⑥ size **依類別**(表見上一條)
 - 另見 `_method.md` §第五條鐵律(快照值必附 timestamp)+ §第六條鐵律(外部權威報告週期稽核)
 - 每日 quota:D1 示範 1 頁 → D2+ 每日 3 頁上限(2026-07-29 降標)
@@ -78,9 +78,10 @@ push / PR 到 `main` 觸發 `validate-wiki`（2026-09-27 實測 9 個 job:8 個�
 | `check-skill-pages.py` | 一次跑 SK 頁 size + frontmatter |
 | `check-skill-structure.py` | SK 頁結構守衛(反補丁 M2/M2′) |
 | `check-stale-worktree.py` | skills/ 未提交偵測(M5) |
-| `check-retrieval-integrity.py` | 檢索性 S5(載入條件/索引/入口可達性) |
-| `check-wiki-pages.py` | 非 SK 類 schema S2(4 類頁面) |
-| `check-detector-count-sync.py` | detector 數對齊(wiki ↔ atlas-go;取不到即失敗) |
+| `check-retrieval-integrity.py` | 檢索性 S5 |
+| `check-wiki-pages.py` | 非 SK 類 schema S2 |
+| `check-detector-count-sync.py` | detector 數對齊(wiki ↔ atlas-go) |
+| `check-claim-rules.py` | 禁用句型 S7(3 條規則) |
 | `check-skill-index-sync.py` | 強制 skills 建立/修改時索引同步更新 |
 | `new-skill-page.py` | SK 頁骨架產生器(反補丁 M6) |
 | `structure-health-metrics.py` | 結構健康度量測(M7;含 L3 覆蓋率＋watch list) |
