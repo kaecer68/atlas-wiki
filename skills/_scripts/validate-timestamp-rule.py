@@ -44,8 +44,11 @@ TIMESTAMP_SENSITIVE_PATTERNS = [
     re.compile(r"volatility[_\w]*\s*=\s*[\-\d\.]+"),
 ]
 # timestamp 關鍵字
+# 2026-09-27 修:原清單硬編月份 `2026-06|2026-07|2026-08` ⇒ **當月(2026-09)不在內**,
+# 導致「已附 ISO 時戳(例 2026-09-27T19:27:54+08:00)」的行仍被判違規(假陽性)。
+# 改為通用日期樣式 `20\d\d-\d\d`(任何 YYYY-MM),意圖不變:快照數字必須附時間。
 TIMESTAMP_KEYWORDS = re.compile(
-    r"2026-08|2026-07|2026-06|timestamp|snapshot|結算|實跑.*20"
+    r"20\d\d-\d\d|timestamp|snapshot|結算|實跑.*20"
 )
 # 例外:公式定義(line 開頭為 `sharpe_ratio = ...` 是公式不是快照)
 FORMULA_PREFIX = re.compile(r"^\s*[\-\*\u2022]\s*`[a-z_0-9]+`")
