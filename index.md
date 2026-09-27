@@ -37,7 +37,8 @@
 - [[concepts/atlas-strategy-taxonomy]] — atlas L1-L5 策略分類體系（2026-08-02 補入；層名對齊 atlas internal/strategy_techniques/enums.go canonical [2026-08-22 iter2]）。檔案:`concepts/atlas-strategy-taxonomy.md`
 - [[concepts/atlas-risk-management-framework]] — atlas 風險管理框架（2026-08-02 補入）。檔案:`concepts/atlas-risk-management-framework.md`
 
-- [[concepts/atlas-three-paradigms-v0.2-summary]] — L/T/S 三範式摘要(Stage 1C)。檔案:`concepts/atlas-three-paradigms-v0.2-summary.md`
+- [[concepts/atlas-three-paradigms-v0.2-summary]] — L/T/S 三範式摘要(Stage 1C)
+- [[concepts/tw-short-cost-sources]] — 台股放空成本的一級來源（融券手續費／融券費 ≤16% 須議定／SBL 每日競價費率；法規 vs 實務分欄）。檔案:`concepts/tw-short-cost-sources.md`。檔案:`concepts/atlas-three-paradigms-v0.2-summary.md`
 - [[concepts/atlas-mcp-failover-policy]] — atlas-mcp 失效時 fail-over 政策（來源標籤 + 網路替代源清單）。檔案:`concepts/atlas-mcp-failover-policy.md`
 - [[concepts/content-attribution-policy-2026-07-20]] — 內容歸屬守則:wiki vs notes 邊界。檔案:`concepts/content-attribution-policy-2026-07-20.md`
 - [[concepts/retail-sentiment-indicators]] — 散戶情緒指標:因果鏈第六層反向指標補課。檔案:`concepts/retail-sentiment-indicators.md`
