@@ -14,7 +14,8 @@ sources:
   - atlas-mcp:narrative_get_bundle
 confidence: low
 contested: true
-contradictions: []
+contradictions:
+  - 「本檔採七類核心機構分法」vs「atlas 規格 3+2+2 七維錢潮雷達（2026-07-17 業主接受）」——兩者切法不同；衝突時以 atlas spec 3+2+2 為準（本檔為散戶可觀測代理視角）[2026-08-22 iter2 對位]
 ---
 
 # 台灣法人錢潮追蹤：七類核心機構與散戶可觀測代理

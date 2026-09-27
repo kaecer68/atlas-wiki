@@ -58,6 +58,8 @@ jobs:
         run: python3 skills/_scripts/check-skill-pages.py --skills-dir skills --min-l3-coverage 90
       - name: 檢索性完整性 S5（載入條件／索引／入口可達性；2026-09-27 升硬門檻）
         run: python3 skills/_scripts/check-retrieval-integrity.py --strict
+      - name: 非 SK 類頁面 schema（S2；concepts／entities／summaries／templates）
+        run: python3 skills/_scripts/check-wiki-pages.py
   size-check:
     name: SK 頁大小檢查(≤ 9000 bytes)
     runs-on: ubuntu-latest

@@ -9,7 +9,7 @@
 
  ## Mission
 
-atlas-wiki = 提煉成品知識層。`atlas-notes`(原料庫)→ atlas-wiki(知識引擎)流水線的輸出端。37 SK 檔（SK-00 索引 + 36 編號頁）、六條鐵律 + 第七條例外、CI 自動驗證一條龍。
+atlas-wiki = 提煉成品知識層。`atlas-notes`(原料庫)→ atlas-wiki(知識引擎)流水線的輸出端。40 SK 檔（SK-00 索引 + 39 編號頁）、六條鐵律 + 第七條例外、CI 自動驗證一條龍。
 
 ## 目錄結構
 
@@ -18,25 +18,25 @@ atlas-wiki/
 ├── README.md              # 本檔
 ├── AGENTS.md              # 專案 context(操作必讀)
 ├── SCHEMA.md              # 知識結構 schema
-├── index.md / log.md      # 知識索引 / 演進日誌
-├── skills/                # 39 個 SK 知識檔(SK-00~SK-38;SK-27/30 已 archive)
-│   ├── _method.md         # 寫入規範(六條鐵律 + 格式)
+├── index.md / log.md      # 知識索引 / 日誌(月切)
+├── skills/                # 40 個 SK 知識檔(SK-00~SK-39)
+│   ├── _method.md         # 寫入規範(六條鐵律)
 │   ├── _consult-index.md  # 跨頁查詢索引
-│   ├── _consult-index_archive.md  # 諮詢索引歷史段歸檔(2026-08-22 audit-fix)
+│   ├── _consult-index_archive.md  # 諮詢索引歷史歸檔
 │   ├── _inbox.md          # 跨 SK 待辦
 │   ├── _index-finskills.md
 │   ├── _methodology_alignment_audit.md  # 對位憲章審計
-│   └── _scripts/          # 驗證工具 14 檔(Python;逐一用途見 §CI 表)
+│   └── _scripts/          # 驗證工具 15 檔(見 §CI 表)
 ├── templates/
 │   ├── audit-report.md    # 審計報告模板
 │   └── trigger-*.md       # 21 檔觸發模板(2026-09-27 實測,§12)
 ├── concepts/              # 台股市場概念 / 領域模型
 ├── entities/              # L1 宏觀實體研究
-├── summaries/             # 階段總結(分工藍圖)＋ HTTP path drift 記錄
+├── summaries/             # 階段總結＋ HTTP path drift
 ├── _internal/            # 內部設計/維運紀錄(索引見其 README.md)
-├── _archive/             # append-only 歷史(月切日誌 log-YYYY-MM.md)
+├── _archive/             # append-only 歷史(log-YYYY-MM.md)
 └── .github/workflows/
-    └── validate-wiki.yml  # CI(9 jobs:8 驗證 + Telegram 通知;2026-09-27 實測)
+    └── validate-wiki.yml  # CI(9 jobs:8 驗證 + 通知)
 ```
 
 ## 規範速查(詳見 `skills/_method.md`)
@@ -78,10 +78,11 @@ push / PR 到 `main` 觸發 `validate-wiki`（2026-09-27 實測 9 個 job:8 個�
 | `check-skill-pages.py` | 一次跑 SK 頁 size + frontmatter |
 | `check-skill-structure.py` | SK 頁結構守衛(反補丁 M2/M2′) |
 | `check-stale-worktree.py` | skills/ 未提交內容偵測(反補丁 M5) |
-| `check-retrieval-integrity.py` | 檢索性完整性 S5(載入條件/索引/入口可達性;warn) |
+| `check-retrieval-integrity.py` | 檢索性完整性 S5(載入條件/索引/入口可達性;strict) |
+| `check-wiki-pages.py` | 非 SK 類頁面 schema S2(concepts/entities/summaries/templates;strict) |
 | `check-skill-index-sync.py` | 強制 skills 建立/修改時索引同步更新 |
 | `new-skill-page.py` | SK 頁骨架產生器(反補丁 M6) |
-| `structure-health-metrics.py` | 結構健康度量測(M7;含指標 8 = L3 覆蓋率＋watch list,非門檻) |
+| `structure-health-metrics.py` | 結構健康度量測(M7;含 L3 覆蓋率＋watch list) |
 | `audit-file-index-sync.py` | 驗證 wiki 內落檔是否被索引引用 |
 | `atlas-mcp-trigger-monitor.py` | 觸發模板自動信號捕捉(每 5 分鐘) |
 | `handle-atlas-failures.py` | atlas-mcp 端點失敗降級處理 |
