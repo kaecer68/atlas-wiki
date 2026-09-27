@@ -98,4 +98,4 @@ Step 4: 確認 wiki _consult-index.md §3 atlas-mcp 端點字典 cross-ref 到�
 - [[concepts/atlas-mcp-tools-reference]] §5 三層訂閱制 + tier 對 audience 路由
 - [[concepts/taiwan-stock-market-structure]] §2.2 / §2.3 TPEx / 興櫃市場定義
 - [[skills/_manifest_coverage_routing]] §3.1 CR-2 + §2 題 2 兩段制來源標籤規範
-- [[skills/_scripts/handle-atlas-failures.py]] — 升級時加 #7「Source Unreachable → Web fallback」分支(走 task-governance)
+- `skills/_scripts/handle-atlas-failures.py`（程式路徑，非 wikilink 目標）— 升級時加 #7「Source Unreachable → Web fallback」分支(走 task-governance)
