@@ -50,8 +50,9 @@ decay_until: 2027Q1-WIR-revision
 | `AI_capex_surge` detector(24 detectors 之一) | conf 0.95 | ✅ **強對位** — 已上線,2026-08-04 01:25 產出 score 0.7343 narrative chain | 缺「外部報告週期」(annual / semi-annual)cadence 重置 |
 | `ai_supercycle_model` narrative(3 models 中 weight 最大 = 0.1639) | historical_hit_rate 0.625 / recent 0.625 implied | ✅ **強對位** — favored sectors 完全對位 HAI §2.7 設備鏈名單 | 缺「報告週期重置 hit_rate」機制 |
 | `trigger-nvda-tsm.md`(13 templates) | 已上線 cron 5min | ✅ 中對位 — 對應 HAI §2.3,但缺時滯機制 | — |
-| **未存在:`trigger-megaproject-2-quarter-lag.md`** | — | ❌ **缺** | B 階段落模板 #14 |
-| **未存在:`trigger-equipment-capex-external-report-cycle.md`** | — | ❌ **缺** | B 階段落模板 #15 |
+| **`templates/trigger-megaproject-2-quarter-lag.md`** | 已存在(2026-08-04 立) | ✅ **已落** | B 階段落模板 #14(2026-09-27 `ls -l` 複驗) |
+| **`templates/trigger-equipment-capex-external-report-cycle.md`** | 已存在(`template_number: 15`) | ✅ **已落** | B 階段落模板 #15(同上複驗) |
+| **未存在:`templates/trigger-renewable-energy-divergence.md`** | — | ❌ **缺** | B 階段模板 #16 |
 
 **對位 narrative 即時資料**(2026-08-04 01:25:54Z 抓取):`US_rates_down` 0.548(偏多 AI)、**`AI_capex_surge` 0.7343(5 chains 最高)**、`JPY_carry_unwind` 0.492(偏空 AI)、`tech_peak_season` 0.525、`earnings_surprise` 0.58 — 5 條中 3 條偏多 AI、1 條中性、1 條偏空;atlas 已有 resonance 運算。
 
@@ -104,8 +105,8 @@ decay_until: 2027Q1-WIR-revision
 - [ ] 對位外部報告 cadence:建「external_report_calendar」(2027Q1 WIR 修訂 + 2027Q2 HAI 修訂)做 atlas 內部年度稽核 cron
 - [ ] 對位 HKS Carvalho §3.3 patient capital 模型 → 入 `atlas-notes/02-knowledge/`(資料卡,非 quota)
 - [ ] 第 16 template(待產):`trigger-renewable-energy-divergence` 對位 UNCTAD § renewable -50%(開發中國家)vs 半導體 +35%(同年)
-- [ ] 落模板:**`templates/trigger-megaproject-2-quarter-lag.md`**(本週期 #14,對位 AI 宣布 → 設備下單 6~18 月 → 試產 / 量產 +12~24 月 鏈)
-- [ ] 落模板:**`templates/trigger-equipment-capex-external-report-cycle.md`**(本週期 #15,對位外部權威報告週期重置 narrative hit_rate)
+
+> **2026-09-27 校正**:原「落模板 #14／#15」兩條與 §atlas 對位表「未存在 ❌ 缺」兩列同屬 stale;`ls -l templates/` 實測兩檔**皆存在**(2026-08-04 立)⇒ 已移出本段,精華併入 §atlas 對位表;真缺者僅 #16。
 - [ ] 散戶解讀段原引用之 CAPE 具體數值缺端點與 timestamp(鐵律五),已改定性表述;若要回填數字,須附 `risk_get_metrics` snapshot + 時間
 - [ ] 6 層因果鏈框架 6 條驗證缺口尚未全勾(2 ✅ + 1 ⚠️ + 3 ⛔)→ 未達升 active 條件
 
