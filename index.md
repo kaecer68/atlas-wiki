@@ -2,7 +2,7 @@
 
 > 散戶 AI 實戰金融工程 知識圖譜
 > 從 2026-07-15 開始建立
-> Last updated: 2026-09-27 | Knowledge entries: 36 (this index;重數於 2026-09-27) / Repo .md 總數: 148（2026-09-27 快照,`git ls-files "*.md"` 實測;舊記 155 為 2026-08-22 值） / SK 知識檔: 40（39 編號 + 索引,SK-27/30 已 archive;2026-09-27 實測）
+> Last updated: 2026-09-27 | Knowledge entries: 33（本索引 `- [[...]]` 條目實測,含 1 條指向 atlas-notes 外鏈;原記 36 與實測不符,2026-09-27 更正） / Repo .md 總數: 138（`git ls-files "*.md" | wc -l` 實測,2026-09-27;同機 on-disk 141 = 138 tracked + 3 未追蹤 `_self-audit.md`／`_self-audit-entry-v8.95-prep.md`／`_structure-health-log.md`;原記 148 與 155 皆與實測不符,以 138 為準） / SK 知識檔: 40（39 編號 + 索引,SK-27/30 已 archive;2026-09-27 實測）
 > 2026-08-03 repo 公開化(MIT + v1.0.0 + CI validate-wiki)
 > 2026-08-22 知識路由：raw/queries/comparisons/summaries-handoff+manifests 共 18 檔遷移至 atlas-notes（純知識回原料庫）
 

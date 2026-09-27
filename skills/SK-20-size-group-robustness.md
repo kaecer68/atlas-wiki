@@ -28,7 +28,7 @@ related:
 <!-- methodology_alignment_tip: 本檔術語:七時期為 PeriodDetector 真值;RISK_ON/OFF/NEUTRAL 為向下相容層 -->
 <!-- methodology_alignment_tip: atlas 後端 38 產業映射(2026-09-27 實測)與公股資金 per-broker 對位,本文未交叉引用 -->
 
-> 術語備註:atlas 資金面 = 七維錢潮雷達 3+2+2,不可加權平均（憲章 §四 + product-positioning §7.1）[2026-08-22 iter2]
+> 術語備註:atlas 資金面 = 七維錢潮雷達 3+2+2(= 憲章 §四「七大資金勢力」同義舊名),不可加權平均（憲章 §四 + product-positioning §7.1）[2026-08-22 iter2;2026-09-27 名稱對位]
 
 ## 一句話定位
 SK-20 是「同一策略在大股 vs 小股上是否都賺錢」的對照實驗——在 atlas 用來挑出「只在某一邊有效」的偽因子。

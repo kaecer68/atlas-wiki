@@ -437,6 +437,8 @@ LLM agent 在引用 atlas 策略時，建議：
 
 ### 9.3 七維雷達的引用範例
 
+> ⚠️ **2026-09-27 更正**：下方舊示範把三層（官方／代理／訊號）加成單一「綜合票數」，與 atlas 規格不符，**勿照抄**；正確讀法見示範後的「引用紀律」三條。
+
 ```
 「atlas 七維雷達顯示：
  - 官方 3 票（外資 / 投信 / 自營商）共識偏多
@@ -444,6 +446,13 @@ LLM agent 在引用 atlas 策略時，建議：
  - 訊號 2 票：外資期貨淨多單增加 + 台積電 ADR 上漲
  → 綜合：短中期偏多訊號
 ```
+（上列為 2026-08-02 原示範，保留供對照）
+
+**引用紀律（2026-09-27 實測後更正）**：
+
+1. **共振只計官方 3 票**：atlas 規格只有 `official_actor`（外資／投信／自營商）進 actor consensus；`behavioral_proxy`（公股行庫／散戶）與 `positioning_indicator`／`cross_market_signal`（外資期貨 OI／TSM ADR）**不進共振計票**，各自是分開的確認層。源碼證據：`internal/capitalflow/forces.go` `ComputeForceProvenance()` 只給三官方 `ParticipatesInActorConsensus: true`，其餘 `false`；`internal/capitalflow/resonance.go` `computeBehavioralConfirmation()` 註解明寫 "It does NOT participate in actor consensus overall — it is a separate signal"。故「代理 2 票 + 訊號 2 票」不得與官方票相加。
+2. **「政府基金」在 atlas 不是政府基金，且不可直讀當票**：該維度 `display_name` = **公股行庫**、`dimension_role=behavioral_proxy`、`evidence_class=proxy`、`source_id=SRC-OPERATOR-IMPORTED`（營運端匯入，非官方即時源；源碼常數 `internal/capitalflow/rolling_store.go:45`）。2026-07-22 該維度曾回 `data_available: false`（見 [[concepts/eight-banks-government-signal-reading-2026-07-22|八大行庫頁]]）；2026-09-27 實測回 `true`，但 `as_of_trading_date=2026-09-24`，較當日交易日落後 3 天。要講「政府護盤」必須走八大行庫反推法，不能直讀此欄（2026-09-27T21:24:06+08:00 `GET /api/capital-flow/daily` http_code 200）。
+3. **正確寫法**：三層分述不合併——「官方 3 票偏多；代理層另計（政府維度不可直讀）；訊號層另計」。此示範僅示意「怎麼讀三層」，不是可加總的票數模型。
 
 ## 十、台股籌碼面特性總結
 

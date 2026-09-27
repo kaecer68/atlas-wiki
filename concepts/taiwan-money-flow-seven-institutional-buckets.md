@@ -2,7 +2,7 @@
 title: 台灣法人錢潮追蹤：七類核心機構與散戶可觀測代理
 description: 要分辨「這筆買盤是哪一種錢、是哪一類機構在買」時載入。
 created: 2026-07-18
-updated: 2026-07-18
+updated: 2026-09-27
 type: concept
 tags: [T, signal, strategy, hypothesis, time-anchor]
 sources:
@@ -25,6 +25,8 @@ contradictions:
 > 對位更新：七維分層正義 = atlas spec 3+2+2（2026-07-17 業主接受）;本檔 contested/low-confidence 內容以 spec 為準 [2026-08-22 iter2]
 
 > kaecer 2026-08-22 收編：3+2+2 + **情緒調整層**（VIX / USD_TWD）為 wiki 知識模型完整版——情緒層只調整外資方向先驗置信度,不進共振投票;atlas spec 未含此層（atlas 端實作另軌）。詳見 [[concepts/funding-forces-taxonomy-e05-pending-approval|E05 檔]]「情緒調整層」節。
+
+> **名稱對位（2026-09-27,跨頁矛盾 C11 處置）**：標題的「**七類核心機構**」是**本頁自己的分析切法／舊名**,不是 atlas 規格名;**規格正名 = 「七維錢潮雷達 3+2+2」**（共識層官方 3 + 行為層代理 2 + 訊號層 2,口徑見 [[concepts/atlas-platform-overview|atlas 平台總覽]]）。三種叫法對照:「七維錢潮 3+2+2」= 正名;「七大資金勢力」= `ATLAS_METHODOLOGY.md` §四 標題名（同義,憲章沿用）;「七類核心機構」= 本頁舊名（切法不同）。歷史用法保留不刪;分層與計票規則一律以 3+2+2 為準。
 
 ## 1. 先修正核心問題：不是「誰買」，而是「哪一種錢」
 

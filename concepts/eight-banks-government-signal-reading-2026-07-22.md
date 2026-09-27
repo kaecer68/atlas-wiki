@@ -2,7 +2,7 @@
 title: 八大行庫買賣超 — 反推政府護盤訊號的實戰方法
 description: 散戶問「八大行庫買賣超代表什麼、是不是政府在護盤」時載入。
 created: 2026-07-22
-updated: 2026-07-22
+updated: 2026-09-27
 type: concept
 tags: [concept, signal, time-anchor]
 sources:
@@ -22,7 +22,7 @@ contradictions: []
 
 ## 為什麼要這頁
 
-atlas-mcp `capital_flow_daily` 的 government 維度 `data_available: false`（2026-07-22 實測）— 政府基金**沒有任何官方即時資料源**。所有「政府護盤」的判斷都必須從間接訊號反推。
+atlas-mcp `capital_flow_daily` 的 government 維度**沒有官方即時資料源**——2026-07-22 該維度回 `data_available: false`；2026-09-27 實測回 `true`，但 `display_name` = 公股行庫、`dimension_role=behavioral_proxy`、`evidence_class=proxy`、`source_id=SRC-OPERATOR-IMPORTED`（營運端匯入，非官方源），仍是**代理**不是政府基金官方資料（2026-09-27T21:24:06+08:00 `GET /api/capital-flow/daily` http_code 200）。注意 `data_available` 是「本次 source channel 有沒有資料」的逐次旗標，不是維度的永久屬性——所以它可以是 true 而仍非官方即時源。所有「政府護盤」的判斷都必須從間接訊號反推。
 
 ## 八大行庫是誰
 
@@ -94,9 +94,10 @@ atlas-mcp `capital_flow_daily` 的 government 維度 `data_available: false`（2
 
 ## 與 atlas-mcp 對位
 
-`capital_flow_daily.assessment.behavioral.available: false` 是已知狀態
-- 政府維度不會被補上（沒有官方即時源）
-- 政府態度必須用本頁的「5 行庫反推」外掛
+`capital_flow_daily.assessment.behavioral.available`：2026-07-22 記 `false`；2026-09-27 實測 `true`（`direction=mixed`，`aligned=[government]`／`opposing=[retail]`，同 2026-09-27T21:24:16+08:00 `GET /api/capital-flow/summary` http_code 200）。該旗標只表示「government 與 retail 兩維度本次都有資料」，**不等於**有政府基金官方即時源。
+- 政府維度仍是 `evidence_class=proxy`／`source_id=SRC-OPERATOR-IMPORTED`，**沒有官方即時源**（不會被「補上」成官方資料）
+- 政府態度在 atlas 端只能靠此代理維度；要在 wiki 端自我驗證，用本頁的「5 行庫反推」外掛
+- 讀法紀律：此維度**不進共振計票**（`behavioral_proxy` 的 `ParticipatesInActorConsensus=false`，見 [[concepts/taiwan-chip-flow-analysis|籌碼面]] §9.3）
 - 可在 wiki investor-onboarding 頁加連結
 
 ## 反直覺點
