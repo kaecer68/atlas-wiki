@@ -2,7 +2,7 @@
 title: atlas MCP 工具參考：六類 40+ 工具速查
 description: 需要查 atlas-mcp 有哪些工具、某個端點的名稱或參數、該先用哪個工具時載入。
 created: 2026-08-02
-updated: 2026-08-02
+updated: 2026-09-27
 type: concept
 tags: [framework, methodology]
 sources:
@@ -95,7 +95,7 @@ MCP（Model Context Protocol）是把工具能力以 **結構化 JSON** 形式�
 
 | 工具 | 用途 |
 |------|------|
-| `industry_sector_list` | 全部 20 個台股產業 canonical 識別（中英標籤 + 代表股） |
+| `industry_sector_list` | 全部 **38** 個產業桶（**20 L1** canonical ＋ **18 L2** 子產業；中英標籤 + 代表股）。⚠️ **20 是 L1 分層數、不是端點總數** [2026-09-27 實測 `GET /api/industry/sectors` http 200,回 38 桶,其中 20 桶有代表成分股] |
 | `industry_sector_lookup` | 以 symbol 或 sector 名稱查產業 |
 | `sector_allocation_plan` | 模擬層 sector allocation snapshot（含 provenance、fallback、mutation receipt） |
 
@@ -353,7 +353,7 @@ Step 6: mcp_anomaly_get_recent          → 最近 anomalies
 
 ```text
 1. sector_allocation_plan → 取得當前 sector 配置（含 provenance）
-2. industry_sector_list → 對照全部 20 個產業
+2. industry_sector_list → 對照全部 **38** 個產業桶（20 L1 + 18 L2；勿寫成 20,20 只是 L1 分層數）[2026-09-27 實測]
 3. risk_get_correlation_matrix → 看 sector 間相關性是否過度集中
 4. （若需要）experiment_diff → 比較不同 sector 配置 candidate
 ```

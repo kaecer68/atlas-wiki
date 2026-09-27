@@ -2,7 +2,7 @@
 title: T1→T4 訊號燈四層驅動結構
 description: 要判斷「這一波是美股、外資、其他法人還是散戶在帶方向」時載入。
 created: 2026-07-15
-updated: 2026-07-15
+updated: 2026-09-27
 type: concept
 tags: [signal, T, framework]
 sources:
@@ -10,8 +10,8 @@ sources:
   - ~/workspace/atlas-notes/02-knowledge/audit-DeepSeek-2026-07-15.md
   - ~/workspace/atlas-notes/02-knowledge/audit-kimi-2026-07-15.md
 confidence: medium
-contested: false
-contradictions: [v0.4 的 I1/I3 過度強調「延遲性 alpha」]
+contested: true
+contradictions: [v0.4 的 I1/I3 過度強調「延遲性 alpha」, 外資佔台股成交比重「4 成」與 concepts/taiwan-chip-flow-analysis.md 的 25–35% 不一致（孰為正待查，2026-09-27）]
 ---
 
 # T1→T4 訊號燈四層驅動結構
@@ -50,7 +50,7 @@ contradictions: [v0.4 的 I1/I3 過度強調「延遲性 alpha」]
 └─────────────────────┬───────────────────┘
                       ↓
 ┌─────────────────────────────────────────┐
-│ T2 引信:外資走向(美股→台股傳遞執行者)  │ ← 佔台股 4 成成交,跟隨美股 ADR 連動
+│ T2 引信:外資走向(美股→台股傳遞執行者)  │ ← 跟隨美股 ADR 連動（成交佔比口徑見下註）
 └─────────────────────┬───────────────────┘
                       ↓
 ┌─────────────────────────────────────────┐
@@ -62,6 +62,8 @@ contradictions: [v0.4 的 I1/I3 過度強調「延遲性 alpha」]
 │ T4 表象鏡像:散戶情緒 → 鏡子 / 韭菜      │ ← 最後的反應者 / 被收割對象
 └─────────────────────────────────────────┘
 ```
+
+> **口徑註（2026-09-27 S4 矛盾收斂）**：本頁原寫「外資佔台股 **4 成成交**」。`concepts/taiwan-chip-flow-analysis.md` §3.1 把兩個量分開——**持股市值**約 40–45%（含僑外資）、**單日成交值**約 25–35%。「4 成」與**持股市值**口徑相符，卻被寫成「成交」，疑為兩量混用。成交佔比究竟為 4 成或 25–35%，兩頁皆未附來源與期間；atlas 端亦無可覆核欄位（2026-09-27 實測 `GET /api/macro/capital-flow/latest` http 200, 2026-09-27T21:23:15+08:00，僅回 `value`／`change_pct` 淨額、單位 hundred_million_shares，**無「佔成交比」欄位**）。⇒ **孰為正待查（2026-09-27）**。
 
 ---
 

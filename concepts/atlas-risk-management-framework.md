@@ -2,7 +2,7 @@
 title: atlas 風險管理框架
 description: 散戶問「這筆部位可以放多大、最壞會虧多少、停損怎麼設」時載入。
 created: 2026-08-02
-updated: 2026-08-02
+updated: 2026-09-27
 type: concept
 tags: [framework, methodology]
 sources:
@@ -63,7 +63,7 @@ contradictions: []
 > 上述事件用作「情境樣本」，提醒組合需對尾部風險（tail risk）有明確預算。
 
 ### 2.3 波動率指標
-- **VIX（CBOE Volatility Index）**：S&P 500 選擇權隱含波動率指數，常作為「恐慌指標」。VIX > 30 視為警戒區，> 40 視為高度警戒。
+- **VIX（CBOE Volatility Index）**：S&P 500 選擇權隱含波動率指數，常作為「恐慌指標」。VIX > 30 視為警戒區，> 40 視為高度警戒。**門檻為實務慣例**（CBOE 無官方定義）;本頁 > 30 為警戒級,與 `concepts/taiwan-fundamental-analysis-guide.md` §2.5 的「> 25 情緒升溫觀察線」是不同層級,非矛盾 [2026-09-27]。
 - **台股歷史波動率（HV）**：過去 20／60 日的歷史波動率，搭配隱含波動率（TXO VIX 指數）觀察市場預期與實際差距。
 - **波動率叢聚（Volatility Clustering）**：高波動後往往延續高波動，這是 VaR 估算與情境規劃的重要前提。
 
@@ -149,7 +149,7 @@ contradictions: []
 ### 6.3 風險歸因（Risk Attribution）
 - **維度**：產業（sector）、因子（factor）、集中度（concentration）。
 - **用途**：理解「報酬從哪裡來、風險從哪裡來」。
-- **產業歸因**：對應 `industry_sector_list`（atlas 維護的 20 個台股產業分類）。
+- **產業歸因**：對應 `industry_sector_list`（atlas 維護的 **38** 個產業桶 = **20 L1** canonical + **18 L2** 子產業；**20 是 L1 分層數、不是端點總數**）[2026-09-27 實測 `GET /api/industry/sectors` http 200,回 38 桶]。
 - **集中度歸因**：觀察單一標的或單一產業占組合淨值比例。
 
 ### 6.4 風險校準（Risk Calibration）
@@ -173,7 +173,7 @@ contradictions: []
 ## 7. 資產配置中的風險分散
 
 ### 7.1 產業分散
-- atlas 維護的 20 個台股產業分類（半導體、金融、電腦周邊、塑膠、鋼鐵、航運、汽車、生技、通訊、營建、觀光、油電、貿易、保全、餐飲、紡織、造紙、玻璃、橡膠、其他）提供標準化分散框架。
+- atlas 維護的 **20 個 L1 產業分類**（半導體、電子零組件、光電、金融保險、水泥、塑膠、紡織、鋼鐵、航運、食品、汽車、通信網路、化學、生技醫療、營建、其他電子、電機機械、觀光、百貨、油電燃氣；另有 18 個 L2 子產業，合計 **38 桶**）提供標準化分散框架。**2026-09-27 更正**：本行原列的「電腦周邊／貿易／保全／餐飲／造紙／玻璃／橡膠」不屬 atlas 現行 L1 taxonomy，已換為現行 20 個 L1 名稱；來源 `~/workspace/atlas/internal/industry/sector.go`（20 個 `SectorID` 常數）＋ live `GET /api/industry/sectors` http 200。
 - **原則**：
   - 單一產業曝險占組合淨值上限（典型設定 20–30%）。
   - 高度相關子產業（如半導體 vs 電子零組件）視為準集中。
