@@ -50,6 +50,8 @@
 | — (訊號層歸屬判斷) | `/api/strategies/layers`（L1–L5,2026-09-27 實測 12 筆） |
 | — (detector 歸屬判斷) | `/api/detector/registry/list`（2026-09-27 實測 **29** themes,非文件寫的 24） |
 
+**原生測試槓桿（batch #3 補,最便宜的一招）**:`cd ~/workspace/atlas && go test ./internal/eval/ -count=1 -v` ⇒ **22 PASS / 0 FAIL（~0.1 s）**。`internal/eval` 是 SK-12~15 的原生實作正本（`metrics.go`:OOSR2/SharpeRatio/CumulativeReturn/MaxDrawdown；`importance.go`:PermutationImportance；`pdp.go`:PartialDependence；`interaction.go`:FriedmanH + 2D joint PD），且 `internal/experiment/judge.go` 把它們接進 `eval_metrics`/`importance_result`。**實作層答案用跑的比讀源碼強**。
+
 **CLI 模型白名單（2026-09-27 實測,batch #2 補）**:`cmd/backtest-pipeline` 的 `-model` 只接受 `ols/pcr/pls/elasticnet/glm/rf`（`newModel()` 白名單,`xgboost` 會報錯）。**每個都能當模型層 L3 代理**,不只 `ols`。
 
 ### 三個必知陷阱
@@ -95,6 +97,8 @@ def probe(path):
 
 > **batch #2 實證**:已有 audit-fix 口徑註 ＋ 再加 9 列證據表的頁**一定撞 9,000 B 上限**（SK-09 就是）。做法:先在同頁壓縮重複敘述（verification 段的歷史、散戶解讀的重述、對位段的冗語），**保留證據表**,再寫入 L3 區塊;壓完要 `wc -c` 確認。
 
+- **frontmatter 必須是合法 YAML（2026-09-27 血淚，現由 `make check-skill-pages` 守門）**：任何純量值或 `l3_endpoints_probed` 清單項，只要**含 ASCII 冒號＋空格**或以**反引號開頭**，就**必須加雙引號**。實際中招例（SK-04 的 `verification:`）：值裡寫了「欄位 `active_signals: null`」⇒ 整段 frontmatter 無法 parse（batch #1/#2 共 21 頁中招，其中 3 頁全壞；CI 原本只做正則檢查所以沒抓到）。
+  - **寫完一律跑**：`python3 skills/_scripts/check-skill-pages.py --skills-dir skills`（該檔已新增 PyYAML 實 parse ＋ 無 PyYAML 時的「未加引號冒號」fallback 規則）。
 - 插入位置:`verification:` 行之後、`methodology_aligned:` 之前（與 SK-34/37/38 一致）;§驗證方式 只**新增** `###` 小節（不算 canonical section,不觸發段序檢查）。
 - **9,000 B 硬上限**:加 L3 區塊前先看頁面大小;接近上限就先壓縮重複敘述（同一事實只留一份）,不要為了塞證據刪掉未消化項。
   - 本批實例:SK-01 原本 8,989 B,已近上限 → 先把「逐字重複的 M1 計分敘述」「重複的 period_system tip 註解」壓掉,才放得下 L3 表（收在 8,979 B）。
@@ -149,11 +153,25 @@ make structure-metrics                          # 前後對照 L3 覆蓋率與 w
 
 覆蓋率:11/38 → **16/38（42.1%）**,watch list 27 → 22 頁。下一批建議序:SK-11、SK-12、SK-13、SK-14、SK-15。
 
+## 9c. 本批（batch #3,2026-09-27,PR #95）實跑成果
+
+| 頁 | 今日結果 | 主要更正 |
+|---|---|---|
+| SK-11 neural-network | CLI `-model nn` exit 1；`internal/ml` 有 ols/pcr/pls/elasticnet/glm/rf + trainer | 「atlas 完全沒 ML 訓練層」**不成立**；NN 本身是已驗證的否定 |
+| SK-12 out-of-sample-eval | `/api/dashboard/agent-observatory` 5 scorecards，**全部 `overfit_warning=true`** | 「sharpe 由 `risk_get_metrics` 提供」**不成立**；端點 Sharpe 未年化（`FrequencyPerOutcome`） |
+| SK-13 permutation-importance | 原生 `PermutationImportance` 已存在且接進 judge（nRepeats=5） | 「atlas 沒有特徵排名」**誤導**——只缺端點；correlation matrix 是策略層（20 檔），無法去共線 |
+| SK-14 pdp | 原生 `PartialDependence`（grid=觀測 min..max）；`/api/regime/history?days=7` → 5 sessions | 「缺（client 端 sklearn）」**誤導**；ICE 仍 0 命中 |
+| SK-15 feature-interaction | 原生 `FriedmanH` + 2D joint PD；`TestFriedmanH_AdditiveModel` 釘 H<0.1 | 「無原生 2D PDP」**不成立**；且 2026-08-02「f32×f11 有交互」應降級為「未用 H 檢定」 |
+
+覆蓋率:16/38 → **21/38（55.3%）**,watch list 22 → 17 頁。
+
 ## 10. 已知未解（下一批可接手）
 
+- **🚧 `-synthetic` 不是 OOS 也不可重現（batch #3 發現,已回頭修正 batch #2 頁面）**:`cmd/backtest-pipeline/main.go` 的 `runSynthetic`（~374-390 行）用**未設 seed** 的 `rand.Float64()` 產生 X,y，然後對**同一份 X** `Fit` 再 `Predict` ⇒ 印出的 `R²_OOS` 是 **in-sample**，且同日重跑值就變（rf +0.9909~+0.9928）。**只能當「模型可跑」的存在性檢查，不可當 OOS 證據。**
+- **Sharpe 年化對照（引用 Sharpe 的頁面必查）**:`shared.ComputeSharpe` = per_outcome（不乘）/ per_day √252 / twse √243；`eval.SharpeRatio` = √252。**`/api/dashboard/drawdown` 是唯一給非零 `var_95`（−0.004816）的端點**，`/api/dashboard/risk` 回 0 且 `insufficient_data: 1`。
 - `universe_get_session_detail` 仍不回 train/valid/test 三段日期（SK-03 §未消化）。
 - `/api/backtest/signals` 今日 `active_signals: null`,報酬序列無處可取;`/api/backtest/snapshots` 是替代,但只有 20 筆日快照、且無 MCP tool。
 - `/api/dashboard/risk` **沒有 Sharpe 欄位**（2026-09-27 更正:payload keys 只有 `degraded/gate_mode/risk_snapshot/session_count/source/var_gate`;`risk_snapshot` = `var_95/var_99/cvar_95`（皆 0,且 `insufficient_data=1` ⇒ 0 是「資料不足」不是「零風險」）、`max_drawdown_pct`、`data_points`）。**以 Sharpe 為驗證步驟的頁一律改走 `/api/dashboard/agent-observatory`**;`var_95=0` 不可當零風險引用。（先前版本誤記「sharpe_short/long 皆 0」,已於 PR #89 更正）
 - **🚧 CLI 真實資料路徑今日不可用（batch #2 新發現,影響所有要「真實 OOS R²」的頁）**:`internal/backtest/rolling_split.go:72` **硬編 `stopYear := 2020`**,而 repo 的 replay 檔 `data/replay/merged.csv` 覆蓋 **2024-07-01 → 2026-08-24**（22,956 列）⇒ 真實資料一律回 `no windows produced`;把 `-first-train-end` 移進迴圈則回 `has empty training data`。**結論:目前只能用 `-synthetic` 做「模型層」L3,不可當市場結論**;要解需 1994–2022 月頻 replay 檔,或把 `stopYear` 改成旗標（atlas-go 側,需拍板）。
-- `/api/experiment/history` 今日回 `{"history":[]}`、`/api/experiment/diff` 未知 id → 404 ⇒ **實驗 diff 目前不能當證據路徑**。
+- `/api/experiment/history` 今日回 `{"history":[]}`；`/api/experiment/diff` **裸 GET = 400**（`experiment_id required`），只有帶**不存在**的 id 才 404 ⇒ **實驗 diff 目前不能當證據路徑**（batch #3 更正）。
 - `cmd/atlas-mcp/server/tools_template_detector.go:19` 的 tool 描述仍寫「All **24** template trigger detectors」,而 live registry 回 **29** ⇒ 引用數目時**以 registry 為準**,勿抄文件字串（atlas-go 側待修）。
