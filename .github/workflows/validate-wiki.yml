@@ -67,6 +67,8 @@ jobs:
         run: python3 skills/_scripts/check-claim-rules.py
       - name: 外部事實來源可追溯性（S3；warn）
         run: python3 skills/_scripts/check-source-tiers.py
+      - name: 時效宣告與逾期（S6；warn）
+        run: python3 skills/_scripts/check-freshness.py
   size-check:
     name: SK 頁大小檢查(≤ 9000 bytes)
     runs-on: ubuntu-latest
