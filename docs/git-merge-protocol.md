@@ -55,15 +55,11 @@
 ### 3.1 標準流程
 
 ```bash
-make ci-gate        # 5 項檢查全綠才 push
+make ci-gate        # 7 項檢查全綠才 push
 ```
 
-5 項:
-1. `check-timestamp` — 第 5 條鐵律 timestamp 驗證(全 33 頁合規)
-2. `check-audit` — atlas-mcp 端點 audit(預設 109 端點)
-3. `check-size` — SK 頁 ≤ 9,000 bytes
-4. `check-frontmatter` — frontmatter 10 欄齊全
-5. `check-actionlint` — workflow YAML lint(若已裝 actionlint)
+7 項（2026-09-27 依 `Makefile` ci-gate 依賴實測;舊記 5 項）:
+`check-timestamp`（第 5 條鐵律;**實測全 37 頁合規,舊記 33**）／`check-audit`（端點 audit,**實測 115 端點,舊記 109**）／`check-size`（SK 頁 ≤9,000B）／`check-skill-structure`（結構,SSOT `skill-page-schema.json`）／`check-frontmatter`（10 欄）／`check-actionlint`（若已裝 actionlint）／`check-skill-index-sync-basic`（R1+R3）。
 
 ### 3.2 預檢 hooks(自動版)
 
@@ -111,7 +107,7 @@ scripts/dev/auto-commit-pr.sh "feat(skills): 新增 SK-XX" main "PR title"
 
 ## Verification
 - 本地 `make ci-gate` 5 項全綠
-- push 後 GitHub CI 4 job 全綠
+- push 後 GitHub CI 9 job(8 驗證 + 通知)全綠
 - 對位 _method.md 5 條鐵律清單
 ```
 
@@ -130,14 +126,9 @@ PR 建立後 **不可停留**在「compare & pull request」未完成狀態。�
 - `push: branches: [main]` → push 到 main 觸發 validate-wiki.yml
 - `pull_request: branches: [main]` → 任何 PR 到 main 觸發
 
-### 5.2 4 個 job
+### 5.2 9 個 job（2026-09-27 實測 `validate-wiki.yml`:驗證 8 + 通知 1;舊記 4）
 
-1. 第 5 條鐵律 timestamp 驗證
-2. atlas-mcp 端點 audit(checkout atlas-go 稀疏取 mcp server)
-3. SK 頁大小檢查(≤ 9,000 bytes)
-4. frontmatter 核心欄位檢查
-
-任一失敗 → notify-telegram job 發 Telegram。
+驗證:`validate-timestamp-rule`（第 5 條鐵律）／`audit-atlas-endpoints`（atlas-go 稀疏 checkout;**實測 115 端點,舊記 109**）／`skill-structure-check`（段名/段序/禁用標記）／`size-check`（≤9,000B）／`frontmatter-check`（10 欄）／`audit-file-index-sync`（索引同步）／`trigger-template-existence`／`trigger-endpoint-validation`;第 9 個 `notify-telegram`（`if: failure()`）任一失敗才發 Telegram。
 
 ### 5.3 Branch protection
 
@@ -177,7 +168,7 @@ gh pr merge <N> --squash --delete-branch --admin
 ### 6.3 自我合併條件
 
 允許自我合併的條件(全部需滿足):
-1. CI 4 job 全綠(`validate-wiki` workflow success)
+1. CI 9 job 全綠(`validate-wiki` workflow success)
 2. 本地 `make ci-gate` 全綠
 3. PR body 三段齊全(Summary / Root Cause / Verification)
 4. 變更 < 200 lines(超出需留 24 小時冷卻期供 review)
@@ -197,7 +188,7 @@ gh pr merge <N> --squash --delete-branch --admin
 符合以下**全部**條件的變更 = routine, hermes 可用 `scripts/dev/auto-commit-pr.sh` 一鍵 merge:
 
 1. **變更範圍**限: `skills/SK-*.md`（SK 頁新增/修正）或 `concepts/` 或 `templates/` 或 `scripts/_scripts/` 工具修正
-2. **CI 全綠**: 本地 `make ci-gate` + GitHub `validate-wiki` 4 job success
+2. **CI 全綠**: 本地 `make ci-gate` + GitHub `validate-wiki` 9 job success
 3. **變更量**: < 300 lines（比 §6.3 的 200 放寬, 因 SK 頁 quota 產出）
 4. **不觸碰**: 憲法 / `_method.md` / `AGENTS.md` / `git-merge-protocol.md` / `.github/workflows/` / `SCHEMA.md`（這些是治理檔, 見 6.4.2）
 5. **SK 頁品質**: 對位 `_method.md` 六條鐵律（不搬運/不瞎寫/不裝完成/不違憲章/派工備份/size ≤9000B）
