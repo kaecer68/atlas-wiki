@@ -19,7 +19,7 @@ atlas-wiki/
 ├── AGENTS.md              # 專案 context(操作必讀)
 ├── SCHEMA.md              # 知識結構 schema
 ├── index.md / log.md      # 知識索引 / 演進日誌
-├── skills/                # 37 個 SK 知識檔(SK-00~SK-36,SK-27/30 已 archive)
+├── skills/                # 39 個 SK 知識檔(SK-00~SK-38;SK-27/30 已 archive)
 │   ├── _method.md         # 寫入規範(六條鐵律 + 格式)
 │   ├── _consult-index.md  # 跨頁查詢索引
 │   ├── _consult-index_archive.md  # 諮詢索引歷史段歸檔(2026-08-22 audit-fix)
@@ -34,7 +34,9 @@ atlas-wiki/
 │   └── trigger-*.md       # 20 檔觸發模板(2026-09-27 實測,§12)
 ├── concepts/              # 台股市場概念 / 領域模型
 ├── entities/              # L1 宏觀實體研究
-├── summaries/             # 階段總結(分工藍圖)
+├── summaries/             # 階段總結(分工藍圖)＋ HTTP path drift 記錄
+├── _internal/            # 內部設計/維運紀錄(索引見其 README.md)
+├── _archive/             # append-only 歷史(月切日誌 log-YYYY-MM.md)
 └── .github/workflows/
     └── validate-wiki.yml  # CI(9 jobs:8 驗證 + Telegram 通知;2026-09-27 實測)
 ```
@@ -80,7 +82,7 @@ push / PR 到 `main` 觸發 `validate-wiki`（2026-09-27 實測 9 個 job:8 個�
 | `check-stale-worktree.py` | skills/ 未提交內容偵測(反補丁 M5) |
 | `check-skill-index-sync.py` | 強制 skills 建立/修改時索引同步更新 |
 | `new-skill-page.py` | SK 頁骨架產生器(反補丁 M6) |
-| `structure-health-metrics.py` | 結構健康度量測(反補丁 M7) |
+| `structure-health-metrics.py` | 結構健康度量測(反補丁 M7;含指標 8 = L3 覆蓋率＋無 L3 證據 watch list,非門檻) |
 | `audit-file-index-sync.py` | 驗證 wiki 內落檔是否被索引引用 |
 | `atlas-mcp-trigger-monitor.py` | 觸發模板自動信號捕捉(每 5 分鐘) |
 | `handle-atlas-failures.py` | atlas-mcp 端點失敗降級處理 |
