@@ -1,5 +1,6 @@
 ---
 title: L1-T.2 石油美元與霍爾木茲
+description: 油價急動或中東（霍爾木茲）衝突升溫，要判斷對台股與通膨的傳導時載入。
 created: 2026-07-17
 updated: 2026-07-17
 type: entity

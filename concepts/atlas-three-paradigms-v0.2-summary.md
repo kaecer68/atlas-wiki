@@ -1,5 +1,6 @@
 ---
 title: L/T/S 三範式摘要（Stage 1C）
+description: 需要分清 L／T／S 三範式的差別與使用順序（先觸發哪個、何時才能配置）時載入。
 created: 2026-07-17
 updated: 2026-07-17
 type: concept

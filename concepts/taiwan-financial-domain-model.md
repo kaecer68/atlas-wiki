@@ -1,5 +1,6 @@
 ---
 title: 台股金融領域模型：十類核心術語與體系
+description: 遇到台股或 atlas 專有名詞（當沖、借券、法人、VaR 等）需要查定義時載入。
 created: 2026-08-02
 updated: 2026-08-02
 type: concept

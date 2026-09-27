@@ -1,5 +1,6 @@
 ---
 title: 台股技術分析指南：常用指標與實務應用
+description: 散戶問「均線、KD、MACD 在台股該怎麼設參數、訊號怎麼看」時載入。
 created: 2026-08-02
 updated: 2026-08-02
 type: concept

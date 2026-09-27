@@ -1,4 +1,5 @@
 ---
+description: 綠能雙臂（電網 × 發電）月營收 YoY 差距 >15pp 且相對強弱差距 >5pp、同月同向成立時載入本模板。
 template_id: trigger-renewable-energy-divergence
 template_number: 16
 type: dual-arm-divergence-trigger(月頻營收 × 日頻相對強弱 雙確認)

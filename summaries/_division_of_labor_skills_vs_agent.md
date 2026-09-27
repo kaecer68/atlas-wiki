@@ -1,5 +1,6 @@
 ---
 title: skills vs agent 系統文件分工(2026-08-07 D4)
+description: 要決定一條內容屬於「atlas-mcp 工具資料」還是「agent 判斷口徑」、該寫進哪一層文件時載入。
 type: reference
 status: draft
 created: 2026-08-07

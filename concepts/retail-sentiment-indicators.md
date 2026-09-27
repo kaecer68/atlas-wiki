@@ -1,5 +1,6 @@
 ---
 title: 散戶情緒指標：因果鏈第六層反向指標補課
+description: 散戶問「融資餘額到高點是不是頭部、散戶情緒怎麼當反向指標」時載入。
 created: 2026-08-22
 updated: 2026-08-22
 type: concept

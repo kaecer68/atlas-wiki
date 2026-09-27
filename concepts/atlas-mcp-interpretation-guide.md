@@ -1,5 +1,6 @@
 ---
 title: atlas-mcp 工具解讀指南
+description: 呼叫 atlas-mcp 工具前後要判斷「這組回傳數字能推論到什麼、不能推論什麼」時載入。
 created: 2026-07-15
 updated: 2026-07-15
 type: concept

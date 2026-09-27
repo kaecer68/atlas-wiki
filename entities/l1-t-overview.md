@@ -1,5 +1,6 @@
 ---
 title: L1-T 系列範式架構總覽(Day 3 補做 2026-07-17)
+description: 要挑 L1-T 六大結構性驅動之一來追蹤，或需要 L1-T 編號與策略 L1-L5 的消歧時載入。
 created: 2026-07-17
 updated: 2026-07-17
 type: entity

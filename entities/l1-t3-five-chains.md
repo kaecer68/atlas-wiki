@@ -1,5 +1,6 @@
 ---
 title: L1-T.3 五鏈耦合鐵律
+description: 要判斷多條供應鏈同時鬆動（跨鏈耦合）而非單一事件時載入。
 created: 2026-07-15
 updated: 2026-07-15
 type: entity

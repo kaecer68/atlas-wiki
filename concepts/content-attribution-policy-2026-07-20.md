@@ -1,5 +1,6 @@
 ---
 title: 內容歸屬守則 — wiki vs notes 邊界（2026-07-20）
+description: 要把一段盤查、待修復或未定型內容落檔，需判斷該寫進 wiki 還是 notes 時載入。
 created: 2026-07-20
 updated: 2026-07-20
 type: concept

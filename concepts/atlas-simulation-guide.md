@@ -1,5 +1,6 @@
 ---
 title: atlas 策略模擬指南：L1-L5 訊號驅動框架
+description: 要解讀 atlas 回測／模擬 session 的結果，或問 L1–L5 訊號驅動模擬怎麼跑時載入。
 created: 2026-08-02
 updated: 2026-08-02
 type: concept
