@@ -59,7 +59,7 @@ make ci-gate        # 7 項檢查全綠才 push
 ```
 
 7 項（2026-09-27 依 `Makefile` ci-gate 依賴實測;舊記 5 項）:
-`check-timestamp`（第 5 條鐵律;**實測全 37 頁合規,舊記 33**）／`check-audit`（端點 audit,**實測 115 端點,舊記 109**）／`check-size`（SK 頁 ≤9,000B）／`check-skill-structure`（結構,SSOT `skill-page-schema.json`）／`check-frontmatter`（10 欄）／`check-actionlint`（若已裝 actionlint）／`check-skill-index-sync`（**R1+R3+R4**；2026-09-27 起 R4 已補完並併入 ci-gate，`check-skill-index-sync-basic` 降為逃生口 = 只跑 R1+R3）。
+`check-timestamp`（第 5 條鐵律;**實測全 37 頁合規,舊記 33**）／`check-audit`（端點 audit,**實測 115 端點,舊記 109**）／`check-size`（SK 頁 ≤9,000B;類別表 = `_method.md` 六條鐵律 6）／`check-skill-structure`（結構,SSOT `skill-page-schema.json`）／`check-frontmatter`（10 欄）／`check-actionlint`（若已裝 actionlint）／`check-skill-index-sync`（**R1+R3+R4**；2026-09-27 起 R4 已補完並併入 ci-gate，`check-skill-index-sync-basic` 降為逃生口 = 只跑 R1+R3）。
 
 ### 3.2 預檢 hooks(自動版)
 
@@ -128,7 +128,7 @@ PR 建立後 **不可停留**在「compare & pull request」未完成狀態。�
 
 ### 5.2 9 個 job（2026-09-27 實測 `validate-wiki.yml`:驗證 8 + 通知 1;舊記 4）
 
-驗證:`validate-timestamp-rule`（第 5 條鐵律）／`audit-atlas-endpoints`（atlas-go 稀疏 checkout;**實測 115 端點,舊記 109**）／`skill-structure-check`（段名/段序/禁用標記）／`size-check`（≤9,000B）／`frontmatter-check`（10 欄）／`audit-file-index-sync`（索引同步）／`trigger-template-existence`／`trigger-endpoint-validation`;第 9 個 `notify-telegram`（`if: failure()`）任一失敗才發 Telegram。
+驗證:`validate-timestamp-rule`（第 5 條鐵律）／`audit-atlas-endpoints`（atlas-go 稀疏 checkout;**實測 115 端點,舊記 109**）／`skill-structure-check`（段名/段序/禁用標記）／`size-check`（SK 頁 ≤9,000B）／`frontmatter-check`（10 欄）／`audit-file-index-sync`（索引同步）／`trigger-template-existence`／`trigger-endpoint-validation`;第 9 個 `notify-telegram`（`if: failure()`）任一失敗才發 Telegram。
 
 ### 5.3 Branch protection
 
@@ -191,7 +191,7 @@ gh pr merge <N> --squash --delete-branch --admin
 2. **CI 全綠**: 本地 `make ci-gate` + GitHub `validate-wiki` 9 job success
 3. **變更量**: < 300 lines（比 §6.3 的 200 放寬, 因 SK 頁 quota 產出）
 4. **不觸碰**: 憲法 / `_method.md` / `AGENTS.md` / `git-merge-protocol.md` / `.github/workflows/` / `SCHEMA.md`（這些是治理檔, 見 6.4.2）
-5. **SK 頁品質**: 對位 `_method.md` 六條鐵律（不搬運/不瞎寫/不裝完成/不違憲章/派工備份/size ≤9000B）
+5. **SK 頁品質**: 對位 `_method.md` 六條鐵律（不搬運/不瞎寫/不裝完成/不違憲章/派工備份/size **依類別**——SK 頁 ≤9,000B、`concepts`+`entities` ≤30,000B、`docs` ≤12,000B、append-only 無硬上限需分流）
 6. **執行工具**: `scripts/dev/auto-commit-pr.sh "<msg>" main "<title>"`（自動: ci-gate → commit → push → PR → 等 CI → squash merge）
 
 #### 6.4.2 重大變更（必須人工 review, hermes 只開 PR 不等 merge）
@@ -276,5 +276,5 @@ Tag 必含 commit 註明:範圍 / 對位 / 風險。
 
 - CLAUDE.md:分支與 PR 紀律、CI preflight gate、Binary freshness gate
 - AGENTS.md:§0 開頭必唸、§2 目錄權限、§10 改版守則、§12 對位憲章（報告格式見 mode-reporting skill）
-- _method.md:5 條鐵律、SK 頁 size 上限、frontmatter 10 欄
+- _method.md:六條鐵律（含 size 類別上限）、frontmatter 10 欄
 - hermes skill `github-pr-workflow`:gh CLI 與 git+curl fallback 完整流程

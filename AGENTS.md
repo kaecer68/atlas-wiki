@@ -180,10 +180,10 @@ hermes prompt-size --json | jq '.skills_index'    # 確認 always-on skills_inde
 
 改 atlas 內容前讀 `~/.hermes/content-routing.md`（先分類 / 一段一檔 / LIMIT MEMORY 2200/USER 1375 / SOUL 只做人）。
 
-驗證：`wc -c AGENTS.md` ≤ **12,500 bytes**（現行上限）；`stat -f '%Sm' ~/.hermes/SOUL.md` 時間戳不變。
+驗證：`wc -c AGENTS.md` ≤ **12,500 bytes**（§10 自訂上限；六條鐵律 6 的類別表把 `AGENTS.md` 單列此上限，不併入 9,000 入口檔）；`stat -f '%Sm' ~/.hermes/SOUL.md` 時間戳不變。
 
-> **上限沿革**：10,500（原始）→ 2026-08-21 v0.9 例外放寬至 12,500（加 §9.5）。2026-09-27 移除「版本沿革」段後為 **10,722 bytes**（沿革改由 `git log` ＋ `_self-audit.md` 承載）。
-> 距 10,500 尚差 222 bytes：缺口在 §9.5／§9 與外部正本（`~/.hermes/skills/skills-map.md`）的重複敘述，去重後即可收回原上限。
+> **上限沿革**：10,500（原始）→ 2026-08-21 v0.9 例外放寬至 12,500（加 §9.5）。逐次 byte 數以 `git log -- AGENTS.md` ＋ `_self-audit.md` 為準（不在本檔留易失準的快照值）。
+> 目前仍高於原 10,500：缺口在 §9.5／§9 與外部正本（`~/.hermes/skills/skills-map.md`）的重複敘述，去重後即可收回原上限。
 
 ---
 
