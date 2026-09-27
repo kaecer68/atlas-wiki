@@ -202,7 +202,7 @@ if __name__ == "__main__":
 
 # =============================================================================
 # Plan F Week 3 Day 4 (2026-08-22 kaecer 拍板): R5 護欄 — skill 競爭 SOP
-# 規範本體: ~/workspace/atlas-wiki/_internal/skill-competitive-sop-design-2026-08-22.md
+# 規範本體: ~/workspace/atlas-wiki/_internal/_completed-plans-2026-08.md §3（原 skill-competitive-sop-design-2026-08-22.md，2026-09-27 併入）
 # 規則: 新增 SKILL.md 必含 competition_sop_decision frontmatter 欄位
 # =============================================================================
 def check_skill_competition_sop_decision(skills_dir: Path) -> List[Dict[str, Any]]:
