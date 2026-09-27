@@ -111,7 +111,7 @@ MCP（Model Context Protocol）是把工具能力以 **結構化 JSON** 形式�
 | `strategy_get_attribution` | 指定期間的策略歸因 |
 | `strategy_ranker` | 按表現排名，含 free / registered / premium tier 標記 |
 | `strategy_get_layers` | L1–L5 全部層級配置 |
-| `detector_registry_list` | 24 個 template trigger detectors 啟用狀態 |
+| `detector_registry_list` | **29** 個 template trigger detectors 啟用狀態（數值由 atlas-go registry 決定；異動時本頁需同步）[2026-09-27 實測 200／29] |
 | `get_recommendations` | 組合層策略（growth / momentum / defensive / all_weather / value） |
 
 > **時期 × 策略對位（2026-08-22 iter2 複查）**：

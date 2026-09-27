@@ -159,7 +159,7 @@ Atlas 是專為 **台股散戶投資人** 設計的 **策略模擬與交易模�
 - `strategy_get` / `strategy_get_summary` / `strategy_get_attribution`
 - `strategy_ranker`：按表現排名（free / registered / premium tier 標記）
 - `strategy_get_layers`：L1–L5 全層級配置
-- `detector_registry_list`：24 個 template trigger detectors 的啟用狀態
+- `detector_registry_list`：**29** 個 template trigger detectors 的啟用狀態（數值由 atlas-go 的 detector registry 決定；新增/移除 detector 時本頁需同步）[2026-09-27 實測 `GET /api/detector/registry/list` → 200、29 themes]
 
 ### 4.4 投資組合類（Portfolio）
 - `get_recommendations`：growth / momentum / defensive / all_weather / value 五種 tier-appropriate 配置
