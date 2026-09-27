@@ -69,14 +69,6 @@
         "template_id"
       ],
       "notes": "觸發模板＝cron 觸發定義；門檻等細節寫在內文。編號欄位只有部分模板有（atlas 端無對應概念，見 recipe §2）。"
-    },
-    "freshness": {
-      "fields": [
-        "last_verified",
-        "verify_by"
-      ],
-      "rule": "含『日期＋量化』快照行的頁面必填。last_verified = 最後一次真的核對來源的日期（YYYY-MM-DD）；尚未核對則寫字串 `待複驗（YYYY-MM-DD）`。verify_by = 誰／哪個 PR 驗的。**SK 頁可用 l3_run_at 代替**。禁止用 updated 冒充驗證日。",
-      "enforced_by": "skills/_scripts/check-freshness.py"
     }
   },
   "rules": [
@@ -88,5 +80,14 @@
     "外部事實可追溯性（S3）：內文引用外部權威機構（IMF/BIS/UNCTAD/金管會/證交所/TWSE/TPEx/央行/CBOE/OECD/FSC…）＋量化主張時，frontmatter `sources:` 必須含可追溯來源（URL／法規名／報告名），或明寫『實務慣例』／『待查（YYYY-MM-DD）』。檢查器：`check-source-tiers.py`（2026-09-27 起，warn → 待 25 頁補完後 --strict）",
     "時效宣告（S6）：含「日期＋量化」快照行的頁面，frontmatter 必須有 `last_verified: YYYY-MM-DD`（最後一次真的核對來源的日期）、或明示 `待複驗`；SK 頁可用 `l3_run_at` 代替（L3 實跑＝驗證行為）。**禁止用 `updated:` 冒充驗證日**。超過 90 天列為逾期警告（交第六條鐵律週期稽核）。檢查器：`check-freshness.py`。",
     "S3 已升 `--strict`（2026-09-27；25 頁全部補完，checker 回 ✅ 0 頁）。S6（check-freshness.py）先 warn，待 18 頁宣告後升 strict。"
-  ]
+  ],
+  "freshness": {
+    "fields": [
+      "last_verified",
+      "verify_by"
+    ],
+    "rule": "含『日期＋量化』快照行的頁面必填。last_verified = 最後一次真的核對來源的日期（YYYY-MM-DD）；尚未核對則寫字串 `待複驗（YYYY-MM-DD）`。verify_by = 誰／哪個 PR 驗的。SK 頁可用 l3_run_at 代替。禁止用 updated 冒充驗證日。",
+    "enforced_by": "skills/_scripts/check-freshness.py",
+    "note": "本鍵為 schema 說明用，不參與 groups 的 glob 驗證。"
+  }
 }
