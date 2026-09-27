@@ -3,6 +3,8 @@ title: L1-T.6 人口轉折
 description: 要評估人口結構（少子化、高齡化）對台股長期需求與勞動供給的影響時載入。
 created: 2026-07-17
 updated: 2026-09-27
+last_verified: 2026-08-22
+verify_by: 未知
 type: entity
 tags: [L, time-anchor, hypothesis, event]
 sources:

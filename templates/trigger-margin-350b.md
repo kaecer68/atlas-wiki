@@ -1,5 +1,7 @@
 ---
 description: retail_margin_balance 超過 5000 億台幣時載入本模板。
+last_verified: "待複驗（2026-09-27）"
+verify_by: pending
 ---
 
 # 融資 3500 億觸發模板(單日版)

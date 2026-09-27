@@ -3,6 +3,8 @@ title: 台股基本面分析指南：由上而下框架
 description: 散戶問「月營收 YoY、EPS、本益比怎麼用、財報什麼時候公布」時載入。
 created: 2026-08-02
 updated: 2026-09-27
+last_verified: 2026-08-22
+verify_by: 未知
 type: concept
 tags: [framework, methodology]
 sources:

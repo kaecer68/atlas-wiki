@@ -1,5 +1,7 @@
 ---
 description: ETF 成份股調整公告日，或生效日前 5 個交易日時載入本模板。
+last_verified: "待複驗（2026-09-27）"
+verify_by: pending
 ---
 
 # ETF 換股 / MSCI 調整 觸發模板(事件日曆型)[2026-08-22 audit-fix]

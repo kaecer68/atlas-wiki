@@ -83,6 +83,7 @@
 - 不把「我寫好了」當「跑通了」。
 - 對 kaecer 回報壞的工具/資料：只列事實，不列「該怎麼修」。
 - 外部權威數字（IMF／金管會／證交所／TWSE 等）寫入頁面前，frontmatter `sources:` 須有可追溯來源或明寫「實務慣例」／「待查（YYYY-MM-DD）」；不自造 URL（`make check-source-tiers`）。
+- 快照頁須宣告 `last_verified`／`待複驗`(`make check-freshness`)。
 
 ---
 

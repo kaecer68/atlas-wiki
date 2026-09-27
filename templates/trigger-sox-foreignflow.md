@@ -1,5 +1,7 @@
 ---
 description: SOX 單日 >+1.5% 且站回 50 日線、當日外資買超 >50 億時載入本模板。
+last_verified: "待複驗（2026-09-27）"
+verify_by: pending
 ---
 
 # SOX+外資買超 觸發模板(單日版)

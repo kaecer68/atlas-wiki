@@ -1,5 +1,7 @@
 ---
 description: 融資餘額較近 60 日高點減少 >15% 且近 5 日不再大減時載入本模板。
+last_verified: "待複驗（2026-09-27）"
+verify_by: pending
 ---
 
 # 散戶融資大減 觸發模板(衰竭訊號版)[2026-08-22 audit-fix]
