@@ -13,7 +13,7 @@ help:                   ## 列出所有 target
 ci-gate:                ## 快速門禁(對位 GitHub CI 9 job=8 驗證+notify(2026-09-27 實測) + skills 索引同步 R1+R3+R4)
 ci-gate: check-timestamp check-audit check-size check-skill-structure check-frontmatter check-actionlint check-skill-index-sync check-retrieval check-wiki-pages
 	@echo ""
-	@echo "✅ local ci-gate: 7 targets passed(含 R1+R3+R4 skills 同步)"
+	@echo "✅ local ci-gate: 9 targets passed（含 R1+R3+R4、L3 覆蓋率／文法、S2 非 SK schema、S5 檢索性）"
 
 ci-strict:              ## 別名(2026-09-27 起 R4 已併入 ci-gate;保留此 target 以免既有引用斷鏈)
 ci-strict: ci-gate
