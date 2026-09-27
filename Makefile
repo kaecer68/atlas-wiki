@@ -40,8 +40,8 @@ check-skill-pages:      ## 內部 target:一次跑 size + frontmatter(被 size/f
 check-size:             ## 3. SK 頁大小 ≤ 9000 bytes
 check-size: check-skill-pages
 
-check-retrieval:        ## 3e. 檢索性完整性 S5（載入條件／索引／入口可達性；**warn 模式**，待 description 覆蓋達標後升硬門檻）
-	@$(PY) skills/_scripts/check-retrieval-integrity.py --repo-root $(CURDIR)
+check-retrieval:        ## 3e. 檢索性完整性 S5（載入條件／索引／入口可達性；**硬門檻**，涵蓋率 92/92 後於 2026-09-27 開啟 --strict）
+	@$(PY) skills/_scripts/check-retrieval-integrity.py --repo-root $(CURDIR) --strict
 
 check-skill-structure:  ## 3b. SK 頁結構（SSOT: skills/_scripts/skill-page-schema.json；失敗輸出最小重構處方）
 	@$(PY) skills/_scripts/check-skill-structure.py --skills-dir skills

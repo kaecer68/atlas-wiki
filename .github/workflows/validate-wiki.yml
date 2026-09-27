@@ -56,6 +56,8 @@ jobs:
         run: python3 skills/_scripts/check-skill-structure.py --skills-dir skills
       - name: size + frontmatter 10 欄 + YAML 合法 + L3 覆蓋率門檻（2026-09-27 kaecer 拍板 ≥90%）
         run: python3 skills/_scripts/check-skill-pages.py --skills-dir skills --min-l3-coverage 90
+      - name: 檢索性完整性 S5（載入條件／索引／入口可達性；2026-09-27 升硬門檻）
+        run: python3 skills/_scripts/check-retrieval-integrity.py --strict
   size-check:
     name: SK 頁大小檢查(≤ 9000 bytes)
     runs-on: ubuntu-latest

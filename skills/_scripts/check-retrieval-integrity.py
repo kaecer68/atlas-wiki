@@ -10,8 +10,10 @@
 
 用法:
   python3 skills/_scripts/check-retrieval-integrity.py [--repo-root .] [--strict] [--json]
-  預設 **warn 模式**（永遠 exit 0，只報告）；`--strict` 才以違規數非零結束。
-  理由：S5 是 2026-09-27 才新增的標準，內容需要時間補；先建基線、再收斂、最後才升硬門檻。
+  **本腳本預設 warn 模式**（永遠 exit 0，只報告）；`--strict` 才以違規數非零結束。
+  使用現況（2026-09-27）：`make check-retrieval` 與 GitHub CI 的 `skill-structure-check` job 都已加 `--strict`
+  —— 因為當日已把 92/92 頁的載入條件補完（PR #113/#114），S5 由「先建基線」升為**硬門檻**。
+  保留 warn 預設是為了讓人能手動跑「只看數字不擋人」的版本。
 """
 import argparse
 import glob
@@ -113,7 +115,8 @@ def main():
             print(f"  … 另有 {len(items) - 10} 頁")
     bad = (len(report["missing_description"]) + len(report["missing_index"])
            + len(report["unreachable_from_entry_surfaces"]))
-    print(f"\n合計 {bad} 條（warn 模式: 不影響 exit code）")
+    mode = "strict（違規即失敗）" if args.strict else "warn（只報告）"
+    print(f"\n合計 {bad} 條｜模式={mode}")
     return 1 if (args.strict and bad) else 0
 
 if __name__ == "__main__":
