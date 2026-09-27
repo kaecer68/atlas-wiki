@@ -732,3 +732,49 @@ archive_owner: agent(autonomous)
 
 ---
 
+## 歸檔記錄(2026-09-27 第二次,依 `_method.md` 第七條例外歸檔 SOP 移入)
+
+**觸發**:`_inbox.md` 11,990B,append 新段（模板狀態校正 ＋ templates quota 條文查核）前接近 12,000B 上限（agent 自查觸發）。
+
+**搬移（原文,未改字）**:`## 總體進度(2026-08-07 D4 結算)` ＋ `## 最後更新對位事實(2026-08-07 D4 session 結算)` 兩段（合計 2,815B）——移入當下 `_inbox.md` 現存最舊結算段。
+
+**依據**:第七條「主檔只留最新 2 版本結算」⇒ 主檔保留 2026-09-27 查核結算 ＋ 2026-09-27 結案段 ＋ 本次 2026-09-27 校正段。
+
+**執行**:prime-agent(2026-09-27,`docs/20260927-stale-template-claims`)。
+
+**移段時仍 OPEN 的項**:D4 段「L3 待驗端點 30 active 頁 × 3 step = 90 個 Step 待跑」為 2026-08-07 快照;實際範圍已於 T9 Task 3 更新為 105 步且 2026-09-27 查核為「從未執行」⇒ 該項隨段入本檔（未消失）。
+
+---
+
+## 總體進度(2026-08-07 D4 結算)
+
+- 已寫:**34/34 = 100%**(SK-00 索引 + SK-01~33 全 33 主體含 SK-33 audience-routing)
+- **active: 33/34 = 97% 主體**(SK-00 索引升 active 2026-08-07 D4 M1 條目完成)
+- **archive: 2/34 = 6%**(SK-27/SK-30 量子,2026-08-07 D4 M2 條目完成)
+| 1 | SK-00 升 active + 偏差對位(35 ≠ 33) | `skills/SK-00-skill-index.md` | [x] line 6 = active, line 11 verification 改為 35, line 57-61 加 SK-31 衝突待解段 |
+| 2 | SK-27 + SK-30 一致性 | `skills/SK-27-quantum-policy.md` + `SK-30-quantum-stability.md` | [x] 兩檔 frontmatter `status: archive` + 歸檔聲明段 |
+| 3 | `_inbox.md` 15201B 歸檔 | `skills/_inbox.md` + `skills/_inbox_archive.md` | [x] 本檔 3589B(從 15201B 縮 76%),歷史段 5261B 到 `_inbox_archive.md` |
+| 4 | 上市/上櫃分流 skill | `skills/SK-34-listed-otc-routing.md`(新) | [x] 5465B, status: draft 待 L3 實跑升 active |
+| 5 | failover-policy 升 skill | `skills/SK-35-mcp-failover.md`(新) | [x] 4888B, status: active |
+| 6 | audience-routing | — | 已存在(SK-33 2026-08-07 Day 1 落地),從未完成清單剔除 |
+| 7 | skills vs agent 分工 | `summaries/_division_of_labor_skills_vs_agent.md`(獨立檔) | [x] 2291B, AGENTS.md 10601B 接近 11000B 上限,採獨立檔避免撞上限 |
+| 8 | `_method.md` 規範本體重構(F 路徑) | `skills/_method.md` + `skills/_method_amendment_history.md` + `~/workspace/atlas-notes/02-knowledge/_method_amendment_D4_oct_review_prompt.md`(superseded,2026-08-22 遷移) | [x] kaecer 拍 F 路徑(非原 A/B/C):line 41 還原 9000B + 5 維度重構(精簡 4 段廢話 + 合併 3 段冗余 + 第七條例外精簡 815B→469B + 起源與演進移到附錄)。最終 `_method.md` 6577B(原 9724B,-32%)≤ 9000B 規範本體自限示範 ✓;附錄 `_method_amendment_history.md` 2783B ≤ 5000B;派工 prompt 標 `status: superseded` |
+| 9 | Todo tool 死循環 | manifest 內已標 [x] | [x] 決策「不寫 todo,線性工作」 |
+
+- L2 對位覆蓋:32/34 = 94%(SK-00 + SK-27/30 標 archive)
+
+---
+
+
+## 最後更新對位事實(2026-08-07 D4 session 結算)
+
+- `_inbox.md` 本次縮 15201B → 3589B(76% 縮,對位第七條例外規範上限 12000B)
+- `_inbox_archive.md` 新建 5261B,承接歷史段(2026-08-04 ~ 2026-08-07 結算 + L3 端點快照 + 待辦)
+- `_method.md` 規範本體 F 路徑重構 6577B(原 9724B,-32%)≤ 9000B 規範本體自限示範
+- 9 條未完成工作全部完成(SK-00 升 active / SK-27+30 archive / _inbox 歸檔 / SK-34 上市上櫃分流 / SK-35 failover / audience-routing 確認 / skills vs agent 分工 / _method 重構 / Todo 死循環)
+- 派工 → 拍板(F 路徑)→ 執行 → 結算 4 步治理痕跡完整;PR #16 已 merge main
+
+- L3 待驗端點(每頁 Step 1~3):30 active 頁 × 3 step = 90 個 Step 待跑(給 02:00 每日 cron)
+
+---
+

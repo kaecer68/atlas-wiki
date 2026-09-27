@@ -40,6 +40,7 @@ SK-13 在 atlas 是「哪個因子真有用」的黑盒問答——把每個因�
 - 沒有「模型訓練」endpoint(client 端 sklearn / xgboost / lightgbm)
 - 沒有「permutation importance」endpoint
 - 沒有「特徵排名」單一 endpoint
+- **SHAP / LIME 個股層級解釋**(2026-09-27 實測):atlas 源碼 (`~/workspace/atlas`,`*.go/*.yaml/*.json`) grep `\bshap\b|\blime\b|shapley` = **0 命中**,且 atlas **無模型訓練端點** ⇒ per-prediction 解釋既無輸入也無輸出;本頁的 permutation(global importance)是 atlas 對位下唯一可跑路徑,SHAP/LIME 只能 client 端自帶模型(套件與 X/y 組裝成本另計)。
 
 ## 散戶解讀（GROW+ 引用點）
 - **G 段**:用戶問「86 個因子真的每個都有用嗎?」 → 反問「打亂某個因子,如果模型掉分很多,代表該因子真有用;如果分數不動,代表是雜訊」。permutation 是「對模型說實話」的方式。
@@ -56,8 +57,9 @@ Step 3: 看 top-10 因子,**人工檢查是否有「冷門訊號」在前 5 名*
 ## 未消化 / 待補
 - [ ] atlas 沒有「特徵排名」端點,需評估是否要提案給 atlas-go 開 `feature_importance` endpoint。
 - [ ] 共線性問題:SK-13 在高共線特徵下 importance 會被低估,atlas 端能否提供「相關性矩陣」快速篩掉冗餘?`risk_get_correlation_matrix` 是策略層,不是特徵層。
-- [ ] 與 SHAP / LIME 的差異:permutation 是 global importance,SHAP 是 per-prediction;散戶需不需要 SHAP?atlas 端缺。
 - [ ] n_repeats=5 預設值是否足夠?學術建議 30-50 次,需實測確認。
+
+> **2026-09-27 校正**:原「與 SHAP / LIME 的差異…atlas 端缺」一條已於本次實測結案(atlas 0 命中),移出本段;結論併入 §atlas 對位「沒有對位的部分」。
 
 methodology_aligned: true
 atlas_constitution_ref: ATLAS_METHODOLOGY.md §五(策略矩陣:Permutation Importance 排列重要性需對位 regime 內 vs 跨 regime 差異)(附註:2026-07-30 period_system 變動 — `period` 已是 PeriodDetector 真值,`source` 欄位正名 `regime_source` / `period_source`)
