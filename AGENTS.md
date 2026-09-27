@@ -155,8 +155,8 @@
 
 ### 品質護欄（S1–S8，2026-09-27）
 
-`make ci-gate` 全跑。**strict（違規即紅燈）**：結構／size／frontmatter＋YAML／L3 ≥90%＋文法／S2 schema／S5 檢索性／S7 句型／**S3 來源可追溯**／R1+R3+R4／detector 數（29）。
-**S6 時效**（`check-freshness.py`：含日期快照頁須有 `last_verified`／`l3_run_at`／`待複驗`，禁用 `updated` 冒充）2026-09-27 由 18 頁補完並升 strict。細節見 `atlas-wiki-quality` skill。
+`make ci-gate` 全跑。**strict（違規即紅燈）**：結構／size／frontmatter＋YAML／L3 ≥90%＋文法／S2 schema／S5 檢索性／S7 句型／**S3 來源可追溯**／**S6 時效**（含日期快照頁須有 `last_verified`／`l3_run_at`／`待複驗`；禁用 `updated` 冒充）／R1+R3+R4／detector 數（29）。
+**治理檔護欄**：觸碰 `AGENTS.md`／`.github/workflows/`／`_method.md`／`SCHEMA.md`／`git-merge-protocol.md` 屬重大變更 ⇒ CI `governance-review-gate` 需 `kaecer-reviewed` 標籤、`auto-commit-pr.sh` 只開 PR 不 merge。
 
 ### 紅線（不可違反）
 

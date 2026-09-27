@@ -103,13 +103,37 @@ for i in $(seq 1 30); do
     sleep 10
 done
 
-# === Step 7: Squash merge(若設定 enforce_admins,加 --admin) ===
+# === Step 6.5: 治理檔／規模閘門（2026-09-27 kaecer 拍板；對位 git-merge-protocol §6.4.2）===
+# 觸碰治理檔、或規模超標（>5 檔 / >300 行）⇒ 只開 PR，**不自動 merge**，等 kaecer review。
+GOV_RE='^(AGENTS\.md|SCHEMA\.md|skills/_method\.md|docs/git-merge-protocol\.md|\.github/workflows/)'
+CHANGED_FILES="$(git diff --name-only "$BASE...HEAD" 2>/dev/null || true)"
+N_FILES="$(printf '%s\n' "$CHANGED_FILES" | grep -c . || true)"
+N_LINES="$(git diff --numstat "$BASE...HEAD" 2>/dev/null | awk '{a+=$1; d+=$2} END {print a+d+0}')"
+GOV_HITS="$(printf '%s\n' "$CHANGED_FILES" | grep -E "$GOV_RE" || true)"
+MAJOR=0
+[ -n "$GOV_HITS" ] && MAJOR=1
+[ "${N_FILES:-0}" -gt 5 ] && MAJOR=1
+[ "${N_LINES:-0}" -gt 300 ] && MAJOR=1
+
+if [ "$MAJOR" = "1" ]; then
+    echo ""
+    echo "🛑 偵測到「重大變更」（§6.4.2）— 只開 PR，不自動 merge："
+    if [ -n "$GOV_HITS" ]; then
+        echo "   治理檔："
+        printf '     - %s\n' $GOV_HITS
+    fi
+    echo "   規模：${N_FILES} 檔 / ${N_LINES} 行（門檻 5 檔、300 行）"
+    echo "   PR：$(gh pr view "$PR_NUM" --json url --jq .url 2>/dev/null || echo "#$PR_NUM")"
+    echo "   ⇒ 請 kaecer review 後人工 merge（本腳本不再自動 merge 治理檔 PR）。"
+    exit 0
+fi
+
+# === Step 7: Squash merge（2026-09-27 起移除 --admin：必須 required checks 全綠才可 merge）===
 echo "🔀 squash merge PR #$PR_NUM"
-ENFORCE="$(gh api repos/kaecer68/atlas-wiki/branches/main/protection --jq '.enforce_admins.enabled' 2>/dev/null || echo false)"
-if [ "$ENFORCE" = "true" ]; then
-    gh pr merge "$PR_NUM" --squash --delete-branch --admin
-else
-    gh pr merge "$PR_NUM" --squash --delete-branch
+if ! gh pr merge "$PR_NUM" --squash --delete-branch; then
+    echo "❌ merge 失敗（required checks 未過／遭 branch protection 阻擋，或需要 review）。"
+    echo "   PR 保持開啟，請人工處理：$(gh pr view "$PR_NUM" --json url --jq .url 2>/dev/null || echo "#$PR_NUM")"
+    exit 1
 fi
 
 # === Step 8: 切回 base + pull ===

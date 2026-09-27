@@ -126,9 +126,9 @@ PR 建立後 **不可停留**在「compare & pull request」未完成狀態。�
 - `push: branches: [main]` → push 到 main 觸發 validate-wiki.yml
 - `pull_request: branches: [main]` → 任何 PR 到 main 觸發
 
-### 5.2 9 個 job（2026-09-27 實測 `validate-wiki.yml`:驗證 8 + 通知 1;舊記 4）
+### 5.2 10 個 job（2026-09-27 實測 `validate-wiki.yml`:驗證 9 + 通知 1;舊記 4）
 
-驗證:`validate-timestamp-rule`（第 5 條鐵律）／`audit-atlas-endpoints`（atlas-go 稀疏 checkout;**實測 115 端點,舊記 109**）／`skill-structure-check`（段名/段序/禁用標記）／`size-check`（SK 頁 ≤9,000B）／`frontmatter-check`（10 欄）／`audit-file-index-sync`（索引同步）／`trigger-template-existence`／`trigger-endpoint-validation`;第 9 個 `notify-telegram`（`if: failure()`）任一失敗才發 Telegram。
+驗證:`governance-review-gate`（治理檔需 `kaecer-reviewed` 標籤,見 §6.4.2）／`validate-timestamp-rule`（第 5 條鐵律）／`audit-atlas-endpoints`（atlas-go 稀疏 checkout;**實測 115 端點,舊記 109**）／`skill-structure-check`（段名/段序/禁用標記＋S2/S3/S5/S6/S7 步驟）／`size-check`（SK 頁 ≤9,000B）／`frontmatter-check`（10 欄）／`audit-file-index-sync`（索引同步）／`trigger-template-existence`／`trigger-endpoint-validation`;第 10 個 `notify-telegram`（`if: failure()`）任一失敗才發 Telegram。
 
 ### 5.3 Branch protection
 
@@ -168,30 +168,23 @@ gh pr merge <N> --squash --delete-branch --admin
 ### 6.3 自我合併條件
 
 允許自我合併的條件(全部需滿足):
-1. CI 9 job 全綠(`validate-wiki` workflow success)
-2. 本地 `make ci-gate` 全綠
-3. PR body 三段齊全(Summary / Root Cause / Verification)
-4. 變更 < 200 lines(超出需留 24 小時冷卻期供 review)
+1. `validate-wiki` 全綠(現 10 job) / 2. 本地 `make ci-gate` 全綠 / 3. PR body 三段(Summary·Root Cause·Verification) / 4. 變更 < 200 lines(超出留 24h 冷卻)。
 
-例外(可立即合併):
-- docs 變更(README / SCHEMA / .md 修正)
-- ci 變更(workflow 修正)
-- emergency fix(影響 main 運作;合併後需 24h 內補 incident report 到 _self-audit.md)
+例外(可立即合併): ~~docs／ci 變更~~ **已由 §6.4.2 取代**（治理檔一律人工 review）；**emergency fix** 仍可即時合併，但 24h 內補 incident report 到 `_self-audit.md`。
 
 ### 6.4 合夥人制自主合併（B 方案, 2026-08-15 kaecer 拍板）
 
-> 背景: iMac hermes 已承接 atlas-wiki 日常產出 (每日 quota 3 頁 SK)。原 §6.3 自我合併條件 (200 lines + PR body 三段) 對 routine 產出過嚴, 會卡 hermes 自主運作。
-> 拍板: kaecer 2026-08-15 決策 T11-B —「合夥人制」: hermes 可自主 merge routine 產出, 重大變更走人工 review。
+> 拍板: kaecer 2026-08-15 決策 T11-B「合夥人制」——hermes 可自主 merge routine 產出, 重大變更走人工 review（原 §6.3 條件對 routine 過嚴）。
 
 #### 6.4.1 Routine 產出（hermes 自主 merge, 不需人工 review）
 
 符合以下**全部**條件的變更 = routine, hermes 可用 `scripts/dev/auto-commit-pr.sh` 一鍵 merge:
 
-1. **變更範圍**限: `skills/SK-*.md`（SK 頁新增/修正）或 `concepts/` 或 `templates/` 或 `scripts/_scripts/` 工具修正
+1. **變更範圍**限: `skills/SK-*.md`（SK 頁新增/修正）或 `concepts/` 或 `templates/` 或 `skills/_scripts/` 工具修正（**2026-09-27 修正路徑 typo**：舊記 `scripts/_scripts/` 不存在）
 2. **CI 全綠**: 本地 `make ci-gate` + GitHub `validate-wiki` 9 job success
 3. **變更量**: < 300 lines（比 §6.3 的 200 放寬, 因 SK 頁 quota 產出）
 4. **不觸碰**: 憲法 / `_method.md` / `AGENTS.md` / `git-merge-protocol.md` / `.github/workflows/` / `SCHEMA.md`（這些是治理檔, 見 6.4.2）
-5. **SK 頁品質**: 對位 `_method.md` 六條鐵律（不搬運/不瞎寫/不裝完成/不違憲章/派工備份/size **依類別**——SK 頁 ≤9,000B、`concepts`+`entities` ≤30,000B、`docs` ≤12,000B、append-only 無硬上限需分流）
+5. **SK 頁品質**: 對位 `_method.md` 六條鐵律；size **依類別**（SK 9,000B／concepts+entities 30,000B／docs 12,000B／append-only 無硬上限）
 6. **執行工具**: `scripts/dev/auto-commit-pr.sh "<msg>" main "<title>"`（自動: ci-gate → commit → push → PR → 等 CI → squash merge）
 
 #### 6.4.2 重大變更（必須人工 review, hermes 只開 PR 不等 merge）
@@ -208,6 +201,10 @@ gh pr merge <N> --squash --delete-branch --admin
 | 規模 | 單 PR > 300 lines 或跨 > 5 檔案 |
 
 重大變更流程: hermes 開 PR → 填 §4.1 三段 body → **不自行 merge** → Telegram 通知 kaecer → 等 review。
+
+**2026-09-27 補牙（incident 後）**：本條原無機械強制；當日 **22 個觸碰治理檔的 PR 被自動合併**（慣犯路徑：`auto-commit-pr.sh` 無排除檢查＋`--admin`）。三道防線：**C** `validate-wiki.yml` 新增 `governance-review-gate`：觸碰治理檔而無 `kaecer-reviewed` 標籤 ⇒ 紅燈（已列 required checks）；**D** `auto-commit-pr.sh` Step 6.5：觸碰治理檔或 >5 檔／>300 行 ⇒ 只開 PR 不 merge，並移除 `--admin`；**A** `check-skill-index-sync.py` R3 收窄為「SK 頁新增/刪除 ⇒ 同步 `SK-00-skill-index.md`」（舊版強制改 `AGENTS.md` = 互撞根因）。
+
+**限度（誠實）**：agent 共用單一帳號（`mergedBy` 一律 `kaecer68`）；`required reviewers`／`CODEOWNERS` 不可行（作者不可自審），標籤可被同 token 自貼 ⇒ 屬**留痕**非**授權**；真解需**第二個 bot 帳號**。
 
 #### 6.4.3 合夥人制判斷速查
 

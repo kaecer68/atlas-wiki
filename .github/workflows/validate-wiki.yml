@@ -10,6 +10,40 @@ permissions:
   contents: read
 
 jobs:
+  governance-review-gate:
+    name: 治理檔變更需 kaecer-reviewed 標籤（§6.4.2）
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - name: 檢查治理檔變更是否有 review 標籤
+        env:
+          LABELS: ${{ join(github.event.pull_request.labels.*.name, ',') }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          set -euo pipefail
+          # 非 PR 事件（push 到 main）⇒ 本閘門不適用；仍回報成功狀態，避免 required check 卡住
+          if [ -z "${BASE_SHA:-}" ]; then
+            echo "ℹ️  非 PR 事件 ⇒ 治理檔 review 閘門不適用，通過"
+            exit 0
+          fi
+          GOV_RE='^(AGENTS\.md|SCHEMA\.md|skills/_method\.md|docs/git-merge-protocol\.md|\.github/workflows/)'
+          CHANGED="$(git diff --name-only "$BASE_SHA" HEAD)"
+          GOV="$(printf '%s\n' "$CHANGED" | grep -E "$GOV_RE" || true)"
+          if [ -z "$GOV" ]; then
+            echo "✅ 未觸碰治理檔 ⇒ 免標籤"
+            exit 0
+          fi
+          echo "觸碰治理檔（§6.4.2 重大變更）："
+          printf '  - %s\n' $GOV
+          if printf '%s' "$LABELS" | tr ',' '\n' | grep -qx 'kaecer-reviewed'; then
+            echo "✅ 已標 kaecer-reviewed ⇒ 可合併（仍需人工執行 merge）"
+          else
+            echo "::error::觸碰治理檔需 kaecer-reviewed 標籤方可合併（§6.4.2）"
+            exit 1
+          fi
+
   validate-timestamp-rule:
     name: 第 5 條鐵律 timestamp 驗證
     runs-on: ubuntu-latest
