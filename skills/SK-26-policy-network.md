@@ -28,7 +28,7 @@ SK-26 是 PPO 用的「策略網路」——LSTM/Transformer 比 MLP(SK-11)更�
 ## 論文版概念
 - LSTM(2 層,hidden=128)或 Transformer(num_heads=4, dropout=0.1)
 - 輸入:過去 N 期產業特徵(SK-23 輸出)
-- 輸出:當期 47 個產業的動作 logits + 價值
+- 輸出:當期 47 個產業的動作 logits + 價值（47 = 論文口徑;atlas 端 38 桶 = 20 L1 + 18 L2,見 SK-23）
 - 與 PPO 整合(SK-24)
 
 ## atlas 對位

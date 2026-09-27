@@ -146,6 +146,7 @@
 | 知識整理 / wiki 寫入 | core: task-knowledge-routing + active: knowledge-harvest / wiki-critic / director-atlas-wiki |
 | 治理 / skill 維護 | core: task-governance / mode-escalation + active: governance-audit |
 | 程式 / 系統 / 研究 | core: task-coding + active: task-system-health / mode-research |
+| 跨頁口徑／數值矛盾 | active: wiki-critic / knowledge-harvest（先定口徑正本再改；產業桶數正本 = SK-23：atlas 38 = 20 L1 + 18 L2，論文 47） |
 
 ### 紅線（不可違反）
 
