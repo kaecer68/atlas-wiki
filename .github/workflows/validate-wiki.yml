@@ -54,6 +54,8 @@ jobs:
       - uses: actions/checkout@v4
       - name: 段名／段序／重複段／禁用標記（失敗輸出最小重構處方）
         run: python3 skills/_scripts/check-skill-structure.py --skills-dir skills
+      - name: size + frontmatter 10 欄 + YAML 合法 + L3 覆蓋率門檻（2026-09-27 kaecer 拍板 ≥90%）
+        run: python3 skills/_scripts/check-skill-pages.py --skills-dir skills --min-l3-coverage 90
   size-check:
     name: SK 頁大小檢查(≤ 9000 bytes)
     runs-on: ubuntu-latest

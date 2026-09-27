@@ -31,6 +31,11 @@ REQUIRED_FM = [
 def parse_args():
     p = argparse.ArgumentParser(description="SK 頁 size + frontmatter 兩項檢查")
     p.add_argument(
+        "--min-l3-coverage", type=float,
+        default=float(os.environ.get("ATLAS_WIKI_MIN_L3_COVERAGE", "90")),
+        help="L3 覆蓋率門檻 %%（0 = 停用；預設 90）",
+    )
+    p.add_argument(
         "--skills-dir",
         default=os.environ.get("ATLAS_WIKI_SKILLS_DIR", DEFAULT_SKILLS_DIR),
         help="skills 目錄(預設絕對路徑,CI 用相對路徑)",
@@ -130,6 +135,42 @@ def check_frontmatter_yaml(skills_dir):
         return len(bad), len(files), have_yaml
     return 0, len(files), have_yaml
 
+
+def check_l3_coverage(skills_dir, min_pct):
+    """L3 覆蓋率門檻（2026-09-27 kaecer 拍板: 由「可見度指標」升為 CI 門檻）。
+
+    定義: `status: active` 的 SK 頁中，frontmatter 同時具備
+    `l3_run_at` + `l3_run_by` + `l3_endpoints_probed` 的比例。
+    低於門檻 ⇒ 失敗（避免「宣稱 active 卻沒有可驗證證據」的頁面繼續累積）。
+    """
+    files = sorted(glob.glob(os.path.join(skills_dir, "SK-*.md")))
+    files = [f for f in files if ".bak" not in f]
+    active, covered, missing = 0, 0, []
+    for f in files:
+        c = open(f, encoding="utf-8").read()
+        m = re.match(r"^---\n(.*?)\n---", c, re.DOTALL)
+        if not m:
+            continue
+        fm = m.group(1)
+        if not re.search(r"^status:\s*active\s*$", fm, re.MULTILINE):
+            continue
+        active += 1
+        if all(re.search(rf"^{k}:", fm, re.MULTILINE) for k in
+               ("l3_run_at", "l3_run_by", "l3_endpoints_probed")):
+            covered += 1
+        else:
+            missing.append(os.path.basename(f))
+    pct = round(100.0 * covered / active, 1) if active else 100.0
+    ok = (min_pct <= 0) or (pct >= min_pct)
+    if not ok:
+        print(f"❌ L3 覆蓋率 {pct}% < 門檻 {min_pct}%（{covered}/{active} active 頁具 l3_* 三欄）")
+        for n in missing:
+            print(f"   缺 L3: {n}")
+    else:
+        print(f"✅ L3 覆蓋率 {pct}%（{covered}/{active} active 頁具 l3_* 三欄；門檻 {min_pct}%）")
+    return (0 if ok else len(missing) or 1), active, pct
+
+
 def main():
     args = parse_args()
     skills_dir = args.skills_dir
@@ -150,6 +191,7 @@ def main():
     else:
         print(f"❌ frontmatter: {fm_bad}/{total} 頁有缺欄")
 
+    l3_bad, l3_active, l3_pct = check_l3_coverage(skills_dir, args.min_l3_coverage)
     yml_bad, _, have_yaml = check_frontmatter_yaml(skills_dir)
     mode = "PyYAML 實parse" if have_yaml else "fallback(未加引號 ': ' 偵測;PyYAML 未安裝)"
     if yml_bad == 0:
@@ -158,10 +200,10 @@ def main():
         print(f"❌ frontmatter YAML: {yml_bad}/{total} 頁不合法({mode})")
 
     print()
-    if sz_bad == 0 and fm_bad == 0 and yml_bad == 0:
+    if sz_bad == 0 and fm_bad == 0 and yml_bad == 0 and l3_bad == 0:
         print(f"✅ 全 {total} 頁合規")
         return 0
-    print(f"❌ 共 {sz_bad + fm_bad + yml_bad} 條違規(需修)")
+    print(f"❌ 共 {sz_bad + fm_bad + yml_bad + l3_bad} 條違規(需修)")
     return 1
 
 
