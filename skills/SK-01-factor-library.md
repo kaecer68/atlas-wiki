@@ -1,5 +1,6 @@
 ---
 title: SK-01 建構多元預測因子庫（atlas 對位版）
+description: "問「這檔在產業中的位置、PB/PE 跟產業平均比」時載入。"
 type: skill-inbound
 source: ~/workspace/Fin-Skills/Fin-Skills.md §SK-01
 ingested_at: 2026-07-28
@@ -31,14 +32,14 @@ related:
 
 ## 一句話定位
 
-把 Fin-Skills 學術版「86 個股票因子」概念,翻譯成 atlas 可程式化調用的因子 schema——這是 mission「找信息差」的原料底層。
+把 Fin-Skills 學術版「86 個股票因子」概念翻譯成 atlas 可程式化因子 schema——mission「找信息差」的原料底層。
 > 口徑註：336 月 vs 理論 340 月、60-70%/90%+ 兩口徑,定義待註 [2026-08-22 audit-fix]
 
 ## 論文版概念(忠實還原 Fin-Skills)
 
-SK-01 定義從原始台股個股數據(月頻)計算 86 個股票層面特徵,作為後續模型(SK-05~11)的預測因子庫。
+SK-01 從原始台股個股數據(月頻)計算 86 個股票層面特徵,作為後續模型(SK-05~11)的預測因子庫。
 
-**真實學術對位(2026-08-02 21:30 v0.8 M1 升分綁定 + 2026-08-03 01:30 v5.6 加 Rosenberg85 + Frazzini14 M1 升 8 觸發)**:
+**真實學術對位(2026-08-02 21:30 v0.8 M1 綁定 + 2026-08-03 01:30 v5.6 加 Rosenberg85 + Frazzini14 M1 升 8)**:
 - **Fama-French 1993**「Common Risk Factors in the Returns on Stocks and Bonds」(JFE 33, 3-56) — MKT + SMB + HML + 2 債券。對位 atlas:`pb`(HML)+ `momentum`(WML)+ `market`(MKT)✅ + 缺 SMB。3/4 對位。
 - **Jegadeesh-Titman 1993**「Returns to Buying Winners and Selling Losers」(JF 48, 65-91) — 12 月動量 skip 1 個月。對位 atlas:`mom12m` + `momentum_20d` + `momentum_weight`✅ = 100%。
 - **Carhart 1997** 4-factor(MKT+SMB+HML+UMD) — 涵蓋於 FF93 + JT93 中。
@@ -61,7 +62,7 @@ SK-01 定義從原始台股個股數據(月頻)計算 86 個股票層面特徵,�
 
 ## atlas 對位
 
-atlas-mcp 沒有單一「build factor library」端點,但對位的底層數據源已存在:
+atlas-mcp 沒有單一「build factor library」端點,但底層數據源已存在:
 
 | 論文因子類 | atlas-mcp 對位 | tool_name |
 |-----------|---------------|-----------|
@@ -73,26 +74,26 @@ atlas-mcp 沒有單一「build factor library」端點,但對位的底層數據�
 | 總經交互(SK-02 預備) | 總經快照 | `macro_get_snapshot_latest` |
 
 **差異點**:
-- 論文版 86 因子 vs atlas 約 10-15 個核心欄位(從上述五個 tool 可拼出)
+- 論文版 86 因子 vs atlas 約 10-15 核心欄位(五 tool 可拼出)
 - 論文版月頻 vs atlas 日頻 + 技術指標即時
-- 論文版學術嚴謹清洗 vs atlas 餵進策略前已由 L1-L5 detector 處理
+- 論文版學術清洗 vs atlas 餵進策略前已由 L1-L5 detector 處理
 
 **沒有對位的部分**:
-- 行業中位數填補——atlas 用 `industry_sector_lookup` 取產業歸屬,但沒看到橫斷面填補的明確 tool,需查 `data_get_field_contract`
-- winsorize——策略層應該有,但沒明確 endpoint 暴露
+- 行業中位數填補——atlas 用 `industry_sector_lookup` 取產業歸屬,但無橫斷面填補 tool,需查 `data_get_field_contract`
+- winsorize——策略層應該有,但無 endpoint 暴露
 
 ## 散戶解讀(GROW+ 引用點)
 
-教練框架 R(Reality)段會用到:
-- **產業位置一句話**:「這個標的屬於哪個產業、產業現在的位置」
+教練框架 R(Reality) 段:
+- **產業位置一句話**:「這標的屬哪個產業、產業現在的位置」
 - **關鍵數據**:用 `stock_get_fundamentals` 拉 PB / PE / 股息率,跟產業平均比
-- **散戶可學到的一條**:`+E`:「本益比不是絕對數字,要跟產業平均比。高本益比可能是高成長支撐,也可能是市場情緒——看 momentum 跟 chips 交叉驗證」
+- **散戶可學**:`+E`:「本益比不是絕對數字,要跟產業平均比。高本益比可能是高成長支撐,也可能是市場情緒——看 momentum 跟 chips 交叉驗證」
 
 ## 驗證方式
 
 **Step 1**:用 `data_get_field_contract` 查 `stock_get_fundamentals` 回傳的所有欄位,確認可湊出 value / size / momentum 三類至少 5 個因子。
 **Step 2**:用 `universe_get_sessions` 看最近一次 supervised 模擬,確認因子層(L1-L2)有 momentum / value / size 三類。
-**Step 3**:若 Step 1 失敗——在「未消化 / 待補」段記錄「需找 atlas backend 補因子填補流程」。
+**Step 3**:若 Step 1 失敗——於「未消化 / 待補」記錄「需找 atlas backend 補因子填補流程」。
 
 ### L3 端點實跑（2026-09-27,本 PR;帶 `X-API-Key`,timeout 6s）
 
@@ -110,7 +111,7 @@ atlas-mcp 沒有單一「build factor library」端點,但對位的底層數據�
 **實測更正（2026-09-27）**：
 - 第 6 列回 **90** sessions,非頁內舊記 147/150——該端點回滾動窗,舊數字為 2026-08-02 當日快照。
 - 頁內「風險側因子」列舉的 `factor_score` **今日不在** field-contract（僅 `factor_scores`、`factor_score_max_age_days`）;其餘 22 個列舉欄位名全部命中。
-- 第 4 列 `rsi14` / `sma20` / `sma50` 今日皆回 0（欄位在、值為 0）→「用 `stock_get_technical` 拼 momentum 因子」目前無法由此端點取到非零指標。
+- 第 4 列 `rsi14` / `sma20` / `sma50` 今日皆回 0（欄位在、值為 0）⇒ 用 `stock_get_technical` 拼 momentum 因子今日取不到非零指標。
 - 歷史（2026-07-30 04:10）:field-contract 1500+ 欄位中 41 個與因子庫相關（value 7/momentum 6/quality 5/配置 4/風險側 3/其他 16）;結構對位存在,但學術命名 `mom12m` ≠ atlas 命名 `momentum_20d`。
 
 ## 未消化 / 待補

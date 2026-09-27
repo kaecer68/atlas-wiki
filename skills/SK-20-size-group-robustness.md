@@ -1,5 +1,6 @@
 ---
 title: SK-20 規模分組穩健性檢驗
+description: "問「同一策略在大股與小股表現一樣嗎」時載入。"
 type: skill-inbound
 source: ~/workspace/Fin-Skills/Fin-Skills.md §SK-20
 ingested_at: 2026-07-30
@@ -27,7 +28,7 @@ related:
 <!-- methodology_alignment_tip: 本檔術語:七時期為 PeriodDetector 真值;RISK_ON/OFF/NEUTRAL 為向下相容層 -->
 <!-- methodology_alignment_tip: atlas 後端 38 產業映射(2026-09-27 實測)與公股資金 per-broker 對位,本文未交叉引用 -->
 
-> 術語備註:atlas 後端資金面 = 七維錢潮雷達 3+2+2 分層,不可加權平均（對位憲章 §四 + product-positioning §7.1）[2026-08-22 iter2]
+> 術語備註:atlas 資金面 = 七維錢潮雷達 3+2+2,不可加權平均（憲章 §四 + product-positioning §7.1）[2026-08-22 iter2]
 
 ## 一句話定位
 SK-20 是「同一策略在大股 vs 小股上是否都賺錢」的對照實驗——在 atlas 用來挑出「只在某一邊有效」的偽因子。
@@ -43,7 +44,7 @@ SK-20 是「同一策略在大股 vs 小股上是否都賺錢」的對照實驗�
 
 ## atlas 對位（產業 × 市值 雙軸）
 
-引:ATLAS_METHODOLOGY.md §四七大資金勢力行為 + §七維錢潮雷達 3+2+2(從「七大資金勢力」混稱正名)。
+引:ATLAS_METHODOLOGY.md §四 + §七維錢潮雷達 3+2+2。
 **本節關鍵**:SK-20 不只切 Big/Small,需與產業映射互鎖。
 
 | 論文概念 | atlas-mcp 對位 | tool_name | 憲章 |
@@ -57,12 +58,12 @@ SK-20 是「同一策略在大股 vs 小股上是否都賺錢」的對照實驗�
 **為何必須雙軸**:atlas 後端 `SectorIndexReader` 與 `GovernmentBrokerAggregator` 都用**產業 × 規模**雙軸做 canonical mapping;原文只切市值 = 對位憲章 §四時漏接「內資抗衡」（轉折下壓期公股連買跨產業）。2026-09-27 實測:規模軸在 atlas 根本無資料（見 §驗證方式）。
 **CF-INV-07 加權風險警示**:規模統計若跨產業混加,股數/百分比不同分母(同 CF-INV-07 規定);嚴禁不分類加權平均。
 
-**差異點**:論文版假設有乾淨的市值日資料;**atlas 連現值市值都沒有**（2026-09-27 實測 0 命中）⇒ 不是「快照 vs 時序」的落差,是**完全無此資料**。
+**差異點**:論文版有乾淨市值日資料;**atlas 連現值市值都沒有**（2026-09-27 實測 0 命中）⇒ 不是快照落差,是**完全無此資料**。
 
-**沒有對位的部分**:月度 re-split 排程 — `/api/scheduler/status` 今日 110 個 job 無規模重切（2026-09-27 實測）;市場端 market-cap 分段碼只有 `detectMarketCapGaps` 空殼。
+**沒有對位的部分**:月度 re-split — `/api/scheduler/status` 今日 110 個 job 無規模重切（2026-09-27 實測）;market-cap 分段碼只有 `detectMarketCapGaps` 空殼。
 
 ## 散戶解讀(GROW+ 引用點)
-- **R 段(Reality)**:教練問「你這個策略最近 60 天在 2330 跟 6547 上表現一樣嗎?」——直接引到 SK-20 的「不是在說有效性,是在說規模依賴」。
+- **R 段(Reality)**:教練問「你這個策略最近 60 天在 2330 跟 6547 上表現一樣嗎?」→ 引出 SK-20 的「規模依賴」。
 - **+E 段**:提醒「小股做不出來不代表策略失敗,可能只是流動性不夠吃;大股做不出來也不代表穩健,可能是因子在大股早被吃光。」
 - **教練句**:**「規模分組穩健性不是確認你的策略多好,是確認它壞在哪一邊。」**
 
@@ -85,10 +86,10 @@ Step 3: 兩組各算近 60 日夏普(年化 std × √252),對比;若一邊 < 0.
 **今日結論（皆 2026-09-27 實跑）**
 1. **規模軸不可用（已驗證的否定）**:無 `market_cap`／`shares_outstanding`,`/api/parameters` 2465 鍵也無市值參數 ⇒ Big/Small 分組**無資料基礎**,須自備外部市值。
 2. **唯一 market-cap 分段碼是 stub**:`internal/spawning/gap_detector.go` 的 `detectMarketCapGaps` 直接回空 slice ⇒ 非可用實作。
-3. **雙軸降為單軸（更正）**:產業軸今日 38 組（20 組有成分股）,非舊記 18;可用的選股軸是 sector→stock_symbols。
+3. **雙軸降為單軸（更正）**:產業軸今日 38 組（20 組有成分股）,非舊記 18;選股軸是 sector→stock_symbols。
 
 ## 未消化 / 待補
-- [ ] 論文 D1~D10 十分位結構未落地:三端點已跑通(2026-08-01),但 client 端市值分組與十分位重切仍待實作（2026-09-27 追加:市值欄位 0 命中 ⇒ 還缺**資料**,不只缺 client 程式;真實回測前須接外部來源 TWSE／FinMind）
+- [ ] 論文 D1~D10 十分位結構未落地:三端點已跑通(2026-08-01),但 client 端市值分組與十分位重切仍待實作（2026-09-27 追加:市值欄位 0 命中 ⇒ 缺**資料**,不只缺 client 程式;回測前須接外部來源 TWSE／FinMind）
 - [ ] 「tercile」三切分版未寫,理論上對應低/中/高 beta 分群,但需要先驗 median 版
 
-> **2026-09-27 batch#4 結案（移出本段）**:①「與 SK-21 是否重複驗證」→ 軸不同（SK-20 要市值、SK-21 要股價）:SK-20 在 atlas 無資料基礎、SK-21 股價軸可用 ⇒ 不構成重複,但 SK-20 現階段不可實作;②「`scheduler_get_status` 是否暴露 re-split hook」→ 110 個 job 無規模重切 ⇒ **否定**。
+> **2026-09-27 batch#4 結案（移出本段）**:①「與 SK-21 重複驗證?」→ 軸不同（SK-20 市值、SK-21 股價）:SK-20 在 atlas 無資料基礎、SK-21 股價軸可用 ⇒ 不重複,但 SK-20 現階段不可實作;②「`scheduler_get_status` 有 re-split hook?」→ 110 個 job 無規模重切 ⇒ **否定**。

@@ -1,5 +1,6 @@
 ---
 title: SK-34 上市/上櫃分流判斷與備援(2026-08-07 D4 v1.0)
+description: "問「興櫃／美股／這檔代號 atlas 查得到嗎」時載入。"
 type: skill-inbound
 source: hermes skill data-source-decision §3 三層架構
 ingested_at: 2026-08-07

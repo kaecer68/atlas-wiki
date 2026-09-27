@@ -1,5 +1,6 @@
 ---
 title: SK-11 多層神經網路（1~5 層）
+description: "問「AI 選股是不是比較準」時載入。"
 type: skill-inbound
 source: ~/workspace/Fin-Skills/Fin-Skills.md §SK-11
 ingested_at: 2026-08-01

@@ -1,5 +1,6 @@
 ---
 title: SK-06 彈性網正則化模型
+description: "問「86 個因子太多怎麼辦」、要正則化篩因子時載入。"
 type: skill-inbound
 source: ~/workspace/Fin-Skills/Fin-Skills.md §SK-06
 ingested_at: 2026-08-01

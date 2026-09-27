@@ -1,5 +1,6 @@
 ---
 title: SK-17 加權方式（等權/價值加權）
+description: "問「名單分 5 檔、每檔各放多少錢」時載入。"
 type: skill-inbound
 source: ~/workspace/Fin-Skills/Fin-Skills.md §SK-17
 ingested_at: 2026-08-01
@@ -32,7 +33,7 @@ SK-17 在 atlas 是「組合內股票各放多少錢」——等權(1/N 散戶�
   - **value**:每檔股票權重 `w_i = MV_i / ΣMV_j`(市值佔比,大股多吃)
 - **輸入**:stock_list、market_cap(dict)、method ∈ {'equal', 'value'}
 - **輸出**:權重 dict
-- **文獻口徑**:等權組合因小股曝險,毛報酬/Sharpe 通常較高;value-weighted 換手低、容量大。淨成本後何者勝出取決於市場與期間 [2026-08-22 audit-fix]
+- **文獻口徑**:等權因小股曝險,毛報酬/Sharpe 通常較高;value-weighted 換手低、容量大。淨成本後何者勝出取決於市場與期間 [2026-08-22 audit-fix]
 
 ## atlas 對位
 | 論文概念 | atlas-mcp 對位 | tool_name |
@@ -44,10 +45,10 @@ SK-17 在 atlas 是「組合內股票各放多少錢」——等權(1/N 散戶�
 | 權重欄位（唯一出權重處） | concentration weight | `risk_exposure`（2026-09-27 實測） |
 | 換手率 | backtest 內含 | `backtest_signals` |
 
-**差異點**:論文版假設已有 market_cap;**atlas 端無此欄位**(2026-09-27 實測)⇒ value-weighted 落地不了,只能 client 端自備市值輸入。
+**差異點**:論文版假設已有 market_cap;**atlas 端無此欄位**(2026-09-27 實測)⇒ value-weighted 落地不了,需 client 端自備市值。
 
 **2026-09-27 L3 實測（VERIFIED NEGATIVE;時戳見 §驗證方式）**:
-- `market_cap` **不存在** ⇒ **value-weighted 在 atlas 端算不出來**（`stock_get_fundamentals` 只回 PE/PB/DividendYield/Sector;field contract 2262 欄 `market_cap`／`shares_outstanding` 皆 0 命中）。
+- `market_cap` **不存在** ⇒ **value-weighted 在 atlas 端算不出來**（`stock_get_fundamentals` 只回 PE/PB/DividendYield/Sector;2262 欄 `market_cap`／`shares_outstanding` 0 命中）。
 - `min_var`／`max_div`:atlas 源碼 **0 命中**;`risk_parity` 只存在於 `internal/strategy/allocator.go`（策略層）⇒ 三變體皆無可驗證實作。
 - **散戶實務解**:小資金 5 檔 → **等權(1/N)**;min_var／risk_parity 需共變異數與市值,atlas 兩者都不給。
 
@@ -56,13 +57,13 @@ SK-17 在 atlas 是「組合內股票各放多少錢」——等權(1/N 散戶�
 ## 散戶解讀（GROW+ 引用點）
 - **G 段**:用戶問「分 5 檔股票,各放多少錢?」→ 直覺是「各 20%」,但文獻結論分歧。
 - **R 段**:對位 atlas → 「用 `universe_get_sessions` 取一份多空名單 → client 端算權重 → `backtest_signals` 回測 → `risk_get_metrics` 看效果」。
-- **+E 段**:警示「**散戶用 value-weighted 反而吃虧**,因為小資金買大股只能買零股、買小股又超限;**台股 1 張 = 1000 股的最小交易單位讓等權在小組合下更實用**」。**散戶最常誤信學術結論直接套到自己帳上**。
+- **+E 段**:警示「**散戶用 value-weighted 反而吃虧**,因為小資金買大股只能買零股、買小股又超限;**台股 1 張 = 1000 股的最小交易單位讓等權在小組合下更實用**」。**散戶常犯:直接套學術結論**。
 - 對位 ATLAS_METHODOLOGY 七時期:value-weighted 在高原期/盤整期表現穩定,在轉折期(向上或向下)落後等權——**因為大股帶動轉折的時滯較長**。
 
 ## 驗證方式
 Step 1: 呼叫 `universe_get_sessions` 取一份 10 檔多頭名單。**2026-09-27 L3 實測:`stock_get_fundamentals` 無 `market_cap`,`shares_outstanding` 於 field contract 亦 0 命中** ⇒ value-weighted 無法在本 repo 組裝;本頁可實跑的只有 equal weight(1/N)。
 Step 2: client 端算等權權重 dict(1/N),餵進 `backtest_signals` 跑回測;value-weighted 需自備外部市值資料。
-Step 3: 呼叫 `risk_get_metrics` 對比回測的 Sharpe / max_drawdown,不預設勝負（主流文獻多為等權毛 Sharpe 較高、value-weighted 換手低/容量大;2026-08-22 修正）。
+Step 3: 呼叫 `risk_get_metrics` 對比回測的 Sharpe / max_drawdown,不預設勝負（文獻:等權毛 Sharpe 較高、value-weighted 換手低/容量大;2026-08-22 修正）。
 
 ### L3 端點實跑（2026-09-27,本 PR;每列附 http_code 與 UTC+0800 時戳）
 
@@ -86,5 +87,5 @@ Step 3: 呼叫 `risk_get_metrics` 對比回測的 Sharpe / max_drawdown,不預�
 - [ ] value-weighted 需**外部市值資料**:atlas 端 `market_cap`／`shares_outstanding` 2026-09-27 複驗仍 0 命中,替代路徑不成立;外部來源（TWSE／FinMind 等）尚未接入本頁流程。
 - [ ] 換手率無獨立端點且今日不可得:`/api/backtest/signals` 200 但 active_signals=null、sharpe 全 0（2026-09-27）,換手率與效果對比須等回測序列恢復。
 
-> **2026-09-27 batch#4 結案（移出本段）**:①「1 張 = 1000 股約束是否處理」→ **NO**（源碼有 lot 常數但 0 生產呼叫者;live `min_trade_size=1` 股且標 unused）,見 §驗證方式 第 2 點;②「與 SK-20 規模分組的關係」→ 同日兩頁皆實跑,value-weighted 與 SK-20 市值分組**共用同一 blocker**（atlas 無市值欄位）⇒ 現階段都不成立,非「待一起驗證」。
+> **2026-09-27 batch#4 結案（移出本段）**:①「1 張 = 1000 股約束是否處理」→ **NO**（源碼有 lot 常數但 0 生產呼叫者;live `min_trade_size=1` 股且標 unused）,見 §驗證方式 第 2 點;②「與 SK-20 規模分組的關係」→ 同日兩頁皆實跑,value-weighted 與 SK-20 市值分組**共用同一 blocker**（atlas 無市值欄位）⇒ 現階段都不成立。
 > **2026-09-27 結案（移出本段,結論併入 §atlas 對位）**:①「`stock_get_fundamentals` 是否含 `market_cap`」→ **NO**;②「`min_var`/`max_div`/`risk_parity` 變體」→ 實測三者皆無可驗證實作（risk_parity 僅策略層）。皆屬已驗證的否定,非待辦。

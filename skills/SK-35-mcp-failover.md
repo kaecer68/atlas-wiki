@@ -1,5 +1,6 @@
 ---
 title: SK-35 atlas-mcp 失敗時 4 級 fallback 鏈(2026-08-07 D4 v1.0)
+description: "atlas-mcp 端點失敗或標的不在範圍、要選降級來源時載入。"
 type: skill-inbound
 source: concepts/atlas-mcp-failover-policy.md(2026-08-07 v1.0)
 ingested_at: 2026-08-07

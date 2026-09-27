@@ -1,5 +1,6 @@
 ---
 title: SK-09 偏最小平方法（PLS）
+description: "問「因子太多塞進模型會 overfit 嗎」、要用 PLS 降維時載入。"
 type: skill-inbound
 source: ~/workspace/Fin-Skills/Fin-Skills.md §SK-09
 ingested_at: 2026-08-01

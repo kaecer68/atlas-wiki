@@ -1,5 +1,6 @@
 ---
 title: SK-15 雙特徵交互作用分析
+description: "問「PB 跟動能哪個組合最賺」、要看雙特徵交互時載入。"
 type: skill-inbound
 source: ~/workspace/Fin-Skills/Fin-Skills.md §SK-15
 ingested_at: 2026-08-01

@@ -1,5 +1,6 @@
 ---
 title: SK-38 PnL 歸因工作流(描述性歸因 vs 消去法)
+description: "問「這個月賺的錢是哪來的、拿掉某因子會少賺多少」時載入。"
 type: skill-inbound
 source: Fin-Skills.md §SK-22 未消化缺口(pnl-attribution 替代路徑 / ablation 結構性缺口)
 ingested_at: 2026-09-27

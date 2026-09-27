@@ -1,5 +1,6 @@
 ---
 title: SK-02 特徵擴充：股票-總經交互作用
+description: "問「同一檔股在升息年與降息年走勢差這麼多」時載入。"
 type: skill-inbound
 source: ~/workspace/Fin-Skills/Fin-Skills.md §SK-02
 ingested_at: 2026-08-01

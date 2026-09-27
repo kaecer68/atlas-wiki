@@ -1,5 +1,6 @@
 ---
 title: SK-08 主成分迴歸（PCR）
+description: "問「因子共線嚴重怎麼處理」、要比較 PCR 降維時載入。"
 type: skill-inbound
 source: ~/workspace/Fin-Skills/Fin-Skills.md §SK-08
 ingested_at: 2026-08-01

@@ -1,5 +1,6 @@
 ---
 title: SK-28 獎勵-績效錯配診斷
+description: "問「RL 訓練 reward 一直漲、實盤卻虧錢」時載入。"
 type: skill-inbound
 source: ~/workspace/Fin-Skills/Fin-Skills.md §SK-28
 ingested_at: 2026-08-01

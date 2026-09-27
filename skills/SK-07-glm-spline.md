@@ -1,5 +1,6 @@
 ---
 title: SK-07 廣義線性模型（樣條非線性）
+description: "問「PE 越低越好嗎」、要看因子與報酬的非線性關係時載入。"
 type: skill-inbound
 source: ~/workspace/Fin-Skills/Fin-Skills.md §SK-07
 ingested_at: 2026-08-01

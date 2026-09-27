@@ -1,5 +1,6 @@
 ---
 title: SK-29 滾動窗口回測模擬（atlas 對位版）
+description: "問「單筆最大能虧多少、這個回測可不可信」時載入。"
 type: skill-inbound
 source: ~/workspace/Fin-Skills/Fin-Skills.md §SK-29
 ingested_at: 2026-07-29
@@ -36,11 +37,11 @@ related:
 
 ## 一句話定位
 
-「滾動窗口回測」是 mission「找漏洞」的時間序列外殼——沒有真實時間回測,所有 Alpha 都是紙上富貴。
+「滾動窗口回測」是 mission「找漏洞」的時間序列外殼——沒有真實回測,Alpha 都是紙上富貴。
 
 ## 論文版概念（忠實還原 Fin-Skills）
 
-sliding window(預設 252 天)、月度再平衡、逐步納入新數據,模擬「資料陸續進來」的時序決策;介接任何有 `.predict()`／`.act()` 的策略物件,輸出權重-報酬-指標時序。為何重要:超額報酬聲稱需先過滾動回測、靜態 split 易過擬合、Newey-West 校正序列相關並給 t 統計量。
+sliding window(預設 252 天)、月度再平衡、逐步納入新數據,模擬「資料陸續進來」的時序決策;介接有 `.predict()`／`.act()` 的策略物件,輸出權重-報酬-指標時序。為何重要:超額報酬聲稱需先過滾動回測、靜態 split 易過擬合、Newey-West 校正序列相關並給 t 統計量。
 
 ## atlas 對位
 
@@ -57,17 +58,17 @@ sliding window(預設 252 天)、月度再平衡、逐步納入新數據,模擬�
 
 ## 散戶解讀（GROW+ 引用點）
 
-**對應 §Q4 一句話**:「單筆最大能虧多少(回撤)比賺多少更重要。先求不破產,再求賺錢。」O 段用回撤當門檻(「過去最大回撤 30%,帳面 -30% 撐得住嗎?」)。**常見坑**:看年化 30% 不看 max_drawdown;把 sample-period 偏誤當 Sharpe 2.0;忽略 `insufficient_data`(今日 209 筆 < 252 閘門 ⇒ VaR=0 是「資料不足」不是「零風險」)。
+**對應 §Q4**:「單筆最大能虧多少(回撤)比賺多少更重要。先求不破產,再求賺錢。」O 段用回撤當門檻(「過去最大回撤 30%,帳面 -30% 撐得住嗎?」)。**常見坑**:看年化 30% 不看 max_drawdown;把 sample-period 偏誤當 Sharpe 2.0;忽略 `insufficient_data`(今日 209 筆 < 252 閘門 ⇒ VaR=0 是「資料不足」不是「零風險」)。
 
 ## 期間依賴性警告
 
-引:ATLAS_METHODOLOGY.md §三 + §五。同一回撤數字在七時期意義不同:高原／盤整「1% 可能正常」(盤整下無風險=無機會)、上升期可能**低估**、轉折下壓／低迷可能正常或低估(斷頭爆量未反映)、黑天鵝若仍報 1% 即**過低**。
+引:ATLAS_METHODOLOGY.md §三+§五。同一回撤數字在七時期意義不同:高原／盤整「1% 可能正常」(盤整下無風險=無機會)、上升期可能**低估**、轉折下壓／低迷可能正常或低估(斷頭爆量未反映)、黑天鵝若仍報 1% 即**過低**。
 
-**對位操作**:三欄交叉(`market_period` + `period_name_zh` + `regime`)今日**不在** `universe_get_sessions`,要走 `/api/regime/history?days=7`(2026-09-27 實測)。只給 `risk_get_metrics` 數字是「死數字」。
+**對位操作**:三欄交叉今日**不在** `universe_get_sessions`(見更正 4),須走 `/api/regime/history?days=7`(2026-09-27 實測)。只給 `risk_get_metrics` 數字是「死數字」。
 
 ## 驗證方式
 
-**L1 格式** ✅ / **L2 對位** ✅(6 個 atlas 出口已標)/ **升 active 條件(4 項)**:2026-08-02 與 2026-09-27 兩批實跑結清。
+**L1 格式** ✅ / **L2 對位** ✅(6 個 atlas 出口已標)/ **升 active 條件(4 項)**:2026-08-02、2026-09-27 兩批實跑結清。
 
 ### L3 端點實跑（2026-09-27,本 PR）
 
@@ -85,8 +86,8 @@ sliding window(預設 252 天)、月度再平衡、逐步納入新數據,模擬�
 **更正（2026-09-27）**
 
 1. **`max_drawdown_pct` 單位已定案**:`risk` 0.7220 與 `drawdown` 0.9229 **皆為 0–1 分數**(不是「1 = 1%」)。數字不同是**端點不同源**(前者 `ComputeRiskSnapshot` 吃 PG session summary,後者 `CalculateMaxDrawdown` 吃 portfolio 序列)⇒ 引用必須寫端點名。
-2. **`insufficient_data` 邏輯已定案**:不是模糊標記,而是 `MinObservationsForVaR=252` 硬閘門(源碼註記「never surface a provisional VaR value」)。`data_points`=209 < 252 ⇒ VaR=CVaR=0(2026-09-27T20:33:10+08:00);**此狀態下 `var_95=0` 不可當零風險**。
-3. **`risk_get_metrics` 沒有 Sharpe**:原表把 Sharpe 掛在它身上,不成立;IS/OOS Sharpe 走 `/api/dashboard/agent-observatory`。
+2. **`insufficient_data` 邏輯已定案**:非模糊標記,而是 `MinObservationsForVaR=252` 硬閘門(源碼註記「never surface a provisional VaR value」)。`data_points`=209 < 252 ⇒ VaR=CVaR=0(2026-09-27T20:33:10+08:00);**此狀態下 `var_95=0` 不可當零風險**。
+3. **`risk_get_metrics` 沒有 Sharpe**:原表此歸屬不成立;IS/OOS Sharpe 走 `/api/dashboard/agent-observatory`。
 4. **三欄交叉不靠 `universe_get_sessions`**:`market_period`/`period_name_zh` 今日不在 sessions payload(2026-08 的 `recent_regime_5_days` 也不在),須走 `/api/regime/history`。
 5. **`window_size=252` 不在回測路徑**:252 只作統計常數出現(最小 VaR 樣本、`/api/capital-flow/daily` 校準 `sample_count`、ff5 √252 年化)。
 
@@ -94,7 +95,7 @@ sliding window(預設 252 天)、月度再平衡、逐步納入新數據,模擬�
 
 - [ ] paper 1 vs paper 2 的回測窗口差異(預測策略 vs RL 策略)對 atlas 同一個 universe_get_sessions 怎麼分流?
 
-> **2026-09-27 已解(移出本段)**:①`max_drawdown_pct` 單位=0–1 分數②`insufficient_data=1`=252 筆樣本閘門③`window_size=252` 未由 atlas 暴露(窗以年計)④`session_count` 口徑:atlas session 是**每交易日一筆事件**(今日 90 筆滾動窗),非模型重訓次數。
+> **2026-09-27 已解**:①`max_drawdown_pct` 單位=0–1 分數②`insufficient_data=1`=252 筆樣本閘門③`window_size=252` 未由 atlas 暴露(窗以年計)④`session_count` 口徑:atlas session 是**每交易日一筆事件**(今日 90 筆滾動窗),非重訓次數。
 
 ## 反向鏈接
 

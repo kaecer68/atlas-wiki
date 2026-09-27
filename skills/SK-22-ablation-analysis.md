@@ -1,5 +1,6 @@
 ---
 title: SK-22 消去法（排除特定因子集）
+description: "問「拿掉某因子策略會不會變差」時載入。"
 type: skill-inbound
 source: ~/workspace/Fin-Skills/Fin-Skills.md §SK-22
 ingested_at: 2026-08-01

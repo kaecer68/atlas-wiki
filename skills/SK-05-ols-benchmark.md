@@ -1,5 +1,6 @@
 ---
 title: SK-05 OLS 基準線性模型
+description: "問「我的策略到底好不好」、需要 OLS 對照基準時載入。"
 type: skill-inbound
 source: ~/workspace/Fin-Skills/Fin-Skills.md §SK-05
 ingested_at: 2026-08-01

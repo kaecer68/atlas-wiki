@@ -1,5 +1,6 @@
 ---
 title: SK-14 部分相依圖（邊際效應）
+description: "問「PE 對預期報酬的影響是什麼」、要看邊際效應曲線時載入。"
 type: skill-inbound
 source: ~/workspace/Fin-Skills/Fin-Skills.md §SK-14
 ingested_at: 2026-08-01

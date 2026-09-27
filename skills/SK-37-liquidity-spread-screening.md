@@ -1,5 +1,6 @@
 ---
 title: SK-37 流動性分位與買賣價差篩選
+description: "問「這檔我吃得下嗎、價差會不會吃掉停利」時載入。"
 type: skill-inbound
 source: Fin-Skills.md §SK-21 未消化缺口（流動性分位 / bid-ask spread）＋ atlas LiquidityScore / Amihud ILLIQ 對位
 ingested_at: 2026-09-27
@@ -29,7 +30,7 @@ related:
 
 ## 一句話定位
 
-下單前先問「這檔我吃得下嗎」:**看成交金額分位,不要只看股價**。中價但量極低的股票,散戶一張單就會吃掉 1–3% 價差。atlas 目前**不給** per-symbol 流動性分數,只給原料（報價成交量）,分位要 client 端自己算。
+下單前先問「這檔我吃得下嗎」:**看成交金額分位,別只看股價**。中價但量極低的股票,散戶一張單就會吃掉 1–3% 價差。atlas **不給** per-symbol 流動性分數,只給原料（報價成交量）,分位要 client 自算。
 
 ## 論文版概念
 
@@ -53,21 +54,21 @@ related:
 | 這檔流動性分數? | — | ❌ **已驗證的否定**:無 per-symbol 端點 |
 | atlas 內部有流動性篩選嗎? | `parameters_get` | ✅ 有定額門檻,但只能讀參數,不能查個股 |
 
-**已驗證的否定 1（無真實價差）**:`internal/marketdata/microstructure_provider.go` 定義 `MicrostructureSnapshot{LiquidityScore, SpreadEstimate, TradeabilityScore}`,但 `NewMicrostructureProvider` 全 repo **只有自身檔案的定義處**、沒有任何 caller（2026-09-27 源碼 grep,排除 `_test`）⇒ 是斷線程式碼,任何端點都拿不到。`/api/field-contract` 確實有欄位名 `spread_estimate`,但**欄位名存在 ≠ 值可得**。
+**已驗證的否定 1（無真實價差）**:`internal/marketdata/microstructure_provider.go` 定義 `MicrostructureSnapshot{LiquidityScore, SpreadEstimate, TradeabilityScore}`,但 `NewMicrostructureProvider` **只有定義處**、無任何 caller（2026-09-27 源碼 grep,排除 `_test`）⇒ 是斷線程式碼,任何端點都拿不到。`/api/field-contract` 確實有欄位名 `spread_estimate`,但**欄位名存在 ≠ 值可得**。
 
-**已驗證的否定 2（無 per-symbol 流動性）**:`/api/field-contract` 有 `liquidity` 系列 10 欄、`/api/parameters` 有 `liquidity` 前綴 20 key（含 `factor_weight.base_weights.liquidity`）,但**沒有任何端點回傳個股流動性分數**。唯一例外是 `universe_get_session_detail` 的 `factor_scores.liquidity`——該 session 96 列**全為 0**,且同層 `momentum`/`value`/`quality`/`agent`/`institutional_sentiment` 亦全 0 ⇒ 該欄位退化,不可用。
+**已驗證的否定 2（無 per-symbol 流動性）**:`/api/field-contract` 有 `liquidity` 系列 10 欄、`/api/parameters` 有 `liquidity` 前綴 20 key（含 `factor_weight.base_weights.liquidity`）,但**無任何端點回傳個股流動性分數**。唯一例外是 `universe_get_session_detail` 的 `factor_scores.liquidity`——該 session 96 列**全為 0**,且同層 `momentum`/`value`/`quality`/`agent`/`institutional_sentiment` 亦全 0 ⇒ 該欄位退化,不可用。
 
 **atlas 其實有流動性下限（可讀參數,不可查個股）**:`baseline.min_tradable_volume`=1000000（股）、`smart_universe.min_daily_amount_twd`=5000000（元）、`smart_universe.volume_floor_twd`=10000000（元）、`smart_universe.price_minimum`=10（元）[2026-09-27 實跑 `parameters_get`,共 1669 key]。
 
-**替代路徑（本 PR 實跑 14 檔示範,2026-09-27）**:client 端逐檔 call `stock_get_quote` 取 `volume` 與 `last`,自算 `turnover = volume × last` 再排名。結果**股數分位與金額分位會分岔**:3008 股數分位 7%（最低）但金額分位 64%;1301 股數分位 93%（次高）但金額分位 36%。⇒ 只看「張數」會同時誤判高價股與低價股。
+**替代路徑（14 檔示範,2026-09-27 實跑）**:client 逐檔 call `stock_get_quote` 取 `volume` 與 `last`,自算 `turnover = volume × last` 再排名。結果**股數分位與金額分位會分岔**:3008 股數分位 7%（最低）但金額分位 64%;1301 股數分位 93%（次高）但金額分位 36%。⇒ 只看「張數」會同時誤判高價股與低價股。
 
 ## 散戶解讀
 
 - 問「這檔安全嗎」:先看成交**金額**,不要只看股價。股價 50 元但日成交金額 800 萬的股票,風險遠高於股價 500 元、日成交 80 億的股票。
 - 台股 1 張 = 1000 股。`stock_get_quote.volume` 回的是**股數**,除以 1000 才是張數;`stock_get_technical.volume` 同單位。
 - 中價股（20–100 元）若日成交量低,散戶單筆就可能吃掉 1–3% 價差——來回一趟就吃掉大半停利空間。
-- atlas 的內部下限（`min_tradable_volume`=1000000 股、`min_daily_amount_twd`=5000000 元、`price_minimum`=10 元）是**模擬器自己的**門檻,不代表你的券商或你的單子安全。
-- 不要問 atlas「這檔流動性幾分」——目前答不出來（已驗證的否定）。要分位就 client 端自算;要真實價差就必須外部來源並標明。
+- atlas 的內部下限（`min_tradable_volume`=1000000 股、`min_daily_amount_twd`=5000000 元、`price_minimum`=10 元）是**模擬器**門檻,不代表券商或你的單子安全。
+- 不要問 atlas「這檔流動性幾分」——答不出來（已驗證的否定）。要分位就 client 自算;要真實價差須外部來源並標明。
 
 ## 驗證方式
 
@@ -90,7 +91,7 @@ related:
 - 第 5 列回 2262 欄:`liquidity` 10 欄、`spread_estimate` 在、`market_cap` 0 命中。
 - 第 6 列回 42 個 channel（含 `tw_vol`、`twse_sbl`、`twse_margin`）。
 - 第 7 列回 1669 key。
-- 斷線證據（源碼 grep,2026-09-27）:`NewMicrostructureProvider` 命中數 = 1（只有定義處）。
+- 斷線證據（源碼 grep,2026-09-27）:`NewMicrostructureProvider` 命中數 = 1（僅定義處）。
 
 ### 重現
 
@@ -101,7 +102,7 @@ Step 4: 真實 bid/ask 一律標「atlas 無此資料」,**不得**把 `(High−
 
 ## 未消化 / 待補
 
-- [ ] 真實 bid/ask 仍無 atlas 來源;需外部（券商 API / 交易所揭示）並標替代來源。
+- [ ] 真實 bid/ask 仍無 atlas 來源;需外部（券商 API / 交易所揭示）並標來源。
 - [ ] `MicrostructureProvider` 接線後可取代 client 端代理;目前 0 caller,是否接線由 atlas 端決定（追蹤）。
 - [ ] 分位門檻（排除最低幾 %）本頁未校準:只給方法,未回測;需與 SK-21 的 P20=19.70 元一起定。
 - [ ] 14 檔僅為方法示範,非 universe 全量分位;全量需 client 端逐檔呼叫（成本 = N 次請求）。
