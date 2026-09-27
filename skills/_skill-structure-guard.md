@@ -59,13 +59,15 @@ python3 skills/_scripts/new-skill-page.py --id SK-37 --title "..."   # 產生合
 | `entities/**`（7 檔 / 86,003 B） | 30,000 B | 最大 `l1-t2-petrodollar-hormuz.md` **25,016** | advisory |
 | `docs/**`（2 檔 / 15,526 B） | 12,000 B | 最大 `git-merge-protocol.md` **11,190** | advisory |
 | `_method.md` / `_method_amendment_history.md` | 9,000 / 5,000 B | **8,968** / 2,783 | advisory |
-| append-only（9 檔 / 205,664 B） | 無硬上限 | `log.md` 46,017、`_inbox.md` 11,792、`_inbox_archive.md` 50,331；**需分流**（超門檻即歸檔/切月） | — |
+| append-only（11 檔 / 206,936 B） | 無硬上限 | `skills/_inbox_archive.md` 50,331、`_archive/log-2026-07.md` 38,951、`skills/_archive/_methodology_alignment_audit_with_fileline.md` 30,522；**需分流**（超門檻即歸檔/切月；PR #76 已示範 `log.md` 月切 46,017 → 2,302） | — |
 | `_internal/**`（14 檔 / 81,195 B） | 無硬上限 | **結案即瘦身**（2026-09-27 示範 16 → 4 檔，−133,433 B） | — |
 | 未列 `*.md`（templates / summaries / `skills/_*.md`） | 9,000 B（舊制沿用） | 最大 `skills/_manifest_coverage_routing.md` 19,810 | advisory |
 
-**理由欄**：`concepts/**`、`entities/**` 是參考字典/指南（領域模型、工具參考、市場結構），硬砍到 9,000 B 會毀損完整條目——上限的目的是擋膨脹，不是逼人刪事實。`docs/**` 是治理文件（協定/流程），比 SK 決策卡長是常態。append-only 日誌只受**分流紀律**管（歸檔/切月），不受硬上限管。
+**理由欄**：`concepts/**`、`entities/**` 是參考字典/指南，硬砍到 9,000 B 會毀損完整條目——上限的目的是擋膨脹，不是逼人刪事實。`docs/**` 是治理文件（協定/流程），比 SK 決策卡長是常態。append-only 日誌（含 `_archive/**`、`skills/_archive/**` 既有歸檔）只受**分流紀律**管（歸檔/切月），不受硬上限管；`skills/_self-audit*.md` 不入 git（`.gitignore`），膨脹時重組格式而非精簡內容。
 
-**誤判更正**：`docs/git-merge-protocol.md` 先前被記為違規，只因舊規則寫「所有 .md ≤ 9000」；依類別制上限 12,000 B，該檔（本 PR 11,190 B，前值 11,018）**本來就合規**。
+**誤判更正**：`docs/git-merge-protocol.md` 先前被記為違規，只因舊規則寫「所有 .md ≤ 9000」；依類別制上限 12,000 B，該檔（11,190 B）**本來就合規**。
+
+**2026-09-27 補**：`_archive/**`＋`skills/_archive/**` 於 PR #76（`log.md` 月切）後補入 append-only 類——原表只列 `*_archive.md`，未涵蓋歸檔目錄。
 
 **已知落差（advisory，不擋 CI）**：`skills/_manifest_coverage_routing.md` 19,810 B（未列類別）、`SCHEMA.md` 9,580 B（入口/索引 9,000）、`templates/trigger-megaproject-2-quarter-lag.md` 9,996 B（未列類別）。處理方式：歸類或瘦身，另案。
 
