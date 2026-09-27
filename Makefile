@@ -29,7 +29,7 @@ ci-full: ci-gate        ## 完整(對位 GitHub Actions 全部 local 化檢查;�
 	@echo "ℹ️  ci-full 等於 ci-gate(atlas-wiki 純 Python/Markdown,無 Go/go generate/golangci-lint 對位項)"
 
 check-timestamp:        ## 1. 第 5 條鐵律 timestamp 驗證
-	@$(PY) skills/_scripts/validate-timestamp-rule.py --skills-dir skills
+	@$(PY) skills/_scripts/validate-timestamp-rule.py --skills-dir skills --all-classes
 
 check-audit:            ## 2. atlas-mcp 端點 audit
 	@$(PY) skills/_scripts/audit-atlas-endpoints.py

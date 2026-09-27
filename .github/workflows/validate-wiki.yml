@@ -19,7 +19,7 @@ jobs:
         with:
           python-version: "3.12"
       - name: 跑 validate-timestamp-rule.py
-        run: python3 skills/_scripts/validate-timestamp-rule.py --skills-dir skills
+        run: python3 skills/_scripts/validate-timestamp-rule.py --skills-dir skills --all-classes
 
   audit-atlas-endpoints:
     name: atlas-mcp 端點 audit
