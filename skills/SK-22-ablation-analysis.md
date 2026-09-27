@@ -51,7 +51,7 @@ SK-22 在 atlas 是「**因子對策略的邊際貢獻驗證**」對位——拿
 
 | 論文概念 | 替代路徑 |
 |---------|---------|
-| by-factor `drop_percentage` | pnl-attribution 描述性歸因 / 自帶資料 |
+| by-factor `drop_percentage` | pnl-attribution 描述性歸因(已獨立成頁:`skills/SK-38-pnl-attribution-workflow.md`) / 自帶資料 |
 | recursive elimination | Darwinian 多輪 + judge |
 | cross-validation fold 平均 | `universe_get_sessions` 跨期平均 |
 | 與 SK-18 因子 Alpha 的關係 | 合併為「因子有效性驗證」組合 skill(待立,見 §未消化) |
@@ -88,10 +88,11 @@ SK-22 在 atlas 是「**因子對策略的邊際貢獻驗證**」對位——拿
 
 **⚠️ 參數名陷阱(根因)**:`?id=` 回 `400 experiment_id required`;`?experiment_id=` 回 200。**教訓**:400 訊息若明寫欄位名,先試該欄位名,再宣告端點缺失(當初即誤傳 `session_id` / `agent_id`,應傳 `experiment_id`)——「等 atlas 暴露 experiment_list」的舊 blocker 即此誤判(端點一直在)。
 
+**⚠️ 2026-09-27 追蹤(timestamp 2026-09-27T08:56:54Z)**:同一 `experiment_id` 今日回 **404**(`{"error":"experiment result not found"}`);`GET /api/experiment/history` 今日回 **200 `{"history":[]}`**(2026-08-07 為 18 條)。⇒ 實驗級 delta 路徑本日不可用——是**資料不在**,不是端點消失。pnl-attribution 描述性歸因替代路徑已獨立成頁:`skills/SK-38-pnl-attribution-workflow.md`(同 PR 實跑)。
+
 ## 未消化 / 待補
 
 - [ ] 與 SK-18 因子 Alpha 的關係:合併為「因子有效性驗證」組合 skill(待立)
 - [ ] `parameters_get_metadata` 是否支援 user-defined `excluded_fields`:已實跑 ~200 個 parameter 無 `excluded_factors` 類欄位,需走 `experiment_promote` 註冊 candidate
 - [ ] 「交叉驗證下平均 drop」無對位:`experiment_diff` 只回 1 個 `experiment_id`,跨期平均不可用
-- [ ] by-factor 排除式邊際貢獻仍 ❌:此為**結構性缺口**(atlas 無 ablation 端點),非參數問題,不會因再試參數名而翻轉
-- [ ] pnl-attribution 描述性歸因作為 by-factor 替代,尚未寫成獨立 SK(目前僅本頁 §散戶解讀 替代路徑)
+- [ ] by-factor 排除式邊際貢獻仍 ❌:此為**結構性缺口**(atlas 無 ablation 端點),非參數問題,不會因再試參數名而翻轉。**2026-09-27 重確認**:`~/workspace/atlas` 全源碼 grep `ablation|drop_percentage|excluded_factors` = 0 命中,缺口成立(已驗證的否定)。
