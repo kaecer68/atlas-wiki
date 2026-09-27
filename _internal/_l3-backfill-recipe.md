@@ -49,6 +49,11 @@
 | — (IS/OOS 唯一出口) | `/api/dashboard/agent-observatory`（**只有這裡有 `is_sharpe`/`oos_sharpe`/`is_oos_ratio`/`overfit_warning`**;`/api/dashboard/risk` 沒有） |
 | — (訊號層歸屬判斷) | `/api/strategies/layers`（L1–L5,2026-09-27 實測 12 筆） |
 | — (detector 歸屬判斷) | `/api/detector/registry/list`（2026-09-27 實測 **29** themes,非文件寫的 24） |
+| — (**唯一權重出口**) | `/api/dashboard/risk-exposure`（`concentration[].weight = market_value/portfolio_value`，**現金入分母**；`cash_ratio` 可對帳。實測 3 檔 0.1618/0.1613/0.1540，合計 0.4771 = 1 − cash_ratio 0.5228） |
+| — (IS/OOS＋顯著性) | `/api/dashboard/agent-observatory` 同時給 `is_sharpe/oos_sharpe/is_oos_ratio/overfit_warning` **＋ `t_stat/statistically_significant/regime_breakdown`**（SK-18 靠它翻案） |
+| — (產業桶) | `/api/industry/sectors`（2026-09-27 實測 **38** 產業，其中 20 有代表股；舊文件「18/24」皆 stale） |
+| — (排程有無) | `/api/scheduler/status`（110 jobs；可回答「有沒有某排程」的否定題） |
+| — (**實驗端點死掉時的替代證據**) | `/api/strategy-ranker/rank`、`/api/regime/history`、`/api/synergy/darwinian/status`（2026-09-27 全 200，SK-22 首次用） |
 
 **原生測試槓桿（batch #3 補,最便宜的一招）**:`cd ~/workspace/atlas && go test ./internal/eval/ -count=1 -v` ⇒ **22 PASS / 0 FAIL（~0.1 s）**。`internal/eval` 是 SK-12~15 的原生實作正本（`metrics.go`:OOSR2/SharpeRatio/CumulativeReturn/MaxDrawdown；`importance.go`:PermutationImportance；`pdp.go`:PartialDependence；`interaction.go`:FriedmanH + 2D joint PD），且 `internal/experiment/judge.go` 把它們接進 `eval_metrics`/`importance_result`。**實作層答案用跑的比讀源碼強**。
 
@@ -165,8 +170,24 @@ make structure-metrics                          # 前後對照 L3 覆蓋率與 w
 
 覆蓋率:16/38 → **21/38（55.3%）**,watch list 22 → 17 頁。
 
+## 9d. 本批（batch #4,2026-09-27,PR #98）實跑成果
+
+| 頁 | 今日結果 | 主要更正 |
+|---|---|---|
+| SK-17 portfolio-weighting | `risk-exposure` concentration 3 檔（權重含現金分母，合計 = 1 − cash_ratio） | 「權重由 `risk_get_metrics` 提供」**不成立**；1 張=1000 股在模擬路徑**未生效**（見 §10） |
+| SK-18 factor-alpha | 因子集只有 momentum/value/quality/agent；`cvar_95=0` 其實是 `var_available:false` | 「有 FF3/FF5」**不成立**；IS/OOS **與** t_stat 都在 `agent-observatory`（今日 0/5 顯著、5/5 overfit） |
+| SK-20 size-group | `industry_sector_list` 首次實跑 = **38** 產業（20 有代表股）；field contract 2262 欄中 `market_cap`/`shares_outstanding` **0 命中** | 「用 PB 反推市值」為**誤記**，市值分組**無資料基礎**；`detectMarketCapGaps` 是回空 stub |
+| SK-21 penny-stock | 量在 `stock_get_quote`(12,989,000)／`stock_get_technical`(14,557,662)；`stock_get_chips` 只有三大法人 | 工具建議更正**複驗成立**；2330 last 2425→2475 但 PE/PB 與 2026-07-30 逐字相同（fundamentals 靜態） |
+| SK-22 ablation | 實驗端點皆死（diff 404／history 空）；源碼＋2465 鍵對 ablation/drop_percentage/excluded_fields 0 命中 | 結構性缺口成立；**替代路徑首次 L3 實跑**（3 端點全 200） |
+| SK-16（跨頁結案） | 用 SK-17 的實跑結案「weight-formula 比對」未消化項（該項其實住 SK-16，不在 SK-17） | 結論＝上述權重口徑；SK-16 移到 9,000 B 滿格 |
+
+覆蓋率:21/38 → **26/38（68.4%）**,watch list 17 → 12 頁。
+
 ## 10. 已知未解（下一批可接手）
 
+- **「源碼有 ≠ 路徑生效」新例（batch #4）**:`internal/tax/tax_aware_sizing.go` 有 `TaiwanLotSize=1000`，但 `NewTaxAwareSizer` **0 個生產呼叫者**（`optimizer.min_trade_size=1` 標 unused）⇒ 台股 1 張=1000 股在模擬路徑**未生效**；`detectMarketCapGaps` 是回空 slice 的 stub。
+- **資料品質觀察（勿據此推論）**:`financials-desk-01` 的 `oos_sharpe = -2.4e15`（哨兵值/溢位）；`/api/stock/technical` 的 rsi/sma 今日皆 0（快取未算）。
+- **第 5 條鐵律小坑**:`cvar_95=0` 這類快照數字，**時戳必須在同一行**，否則 `validate-timestamp-rule.py` 會判違規（batch #4 踩過一次）。
 - **🚧 `-synthetic` 不是 OOS 也不可重現（batch #3 發現,已回頭修正 batch #2 頁面）**:`cmd/backtest-pipeline/main.go` 的 `runSynthetic`（~374-390 行）用**未設 seed** 的 `rand.Float64()` 產生 X,y，然後對**同一份 X** `Fit` 再 `Predict` ⇒ 印出的 `R²_OOS` 是 **in-sample**，且同日重跑值就變（rf +0.9909~+0.9928）。**只能當「模型可跑」的存在性檢查，不可當 OOS 證據。**
 - **Sharpe 年化對照（引用 Sharpe 的頁面必查）**:`shared.ComputeSharpe` = per_outcome（不乘）/ per_day √252 / twse √243；`eval.SharpeRatio` = √252。**`/api/dashboard/drawdown` 是唯一給非零 `var_95`（−0.004816）的端點**，`/api/dashboard/risk` 回 0 且 `insufficient_data: 1`。
 - `universe_get_session_detail` 仍不回 train/valid/test 三段日期（SK-03 §未消化）。
