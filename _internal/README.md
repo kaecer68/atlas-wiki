@@ -22,6 +22,12 @@
 | `hermes-agent-maintenance-redirect.md` | hermes-agent fork 安裝／維護／升級工作已遷移（2026-08-22） | `~/.hermes/hermes-agent/` 相關文件 |
 | `hermes-gateway-multiplex-migration-2026-09-27.md` | hermes gateway 收斂至單一 default multiplexer 的遷移紀錄（2026-09-27） | `~/workspace/atlas-notes/03-system-health/hermes-gateway-multiplex-migration-2026-09-27.md` |
 
+## 操作程序（recipe）＋ 待決提案
+
+| 檔案 | 一句話 |
+|------|--------|
+| `hermes-daily-task-proposal-2026-09-27.md` | hermes 每日任務設定變更**提案**（P1–P7＋共通護欄＋套用/驗收方式）；**待 kaecer 拍板，未套用** |
+
 ## 操作程序（recipe）
 
 | 檔案 | 一句話 |
