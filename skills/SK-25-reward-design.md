@@ -1,5 +1,6 @@
 ---
 title: SK-25 獎勵函數設計與評估
+description: "問「RL 訓練 reward 高、實盤卻虧」、要檢查 reward 設計時載入。"
 type: skill-inbound
 source: ~/workspace/Fin-Skills/Fin-Skills.md §SK-25
 ingested_at: 2026-08-01

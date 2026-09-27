@@ -1,5 +1,6 @@
 ---
 title: SK-36 監督學習 vs. 強化學習策略比較
+description: "問「監督學習跟強化學習哪個好」時載入。"
 type: skill-inbound
 source: ~/workspace/Fin-Skills/Fin-Skills.md §SK-31 (wiki 編號已改為 SK-36, 2026-08-21 kaecer 拍板, kimi-for-coding 審查 8 步執行)
 renumbered_from: SK-31

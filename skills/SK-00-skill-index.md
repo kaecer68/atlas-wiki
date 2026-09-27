@@ -1,5 +1,6 @@
 ---
 title: SK-00 技能索引指南
+description: "要查「有哪些 SK 頁、某主題屬哪一頁、pipeline 順序」時載入。"
 type: skill-inbound
 source: ~/workspace/Fin-Skills/Fin-Skills.md §SK-00
 ingested_at: 2026-08-01

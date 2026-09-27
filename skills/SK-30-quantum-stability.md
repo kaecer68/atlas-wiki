@@ -1,5 +1,6 @@
 ---
 title: SK-30 量子模型訓練穩定性分析
+description: "追問「量子 AI 選股穩定嗎」時載入（配套 SK-27，已 archive）。"
 type: skill-inbound
 source: ~/workspace/Fin-Skills/Fin-Skills.md §SK-30
 ingested_at: 2026-08-01

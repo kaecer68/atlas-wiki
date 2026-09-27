@@ -1,5 +1,6 @@
 ---
 title: SK-26 經典策略網路（LSTM/Transformer）
+description: "問「用 LSTM／Transformer 預測股價準不準」時載入。"
 type: skill-inbound
 source: ~/workspace/Fin-Skills/Fin-Skills.md §SK-26
 ingested_at: 2026-08-01

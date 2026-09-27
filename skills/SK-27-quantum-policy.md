@@ -1,5 +1,6 @@
 ---
 title: SK-27 量子增強策略網路（QNN/QRWKV/QASA）
+description: "問「量子計算能不能選股」時載入（結論：不優於經典，已 archive）。"
 type: skill-inbound
 source: ~/workspace/Fin-Skills/Fin-Skills.md §SK-27
 ingested_at: 2026-08-01

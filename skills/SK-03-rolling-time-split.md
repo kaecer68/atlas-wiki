@@ -1,5 +1,6 @@
 ---
 title: SK-03 時間序列滾動切割
+description: "問「回測好看、實盤卻虧」或要切訓練/驗證/測試時序時載入。"
 type: skill-inbound
 source: ~/workspace/Fin-Skills/Fin-Skills.md §SK-03
 ingested_at: 2026-07-31
@@ -26,7 +27,7 @@ atlas_constitution_ref: ATLAS_METHODOLOGY.md §五(策略矩陣:時序切分需�
 ---
 
 ## 一句話定位
-在 atlas 中,SK-03 提供「訓練 / 驗證 / 測試」三段式時間滾動切片的工程基礎,直接對位 `universe_get_sessions` 的 session 結構。
+atlas 中,SK-03 提供「訓練 / 驗證 / 測試」三段式滾動切片基礎,對位 `universe_get_sessions` 的 session 結構。
 
 ## 論文版概念(忠實還原來源)
 - **三段式切分**:train(從資料起點到 `first_train_end`) / valid(`first_train_end` 之後 `valid_length_years` 年) / test(驗證集結束到固定 `test_end`)
@@ -44,18 +45,18 @@ atlas_constitution_ref: ATLAS_METHODOLOGY.md §五(策略矩陣:時序切分需�
 | step_years=1 滾動步進 | universe 的 rolling_period 設定 | `backtest_signals` |
 | 樣本外評估(R²/夏普) | 樣本外績效總表 | `risk_get_metrics` |
 
-**差異點**:atlas universe 是「策略 × 期間」的笛卡兒積(session 數通常 50+),SK-03 是純「時段切片」單一軸;atlas 多了「策略 ID」維度,SK-03 沒提。
+**差異點**:atlas universe 是「策略 × 期間」笛卡兒積(session 數通常 50+),SK-03 是純「時段切片」單軸;atlas 多了「策略 ID」維度,SK-03 沒提。
 
-**更正（2026-09-27）**:原寫「`valid_length_years` 與 `step_years` 在 atlas 沒有外部暴露欄位」**不成立** —— `atlas/internal/backtest/rolling_split.go` 已依 SK-03 規格實作三軸,`atlas/cmd/backtest-pipeline` 以旗標暴露。正確說法:**不在 MCP／HTTP 面**（`/api/parameters` 0 命中,且 session 端點不回三段日期）。
+**更正（2026-09-27）**:原寫「`valid_length_years`／`step_years` 在 atlas 無外部暴露欄位」**不成立** —— `rolling_split.go` 已依 SK-03 實作三軸,`backtest-pipeline` 以旗標暴露。正確說法:**不在 MCP／HTTP 面**（`/api/parameters` 0 命中,session 端點不回三段日期）。
 
 ## 散戶解讀(GROW+ 引用點)
-- **R 段(現狀)**:用戶問「為什麼回測看起來好、實盤卻虧損」→ 多半是「只看 test 段、沒看 valid 段」造成的過擬合錯覺。SK-03 提醒:valid 段才是策略真正「驗收」的考試。
+- **R 段(現狀)**:用戶問「為什麼回測看起來好、實盤卻虧損」→ 多半是「只看 test 段、沒看 valid 段」的過擬合錯覺。SK-03 提醒:valid 段才是策略真正的「驗收」。
 - **+E 段(風險)**:強調「滾動是必須,不是可選」——若每年只回測一次、不滾動,2020 疫情或 2022 升息這種 regime 切換會被錯過。
 - 對位 ATLAS_METHODOLOGY 七時期:每次滾動對應一次「時期重判」,valid 段是 regime 切換壓力測試。
 
 ## 驗證方式
 Step 1: 呼叫 `universe_get_sessions` 確認近 90 天 session 數量與切分頻率(月/季/半年)。
-Step 2: 抽一個 session,呼叫 `universe_get_session_detail` 確認 train/valid/test 三段日期範圍與 SK-03 定義是否一致(預期 valid 在 test 之前、test 跨年)。今日實測:session 只有 `recorded_at`/`regime`/`outcome_count`/`summary`,**沒有 train/valid/test 三段日期** → 步驟本身不可由 HTTP 完成（見下）。
+Step 2: 抽一個 session,呼叫 `universe_get_session_detail` 確認 train/valid/test 三段日期範圍與 SK-03 定義是否一致(預期 valid 在 test 之前、test 跨年)。今日實測:session 只有 `recorded_at`/`regime`/`outcome_count`/`summary`,**沒有 train/valid/test 三段日期** → 此步不可由 HTTP 完成（見下）。
 Step 3: 呼叫 `risk_get_metrics` 比對該 session 樣本外指標(drawdown、Sharpe)是否反映 valid+test 兩段,而不是只看 test。今日實測:`/api/dashboard/risk` **無 sharpe 欄位**（var_95=0 且 insufficient_data=1）,分段對比不可行;可用的最近替代是 `/api/backtest/snapshots`（20 筆日快照、17 筆 `sharpe_short` 非 0）。
 
 ### L3 端點實跑（2026-09-27,本 PR;帶 `X-API-Key`,timeout 6s）
@@ -72,13 +73,13 @@ Step 3: 呼叫 `risk_get_metrics` 比對該 session 樣本外指標(drawdown、S
 | 8 | `/api/parameters` | 200 | 1669 keys；step_year/valid_length/first_train/test_end 各 0 命中 | 2026-09-27T19:27:54+08:00 |
 
 **非 HTTP 的代理驗證（2026-09-27）**
-- `atlas/internal/backtest/rolling_split.go`（讀原始碼）註解明寫「following the SK-03 specification」,且 `NewRollingWindowSplit()` 預設值 **FirstTrainEnd=2007-12-31 / ValidLengthYears=2 / StepYears=1 / TestEnd=2022-04-30 / stopYear=2020** 與本頁 §論文版概念 逐項相同。
-- `atlas/cmd/backtest-pipeline` 以旗標 `-first-train-end / -valid-years / -step-years / -test-end` 暴露同一組三軸。
-- 結論修正:**三軸不是「atlas 沒有」,而是「不在 MCP／HTTP 面」** —— MCP 與 `/api/parameters` 皆無此三軸,要走 CLI 或直接呼叫 `internal/backtest` 套件。
+- `atlas/internal/backtest/rolling_split.go`（讀原始碼）註解明寫「following the SK-03 specification」,`NewRollingWindowSplit()` 預設值 **FirstTrainEnd=2007-12-31 / ValidLengthYears=2 / StepYears=1 / TestEnd=2022-04-30 / stopYear=2020** 與本頁 §論文版概念 逐項相同。
+- `atlas/cmd/backtest-pipeline` 以旗標 `-first-train-end / -valid-years / -step-years / -test-end` 暴露同組三軸。
+- 結論修正:**三軸不是「atlas 沒有」,是「不在 MCP／HTTP 面」** —— MCP 與 `/api/parameters` 皆無,要走 CLI 或直接呼叫 `internal/backtest` 套件。
 
 **更正（2026-09-27）**
-- 頁內「147 sessions 對位」為 2026-08-02 快照;今日端點回 90（滾動窗）。
-- `universe_get_session_detail` 的真實路徑是 `/api/dashboard/sessions/{session_id}`;`.../latest` 回 404（與 SK-37 同日同結論）。
+- 頁內「147 sessions」為 2026-08-02 快照;今日端點回 90（滾動窗）。
+- `universe_get_session_detail` 真實路徑是 `/api/dashboard/sessions/{session_id}`;`.../latest` 回 404（與 SK-37 同日結論）。
 
 ## 未消化 / 待補
 - [ ] `universe_get_session_detail` 對 valid 段是否有獨立的 metrics(不是 test 段的子集)?若無,「valid 沒過就停下」的 SOP 在 atlas 沒有對位工具。

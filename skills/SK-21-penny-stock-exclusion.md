@@ -1,5 +1,6 @@
 ---
 title: SK-21 排除仙股穩健性檢驗
+description: "問「這策略賺的錢是否都來自低價股」時載入。"
 type: skill-inbound
 source: ~/workspace/Fin-Skills/Fin-Skills.md §SK-21
 ingested_at: 2026-08-01
@@ -22,7 +23,7 @@ methodology_aligned: true
 atlas_constitution_ref: ATLAS_METHODOLOGY.md §五(策略矩陣:仙股排除需對位 7 時期,不同時期仙股風險溢價不同)(附註:2026-07-30 period_system 變動 — `period` 已是 PeriodDetector 真值,`source` 欄位正名 `regime_source` / `period_source`)
 ---
 
-> 口徑註：原「電子股 80% < 20 元／金融股 80% > 20 元」與「P20 10-15 元」為未實證推測（2026-08-22）;已由下條 TWSE 全量實測推翻／修正。
+> 口徑註：原「電子股 80% < 20 元／金融股 80% > 20 元」與「P20 10-15 元」為未實證推測（2026-08-22）;已由下條 TWSE 實測推翻。
 > [2026-08-23 TWSE 實測] 上市+上櫃 2026-08-21 收盤全量 1954 檔（TWSE openapi + TPEX openapi,非抽樣）:電子股 904 檔 <20 元僅 12.6%（原 80% 斷言不成立,實為 87.4% ≥20）;金融股 38 檔 >20 元 71.1%（80% 未達）;全市場 P20=19.70 元（原預期 10-15 元區間偏低,實值近 20 元）[2026-08-23 實測:修正]
 
 ## 一句話定位
@@ -36,7 +37,7 @@ SK-21 在 atlas 是「策略會不會被仙股污染」的真值檢驗——剔�
   2. 剔除股價 < 該分位數的股票
   3. 在篩選後樣本上重跑 strategy_func
   4. 輸出排除前後差異
-- **為何重要**:**仙股(低價股)流動性差、操縱成本低、報價雜訊大**,任何在仙股上有顯著 alpha 的策略,實盤執行成本會吃掉所有利潤
+- **為何重要**:**仙股流動性差、操縱成本低、報價雜訊大**,任何在仙股上有顯著 alpha 的策略,實盤執行成本會吃掉所有利潤
 - **散戶盲點**:台股「飆股故事」多發生在 < 20 元仙股;散戶看到「策略年賺 100%」就買,其實是仙股拉動,實盤跟不上
 
 ## atlas 對位
@@ -52,7 +53,7 @@ SK-21 在 atlas 是「策略會不會被仙股污染」的真值檢驗——剔�
 
 **沒有對位的部分**:
 - 沒有「百分位篩選」endpoint
-- 沒有「流動性指標」endpoint(仙股流動性比股價更該看;**成交量取自 `stock_get_quote`／`stock_get_technical`,`stock_get_chips` 只回三大法人淨額** [2026-09-27 更正]）
+- 沒有「流動性指標」endpoint(流動性比股價更該看;**成交量取自 `stock_get_quote`／`stock_get_technical`,`stock_get_chips` 只回三大法人淨額** [2026-09-27 更正]）
 - 沒有「操縱風險標記」endpoint
 
 ## 散戶解讀（GROW+ 引用點）
@@ -62,9 +63,9 @@ SK-21 在 atlas 是「策略會不會被仙股污染」的真值檢驗——剔�
 - 散戶實務:台股 1 張 = 1000 股,股價 < 10 元要 1 萬本金才買得到 1 張 ⇒ **「等權」在小資族的仙股上不可行**。
 
 ## 驗證方式
-Step 1: 呼叫 `stock_get_quote` 取 universe 全股票現價,client 端算第 20 百分位閾值(2026-08-23 TWSE 全量實測:2026-08-21 收盤全市場 P20=19.70 元;原預期 10-15 元偏低)。
+Step 1: 呼叫 `stock_get_quote` 取 universe 全股票現價,client 端算第 20 百分位閾值(2026-08-23 TWSE 全量實測:2026-08-21 收盤 P20=19.70 元;原預期 10-15 元偏低)。
 Step 2: client 端用 `universe_get_sessions` 拿策略名單,排除股價低於閾值的股票。
-Step 3: 對排除前/後各跑一次 `backtest_signals`,呼叫 `risk_get_metrics` 對比 Sharpe / 換手率 / max_drawdown。**2026-09-27 實測:`backtest_signals` 回 `active_signals:null`、sharpe 全 0 ⇒ 今日對比算不出來,須等回測序列恢復。**
+Step 3: 對排除前/後各跑一次 `backtest_signals`,呼叫 `risk_get_metrics` 對比 Sharpe / 換手率 / max_drawdown。**2026-09-27 實測:`backtest_signals` 回 `active_signals:null`、sharpe 全 0 ⇒ 今日算不出,須等回測序列恢復。**
 
 ### L3 端點實跑（2026-09-27,本 PR;每列附 http_code 與 UTC+0800 時戳）
 
@@ -85,6 +86,6 @@ Step 3: 對排除前/後各跑一次 `backtest_signals`,呼叫 `risk_get_metrics
 - [ ] 排除比例 20% 與流動性代理的**門檻校準**仍未做:本頁只給方法（股價 P20 + 成交量代理）,未回測;需與 `skills/SK-37-liquidity-spread-screening.md` 的分位門檻一起定。
 - [ ] 排除比例 20% 是論文預設,實務該看產業:(2026-08-23 TWSE 實測修正:電子股 <20 元僅 12.6%、金融股 >20 元 71.1%,原「電子 80% <20 / 金融 80% >20」不成立;電子股 87.4% ≥20 元)需分產業處理;atlas 端無產業×價格聯合篩選端點。
 
-> **2026-09-27 batch#4 結案（移出本段）**:①「atlas 沒有流動性分位篩選」→ 確認是**已驗證的否定**（無分位端點）,替代法（client 端用 quote volume 自算）已落 `skills/SK-37-liquidity-spread-screening.md`,本頁複驗成交量確實在 quote／technical;②「與 SK-20 差別」→ 兩頁軸不同（SK-20 要市值、SK-21 要股價）,同日實測顯示 SK-20 在 atlas **無市值資料**、SK-21 的股價軸可用 ⇒ 不重疊也不重複,且 SK-21 可實作、SK-20 不可。
+> **2026-09-27 batch#4 結案（移出本段）**:①「atlas 沒有流動性分位篩選」→ **已驗證的否定**（無分位端點）,替代法（client 端用 quote volume 自算）已落 `skills/SK-37-liquidity-spread-screening.md`,本頁複驗成交量確在 quote／technical;②「與 SK-20 差別」→ 兩頁軸不同（SK-20 要市值、SK-21 要股價）,同日實測顯示 SK-20 在 atlas **無市值資料**、SK-21 的股價軸可用 ⇒ 不重疊;SK-21 可實作、SK-20 不可。
 
-- [ ] 「實盤流動性」需考量 bid-ask spread;**2026-09-27 精確化:atlas 無真實 spread,只有 OHLCV 代理 `SpreadEstimate`(`internal/marketdata/microstructure_provider.go`),而該 provider 無 caller ⇒ 端點不可達(已驗證的否定,見 `skills/SK-37-liquidity-spread-screening.md`)**;仍需另尋外部 data source。
+- [ ] 「實盤流動性」需考量 bid-ask spread;**2026-09-27 精確化:atlas 無真實 spread,只有 OHLCV 代理 `SpreadEstimate`(`internal/marketdata/microstructure_provider.go`),該 provider 無 caller ⇒ 端點不可達(已驗證的否定,見 `skills/SK-37-liquidity-spread-screening.md`)**;需另尋外部 data source。

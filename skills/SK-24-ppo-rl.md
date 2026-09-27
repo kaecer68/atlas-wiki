@@ -1,5 +1,6 @@
 ---
 title: SK-24 PPO 強化學習訓練框架
+description: "問「能不能用 AI 自動分配各產業資金（PPO）」時載入。"
 type: skill-inbound
 source: ~/workspace/Fin-Skills/Fin-Skills.md §SK-24
 ingested_at: 2026-08-01

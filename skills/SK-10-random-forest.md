@@ -1,5 +1,6 @@
 ---
 title: SK-10 隨機森林模型
+description: "問「線性模型不夠、想用非線性」、要調隨機森林深度時載入。"
 type: skill-inbound
 source: ~/workspace/Fin-Skills/Fin-Skills.md §SK-10
 ingested_at: 2026-08-01

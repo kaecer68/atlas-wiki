@@ -1,5 +1,6 @@
 ---
 title: SK-32 獎勵函數敏感性分析
+description: "問「哪個 reward 函數最賺、換 reward 值不值得」時載入。"
 type: skill-inbound
 source: ~/workspace/Fin-Skills/Fin-Skills.md §SK-32
 ingested_at: 2026-08-01

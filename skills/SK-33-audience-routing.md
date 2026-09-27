@@ -1,5 +1,6 @@
 ---
 title: SK-33 三 audience 表達口徑切換(user / developer / admin)
+description: "要決定同一件事對散戶／開發者／管理者各講多少時載入。"
 type: skill-inbound
 source: ~/workspace/atlas-wiki/skills/_manifest_coverage_routing.md §2 題 3 + §3.3 Day 1
 ingested_at: 2026-08-07

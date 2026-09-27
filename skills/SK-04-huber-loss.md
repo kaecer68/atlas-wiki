@@ -1,5 +1,6 @@
 ---
 title: SK-04 Huber 損失異常值處理
+description: "問「崩盤把回測夏普弄得很難看怎麼辦」時載入。"
 type: skill-inbound
 source: ~/workspace/Fin-Skills/Fin-Skills.md §SK-04
 ingested_at: 2026-08-01

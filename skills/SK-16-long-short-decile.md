@@ -1,5 +1,6 @@
 ---
 title: SK-16 多空十分位數投資組合（atlas 對位版）
+description: "問「做多最強 10%、做空最弱 10% 怎麼跑」時載入。"
 type: skill-inbound
 source: ~/workspace/Fin-Skills/Fin-Skills.md §SK-16
 ingested_at: 2026-07-29
@@ -32,17 +33,17 @@ related:
 
 ## 一句話定位
 
-把「做多最強 10%、做空最弱 10%」這個學術策略,翻譯成 atlas 可驗證、可對散戶解釋的「找漏洞」核心工具。
+把「做多最強 10%、做空最弱 10%」學術策略,翻譯成 atlas 可驗證、對散戶可解釋的「找漏洞」核心工具。
 
 ## 論文版概念
 
-SK-16 定義將股票池每月依模型預測值排序,切成 10 等分,做多最高分位（D10）、做空最低分位（D1）,形成多空對沖組合,觀察報酬序列。
+SK-16 將股票池每月依模型預測值排序,切 10 等分,做多最高分位（D10）、做空最低分位（D1）,形成對沖組合,觀察報酬序列。
 
 **關鍵設計**:月頻（M）；n_groups=10；weighting=`value`（市值加權）／`equal`（等權）；每月依最新預測重新分組；輸出多空報酬序列（D10 − D1）。**依賴**:SK-01 因子庫、SK-05/06/07 回歸模型、SK-17 加權方式。
 
 ## atlas 對位
 
-atlas 沒有單一「long_short_decile」端點,但對位的核心數據 + 驗證鏈已存在:
+atlas 沒有單一「long_short_decile」端點,但核心數據 + 驗證鏈已存在:
 
 | 論文概念 | atlas-mcp 對位 | tool_name |
 |---------|---------------|-----------|
@@ -51,14 +52,14 @@ atlas 沒有單一「long_short_decile」端點,但對位的核心數據 + 驗�
 | 股票池/市值 | 報價/基本面 | `stock_get_quote` + `stock_get_fundamentals` |
 | 多空績效 | 風險指標 | `risk_get_metrics` (2026-07-29 實跑回 max_drawdown_pct=1, session_count=147, insufficient_data=1) |
 
-**放空腿的可行性（2026-09-27 結案）**:Fin-Skills 未論及的「融券限額／流動性折扣」，atlas **0 對位**——`parameters_get` 1669 key 無任何融券/借券限額或借券費鍵、模擬 session 的 `side` 全為空、`backtest_signals` 無 borrow 成本欄。外部制度面（TWSE 總量管制 25%／10%／30%、標借費上限、平盤下規則）與 atlas 端的落差已獨立成頁 → `skills/SK-39-short-cost-model.md`；流動性折扣 → `skills/SK-37-liquidity-spread-screening.md`。
+**放空腿的可行性（2026-09-27 結案）**:Fin-Skills 未論及的「融券限額／流動性折扣」，atlas **0 對位**——`parameters_get` 1669 key 無融券/借券限額或借券費鍵、模擬 session 的 `side` 全為空、`backtest_signals` 無 borrow 成本欄。外部制度面（TWSE 總量管制 25%／10%／30%、標借費上限、平盤下規則）與 atlas 端的落差已獨立成頁 → `skills/SK-39-short-cost-model.md`；流動性折扣 → `skills/SK-37-liquidity-spread-screening.md`。
 
 **差異點**:
 - 論文版學術時間序列 (1994–2022) vs atlas 後端 session-based 模擬
 - 論文版假設預測完美 → atlas 訊號是「模型給的」會帶噪
 - 論文版可細看月內 vs atlas 是日頻聚合
 
-**沒有對位的部分**:真實「月分組」執行（atlas 無 decile sort 端點，只能從 session 內部解讀）；市值加權細節（SK-17 公式 vs atlas 權重口徑，atlas 權重在 `risk_exposure` 而非 `risk_get_metrics`）。
+**沒有對位的部分**:真實「月分組」執行（atlas 無 decile sort 端點，只能從 session 內部解讀）；市值加權細節（SK-17 公式 vs atlas 權重口徑，atlas 權重在 `risk_exposure`）。
 
 ## 七時期 × 信號可用性表（AllowedStrategies 對位）
 
@@ -83,7 +84,7 @@ atlas 沒有單一「long_short_decile」端點,但對位的核心數據 + 驗�
 
 **教練框架的 W（Will）段**:「你要 alpha（超越大盤）還是絕對報酬?兩者策略不同」「只做多不做空要記得融券成本,別只看『做空一倍』的美麗數字」
 
-**散戶最常踩的坑**:
+**散戶常踩坑**:
 - 把「做多最強 10%」誤讀為「今天漲最多的」——其實是「**預測**最強 10%」,是模型先講才漲的
 - 忽略交易成本（做空 + 月再平衡）——下一條 SK-19 會解
 - 把學術 Sharpe 直接套現實——台股流動性與融券限額會打折扣（見 SK-37／SK-39）
@@ -105,7 +106,7 @@ atlas 沒有單一「long_short_decile」端點,但對位的核心數據 + 驗�
 
 ## 未消化 / 待補
 
-> **2026-09-27 batch#4 結案（移出本段）**:加權公式比對**已完成** —— atlas 唯一權重欄位 `risk_exposure.concentration[].weight` = `market_value / portfolio_value`（**現金入分母**）:2609.TW 0.16183、00713.TW 0.16134、2603.TW 0.15399,合計 0.4771 = 1 − cash_ratio 0.5228 ⇒ 與 SK-17 的 equal-weight `1/N` **不同口徑**（3 檔等權各 0.3333、不含現金）。明細見 SK-17 §驗證方式。
+> **2026-09-27 batch#4 結案**:加權公式比對**已完成**:atlas 唯一權重欄位 `risk_exposure.concentration[].weight` = `market_value / portfolio_value`（**現金入分母**）:2609.TW 0.16183、00713.TW 0.16134、2603.TW 0.15399,合計 0.4771 = 1 − cash_ratio 0.5228 ⇒ 與 SK-17 的 equal-weight `1/N` **不同口徑**（3 檔等權各 0.3333、不含現金）。明細見 SK-17 §驗證方式。
 
 ## 反向鏈接
 

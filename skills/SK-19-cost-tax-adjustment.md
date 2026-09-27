@@ -1,5 +1,6 @@
 ---
 title: SK-19 交易成本與稅務調整
+description: "問「這策略一年能賺多少、含成本嗎」時載入。"
 type: skill-inbound
 source: ~/workspace/Fin-Skills/Fin-Skills.md §SK-19
 ingested_at: 2026-07-31

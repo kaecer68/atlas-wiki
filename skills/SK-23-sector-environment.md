@@ -1,5 +1,6 @@
 ---
 title: SK-23 產業輪動環境建構
+description: "問「該重壓電子還是金融」、要看產業輪動時載入。"
 type: skill-inbound
 source: ~/workspace/Fin-Skills/Fin-Skills.md §SK-23
 ingested_at: 2026-08-01
@@ -25,7 +26,7 @@ methodology_aligned: true
 atlas_constitution_ref: ATLAS_METHODOLOGY.md §四(七大資金勢力行為)+ §五(策略矩陣:產業輪動 env 需對位 3+2+2 錢潮雷達 + 策略三分類)(附註:2026-07-30 period_system 變動 — `period` 已是 PeriodDetector 真值,`source` 欄位正名 `regime_source` / `period_source`)
 ---
 
-> 口徑註：atlas 產業數 = 38（20 L1 + 18 L2,2026-09-27 雙證,見 §驗證方式）;SK-20「18」為 B5-3 SectorIndexReader 舊口徑、論文「47」為 Fin-Skills 口徑,三數並存各註明;「電子/金融合計 > 50%」2026-08-22 時無本地市值快照,需實跑確認 [2026-08-22 驗證]
+> 口徑註：atlas 產業數 = 38（20 L1 + 18 L2,2026-09-27 雙證,見 §驗證方式）;SK-20「18」為 B5-3 SectorIndexReader 舊口徑、論文「47」為 Fin-Skills 口徑,三數並存各註明;「電子/金融合計 > 50%」2026-08-22 時無快照,需實跑確認 [2026-08-22 驗證]
 > [2026-08-23 TWSE 實測] 上市+上櫃 2026-08-21 收盤 × 股本全量市值 158.9 兆:電子 80.4% + 金融 7.0% = 87.4%（原「>50%」斷言大幅成立）;分市場:上市 87.9%、上櫃 81.0% [2026-08-23 實測:成立]
 
 ## 一句話定位
@@ -50,16 +51,16 @@ SK-23 在 atlas 是「從個股走到產業」——把個股聚合成產業面�
 
 **差異點**:論文是純 Python 組裝,atlas 已有現成產業端點。**這是 atlas 對位完整的 SK 之一**。
 
-**沒有對位的部分**（2026-09-27 更正）:無「產業指數時序」**對外端點**——但資料層**已有**原生類股指數時序（TWSE MI_INDEX/FinMind → `data/state/sector_index/` 日檔,本機 106 檔,＋排程 `macro_cache_twse_sector_index`）;無「市值加權」端點,**且今日無 `market_cap` 欄位可算**。
+**沒有對位的部分**（2026-09-27 更正）:無「產業指數時序」**對外端點**——但資料層**已有**原生類股指數時序（TWSE MI_INDEX/FinMind → `data/state/sector_index/` 日檔,本機 106 檔,＋排程 `macro_cache_twse_sector_index`）;無「市值加權」端點。
 
 ## 散戶解讀
-- **G**:用戶問「該重壓電子還是金融?」 → SK-23 給你產業層級的訊號,搭配 SK-16 的十分位多空,在「產業」+「個股」兩層做決策。
+- **G**:用戶問「該重壓電子還是金融?」 → SK-23 給產業層級訊號,搭配 SK-16 的十分位多空,在「產業」+「個股」兩層做決策。
 - **+E**:**產業數對散戶太多**——atlas 端 38（20 L1 + 18 L2）,而 `industry_winrate` 只給 20 個 L1;台股實務 10-15 個大類就夠,散戶先用 20 個 L1 再合併。
 - 對位 ATLAS_METHODOLOGY 七時期:產業輪動在 regime 切換時最明顯(電子→生技→金融循環),這是 SK-23 主要的 alpha 源。
 
 ## 驗證方式
 Step 1: 呼叫 `industry_sector_list` 確認產業清單（atlas 實回 **38**,非論文 47;2026-09-27）,call `industry_sector_lookup` 抽個股確認歸屬。
-Step 2: 產業市值佔比**今日 client 端算不出來**（`stock_get_fundamentals` 無 `market_cap`,2026-09-27）;需要市值時改用 TWSE 已發布類股指數（`data/state/sector_index/`）或外部市值來源並標替代。
+Step 2: 產業市值佔比**今日 client 端算不出來**（`stock_get_fundamentals` 無 `market_cap`,2026-09-27）;需要市值時改用 TWSE 已發布類股指數（`data/state/sector_index/`）或外部來源並標替代。
 Step 3: 產業層訊號品質直接用 `/api/stock/industry_winrate?condition_id=momentum-20d-positive`（20 個 L1 產業,含 Wilson 區間與扣成本前瞻報酬）,不需 client 端聚合。
 
 ### L3 端點實跑（2026-09-27,本 PR）
@@ -78,7 +79,7 @@ Step 3: 產業層訊號品質直接用 `/api/stock/industry_winrate?condition_id
 
 **更正（2026-09-27）**
 
-1. 「無『產業指數時序』單一端點（需 client 端組裝）」只對一半:資料層**已有**原生類股指數時序 —— `adapter_twse_sector_index.go`（TWSE MI_INDEX／FinMind,`TAISEMI`）＋ `cmd/backfill-sector-index` 寫入 `data/state/sector_index/`（本機 **106** 個日檔,2026-06-03 → 2026-09-24,每檔 **20** 個 L1 key 的 `index`＋`return_pct`）＋ 排程每 15 分鐘更新。**缺的是對外 MCP/HTTP 端點,不是資料**。
+1. 「無『產業指數時序』單一端點（需 client 端組裝）」只對一半:資料層**已有**原生類股指數時序 —— `adapter_twse_sector_index.go`（TWSE MI_INDEX／FinMind,`TAISEMI`）＋ `cmd/backfill-sector-index` 寫入 `data/state/sector_index/`（本機 **106** 個日檔,2026-06-03 → 2026-09-24,每檔 **20** 個 L1 key 的 `index`＋`return_pct`）＋ 排程每 15 分鐘更新。**缺對外端點,不是資料**。
 2. 「47 個產業」定案 **38 = 20 L1 + 18 L2**:`internal/industry/sector.go` 的 20 個 `SectorID` 常數＋`internal/sectormap/canonical.go`（`canonicalL1`/`canonicalL2`）,與 live 端點同日一致。
 3. 「client 端用 `stock_get_fundamentals` × `industry_sector_list` 算市值加權」**無資料基礎**:今日無 `market_cap`（2026-09-27T20:26:19+08:00）,與 SK-20／SK-37 的 2262 欄 field-contract 0 命中一致。
 4. 「macro 確認 `current_period=consolidation`」**不可重現**:該端點回 43 條序列,無任何 period/regime 欄位（2026-09-27T20:26:19+08:00）。時期真值改查 PeriodDetector 出口,不要用 macro snapshot 反推。
