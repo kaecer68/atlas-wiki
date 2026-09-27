@@ -180,6 +180,10 @@ def main():
     print("=" * 60)
 
     sz_bad, total = check_size(skills_dir)
+    # S8 護欄牙齒（2026-09-27）：掃到 0 檔 = 檢查沒有在驗任何東西 ⇒ 失敗，不得靜默全綠
+    if total == 0:
+        print(f"❌ 掃到 0 個 SK 頁（skills_dir={skills_dir}）— 路徑錯或目錄空；不得靜默全綠")
+        return 1
     if sz_bad == 0:
         print(f"✅ size: {total} 頁全部 ≤ {MAX_SIZE} bytes")
     else:

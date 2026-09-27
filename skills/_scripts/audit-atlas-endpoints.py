@@ -95,6 +95,10 @@ def main():
         print()
 
     print("=" * 70)
+    if len(endpoints) == 0:
+        print("❌ 掃到 0 個端點（atlas-mcp 源碼路徑錯或 checkouts 空）— 不得印『audit 完成』")
+        print("=" * 70)
+        sys.exit(1)
     print(f"audit 完成 — {len(endpoints)} 端點已盤查")
     print("=" * 70)
 
