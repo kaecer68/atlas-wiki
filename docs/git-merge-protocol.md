@@ -59,7 +59,7 @@ make ci-gate        # 7 項檢查全綠才 push
 ```
 
 7 項（2026-09-27 依 `Makefile` ci-gate 依賴實測;舊記 5 項）:
-`check-timestamp`（第 5 條鐵律;**實測全 37 頁合規,舊記 33**）／`check-audit`（端點 audit,**實測 115 端點,舊記 109**）／`check-size`（SK 頁 ≤9,000B）／`check-skill-structure`（結構,SSOT `skill-page-schema.json`）／`check-frontmatter`（10 欄）／`check-actionlint`（若已裝 actionlint）／`check-skill-index-sync-basic`（R1+R3）。
+`check-timestamp`（第 5 條鐵律;**實測全 37 頁合規,舊記 33**）／`check-audit`（端點 audit,**實測 115 端點,舊記 109**）／`check-size`（SK 頁 ≤9,000B）／`check-skill-structure`（結構,SSOT `skill-page-schema.json`）／`check-frontmatter`（10 欄）／`check-actionlint`（若已裝 actionlint）／`check-skill-index-sync`（**R1+R3+R4**；2026-09-27 起 R4 已補完並併入 ci-gate，`check-skill-index-sync-basic` 降為逃生口 = 只跑 R1+R3）。
 
 ### 3.2 預檢 hooks(自動版)
 

@@ -31,7 +31,8 @@ make pre-commit-install    # 裝 pre-commit + pre-push hook(之後全自動)
 門禁：  make ci-gate / ci-strict / ci-fast / ci-full
 檢查：  make check-timestamp / check-audit / check-skill-pages / check-size
         make check-skill-structure / check-stale / check-frontmatter / check-actionlint
-        make check-skill-index-sync / check-skill-index-sync-basic
+        make check-skill-index-sync          # R1+R3+R4(2026-09-27 起 ci-gate 用這條)
+        make check-skill-index-sync-basic    # 逃生口:只跑 R1+R3(跳過 R4)
 度量：  make structure-metrics   # M7 結構健康度,輸出可直接貼進結算
 hooks： make pre-commit-install / uninstall-hooks
 收尾：  make verify-clean / test   # test = trigger-monitor pytest
