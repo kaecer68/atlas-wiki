@@ -55,8 +55,12 @@
 | — (**產業層訊號品質**) | `/api/stock/industry_winrate?condition_id=momentum-20d-positive`（20 個 L1：obs/symbols/hits/win_rate/Wilson 上下界/net forward return，全 `calibration_status=eligible`；另附 `coverage`：total_observations 28829、mapped 14.11%、symbol_coverage 11.24%） |
 | — (**端點在但今日未生效**的新陷阱類) | `/api/dashboard/sector-allocation-plan` 200 但 `target/current/delta` 全 null、`fallback_reason: no_simulation_session` |
 | — (rolling Sharpe 代理) | `/api/dashboard/agent-observatory` 每筆 scorecard 另有 **`rolling_sharpe_trend`**（非只 IS/OOS/t_stat） |
+| — (narrative 模板) | `/api/narrative/templates`（**29** 筆；**無編號欄位**——`template_number` 在 atlas-go **0 命中**，編號純粹是 atlas-wiki `templates/*.md` 的檔頭慣例，沒有任何端點會認「template #N」） |
+| — (cycle 頁的參數層) | `/api/parameters` 的 `narrative.cowos_utilization_threshold.value`=**78**（heuristic，last_calibrated 2026-06-09）與 `engine.structural_trend.cowos_utilization_threshold`=**75.05**——**兩者都是「門檻參數」不是即時量測值**，引用時寫「門檻」不寫「使用率為 N」 |
 | — (排程有無) | `/api/scheduler/status`（110 jobs；可回答「有沒有某排程」的否定題） |
 | — (**實驗端點死掉時的替代證據**) | `/api/strategy-ranker/rank`、`/api/regime/history`、`/api/synergy/darwinian/status`（2026-09-27 全 200，SK-22 首次用） |
+
+**hit_rate 有兩種口徑，引用必標來源（batch #6）**：模板 `historical_hit_rate` ＋ `hit_rate_source=handwritten_prior`（例 AI capex 0.81）vs narrative models 的 `replay_eval_in_memory`（例 AI 0.4111）。**只寫「AI 命中率」而不寫來源＝不可用**。
 
 **訓練層問答錨點（batch #5,batch #3 補）**：PRISM（`prism_training` enabled、last_run 2026-09-27T09:29Z）是 **regime 分群樣本佇列（非 RL）**；`ml_retrain` 明寫「D2 決策暫停：無消費端」且 disabled ⇒ 被問「atlas 有沒有訓練層／RL」可一句話定案。**產業指數時序資料層存在**（`internal/apigateway/adapter_twse_sector_index.go` + `cmd/backfill-sector-index -source twse|finmind` → `data/state/sector_index/` 106 檔、每檔 20 個 L1 key；排程 `macro_cache_twse_sector_index` 900 s）但**無對外端點** ⇒ 產業類頁面最便宜的實跑槓桿。
 
@@ -68,6 +72,8 @@
 ### 三個必知陷阱
 
 1. **`universe_get_session_detail` 的 canary 值 `/api/dashboard/sessions/latest` 回 404**（`{"error":"session not found","session_id":"latest"}`;SK-37 與本批同日各驗一次）。真實路徑是 `/api/dashboard/sessions/{session_id}`,id 從 `/api/dashboard/sessions` 取（如 `session-20260927-daily` → 200）。
+2b. **canary 有 ≠ 端點存在（batch #6 反向實證）**：`mcp_roots_list` 在 `canaryRoutes` 有名，但 live `/api/mcp/roots` 回 **route-404**（`{"code":"404","error":"route not found"}`）。⇒ canary 清單只能當「可能的路徑」提示，**一律以實跑為準**。
+3. **平行／冷快取探測會製造假 ERR（batch #6）**：8 路並行探測時 `/api/narrative/models`、`/api/capital-flow/daily`、`/api/stock/quote?symbol=6640` 皆 6 s timeout；**單獨重試同一路徑在 2–38 ms 內回 200**。⇒ 探測**併發上限 ≤ 4**，任何 `ERR` 必須以 `timeout=30` 單獨重試一次才能記錄。
 2. **canary 沒有 ≠ 端點不存在**。`/api/backtest/snapshots` 不在 `canaryRoutes`、也沒有 MCP tool（`grep` `cmd/atlas-mcp` 0 命中）,但 **HTTP 200 可用**。反向亦然:有些工具沒有 HTTP 端點（見第 3 節）。
 3. **本地快取／未生效端點會回 0 或 null 不代表壞掉**。`/api/stock/technical?symbol=2330&days=10` 今日 200 但 `rsi14/sma20/sma50` 皆 0;`/api/dashboard/risk` 今日 200 但無 Sharpe 欄位、`var_95=0`（且 `insufficient_data=1`）。**記錄觀測值,不要推論成「壞」**。
 4. **端點活著但今日不生效（batch #5 新增類）**：`/api/dashboard/sector-allocation-plan` 200 但 `target/current/delta` 全 null、`fallback_reason: no_simulation_session`。判「有沒有這功能」時,要區分 **route 404**（`{"code":"404","error":"route not found","path":…}`,例 `/api/rl/status`、`/api/agent/status`）與 **資源 404**（`{"error":"experiment result not found"}`,例 `/api/experiment/diff`）—— 前者答「功能面不存在」,後者只答「這筆資料不在」。
@@ -204,8 +210,24 @@ make structure-metrics                          # 前後對照 L3 覆蓋率與 w
 
 覆蓋率:26/38 → **31/38（81.6%）**,watch list 12 → 7（SK-00 索引頁不計；剩 SK-29/31/32/33/35/36）。
 
+## 9f. 本批（batch #6 收尾,2026-09-27,PR #104）實跑成果
+
+| 頁 | 今日結果 | 主要更正 |
+|---|---|---|
+| SK-29 rolling-window-backtest | `/api/regime/history?days=7` → `current_period=consolidation`／`current_regime=RISK_ON`（5 sessions）；源碼 `MinObservationsForVaR=252` | `max_drawdown_pct` 單位＝0–1 分數（risk 0.7220 vs drawdown 0.9229，來源不同）；`var_95=0` 是觀測不足；`window_size=252` **不是**回測參數；三欄時期交叉比對**只在 regime/history**，不在 sessions |
+| SK-31 ai-investment-cycle | 模型 `hit_rate 0.625→0.4111`、`weight 0.1639→0.03696`（**已非最大權重**）；chains 5→4；templates **29**；`/api/parameters` CoWoS 門檻 78／75.05 | Layer 3 由「無對位」降級為「參數層有、roadmap 層無」；**6 個驗證缺口維持 2✅+1⚠️+3⛔，無假結** |
+| SK-32 reward-sensitivity | 實驗端點全死（history 空、diff 400/404）、`backtest_signals` 全 0/null | 4 個 reward 名稱在 atlas-go **0 命中**；最近的原生面＝`eval.CheckSLRLAlignment`＋`config.SweepParameter`（皆無端點） |
+| SK-33 audience-routing | tier 是真的（12 策略 premium 2/registered 2/free 8）；**Step 2 為已驗證否定**：`/api/mcp/roots` route-404、`HERMES_AUDIENCE` 全 repo 0 命中 | 受眾切換仍在 agent 側；`scripts/dev/verify-audience-routing.py` **不存在** |
+| SK-35 mcp-failover | circuit-breaker 200 但 `state=uninitialized`／`initialized=false`；**外部臂實測 L2-A TPEx 200、L2-B Yahoo 429** | 端點活著 ≠ 斷路器已武裝；atlas fail-closed 由參數 `flow_gateway.fail_closed_when_all_missing=true` 確認 |
+| SK-36 sl-vs-rl | SL 面存在（`/api/strategies/active` 12 策略）、RL 面不存在；`go test ./internal/eval/` = **72 PASS**（含 7 個 SL/RL mismatch 測試） | 2026-08-01 Sharpe 0.27/0.49 今日**不可重現**；原生 `CheckSLRLAlignment` **0 生產呼叫者** |
+
+覆蓋率:31/38 → **37/38（97.4%）**,watch list **只剩 SK-00（索引頁，不適用）** ⇒ **L3 回填收尾完成**。
+
 ## 10. 已知未解（下一批可接手）
 
+- **`insufficient_data=1` 的確切原因（batch #6）**：`internal/risk/var_calculator.go` 的 `risk.MinObservationsForVaR = 252`；觀測數 < 252 時 **VaR/CVaR 被歸零、drawdown 照留** ⇒ `var_95=0` ＋ `insufficient_data=1` **永遠讀成「資料不足」，不是「零風險」**（今日 209 obs）。
+- **atlas 通道健康 ≠ 客戶端可達（batch #6）**：`/api/dashboard/system-health` 顯示 `us_yahoo` status **ok**，但同一分鐘客戶端直打 Yahoo chart API 得 **429** ⇒ 判外部依賴要用**客戶端實測**，不能只信 atlas 的通道狀態。
+- **cycle-page 的預算（batch #6）**：`type: cycle-page` 的頁面（如 SK-31）需要約 **42% 正文壓縮**才塞得下 L3 證據表 ⇒ 先在 frontmatter ≤ ~1.9 KB 的前提下規畫欄位，再寫證據。
 - **時期真值不可由 `/api/macro/snapshot/latest` 反推（batch #5）**：該端點回 **43 條序列**，**無 `current_period`／`period`／`regime`** 欄位（推翻 SK-23 舊註）。要時期／regime 請走 `/api/regime/history` 或 `agent-observatory` 的 `regime_breakdown`。
 - **「源碼有 ≠ 路徑生效」新例（batch #4）**:`internal/tax/tax_aware_sizing.go` 有 `TaiwanLotSize=1000`，但 `NewTaxAwareSizer` **0 個生產呼叫者**（`optimizer.min_trade_size=1` 標 unused）⇒ 台股 1 張=1000 股在模擬路徑**未生效**；`detectMarketCapGaps` 是回空 slice 的 stub。
 - **資料品質觀察（勿據此推論）**:`financials-desk-01` 的 `oos_sharpe = -2.4e15`（哨兵值/溢位）；`/api/stock/technical` 的 rsi/sma 今日皆 0（快取未算）。
