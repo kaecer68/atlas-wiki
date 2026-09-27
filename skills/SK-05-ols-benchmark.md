@@ -8,7 +8,7 @@ tier: T3
 confidence: medium
 atlas_go_relevance: high
 mcp_tools_used: [stock_get_fundamentals, backtest_signals, risk_get_metrics]
-verification: 2026-09-27 L3 端點實跑 (http_code + timestamp 見 `l3_endpoints_probed`;明細見 §驗證方式):4 個 HTTP 端點全 200,但**皆無 R²_oos 欄位** → 頁內 `R²_oos ∈ [-0.05, 0.10]` 的猜測範圍**今日仍無法由 atlas 驗證**（且 `field-contract` 2262 欄中 r2/r_squared 0 命中）;(2) **atlas 原生 OLS 可實跑（CLI 代理驗證）**:`go run ./cmd/backtest-pipeline -synthetic -model ols` 2026-09-27T19:30:33+08:00 exit 0 → 500 samples × 2 features、True β [2.00, 3.00]、**R²_OOS = +0.9993（PASS,R²>0.9）**;此結果獨立複現本頁「合成線性資料 R²≈1.0 不代表真實台股」的註記,並更正「OLS 在 atlas 端沒原生訓練」——repo 內有原生 OLS 基準（`cmd/backtest-pipeline` 支援 `-model ols/pcr/pls/elasticnet/glm/rf`）,只是不在 MCP／HTTP 面。歷史:2026-08-02 v0.9 結算跑過 L3 升 active（client 端 sklearn 1.8.0 LinearRegression 跑 make_regression）。
+verification: 2026-09-27 L3 端點實跑 (http_code + timestamp 見 `l3_endpoints_probed`;明細見 §驗證方式):4 個 HTTP 端點全 200,但**皆無 R²_oos 欄位** → 頁內 `R²_oos ∈ [-0.05, 0.10]` 的猜測範圍**今日仍無法由 atlas 驗證**（且 `field-contract` 2262 欄中 r2/r_squared 0 命中）;(2) **atlas 原生 OLS 可實跑（CLI 代理驗證）**:`go run ./cmd/backtest-pipeline -synthetic -model ols` 2026-09-27T19:30:33+08:00 exit 0 → 500 samples × 2 features、True β [2.00, 3.00]、**R²_OOS = +0.9993（PASS,R²>0.9）**;此結果獨立複現本頁「合成線性資料 R²≈1.0 不代表真實台股」的註記,並更正「OLS 在 atlas 端沒原生訓練」——repo 內有原生 OLS 基準（`cmd/backtest-pipeline` 支援 `-model ols/pcr/pls/elasticnet/glm/rf`）,只是不在 MCP／HTTP 面。歷史:2026-08-02 v0.9 結算跑過 L3 升 active（client 端 sklearn 1.8.0 LinearRegression 跑 make_regression）。**2026-09-27 更正（本批發現）**：CLI `-synthetic` 印出的 `R²_OOS` **實為 in-sample**——`cmd/backtest-pipeline/main.go` 的 `runSynthetic` 對**同一份 X** 先 `Fit` 後 `Predict`（第 ~382–388 行），且 `rand.Float64()` 未設 seed ⇒ 同日重跑值即變動（rf +0.9909～+0.9928 實測）。⇒ 此列只能當「模型可跑」的存在性檢查，**不可當 OOS 證據**。
 l3_run_at: 2026-09-27
 l3_run_by: prime-agent（feat/20260927-l3-backfill-b1）
 l3_endpoints_probed:
@@ -17,7 +17,7 @@ l3_endpoints_probed:
   - "/api/dashboard/risk → 200（session_count 210；無 R² 欄位）（2026-09-27T19:27:54+08:00）"
   - "/api/field-contract → 200（2262 欄；r2/r_squared 0 命中）（2026-09-27T19:27:52+08:00）"
   - "/api/parameters → 200（`experiment.oos_window_days`=30、`experiment.walk_forward_embargo_days`=5）（2026-09-27T19:27:54+08:00）"
-  - "CLI 代理（無 HTTP 端點）: go run ./cmd/backtest-pipeline -synthetic -model ols → R²_OOS +0.9993（2026-09-27T19:30:33+08:00）"
+  - "CLI 代理（無 HTTP 端點）: go run ./cmd/backtest-pipeline -synthetic -model ols → R²_OOS +0.9993（實為 in-sample,非 OOS）（2026-09-27T19:30:33+08:00）"
 
 ---
 
@@ -61,9 +61,9 @@ Step 3: 對比 `risk_get_metrics` 給的 R²,確認 OLS R²_oos 範圍在 -0.05 
 | 3 | `/api/dashboard/risk` | 200 | session_count 210；無 R² 欄位 | 2026-09-27T19:27:54+08:00 |
 | 4 | `/api/field-contract` | 200 | 2262 欄；r2 / r_squared 0 命中 | 2026-09-27T19:27:52+08:00 |
 | 5 | `/api/parameters` | 200 | `experiment.oos_window_days`=30、`experiment.walk_forward_embargo_days`=5 | 2026-09-27T19:27:54+08:00 |
-| 6 | CLI（非 HTTP）:`go run ./cmd/backtest-pipeline -synthetic -model ols` | exit 0 | 500 samples × 2 features，True β [2.00, 3.00]，**R²_OOS +0.9993 → PASS** | 2026-09-27T19:30:33+08:00 |
+| 6 | CLI（非 HTTP）:`go run ./cmd/backtest-pipeline -synthetic -model ols` | exit 0 | 500 samples × 2 features，True β [2.00, 3.00]，**R²_OOS +0.9993 → PASS（實為 in-sample,非 OOS）** | 2026-09-27T19:30:33+08:00 |
 
-- 第 6 列是**本頁最重要的新證據**:atlas repo 原生就有 OLS 基準（`cmd/backtest-pipeline` 的 `-model` 支援 `ols/pcr/pls/elasticnet/glm/rf`,另有 `-synthetic` 專門驗 β 回收）,輸出格式為 `R²_OOS`。它與本頁 client 端 sklearn 的結論一致（合成線性資料 R²≈1.0）,可用來交叉驗證 client 端實作是否正確。
+- 第 6 列是**本頁唯一新增的模型證據(只證「模型可跑」,非 OOS)**:atlas repo 原生就有 OLS 基準（`cmd/backtest-pipeline` 的 `-model` 支援 `ols/pcr/pls/elasticnet/glm/rf`,另有 `-synthetic` 專門驗 β 回收）,輸出格式為 `R²_OOS`。它與本頁 client 端 sklearn 的結論一致（合成線性資料 R²≈1.0）,但該 score 為 in-sample ⇒ 只能當存在性檢查,不可當 OOS 交叉驗證證據。
 - 但第 1–5 列證明:**這條路徑不在 MCP／HTTP 面**,MCP 端仍須 client 端自算 R²_oos。
 
 ## 未消化 / 待補

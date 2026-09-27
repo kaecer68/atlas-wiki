@@ -8,7 +8,7 @@ tier: T3
 confidence: high
 atlas_go_relevance: high
 mcp_tools_used: [stock_get_fundamentals, stock_get_technical, backtest_signals, risk_get_metrics]
-verification: 2026-09-27 L3 端點實跑 (http_code + timestamp 見 `l3_endpoints_probed`;明細見 §驗證方式):5 個 HTTP 端點中 4 個 200、1 個 400 → **無任何端點回 R²_oos**,本頁 `R²_oos=0.1248` 維持 2026-08-02 client 端 sklearn 快照,今日無法由 atlas 複驗。新增:**atlas repo 內有原生 RandomForest**(`internal/ml/randomforest.go`:CART + bootstrap + 隨機子空間,`MaxFeatures` 支援 "sqrt"/"all"),CLI `cmd/backtest-pipeline -model rf` 實跑 → `-synthetic` exit 0、**R²_OOS +0.9914（PASS）**;但**原生預設與本頁論文設定相反**:`NTrees` 預設 **100**（非 500）、`MaxDepth` 預設 **10**（非 2）→ 「淺樹防過擬合」在 atlas 原生路徑不是預設。**未消化第 1 項已解（2026-09-27）**:XGBoost / LightGBM 為**已驗證的負面**——`git grep -i 'xgboost|lightgbm|gradientboost'` 在 atlas 只命中 `cmd/backtest-pipeline/main_test.go` 的 `newModel("xgboost")` 應報錯測試,`newModel` 只收 `ols/pcr/pls/elasticnet/glm/rf`。**原生 RF 無 feature importance 方法**(`internal/ml` 內 `importance` 0 命中);重要性在 **experiment 結果**路線——`internal/eval/importance.go` 的 `PermutationImportance` 產出 `ImportanceResult`,並掛在 `internal/domain/experiment` 的 `importance_result` 欄位,但今日 `/api/experiment/history` 回空。歷史:2026-08-02 v0.9 結算跑過 L3 升 active（client 端 sklearn 1.8.0 RandomForestRegressor(n_estimators=500, max_depth=2),R²_oos=0.1248;feature_importances_ 跑通）。
+verification: 2026-09-27 L3 端點實跑 (http_code + timestamp 見 `l3_endpoints_probed`;明細見 §驗證方式):5 個 HTTP 端點中 4 個 200、1 個 400 → **無任何端點回 R²_oos**,本頁 `R²_oos=0.1248` 維持 2026-08-02 client 端 sklearn 快照,今日無法由 atlas 複驗。新增:**atlas repo 內有原生 RandomForest**(`internal/ml/randomforest.go`:CART + bootstrap + 隨機子空間,`MaxFeatures` 支援 "sqrt"/"all"),CLI `cmd/backtest-pipeline -model rf` 實跑 → `-synthetic` exit 0、**R²_OOS +0.9914（PASS）**;但**原生預設與本頁論文設定相反**:`NTrees` 預設 **100**（非 500）、`MaxDepth` 預設 **10**（非 2）→ 「淺樹防過擬合」在 atlas 原生路徑不是預設。**未消化第 1 項已解（2026-09-27）**:XGBoost / LightGBM 為**已驗證的負面**——`git grep -i 'xgboost|lightgbm|gradientboost'` 在 atlas 只命中 `cmd/backtest-pipeline/main_test.go` 的 `newModel("xgboost")` 應報錯測試,`newModel` 只收 `ols/pcr/pls/elasticnet/glm/rf`。**原生 RF 無 feature importance 方法**(`internal/ml` 內 `importance` 0 命中);重要性在 **experiment 結果**路線——`internal/eval/importance.go` 的 `PermutationImportance` 產出 `ImportanceResult`,並掛在 `internal/domain/experiment` 的 `importance_result` 欄位,但今日 `/api/experiment/history` 回空。歷史:2026-08-02 v0.9 結算跑過 L3 升 active（client 端 sklearn 1.8.0 RandomForestRegressor(n_estimators=500, max_depth=2),R²_oos=0.1248;feature_importances_ 跑通）。**2026-09-27 更正**：`-synthetic` 的 `R²_OOS` 實為 in-sample（`runSynthetic` 對同一份 X 先 Fit 後 Predict，~382–388 行）且 `rand.Float64()` 未設 seed ⇒ 同日重跑即變動（rf +0.9909～+0.9928）。此列只證明模型可跑，**不可當 OOS 證據**。
 l3_run_at: 2026-09-27
 l3_run_by: prime-agent（feat/20260927-l3-backfill-b2）
 l3_endpoints_probed:
@@ -18,7 +18,7 @@ l3_endpoints_probed:
   - "/api/dashboard/risk → 200（session_count 210;無 R² 欄位）（2026-09-27T20:02:26+08:00）"
   - "/api/experiment/history → 200（history 空陣列 → experiment_diff 無實例可跑）（2026-09-27T20:02:48+08:00）"
   - "/api/experiment/diff → 400（缺 experiment_id）;帶不存在 id → 404（2026-09-27T20:02:48+08:00）"
-  - "CLI 代理（無 HTTP 端點）: atlas repo `-synthetic -model rf` → R²_OOS +0.9914（PASS）（2026-09-27T20:02:28+08:00）"
+  - "CLI 代理（無 HTTP 端點）: atlas repo `-synthetic -model rf` → R²_OOS +0.9914（PASS;實為 in-sample,非 OOS）（2026-09-27T20:02:28+08:00）"
 ---
 
 ## 一句話定位
@@ -63,18 +63,18 @@ Step 3: OOS R² 對比 SK-05 OLS(預期 RF 優 10-20%);同時算 `feature_import
 | 4 | `/api/dashboard/risk` | 200 | session_count 210；**無 R² 欄位** | 2026-09-27T20:02:26+08:00 |
 | 5 | `/api/experiment/history` | 200 | `history` 空陣列 → **今日無 experiment 結果** | 2026-09-27T20:02:48+08:00 |
 | 6 | `/api/experiment/diff`（缺參數／不存在 id） | **400 / 404** | `experiment_id` 必填;不存在回 `experiment result not found` | 2026-09-27T20:02:48+08:00 |
-| 7 | CLI（非 HTTP）:`cmd/backtest-pipeline -synthetic -model rf` | exit 0 | 500 samples × 2 features；**R²_OOS +0.9914 → PASS** | 2026-09-27T20:02:28+08:00 |
+| 7 | CLI（非 HTTP）:`cmd/backtest-pipeline -synthetic -model rf` | exit 0 | 500 samples × 2 features；**R²_OOS +0.9914 → PASS（實為 in-sample,非 OOS）** | 2026-09-27T20:02:28+08:00 |
 
 - **更正（2026-09-27）**:第 7 列推翻「無原生 RF 端點」的 repo 層敘述:`internal/ml/randomforest.go` 有原生 CART＋bagging＋隨機子空間 RF,`-model rf` 可實跑。仍**不在 MCP／HTTP 面**。
-- **原生預設與本頁論文設定相反（重要）**:`NewRandomForest()` 的 `NTrees` 預設 **100**（本頁 500）、`MaxDepth` 預設 **10**（本頁 2）→ 「金融 RF 要用淺樹」這條建議**不是 atlas 原生行為**;合成資料 100 棵也能 PASS（+0.9914）,但真實台股需自行確認深度。
+- **原生預設與本頁論文設定相反（重要）**:`NewRandomForest()` 的 `NTrees` 預設 **100**（本頁 500）、`MaxDepth` 預設 **10**（本頁 2）→ 「金融 RF 要用淺樹」這條建議**不是 atlas 原生行為**;合成資料 100 棵也能 PASS（+0.9914,in-sample）,但真實台股需自行確認深度。
 - **第 5／6 列**:`experiment_diff` 今日不可作為重要性驗證路徑（無 experiment 結果）;要驗 importance 目前只能走原生 `PermutationImportance` 或 client 端。
 - Step 1 今日只完成一半:X 來源可用但欄位不足(fundamentals 4 欄;technical 的 RSI/SMA 皆 0),`backtest_signals` 無 OOS y。Step 3 的 `feature_importances_` 對照在 atlas 端無對位方法(原生 RF 無此輸出)。
 
 ## 未消化 / 待補
-- [ ] `n_estimators=500` 在台股月度資料是否足夠?可能需 1000。（2026-09-27 實測:atlas 原生預設 `NTrees=100`,合成資料 100 棵即 PASS（R²_OOS +0.9914）→ 「100 是否夠」在合成 DGP 上成立,真實台股月頻仍需 client 端驗）
+- [ ] `n_estimators=500` 在台股月度資料是否足夠?可能需 1000。（2026-09-27 實測:atlas 原生預設 `NTrees=100`,合成資料 100 棵即 PASS（in-sample R² +0.9914）→ 「100 是否夠」在合成 DGP 上成立,真實台股月頻仍需 client 端驗）
 - [ ] RF 對 regime 切換的適應性比線性差,需監控特徵重要性穩定性。
 
-已解（2026-09-27）:XGBoost / LightGBM 是否有 atlas 對位 → **已驗證負面**:`git grep -i 'xgboost|lightgbm|gradientboost'` 只命中 `cmd/backtest-pipeline/main_test.go` 的 `newModel("xgboost")` 應報錯測試;`newModel` 白名單僅 `ols/pcr/pls/elasticnet/glm/rf` → atlas 端無任何梯度提升實作。
+已解（2026-09-27）:XGBoost / LightGBM 無 atlas 對位 → **已驗證負面**:`git grep` 0 命中實作,`newModel` 白名單僅 `ols/pcr/pls/elasticnet/glm/rf`（明細見 `verification:`）。
 
 methodology_aligned: true
 atlas_constitution_ref: ATLAS_METHODOLOGY.md §五(策略矩陣:Random Forest 非線性需對位 regime 切換)(附註:2026-07-30 period_system 變動 — `period` 已是 PeriodDetector 真值,`source` 欄位正名 `regime_source` / `period_source`)

@@ -8,7 +8,7 @@ tier: T3
 confidence: medium
 atlas_go_relevance: high
 mcp_tools_used: [stock_get_fundamentals, backtest_signals, risk_get_metrics]
-verification: "2026-09-27 L3 端點實跑 (http_code + timestamp 見 `l3_endpoints_probed`;明細見 §驗證方式):4 個 HTTP 端點全 200,但**皆無 R²_oos／係數欄位** → 本頁 `R²_oos=0.9996` 為 2026-08-02 client 端 sklearn 快照,今日無法由 atlas 複驗。新增:**atlas repo 內有原生 ElasticNet**(`internal/ml/elasticnet.go`,座標下降 + 標準化 + 內建 `AlphaAuto` 3-fold CV,另有 `UseHuber`/`Xi` 穩健加權),可用 `cmd/backtest-pipeline -model elasticnet` 實跑 → 今日 `-synthetic` exit 0 但 **R²_OOS +0.6406（✗ WARN;同批同 binary 的 OLS 為 +0.9992）**,原因是 CLI 的 `newModel(\"elasticnet\")` 傳入 `AlphaAuto: false, Alpha: 1.0` 固定值 → **本頁「alpha 由 CV 自動選」在 CLI 路徑不成立**;`UseHuber` 全 repo 無任何呼叫者啟用（只有 `internal/ml/elasticnet.go` 自身引用）。歷史:2026-08-02 v0.9 結算跑過 L3 升 active（client 端 sklearn 1.8.0 ElasticNetCV,l1_ratio=[0.1,0.5,0.9],R²_oos=0.9996）。"
+verification: "2026-09-27 L3 端點實跑 (http_code + timestamp 見 `l3_endpoints_probed`;明細見 §驗證方式):4 個 HTTP 端點全 200,但**皆無 R²_oos／係數欄位** → 本頁 `R²_oos=0.9996` 為 2026-08-02 client 端 sklearn 快照,今日無法由 atlas 複驗。新增:**atlas repo 內有原生 ElasticNet**(`internal/ml/elasticnet.go`,座標下降 + 標準化 + 內建 `AlphaAuto` 3-fold CV,另有 `UseHuber`/`Xi` 穩健加權),可用 `cmd/backtest-pipeline -model elasticnet` 實跑 → 今日 `-synthetic` exit 0 但 **R²_OOS +0.6406（✗ WARN;同批同 binary 的 OLS 為 +0.9992）**,原因是 CLI 的 `newModel(\"elasticnet\")` 傳入 `AlphaAuto: false, Alpha: 1.0` 固定值 → **本頁「alpha 由 CV 自動選」在 CLI 路徑不成立**;`UseHuber` 全 repo 無任何呼叫者啟用（只有 `internal/ml/elasticnet.go` 自身引用）。歷史:2026-08-02 v0.9 結算跑過 L3 升 active（client 端 sklearn 1.8.0 ElasticNetCV,l1_ratio=[0.1,0.5,0.9],R²_oos=0.9996）。**2026-09-27 更正（本批發現）**：CLI `-synthetic` 印出的 `R²_OOS` **實為 in-sample**——`cmd/backtest-pipeline/main.go` 的 `runSynthetic` 對**同一份 X** 先 `Fit` 後 `Predict`（第 ~382–388 行），且 `rand.Float64()` 未設 seed ⇒ 同日重跑值即變動（rf +0.9909～+0.9928 實測）。⇒ 此列只能當「模型可跑」的存在性檢查，**不可當 OOS 證據**。"
 l3_run_at: 2026-09-27
 l3_run_by: prime-agent（feat/20260927-l3-backfill-b2）
 l3_endpoints_probed:
@@ -16,7 +16,7 @@ l3_endpoints_probed:
   - "/api/backtest/signals → 200（active_signals null,無 OOS y）（2026-09-27T20:02:26+08:00）"
   - "/api/dashboard/risk → 200（session_count 210;無 R²／係數欄位）（2026-09-27T20:02:26+08:00）"
   - "/api/field-contract → 200（2262 欄;r2 / r_squared 0 命中）（2026-09-27T20:03:56+08:00）"
-  - "CLI 代理（無 HTTP 端點）: atlas repo `-synthetic -model elasticnet` → R²_OOS +0.6406（WARN;同批 OLS +0.9992）（2026-09-27T20:02:28+08:00）"
+  - "CLI 代理（無 HTTP 端點）: atlas repo `-synthetic -model elasticnet` → R²_OOS +0.6406（WARN;實為 in-sample,非 OOS;同批 OLS +0.9992）（2026-09-27T20:02:28+08:00）"
 ---
 
 ## 一句話定位
@@ -32,7 +32,7 @@ SK-06 是 OLS 的高維修正版——L1+L2 混合正則化,把不重要因子�
 | 論文概念 | atlas-mcp 對位 |
 |---------|---------------|
 | ElasticNet 訓練 | MCP／HTTP 缺;**repo 內有原生 ElasticNet**(`internal/ml/elasticnet.go`,座標下降;CLI `-model elasticnet`,2026-09-27 實跑) |
-| CV 選 alpha | 原生 `AlphaAuto` 內建 3-fold CV,但 CLI 路徑關閉(`newModel("elasticnet")` 固定 `Alpha 1.0,AlphaAuto false`;2026-09-27 實跑 R²_OOS +0.6406) |
+| CV 選 alpha | 原生 `AlphaAuto` 內建 3-fold CV,但 CLI 路徑關閉(`newModel("elasticnet")` 固定 `Alpha 1.0,AlphaAuto false`;2026-09-27 實跑 in-sample R² +0.6406) |
 | 評估 | `risk_get_metrics` |
 | 與 SK-04 整合 | Huber ElasticNet 在 client 端即可組合 |
 
@@ -59,14 +59,14 @@ Step 3: 對比 SK-05 OLS 與 SK-09 PLS 的 OOS R²,確認 ElasticNet 優於 OLS 
 | 2 | `/api/backtest/signals` | 200 | `active_signals` null、var/sharpe 全 0 → 無 OOS y | 2026-09-27T20:02:26+08:00 |
 | 3 | `/api/dashboard/risk` | 200 | session_count 210、`insufficient_data` 1；無 R² 欄位 | 2026-09-27T20:02:26+08:00 |
 | 4 | `/api/field-contract` | 200 | 2262 欄；`r2` / `r_squared` 0 命中 | 2026-09-27T20:03:56+08:00 |
-| 5 | CLI（非 HTTP）:`cmd/backtest-pipeline -synthetic -model elasticnet` | exit 0 | 500 samples × 2 features；**R²_OOS +0.6406 → ✗ WARN**（同批 OLS +0.9992） | 2026-09-27T20:02:28+08:00 |
+| 5 | CLI（非 HTTP）:`cmd/backtest-pipeline -synthetic -model elasticnet` | exit 0 | 500 samples × 2 features；**R²_OOS +0.6406 → ✗ WARN（實為 in-sample,非 OOS）**（同批 OLS +0.9992） | 2026-09-27T20:02:28+08:00 |
 
 - **更正（2026-09-27）**:第 5 列推翻兩句舊敘述 ——(a)「ElasticNet 訓練缺、atlas 端需 client 自組」在 repo 層不成立:`internal/ml/elasticnet.go` 有原生座標下降實作,`cmd/backtest-pipeline -model elasticnet` 可直接跑;(b)「alpha 由 CV 自動選」只在 `AlphaAuto=true` 時成立,CLI 的 `newModel` 傳固定 `Alpha: 1.0` → 合成線性 DGP 上明顯 under-fit（+0.6406 對比 OLS +0.9992）。
 - **`use_huber` 更正**:`internal/ml/elasticnet.go` 有 `UseHuber`/`Xi` 穩健加權實作,但 `git grep -n UseHuber` 顯示全 repo 只有該檔自身引用、預設 false,沒有任何呼叫者啟用 → atlas 端今日無啟用途徑,本頁「需實測」仍成立。
 - Step 1 今日只完成一半:X 端點可用（2330 PE/PB/DY）,但 `/api/backtest/signals` 回 `active_signals: null` 全 0 → **無 OOS y**。Step 3 亦不可由 atlas 完成（第 3 列無 R² 欄位）。
 
 ## 未消化 / 待補
-- [ ] `alpha` CV 範圍是否足夠?學術建議 logspace(-6, 2, 50)。（2026-09-27 實測:atlas 原生 `AlphaAuto` 只做 3-fold 網格且 CLI 關閉該路徑 → 固定 α 在合成資料 R²_OOS 僅 +0.6406,是「α 選不好即崩」的直接證據;真實台股 α 範圍仍待 client 端實測）
+- [ ] `alpha` CV 範圍是否足夠?學術建議 logspace(-6, 2, 50)。（2026-09-27 實測:atlas 原生 `AlphaAuto` 只做 3-fold 網格且 CLI 關閉該路徑 → 固定 α 在合成資料的 in-sample R² 僅 +0.6406,是「α 選不好即崩」的直接證據;真實台股 α 範圍仍待 client 端實測）
 - [ ] use_huber=True 對小樣本的影響需實測。（2026-09-27 實測:`internal/ml/elasticnet.go` 有 `UseHuber`/`Xi`,但全 repo 無呼叫者啟用 → atlas 端今日無法以 CLI 實測,仍須 client 端自組）
 - [ ] ElasticNet 與 SK-22 消去法的因果關係:理論上若 SK-22 顯示某因子刪掉後掉分很多,ElasticNet 應該把該因子的係數保留下來——可交叉驗證。
 
