@@ -29,6 +29,10 @@ def parse_args():
         description="第 5 條鐵律 enforcement 工具(快照值必附 timestamp)"
     )
     parser.add_argument(
+        "--all-classes", action="store_true",
+        help="同時掃 concepts/entities/summaries/templates（預設只掃 skills/SK-*.md）",
+    )
+    parser.add_argument(
         "--skills-dir",
         default=os.environ.get("ATLAS_WIKI_SKILLS_DIR", DEFAULT_SKILLS_DIR),
         help="skills 目錄路徑(CI 用相對路徑,本地保留預設絕對路徑)",
@@ -86,6 +90,13 @@ def check_file(filepath):
 def main():
     args = parse_args()
     files = sorted(glob.glob(os.path.join(args.skills_dir, "SK-*.md")))
+    if getattr(args, "all_classes", False):
+        # 2026-09-27 擴充（S6 前置）：第五條鐵律原本只掃 skills/SK-*.md，
+        # 非 SK 類（concepts/entities/summaries/templates）完全不受檢。此處一併納入。
+        root = os.path.dirname(os.path.abspath(args.skills_dir))
+        for pat in ("concepts/*.md", "entities/*.md", "summaries/*.md", "templates/*.md"):
+            files += sorted(f for f in glob.glob(os.path.join(root, pat)) if ".bak" not in f)
+        files = sorted(set(files))
     files = [f for f in files if ".bak" not in f]
     total = 0
     print("=" * 60)
