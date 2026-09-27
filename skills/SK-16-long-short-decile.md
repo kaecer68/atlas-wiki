@@ -13,18 +13,22 @@ mcp_tools_used:
   - universe_get_sessions
   - stock_get_fundamentals
   - risk_get_metrics
-verification: 2026-08-01 v0.9 結算跑過 L3 Step 1~3 升 active:backtest_signals sharpe_long=0.27 + sharpe_short=0.49(皆 > 0.2),var_95=-0.0225(> -0.05);universe_get_sessions **150 sessions** 從 2026-01-01~2026-07-20(2026-08-02 20:40 重跑確認 150 sessions 不是 147),7/4~7/9 NEUTRAL 期 outcome_count=0 對位 SK-16 §七時期表「Consolidation 不可信」;risk_get_metrics live provenance session_count=147 insufficient_data=1。
+verification: 2026-08-01 v0.9 結算跑過 L3 Step 1~3 升 active:backtest_signals sharpe_long=0.27 + sharpe_short=0.49(皆 > 0.2),var_95=-0.0225(> -0.05);universe_get_sessions **150 sessions** 從 2026-01-01~2026-07-20(2026-08-02 20:40 重跑確認 150 sessions 不是 147),7/4~7/9 NEUTRAL 期 outcome_count=0 對位 SK-16 §七時期表「Consolidation 不可信」;risk_get_metrics live provenance session_count=147 insufficient_data=1。**2026-09-27 重跑(L3):`universe_get_sessions` 回 **90 sessions**(滾動窗,非 1994 起算)、`risk_get_metrics` session_count=210;`backtest_signals` 當日回 **全 0** ⇒ **2026-08-01 的 0.27/0.49 今日無法重現,不得當現值引用**。
+l3_run_at: 2026-09-27
+l3_run_by: prime-agent（PR feat/20260927-sk39-short-cost）
+l3_endpoints_probed:
+  - /api/dashboard/sessions → 200 (11:30:41Z)｜/api/dashboard/risk → 200｜/api/backtest/signals → 200｜/api/stock/fundamentals?symbol=2330 → 200（皆 11:30:42Z）
+  - /api/dashboard/risk-exposure → 200 (11:31:04Z)｜/api/dashboard/sessions/session-20260927-daily → 200 (11:30:42Z)
 methodology_aligned: true
-atlas_constitution_ref: ATLAS_METHODOLOGY.md §五(策略矩陣:多空十分位對應「跟隨聰明錢」策略;RISK_OFF 期 Advisor.AllowedStrategies() 禁「事件套利／資金對抗」)(附註:2026-07-30 period_system 變動 — `period` 已是 PeriodDetector 真值,`source` 欄位正名 `regime_source` / `period_source`)
+atlas_constitution_ref: ATLAS_METHODOLOGY.md §五(多空十分位屬「跟隨聰明錢」;RISK_OFF 期 Advisor.AllowedStrategies() 禁「事件套利／資金對抗」;2026-07-30 起 `period` 為 PeriodDetector 真值)
 related:
   - ~/workspace/atlas-wiki/skills/_methodology_alignment_audit_with_fileline.md §1.4 (TW-X4 已撤銷 — regime vs 策略分類正交,見附錄 H「裁決狀態」)
   - ~/workspace/atlas-wiki/concepts/retail-sentiment-indicators.md（L6 散戶情緒反向指標,2026-08-22 接線）
 ---
 
-<!-- methodology_alignment_tip: 本檔術語:七時期為真值,RISK_ON/OFF 為向下相容;atlas strategy_ranker 內部 regime = BULL/BEAR/HIGH_VOL/NEUTRAL 4 分類與憲章策略三分類(跟隨聰明錢／事件套利／資金對抗)正交(2026-07-30 kaecer 裁定 TW-X4 撤銷) -->
-<!-- methodology_alignment_tip: 2026-07-30 period_system 變動 — `period` 已是 PeriodDetector 真值;`source` 欄位正名 `regime_source` / `period_source` -->
+<!-- methodology_alignment_tip: 七時期為真值,RISK_ON/OFF 為向下相容;atlas strategy_ranker 內部 regime(BULL/BEAR/HIGH_VOL/NEUTRAL)與憲章策略三分類正交(2026-07-30 裁定 TW-X4 撤銷);2026-07-30 起 `period` 已是 PeriodDetector 真值、`source` 正名 `regime_source`/`period_source` -->
 
-> 術語備註:atlas 後端資金面 = 七維錢潮雷達 3+2+2 分層,不可加權平均（對位憲章 §四 + product-positioning §7.1）[2026-08-22 iter2]
+> 術語備註:atlas 後端資金面 = 七維錢潮雷達 3+2+2 分層,不可加權平均（對位憲章 §四＋product-positioning §7.1）[2026-08-22]
 
 ## 一句話定位
 
@@ -34,13 +38,7 @@ related:
 
 SK-16 定義將股票池每月依模型預測值排序,切成 10 等分,做多最高分位（D10）、做空最低分位（D1）,形成多空對沖組合,觀察報酬序列。
 
-**關鍵設計**:
-- 頻率:月頻（M）
-- 分組數:n_groups=10
-- 加權方式:weighting="value"（市值加權）/ "equal"（等權）
-- 月度再平衡:每月依最新預測重新分組
-- 關鍵輸出:多空報酬序列（D10 - D1）
-- **依賴**:SK-01 因子庫、SK-05/06/07 等回歸模型、SK-17 加權方式
+**關鍵設計**:月頻（M）；n_groups=10；weighting=`value`（市值加權）／`equal`（等權）；每月依最新預測重新分組；輸出多空報酬序列（D10 − D1）。**依賴**:SK-01 因子庫、SK-05/06/07 回歸模型、SK-17 加權方式。
 
 ## atlas 對位
 
@@ -53,18 +51,18 @@ atlas 沒有單一「long_short_decile」端點,但對位的核心數據 + 驗�
 | 股票池/市值 | 報價/基本面 | `stock_get_quote` + `stock_get_fundamentals` |
 | 多空績效 | 風險指標 | `risk_get_metrics` (2026-07-29 實跑回 max_drawdown_pct=1, session_count=147, insufficient_data=1) |
 
+**放空腿的可行性（2026-09-27 結案）**:Fin-Skills 未論及的「融券限額／流動性折扣」，atlas **0 對位**——`parameters_get` 1669 key 無任何融券/借券限額或借券費鍵、模擬 session 的 `side` 全為空、`backtest_signals` 無 borrow 成本欄。外部制度面（TWSE 總量管制 25%／10%／30%、標借費上限、平盤下規則）與 atlas 端的落差已獨立成頁 → `skills/SK-39-short-cost-model.md`；流動性折扣 → `skills/SK-37-liquidity-spread-screening.md`。
+
 **差異點**:
 - 論文版學術時間序列 (1994–2022) vs atlas 後端 session-based 模擬
 - 論文版假設預測完美 → atlas 訊號是「模型給的」會帶噪
 - 論文版可細看月內 vs atlas 是日頻聚合
 
-**沒有對位的部分**:
-- 真實「月分組」執行——atlas 後端沒暴露 decile sort 端點,只能從 session 內部解讀
-- 市值加權細節:fin-Skills SK-17 公式 vs atlas `risk_get_metrics` 的暴露權重不一定一致
+**沒有對位的部分**:真實「月分組」執行（atlas 無 decile sort 端點，只能從 session 內部解讀）；市值加權細節（SK-17 公式 vs atlas 權重口徑，atlas 權重在 `risk_exposure` 而非 `risk_get_metrics`）。
 
 ## 七時期 × 信號可用性表（Advisor.AllowedStrategies() 對位承諾）
 
-引:ATLAS_METHODOLOGY.md §五策略矩陣(Advisor.AllowedStrategies())。
+引:ATLAS_METHODOLOGY.md §五。
 
 | 七時期 | SK-16 多空十分位訊號是否可信 | 三分類主力 |
 |--------|---------------------------|----------|
@@ -76,39 +74,38 @@ atlas 沒有單一「long_short_decile」端點,但對位的核心數據 + 驗�
 | **轉折下壓（Turnaround Down）** | ❌ **不可信** — VaR 飆升 | **資金對抗**（低位布局） |
 | **黑天鵝（Black Swan）** | ❌ **不可信 + 停損** | 暫停所有策略 |
 
-**給散戶的話**:**「同一個多空十分位訊號,在七不同時期下的可用性完全不同。給你的 sharpe 0.27 看起來是死數,要看它在當期(高原?上升?轉折下壓?)意義才完整」**。
+**給散戶的話**:**同一個多空十分位訊號,在不同時期可用性完全不同；同一個 sharpe 要看當期才有意義**。
 
 ## 散戶解讀（GROW+ 引用點）
 
 **對應 §Q2 散戶一句話**（consult-index §4）:
 > 「做多 top 10% / 做空 bottom 10%,先讓策略在歷史上能跑贏,再看現在訊號有沒有亮。」
 
-**教練框架的 W（Will）段會用到**:
-- 「你想要的是 alpha（超越大盤）還是絕對報酬?兩者用的策略不一樣」
-- 「如果你只做多不做空,台股實務上要記得融券成本,別只看『做空一倍』的美麗數字」
+**教練框架的 W（Will）段**:「你要 alpha（超越大盤）還是絕對報酬?兩者策略不同」「只做多不做空要記得融券成本,別只看『做空一倍』的美麗數字」
 
 **散戶最常踩的坑**:
 - 把「做多最強 10%」誤讀為「今天漲最多的」——其實是「**預測**最強 10%」,是模型先講才漲的
 - 忽略交易成本（做空 + 月再平衡）——下一條 SK-19 會解
-- 把學術 Sharpe 直接套現實——台股流動性 + 融券限額常常打折扣
+- 把學術 Sharpe 直接套現實——台股流動性與融券限額會打折扣（見 SK-37／SK-39）
 
 ## 驗證方式
 
-**L1 格式**:frontmatter 9 欄齊全 ✅ / 6 段俱全 ✅ / 路徑正確 ✅
-**L2 對位**:上述 4 個 atlas-mcp tool 對位已標 + 用法已寫 ✅
-**L3 端點**（ground truth,2026-07-29 實跑完成 1/2 + 2026-08-01 跑完 Step 1~3 升 active）:
-- ✅ `backtest_signals` 2026-08-01 實跑:sharpe_long=0.27、sharpe_short=0.49、var_95=-0.0225、var_99=-0.0723、active_signals=[CIRCUIT_BREAKER]、drawdown_pct=0.72
-- ✅ `risk_get_metrics` 2026-08-01 實跑:data_provenance=live、session_count=147、data_points=145、insufficient_data=1、var_95=-0.39、var_99=-0.65、max_drawdown_pct=1
-- ✅ `universe_get_sessions` 2026-07-30 實跑 + 2026-08-01 重驗:147 筆 sessions(2026-01-01~2026-07-20),RISK_ON 為主,7/4~7/9 NEUTRAL 期 outcome_count=0 對位 §七時期表「Consolidation 不可信」;**atlas session 結構是「signal count」非「monthly decile return」,不直接對位 SK-16 論文 D1~D10 十分位結構**
+**L1** ✅（10 欄／6 段齊全）　**L2** ✅（4 個 atlas-mcp tool 已標用法）
 
-**升 active 完成**(2026-08-01 v0.9 結算):sharpe_long 0.27 + sharpe_short 0.49 皆 > 0.2、var_95 -0.0225 > -0.05,三項閾值通過。Frontmatter 已改 status: active。
-- 升 active 判準（2026-08-01 結算）：`sharpe_long` 0.27＋`sharpe_short` 0.49 皆 **> 0.2** 門檻通過。
+**L3 舊跑（2026-08-01，快照已過期）**：`backtest_signals` sharpe_long=0.27、sharpe_short=0.49、var_95=-0.0225；`risk_get_metrics` session_count=147。升 active 判準（2026-08-01 結算）：兩 sharpe 皆 > 0.2 通過。
+
+**L3 端點（2026-09-27 重跑，本 PR）**：
+- `universe_get_sessions` 200（11:30:41Z）：**90 sessions**，2026-06-27T23:26Z～2026-09-27T03:19Z；RISK_ON 49／RISK_OFF 40／NEUTRAL 1；78 筆 `top_strategies` 的 `side` 全為空字串。
+- `risk_get_metrics` 200（11:30:42Z）：session_count=210、data_points=209、var_95=0、var_99=0、max_drawdown_pct=0.722、insufficient_data=1、source=postgres、gate_mode=NORMAL。
+- `backtest_signals` 200（11:30:42Z）：**全 0**（active_signals=null），與 2026-08-01 的 0.27/0.49 不同 ⇒ 今日價值為 0，舊值不得當現值。
+- `stock_get_fundamentals` 200（11:30:42Z）：2330 PE 30.19／PB 9.57／DividendYield 1.1（與 2026-07-30 同值）。
+- `risk_exposure` 200（11:31:04Z）：position_count 3、cash_ratio 0.5228（`risk_get_metrics` 無權重欄位，權重看這條）。
+
+**結論（2026-09-27）**：atlas session 是**滾動窗**（今日 90 筆），非 1994 起算序列；session 仍是「signal count」而非「monthly decile return」，D1~D10 無直接對位。
 
 ## 未消化 / 待補
 
-- [ ] 台股實務:融券限額與流動性折扣,Fin-Skills 沒論及,atlas 也沒對位
-- [ ] paper 1 vs atlas session 的時間軸對齊問題——Fin-Skills 用 1994–2022 學術數據,atlas session 從何起算需查
-- [ ] SK-17 加權公式與 atlas `risk_get_metrics` 暴露權重的口徑差異
+- [ ] SK-17 加權公式與 atlas 權重口徑的差異**只做了一半**:2026-09-27 實跑確認 `risk_get_metrics` **根本沒有權重欄位**(只回 var_95/99、cvar_95、max_drawdown_pct、session_count 210、data_points 209、insufficient_data 1),權重改看 `risk_exposure`(同日 200:position_count 3、cash_ratio 0.5228、sector_exposure)。**實際加權公式逐項比對仍未做**,需與 SK-17 一起跑。
 
 ## 反向鏈接
 

@@ -2,7 +2,7 @@
 
 > 散戶 AI 實戰金融工程 知識圖譜
 > 從 2026-07-15 開始建立
-> Last updated: 2026-09-27 | Knowledge entries: 36 (this index;重數於 2026-09-27) / Repo .md 總數: 148（2026-09-27 快照,`git ls-files "*.md"` 實測;舊記 155 為 2026-08-22 值） / SK 知識檔: 37（36 編號 + 索引,SK-27/30 已 archive;2026-09-27 實測）
+> Last updated: 2026-09-27 | Knowledge entries: 36 (this index;重數於 2026-09-27) / Repo .md 總數: 148（2026-09-27 快照,`git ls-files "*.md"` 實測;舊記 155 為 2026-08-22 值） / SK 知識檔: 40（39 編號 + 索引,SK-27/30 已 archive;2026-09-27 實測）
 > 2026-08-03 repo 公開化(MIT + v1.0.0 + CI validate-wiki)
 > 2026-08-22 知識路由：raw/queries/comparisons/summaries-handoff+manifests 共 18 檔遷移至 atlas-notes（純知識回原料庫）
 
@@ -54,7 +54,7 @@
 - [[summaries/atlas-http-path-drift]] — atlas HTTP path drift 集中記錄（2026-09-27 建立,含當日實測 404/200）。檔案:`summaries/atlas-http-path-drift.md`
 
 ## Skills
-<!-- SK 知識頁索引:SK-00 索引 + SK-01~SK-38(39 檔,SK-27/30 已 archive;2026-09-27 補列 SK-37/38) -->
+<!-- SK 知識頁索引:SK-00 索引 + SK-01~SK-39(40 檔,SK-27/30 已 archive;2026-09-27 補列 SK-37/38/39) -->
 
 - [[skills/SK-00-skill-index]] — SK 索引頁
 - **8/7-8/21 新增**:
@@ -66,6 +66,7 @@
 - **2026-09-27 新增**:
   - [[skills/SK-37-liquidity-spread-screening]] — 流動性分位與買賣價差篩選（L3 實跑 2026-09-27;兩個已驗證的否定:無 per-symbol 流動性端點、無真實價差）
   - [[skills/SK-38-pnl-attribution-workflow]] — PnL 歸因工作流（描述性歸因 vs 消去法;L3 實跑 2026-09-27）
+  - [[skills/SK-39-short-cost-model]] — 放空成本模型（借券費/標借費 vs atlas 四個已驗證的否定;L3 實跑 2026-09-27,4 條候選路由 404）
 
 ---
 
