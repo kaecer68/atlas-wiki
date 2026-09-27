@@ -83,7 +83,6 @@
 - 不把「我寫好了」當「跑通了」。
 - 對 kaecer 回報壞的工具/資料：只列事實，不列「該怎麼修」。
 - 外部權威數字（IMF／金管會／證交所／TWSE 等）寫入頁面前，frontmatter `sources:` 須有可追溯來源或明寫「實務慣例」／「待查（YYYY-MM-DD）」；不自造 URL（`make check-source-tiers`）。
-- 快照頁須宣告 `last_verified`／`待複驗`(`make check-freshness`)。
 
 ---
 
@@ -157,7 +156,7 @@
 ### 品質護欄（S1–S8，2026-09-27）
 
 `make ci-gate` 全跑。**strict（違規即紅燈）**：結構／size／frontmatter＋YAML／L3 ≥90%＋文法／S2 schema／S5 檢索性／S7 句型／**S3 來源可追溯**／R1+R3+R4／detector 數（29）。
-**warn**：**S6 時效**（`check-freshness.py`：含日期快照頁須有 `last_verified`／`l3_run_at`／`待複驗`；禁用 `updated` 冒充）。細節見 `atlas-wiki-quality` skill。
+**warn**：**S6 時效**（`check-freshness.py`：含日期快照頁須有 `last_verified`／`l3_run_at`／`待複驗`，禁用 `updated` 冒充；2026-09-27 未宣告 **18 → 0**，可升 strict）。細節見 `atlas-wiki-quality` skill。
 
 ### 紅線（不可違反）
 
