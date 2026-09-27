@@ -12,14 +12,14 @@ verification: 2026-09-27 L3 實跑 9 端點、全部附 http_code 與 UTC timest
 l3_run_at: 2026-09-27
 l3_run_by: prime-agent（PR feat/20260927-sk37-liquidity-and-attribution）
 l3_endpoints_probed:
-  - /api/stock/quote?symbol=2330 → 200
-  - /api/stock/chips?symbol=2330 → 200
-  - /api/stock/technical?symbol=2330&days=10 → 200
-  - /api/stock/volume_divergence?symbol=2330&window=30 → 200
-  - /api/field-contract → 200
-  - /api/dashboard/data-channels → 200
-  - /api/parameters → 200
-  - /api/dashboard/sessions/session-20260927-daily → 200
+  - "/api/stock/quote?symbol=2330 → 200"
+  - "/api/stock/chips?symbol=2330 → 200"
+  - "/api/stock/technical?symbol=2330&days=10 → 200"
+  - "/api/stock/volume_divergence?symbol=2330&window=30 → 200"
+  - "/api/field-contract → 200"
+  - "/api/dashboard/data-channels → 200"
+  - "/api/parameters → 200"
+  - "/api/dashboard/sessions/session-20260927-daily → 200"
 numbering_note: 編號 SK-37 曾於 2026-08-22 因品質整頁撤回到 `skills/_archive/2026-08-22-sk37-revert/`（主題 = fin-skill decision index）。本頁主題不同（流動性/價差），非復活該檔內容；舊檔續留 _archive。
 related:
   - skills/SK-21-penny-stock-exclusion.md（缺口來源頁；本 PR 同步更正其工具建議）

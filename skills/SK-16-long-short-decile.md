@@ -17,8 +17,8 @@ verification: 2026-08-01 v0.9 結算跑過 L3 Step 1~3 升 active:backtest_signa
 l3_run_at: 2026-09-27
 l3_run_by: prime-agent（PR feat/20260927-sk39-short-cost）
 l3_endpoints_probed:
-  - /api/dashboard/sessions → 200 (11:30:41Z)｜/api/dashboard/risk → 200｜/api/backtest/signals → 200｜/api/stock/fundamentals?symbol=2330 → 200（皆 11:30:42Z）
-  - /api/dashboard/risk-exposure → 200 (11:31:04Z)｜/api/dashboard/sessions/session-20260927-daily → 200 (11:30:42Z)
+  - "/api/dashboard/sessions → 200 (11:30:41Z)｜/api/dashboard/risk → 200｜/api/backtest/signals → 200｜/api/stock/fundamentals?symbol=2330 → 200（皆 11:30:42Z）"
+  - "/api/dashboard/risk-exposure → 200 (11:31:04Z)｜/api/dashboard/sessions/session-20260927-daily → 200 (11:30:42Z)"
 methodology_aligned: true
 atlas_constitution_ref: ATLAS_METHODOLOGY.md §五(多空十分位屬「跟隨聰明錢」;RISK_OFF 期 Advisor.AllowedStrategies() 禁「事件套利／資金對抗」;2026-07-30 起 `period` 為 PeriodDetector 真值)
 related:

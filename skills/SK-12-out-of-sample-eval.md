@@ -8,16 +8,16 @@ tier: T3
 confidence: high
 atlas_go_relevance: high
 mcp_tools_used: [backtest_signals, risk_get_metrics, risk_get_drawdown, risk_get_correlation_matrix]
-verification: 2026-09-27 L3 端點實跑（明細見 §驗證方式）:7 個端點群中 5 個 200、2 個非 200。**更正 #1:`risk_get_metrics` 不提供 sharpe**——`/api/dashboard/risk` 只有 6 個 key;IS/OOS 唯一出口是 `/api/dashboard/agent-observatory`,今日 5 張 scorecard **全部 `overfit_warning=true`**（etf-rotation-01 IS +0.0717／OOS −1.3685）。**更正 #2:OOS R² 有原生實作但只在 judge 路徑**——`internal/experiment/judge.go` 用 `eval.OOSR2` 產出 `eval_metrics.r2_oos`,且 `eval.SharpeRatio(..., 0)` **rf 硬編 0**;今日 experiment 端點無實例可取。**更正 #3:端點 sharpe 未年化**（`FrequencyPerOutcome` 無乘數）。今日快照:risk session_count **210**、`var_95` 0 且 `insufficient_data` 1（=資料不足,非零風險）。歷史:2026-08-01 v0.9 結算升 active（sharpe_long 0.27／sharpe_short 0.49／session_count 147;當日快照;sharpe 來源已更正）。
+verification: "2026-09-27 L3 端點實跑（明細見 §驗證方式）:7 個端點群中 5 個 200、2 個非 200。**更正 #1:`risk_get_metrics` 不提供 sharpe**——`/api/dashboard/risk` 只有 6 個 key;IS/OOS 唯一出口是 `/api/dashboard/agent-observatory`,今日 5 張 scorecard **全部 `overfit_warning=true`**（etf-rotation-01 IS +0.0717／OOS −1.3685）。**更正 #2:OOS R² 有原生實作但只在 judge 路徑**——`internal/experiment/judge.go` 用 `eval.OOSR2` 產出 `eval_metrics.r2_oos`,且 `eval.SharpeRatio(..., 0)` **rf 硬編 0**;今日 experiment 端點無實例可取。**更正 #3:端點 sharpe 未年化**（`FrequencyPerOutcome` 無乘數）。今日快照:risk session_count **210**、`var_95` 0 且 `insufficient_data` 1（=資料不足,非零風險）。歷史:2026-08-01 v0.9 結算升 active（sharpe_long 0.27／sharpe_short 0.49／session_count 147;當日快照;sharpe 來源已更正）。"
 l3_run_at: 2026-09-27
 l3_run_by: prime-agent（feat/20260927-l3-backfill-b3）
 l3_endpoints_probed:
-  - /api/dashboard/risk → 200（無 sharpe 欄位;var_95 0＋insufficient_data 1）（2026-09-27T20:12:12+08:00）
-  - /api/dashboard/agent-observatory → 200（5 scorecard 全 overfit_warning true;含 is_sharpe／oos_sharpe／is_oos_ratio／regime_breakdown）（2026-09-27T20:12:12+08:00）
-  - /api/dashboard/drawdown → 200（max_drawdown 0.9229;var_95 −0.004816）（2026-09-27T20:12:13+08:00）
-  - /api/backtest/signals → 200（active_signals null;sharpe_short／long 皆 0）（2026-09-27T20:12:12+08:00）
-  - /api/dashboard/correlation-matrix → 200（20 個策略／類股標的）（2026-09-27T20:12:13+08:00）
-  - /api/experiment/history → 200（空）;diff 缺 id／不存在 id → 400／404（2026-09-27T20:12:13+08:00）
+  - "/api/dashboard/risk → 200（無 sharpe 欄位;var_95 0＋insufficient_data 1）（2026-09-27T20:12:12+08:00）"
+  - "/api/dashboard/agent-observatory → 200（5 scorecard 全 overfit_warning true;含 is_sharpe／oos_sharpe／is_oos_ratio／regime_breakdown）（2026-09-27T20:12:12+08:00）"
+  - "/api/dashboard/drawdown → 200（max_drawdown 0.9229;var_95 −0.004816）（2026-09-27T20:12:13+08:00）"
+  - "/api/backtest/signals → 200（active_signals null;sharpe_short／long 皆 0）（2026-09-27T20:12:12+08:00）"
+  - "/api/dashboard/correlation-matrix → 200（20 個策略／類股標的）（2026-09-27T20:12:13+08:00）"
+  - "/api/experiment/history → 200（空）;diff 缺 id／不存在 id → 400／404（2026-09-27T20:12:13+08:00）"
   - 源碼代理（無 HTTP 端點）＝ internal/eval/metrics.go ＋ judge 的 eval_metrics;`go test ./internal/eval/` → 22 PASS／0 FAIL（2026-09-27T20:12:14+08:00）
 ---
 

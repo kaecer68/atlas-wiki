@@ -12,11 +12,11 @@ verification: 2026-09-27 L3 端點實跑（http_code + timestamp 見 `l3_endpoin
 l3_run_at: 2026-09-27
 l3_run_by: prime-agent（feat/20260927-l3-backfill-b3）
 l3_endpoints_probed:
-  - /api/strategies/layers → 200（12 筆:L1 1／L2 2／L3 2／L4 4／L5 3）（2026-09-27T20:12:13+08:00）
-  - /api/detector/registry/list → 200（29 themes）（2026-09-27T20:12:13+08:00）
-  - /api/backtest/signals → 200（active_signals null ⇒ Step 3 不可跑）（2026-09-27T20:12:12+08:00）
-  - /api/dashboard/risk → 200（session_count 210;無 sharpe／R² 欄位）（2026-09-27T20:12:12+08:00）
-  - /api/stock/fundamentals?symbol=2330 與 /api/stock/technical?symbol=2330&days=10 → 皆 200（fundamentals 4 欄;rsi14／sma20／sma50 皆 0）（2026-09-27T20:12:12+08:00）
+  - "/api/strategies/layers → 200（12 筆:L1 1／L2 2／L3 2／L4 4／L5 3）（2026-09-27T20:12:13+08:00）"
+  - "/api/detector/registry/list → 200（29 themes）（2026-09-27T20:12:13+08:00）"
+  - "/api/backtest/signals → 200（active_signals null ⇒ Step 3 不可跑）（2026-09-27T20:12:12+08:00）"
+  - "/api/dashboard/risk → 200（session_count 210;無 sharpe／R² 欄位）（2026-09-27T20:12:12+08:00）"
+  - "/api/stock/fundamentals?symbol=2330 與 /api/stock/technical?symbol=2330&days=10 → 皆 200（fundamentals 4 欄;rsi14／sma20／sma50 皆 0）（2026-09-27T20:12:12+08:00）"
   - 源碼代理（無 HTTP 端點）＝ internal/eval/interaction.go 的 FriedmanH 與 partialDependence2D;`go test ./internal/eval/` → 22 PASS／0 FAIL（含 6 支 FriedmanH 測試）（2026-09-27T20:12:14+08:00）
 ---
 

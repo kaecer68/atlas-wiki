@@ -12,9 +12,9 @@ verification: 2026-09-27 L3 實跑 16 端點 200＋5 端點 404（見 §驗證�
 l3_run_at: 2026-09-27
 l3_run_by: prime-agent（PR feat/20260927-sk39-short-cost）
 l3_endpoints_probed:
-  - 200：/api/parameters、/api/field-contract、/api/dashboard/data-channels、/api/parameters/audit-log、/api/strategies、/api/capital-flow/daily
-  - 200：/api/stock/chips?symbol=2330、/api/backtest/signals、/api/backtest/status、/api/dashboard/risk、/api/dashboard/risk-exposure、/api/dashboard/tax-snapshot、/api/dashboard/retail-sentiment、/api/dashboard/sessions (11:30:41Z)、/api/dashboard/sessions/session-20260927-daily (11:30:42Z)
-  - 404：/api/stock/sbl?symbol=2330、/api/dashboard/sbl、/api/sbl/summary、/api/sbl/daily、/api/dashboard/sessions/latest（皆 11:30:47Z）
+  - "200：/api/parameters、/api/field-contract、/api/dashboard/data-channels、/api/parameters/audit-log、/api/strategies、/api/capital-flow/daily"
+  - "200：/api/stock/chips?symbol=2330、/api/backtest/signals、/api/backtest/status、/api/dashboard/risk、/api/dashboard/risk-exposure、/api/dashboard/tax-snapshot、/api/dashboard/retail-sentiment、/api/dashboard/sessions (11:30:41Z)、/api/dashboard/sessions/session-20260927-daily (11:30:42Z)"
+  - "404：/api/stock/sbl?symbol=2330、/api/dashboard/sbl、/api/sbl/summary、/api/sbl/daily、/api/dashboard/sessions/latest（皆 11:30:47Z）"
 external_fetched: [TWSE sbl/qa.html、TWSE shl/trade/16.html、law.fsc.gov.tw GL001673 — 皆 200]
 related: [skills/SK-19-cost-tax-adjustment.md, skills/SK-16-long-short-decile.md, skills/SK-37-liquidity-spread-screening.md]
 ---

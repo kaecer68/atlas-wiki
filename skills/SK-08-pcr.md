@@ -12,12 +12,12 @@ verification: 2026-09-27 L3 端點實跑 (http_code + timestamp 見 `l3_endpoint
 l3_run_at: 2026-09-27
 l3_run_by: prime-agent（feat/20260927-l3-backfill-b2）
 l3_endpoints_probed:
-  - /api/stock/fundamentals?symbol=2330 → 200（PE 30.19/PB 9.57/DY 1.1）（2026-09-27T20:02:26+08:00）
-  - /api/backtest/signals → 200（active_signals null;無 OOS y）（2026-09-27T20:02:26+08:00）
-  - /api/dashboard/risk → 200（session_count 210;無 R² 欄位）（2026-09-27T20:02:26+08:00）
-  - /api/strategies/layers → 200（L1:1/L2:2/L3:2/L4:4/L5:3,total 12;strategy frame 分層）（2026-09-27T20:02:48+08:00）
-  - /api/detector/registry/list → 200（29 個 theme detector,全 enabled）（2026-09-27T20:02:46+08:00）
-  - CLI 代理（無 HTTP 端點）: atlas repo `-synthetic -model pcr` → R²_OOS +0.9993（PASS）（2026-09-27T20:02:28+08:00）
+  - "/api/stock/fundamentals?symbol=2330 → 200（PE 30.19/PB 9.57/DY 1.1）（2026-09-27T20:02:26+08:00）"
+  - "/api/backtest/signals → 200（active_signals null;無 OOS y）（2026-09-27T20:02:26+08:00）"
+  - "/api/dashboard/risk → 200（session_count 210;無 R² 欄位）（2026-09-27T20:02:26+08:00）"
+  - "/api/strategies/layers → 200（L1:1/L2:2/L3:2/L4:4/L5:3,total 12;strategy frame 分層）（2026-09-27T20:02:48+08:00）"
+  - "/api/detector/registry/list → 200（29 個 theme detector,全 enabled）（2026-09-27T20:02:46+08:00）"
+  - "CLI 代理（無 HTTP 端點）: atlas repo `-synthetic -model pcr` → R²_OOS +0.9993（PASS）（2026-09-27T20:02:28+08:00）"
 ---
 
 ## 一句話定位

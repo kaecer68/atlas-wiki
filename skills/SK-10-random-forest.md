@@ -12,13 +12,13 @@ verification: 2026-09-27 L3 端點實跑 (http_code + timestamp 見 `l3_endpoint
 l3_run_at: 2026-09-27
 l3_run_by: prime-agent（feat/20260927-l3-backfill-b2）
 l3_endpoints_probed:
-  - /api/stock/fundamentals?symbol=2330 → 200（PE 30.19/PB 9.57/DY 1.1）（2026-09-27T20:02:26+08:00）
-  - /api/stock/technical?symbol=2330&days=10 → 200（rsi14/sma20/sma50 皆 0）（2026-09-27T20:02:26+08:00）
-  - /api/backtest/signals → 200（active_signals null;無 OOS y）（2026-09-27T20:02:26+08:00）
-  - /api/dashboard/risk → 200（session_count 210;無 R² 欄位）（2026-09-27T20:02:26+08:00）
-  - /api/experiment/history → 200（history 空陣列 → experiment_diff 無實例可跑）（2026-09-27T20:02:48+08:00）
-  - /api/experiment/diff → 400（缺 experiment_id）;帶不存在 id → 404（2026-09-27T20:02:48+08:00）
-  - CLI 代理（無 HTTP 端點）: atlas repo `-synthetic -model rf` → R²_OOS +0.9914（PASS）（2026-09-27T20:02:28+08:00）
+  - "/api/stock/fundamentals?symbol=2330 → 200（PE 30.19/PB 9.57/DY 1.1）（2026-09-27T20:02:26+08:00）"
+  - "/api/stock/technical?symbol=2330&days=10 → 200（rsi14/sma20/sma50 皆 0）（2026-09-27T20:02:26+08:00）"
+  - "/api/backtest/signals → 200（active_signals null;無 OOS y）（2026-09-27T20:02:26+08:00）"
+  - "/api/dashboard/risk → 200（session_count 210;無 R² 欄位）（2026-09-27T20:02:26+08:00）"
+  - "/api/experiment/history → 200（history 空陣列 → experiment_diff 無實例可跑）（2026-09-27T20:02:48+08:00）"
+  - "/api/experiment/diff → 400（缺 experiment_id）;帶不存在 id → 404（2026-09-27T20:02:48+08:00）"
+  - "CLI 代理（無 HTTP 端點）: atlas repo `-synthetic -model rf` → R²_OOS +0.9914（PASS）（2026-09-27T20:02:28+08:00）"
 ---
 
 ## 一句話定位
