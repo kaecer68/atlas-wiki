@@ -1,5 +1,10 @@
 ---
 description: 2330 月營收 YoY >+5%、設備鏈連 3 月 YoY >+30%、投信連 5 日買超 >+20 億，任一層成立時載入本模板。
+sources:
+  - UNCTAD WIR 2026 figure III.1（半導體 greenfield 5 年 CAGR +54%；頁內 §2）
+  - Stanford HAI 2026 AI Index Chapter 4／HKS M-RCBG WP No.213（2026/05；頁內 §對位文獻）
+  - 端點實測 /api/stock/monthly_revenue?symbol=2330 → 200（2026-09-27；頁內 §附註）
+  - 閾值（月營收 YoY +5%／連 3 月 +30%／投信連 5 日 +20 億）— 本模板自訂（2026）
 ---
 
 # atlas-mcp Trigger Template #14 — trigger-megaproject-2-quarter-lag

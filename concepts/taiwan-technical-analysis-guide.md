@@ -2,12 +2,16 @@
 title: 台股技術分析指南：常用指標與實務應用
 description: 散戶問「均線、KD、MACD 在台股該怎麼設參數、訊號怎麼看」時載入。
 created: 2026-08-02
-updated: 2026-08-02
+updated: 2026-09-27
 type: concept
 tags: [framework, signal, methodology]
 sources:
   - atlas-mcp:stock_get_technical
   - concepts/taiwan-financial-domain-model.md
+  - 外部事實來源狀態（2026-09-27 補登）
+  - 集中市場／櫃買市場日均量與當沖占比 — 待查（2026-09-27）：頁內未載明統計出處，須補 TWSE 官方統計頁後收斂
+  - 加權指數權重（台積電 30% 以上）— TWSE 市值加權；對位 concepts/taiwan-fundamental-analysis-guide.md §8 之 2026-08-22 openapi 實抓
+  - 技術指標參數與訊號門檻（均線／KD／MACD、量能 1.5–2 倍）— 實務慣例（台股技術分析通用設定），非官方定義
 confidence: medium
 contested: false
 contradictions: []

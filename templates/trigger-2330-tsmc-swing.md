@@ -1,5 +1,9 @@
 ---
 description: 2330 台積電盤中漲跌幅超過 ±3.0% 時載入本模板。
+sources:
+  - 台積電台股權值約 30% — TWSE 市值加權；對位 concepts/taiwan-fundamental-analysis-guide.md §8 之 2026-08-22 openapi 實抓（2026-09-27 標示）
+  - 觸發閾值 ±3.0% — 本模板自訂門檻（2026-08-03 立此），非官方定義
+  - 端點實測 /api/stock/quote?symbol=2330 → 200（頁內 §實作 checklist C；PR #1445 驗收）
 ---
 
 # 2330 台積電報價觸發模板(單日版)

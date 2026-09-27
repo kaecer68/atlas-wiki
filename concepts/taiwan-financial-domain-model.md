@@ -2,13 +2,17 @@
 title: 台股金融領域模型：十類核心術語與體系
 description: 遇到台股或 atlas 專有名詞（當沖、借券、法人、VaR 等）需要查定義時載入。
 created: 2026-08-02
-updated: 2026-08-02
+updated: 2026-09-27
 type: concept
 tags: [framework, methodology]
 sources:
   - atlas-mcp:macro_get_snapshot_latest
   - atlas-mcp:strategy_list_active
   - concepts/taiwan-money-flow-seven-institutional-buckets.md
+  - 外部事實來源（頁內已載明者，2026-09-27 補登）
+  - TWSE 官方 FAQ（權證歐式／美式）— 頁內 §1 認購（售）權證；2026-08-22 驗證，https://www.twse.com.tw/zh/page/products/securities/warrant/faq.html（http 200）
+  - 台股交易制度數字（漲跌幅 10%、集中市場 TWSE／櫃檯市場 TPEx、T+2）— TWSE／TPEx 現行制度；制度正本見 concepts/taiwan-stock-market-structure.md（2026-08-22 官方驗證）
+  - 市場通用門檻（VIX 恐慌 > 30、RSI 70／30、PMI 50 榮枯線）— 實務慣例（技術分析／市場通用說法），非官方定義；2026-09-27 標示
 confidence: medium
 contested: false
 contradictions: []
