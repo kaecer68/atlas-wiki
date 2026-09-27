@@ -18,6 +18,8 @@ l3_endpoints_probed:
   - "/api/dashboard/risk → 200（session_count 210;無 NN／R² 欄位）（2026-09-27T20:12:12+08:00）"
   - "源碼代理（無 HTTP 端點）＝ atlas `git grep -i` neural／MLP／hidden_layer／backprop／relu → 0 命中;`ls internal/ml/` ＝ ols／pcr／pls／elasticnet／randomforest／spline／trainer（2026-09-27T20:12:14+08:00）"
   - CLI 代理 ＝ `go run ./cmd/backtest-pipeline -synthetic -model nn` → exit 1 被拒;-model ols R²_OOS +0.9992、-model rf +0.9909（**實為 in-sample**）（2026-09-27T20:12:13+08:00）
+methodology_aligned: true
+atlas_constitution_ref: ATLAS_METHODOLOGY.md §五(策略矩陣:Neural Network 深度學習需對位 regime 切換下的泛化)(附註:2026-07-30 period_system 變動 — `period` 已是 PeriodDetector 真值,`source` 欄位正名 `regime_source` / `period_source`)
 ---
 
 ## 一句話定位
@@ -74,6 +76,3 @@ Step 3: 對比 SK-10 RF 與 SK-05 OLS 的 OOS R²(預期 NN ≈ OLS < RF,若 NN 
 - [ ] Huber loss 對 NN 訓練穩定性的影響需實測。
 
 > **2026-09-27 補充**:本段三項今日皆**未能由 atlas 端量測**（atlas 無 NN 實作可跑,見 §驗證方式）,故全部維持未消化;本頁今日新增的是 NN 側的**已驗證負面**（識別字 0 命中＋CLI 拒收）。
-
-methodology_aligned: true
-atlas_constitution_ref: ATLAS_METHODOLOGY.md §五(策略矩陣:Neural Network 深度學習需對位 regime 切換下的泛化)(附註:2026-07-30 period_system 變動 — `period` 已是 PeriodDetector 真值,`source` 欄位正名 `regime_source` / `period_source`)

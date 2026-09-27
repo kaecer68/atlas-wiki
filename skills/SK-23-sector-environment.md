@@ -21,6 +21,8 @@ l3_endpoints_probed:
   - "/api/stock/industry_winrate?condition_id=momentum-20d-positive → 200 (2026-09-27T20:27:42+08:00)"
   - "/api/dashboard/sector-allocation-plan → 200 (no_simulation_session) (2026-09-27T20:27:24+08:00)"
   - "/api/scheduler/status → 200 (2026-09-27T20:26:25+08:00)"
+methodology_aligned: true
+atlas_constitution_ref: ATLAS_METHODOLOGY.md §四(七大資金勢力行為)+ §五(策略矩陣:產業輪動 env 需對位 3+2+2 錢潮雷達 + 策略三分類)(附註:2026-07-30 period_system 變動 — `period` 已是 PeriodDetector 真值,`source` 欄位正名 `regime_source` / `period_source`)
 ---
 
 > 口徑註：atlas 產業數 = 38（20 L1 + 18 L2,2026-09-27 雙證,見 §驗證方式）;SK-20「18」為 B5-3 SectorIndexReader 舊口徑、論文「47」為 Fin-Skills 口徑,三數並存各註明;「電子/金融合計 > 50%」2026-08-22 時無本地市值快照,需實跑確認 [2026-08-22 驗證]
@@ -87,6 +89,3 @@ Step 3: 產業層訊號品質直接用 `/api/stock/industry_winrate?condition_id
 已解（2026-09-27）:atlas `industry_sector_list` 與論文 47 類**不一致**——atlas 定案 38（20 L1 + 18 L2）;論文正本不在本機,逐類比對不可行。
 - [ ] 產業指數的「市值加權」是否要排除 ETF 持倉重複計算?需釐清。
 - [ ] 與 SK-24 PPO 整合:RL 環境(state, action, reward)的具體設計待補。
-
-methodology_aligned: true
-atlas_constitution_ref: ATLAS_METHODOLOGY.md §四(七大資金勢力行為)+ §五(策略矩陣:產業輪動 env 需對位 3+2+2 錢潮雷達 + 策略三分類)(附註:2026-07-30 period_system 變動 — `period` 已是 PeriodDetector 真值,`source` 欄位正名 `regime_source` / `period_source`)

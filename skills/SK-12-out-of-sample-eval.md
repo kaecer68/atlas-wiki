@@ -19,6 +19,8 @@ l3_endpoints_probed:
   - "/api/dashboard/correlation-matrix → 200（20 個策略／類股標的）（2026-09-27T20:12:13+08:00）"
   - "/api/experiment/history → 200（空）;diff 缺 id／不存在 id → 400／404（2026-09-27T20:12:13+08:00）"
   - 源碼代理（無 HTTP 端點）＝ internal/eval/metrics.go ＋ judge 的 eval_metrics;`go test ./internal/eval/` → 22 PASS／0 FAIL（2026-09-27T20:12:14+08:00）
+methodology_aligned: true
+atlas_constitution_ref: ATLAS_METHODOLOGY.md §五(策略矩陣:OOS 樣本外評估需對位 7 時期切換的真實表現)(附註:2026-07-30 period_system 變動 — `period` 已是 PeriodDetector 真值,`source` 欄位正名 `regime_source` / `period_source`)
 ---
 
 ## 一句話定位
@@ -82,6 +84,3 @@ Step 3: 呼叫 `risk_get_metrics` 取 sharpe_ratio、volatility,呼叫 `risk_get
 - [ ] 與 SK-22 消去法的關係:R²_oos 與 Sharpe 哪個對「刪掉某因子」更敏感?需實測才能確認 atlas 端該用哪個做 ablation 判準。
 
 > **2026-09-27 已解並移出本段（3 項）**:①`risk_get_metrics` 是否含 OOS R²?→ **否**,且連 Sharpe 都沒有（payload 只有 6 個 key）;OOS R² 原生只在 `eval.OOSR2`／judge。②是否暴露 risk-free 來源?→ `SharpeConfig.RiskFreeRate` 只是呼叫端參數、**未經端點暴露**,而 judge **硬編 0** ⇒ 「rf=0 在台股不適用」在 atlas 原生路徑**成立**。③sharpe 是否年化?→ **端點值未年化**（`FrequencyPerOutcome`）;年化版本在 `eval.SharpeRatio`（√252）與 `shared.ComputeSharpe`（日頻 √252、台股 √243）。
-
-methodology_aligned: true
-atlas_constitution_ref: ATLAS_METHODOLOGY.md §五(策略矩陣:OOS 樣本外評估需對位 7 時期切換的真實表現)(附註:2026-07-30 period_system 變動 — `period` 已是 PeriodDetector 真值,`source` 欄位正名 `regime_source` / `period_source`)

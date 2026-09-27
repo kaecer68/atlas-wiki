@@ -18,6 +18,8 @@ l3_endpoints_probed:
   - /api/industry/sectors → 200 (2026-09-27T20:13:26+08:00)
   - /api/stock/fundamentals?symbol=2330 → 200 (2026-09-27T20:13:25+08:00)
   - /api/dashboard/risk → 200 (2026-09-27T20:13:25+08:00)
+methodology_aligned: true
+atlas_constitution_ref: ATLAS_METHODOLOGY.md §五(策略矩陣:仙股排除需對位 7 時期,不同時期仙股風險溢價不同)(附註:2026-07-30 period_system 變動 — `period` 已是 PeriodDetector 真值,`source` 欄位正名 `regime_source` / `period_source`)
 ---
 
 > 口徑註：原「電子股 80% < 20 元／金融股 80% > 20 元」與「P20 10-15 元」為未實證推測（2026-08-22）;已由下條 TWSE 全量實測推翻／修正。
@@ -86,6 +88,3 @@ Step 3: 對排除前/後各跑一次 `backtest_signals`,呼叫 `risk_get_metrics
 > **2026-09-27 batch#4 結案（移出本段）**:①「atlas 沒有流動性分位篩選」→ 確認是**已驗證的否定**（無分位端點）,替代法（client 端用 quote volume 自算）已落 `skills/SK-37-liquidity-spread-screening.md`,本頁複驗成交量確實在 quote／technical;②「與 SK-20 差別」→ 兩頁軸不同（SK-20 要市值、SK-21 要股價）,同日實測顯示 SK-20 在 atlas **無市值資料**、SK-21 的股價軸可用 ⇒ 不重疊也不重複,且 SK-21 可實作、SK-20 不可。
 
 - [ ] 「實盤流動性」需考量 bid-ask spread;**2026-09-27 精確化:atlas 無真實 spread,只有 OHLCV 代理 `SpreadEstimate`(`internal/marketdata/microstructure_provider.go`),而該 provider 無 caller ⇒ 端點不可達(已驗證的否定,見 `skills/SK-37-liquidity-spread-screening.md`)**;仍需另尋外部 data source。
-
-methodology_aligned: true
-atlas_constitution_ref: ATLAS_METHODOLOGY.md §五(策略矩陣:仙股排除需對位 7 時期,不同時期仙股風險溢價不同)(附註:2026-07-30 period_system 變動 — `period` 已是 PeriodDetector 真值,`source` 欄位正名 `regime_source` / `period_source`)

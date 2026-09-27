@@ -17,7 +17,8 @@ l3_endpoints_probed:
   - "/api/backtest/snapshots → 200（20 筆日快照,17 筆 sharpe_short 非 0）（2026-09-27T19:30:53+08:00）"
   - "/api/events/calendar → 200（事件日曆可用）（2026-09-27T19:27:54+08:00）"
   - "源碼級代理（無 HTTP 端點）: atlas/internal/ml/elasticnet.go（UseHuber/Xi）（2026-09-27T19:30+08:00）"
-
+methodology_aligned: true
+atlas_constitution_ref: ATLAS_METHODOLOGY.md §五(策略矩陣:Huber 損失需對位 regime 切換,不同 regime 異常值定義不同)(附註:2026-07-30 period_system 變動 — `period` 已是 PeriodDetector 真值,`source` 欄位正名 `regime_source` / `period_source`)
 ---
 
 ## 一句話定位
@@ -76,6 +77,3 @@ Step 3: 對比 `risk_get_metrics` 在處理前後的 Sharpe / max_drawdown 變�
 - [ ] 論文 xi=0.9 的「90% 分位」表述待釐清——δ 是**尺度參數不是分位數**;實務該用 z-score 動態閾值;atlas 是否暴露分位計算? [2026-08-22 audit-fix]
 - [ ] 「實盤遇到同樣事件沒準備」風險的量化方法論:在 atlas `event_calendar` 對位?（2026-09-27 實測:`/api/events/calendar` 200、今日 7 筆事件,欄位含 `expected_flow_impact`/`decay_days`;仍未驗證這些欄位能否量化極端事件,故維持未結）
 - [ ] Huber 與 SK-21 排除仙股的關係:兩者都是「樣本穩健性」,是否可共用 endpoint?
-
-methodology_aligned: true
-atlas_constitution_ref: ATLAS_METHODOLOGY.md §五(策略矩陣:Huber 損失需對位 regime 切換,不同 regime 異常值定義不同)(附註:2026-07-30 period_system 變動 — `period` 已是 PeriodDetector 真值,`source` 欄位正名 `regime_source` / `period_source`)

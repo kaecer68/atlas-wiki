@@ -17,6 +17,8 @@ l3_endpoints_probed:
   - "/api/dashboard/risk → 200（session_count 210;無 R²／係數欄位）（2026-09-27T20:02:26+08:00）"
   - "/api/field-contract → 200（2262 欄;r2 / r_squared 0 命中）（2026-09-27T20:03:56+08:00）"
   - "CLI 代理（無 HTTP 端點）: atlas repo `-synthetic -model elasticnet` → R²_OOS +0.6406（WARN;實為 in-sample,非 OOS;同批 OLS +0.9992）（2026-09-27T20:02:28+08:00）"
+methodology_aligned: true
+atlas_constitution_ref: ATLAS_METHODOLOGY.md §五(策略矩陣:Elastic Net 正則化需對位 7 時期 × 策略三分類)(附註:2026-07-30 period_system 變動 — `period` 已是 PeriodDetector 真值,`source` 欄位正名 `regime_source` / `period_source`)
 ---
 
 ## 一句話定位
@@ -69,6 +71,3 @@ Step 3: 對比 SK-05 OLS 與 SK-09 PLS 的 OOS R²,確認 ElasticNet 優於 OLS 
 - [ ] `alpha` CV 範圍是否足夠?學術建議 logspace(-6, 2, 50)。（2026-09-27 實測:atlas 原生 `AlphaAuto` 只做 3-fold 網格且 CLI 關閉該路徑 → 固定 α 在合成資料的 in-sample R² 僅 +0.6406,是「α 選不好即崩」的直接證據;真實台股 α 範圍仍待 client 端實測）
 - [ ] use_huber=True 對小樣本的影響需實測。（2026-09-27 實測:`internal/ml/elasticnet.go` 有 `UseHuber`/`Xi`,但全 repo 無呼叫者啟用 → atlas 端今日無法以 CLI 實測,仍須 client 端自組）
 - [ ] ElasticNet 與 SK-22 消去法的因果關係:理論上若 SK-22 顯示某因子刪掉後掉分很多,ElasticNet 應該把該因子的係數保留下來——可交叉驗證。
-
-methodology_aligned: true
-atlas_constitution_ref: ATLAS_METHODOLOGY.md §五(策略矩陣:Elastic Net 正則化需對位 7 時期 × 策略三分類)(附註:2026-07-30 period_system 變動 — `period` 已是 PeriodDetector 真值,`source` 欄位正名 `regime_source` / `period_source`)

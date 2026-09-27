@@ -18,6 +18,8 @@ l3_endpoints_probed:
   - "/api/strategies/layers → 200（L1:1/L2:2/L3:2/L4:4/L5:3,total 12;strategy frame 分層）（2026-09-27T20:02:48+08:00）"
   - "/api/detector/registry/list → 200（29 個 theme detector,全 enabled）（2026-09-27T20:02:46+08:00）"
   - "CLI 代理（無 HTTP 端點）: atlas repo `-synthetic -model pcr` → R²_OOS +0.9993（PASS;實為 in-sample,非 OOS）（2026-09-27T20:02:28+08:00）"
+methodology_aligned: true
+atlas_constitution_ref: ATLAS_METHODOLOGY.md §五(策略矩陣:PCR 主成分需對位 regime 切換下的因子有效性)(附註:2026-07-30 period_system 變動 — `period` 已是 PeriodDetector 真值,`source` 欄位正名 `regime_source` / `period_source`)
 ---
 
 ## 一句話定位
@@ -70,6 +72,3 @@ Step 3: 對比 SK-05 OLS 與 SK-09 PLS 的 OOS R²(預期 PLS > PCR > OLS)。
 - [ ] PCR 與 SK-22 消去法的關係不明。
 
 已解（2026-09-27）:與 L1–L5 detector 的重疊問題 → `/api/strategies/layers` 回 L1–L5 為 strategy frame 分層（12 個）,`/api/detector/registry/list` 回 29 個事件主題 detector,皆非降維後訊號;詳見 §驗證方式 L3 表第 4、5 列。
-
-methodology_aligned: true
-atlas_constitution_ref: ATLAS_METHODOLOGY.md §五(策略矩陣:PCR 主成分需對位 regime 切換下的因子有效性)(附註:2026-07-30 period_system 變動 — `period` 已是 PeriodDetector 真值,`source` 欄位正名 `regime_source` / `period_source`)

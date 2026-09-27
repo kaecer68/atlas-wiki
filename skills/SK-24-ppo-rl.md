@@ -19,6 +19,8 @@ l3_endpoints_probed:
   - "/api/scheduler/status → 200（110 jobs） (2026-09-27T20:26:25+08:00)"
   - "/api/rl/status → 404 route not found (2026-09-27T20:26:25+08:00)"
   - "/api/agent/status → 404 route not found (2026-09-27T20:26:25+08:00)"
+methodology_aligned: true
+atlas_constitution_ref: ATLAS_METHODOLOGY.md §五(策略矩陣:PPO 強化學習需對位 7 時期切換下的策略適應)(附註:2026-07-30 period_system 變動 — `period` 已是 PeriodDetector 真值,`source` 欄位正名 `regime_source` / `period_source`)
 ---
 
 ## 一句話定位
@@ -77,6 +79,3 @@ Step 3: 對 `backtest_signals` 跑出的 RL 序列取 Sharpe 時,**不要用 `ri
 - [ ] RL 訓練成本(100k steps × 47 動作)極高,實務需 GPU。
 - [ ] 與 SK-28 獎勵錯配診斷:若 PPO 訓練 reward 高但 OOS Sharpe 低,需 SK-28 介入。
 - [ ] SK-27 量子 PPO 實務效能更差,論文已警告,SK-24 不建議用量子網路。
-
-methodology_aligned: true
-atlas_constitution_ref: ATLAS_METHODOLOGY.md §五(策略矩陣:PPO 強化學習需對位 7 時期切換下的策略適應)(附註:2026-07-30 period_system 變動 — `period` 已是 PeriodDetector 真值,`source` 欄位正名 `regime_source` / `period_source`)

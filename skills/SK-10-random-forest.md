@@ -19,6 +19,8 @@ l3_endpoints_probed:
   - "/api/experiment/history → 200（history 空陣列 → experiment_diff 無實例可跑）（2026-09-27T20:02:48+08:00）"
   - "/api/experiment/diff → 400（缺 experiment_id）;帶不存在 id → 404（2026-09-27T20:02:48+08:00）"
   - "CLI 代理（無 HTTP 端點）: atlas repo `-synthetic -model rf` → R²_OOS +0.9914（PASS;實為 in-sample,非 OOS）（2026-09-27T20:02:28+08:00）"
+methodology_aligned: true
+atlas_constitution_ref: ATLAS_METHODOLOGY.md §五(策略矩陣:Random Forest 非線性需對位 regime 切換)(附註:2026-07-30 period_system 變動 — `period` 已是 PeriodDetector 真值,`source` 欄位正名 `regime_source` / `period_source`)
 ---
 
 ## 一句話定位
@@ -75,6 +77,3 @@ Step 3: OOS R² 對比 SK-05 OLS(預期 RF 優 10-20%);同時算 `feature_import
 - [ ] RF 對 regime 切換的適應性比線性差,需監控特徵重要性穩定性。
 
 已解（2026-09-27）:XGBoost / LightGBM 無 atlas 對位 → **已驗證負面**:`git grep` 0 命中實作,`newModel` 白名單僅 `ols/pcr/pls/elasticnet/glm/rf`（明細見 `verification:`）。
-
-methodology_aligned: true
-atlas_constitution_ref: ATLAS_METHODOLOGY.md §五(策略矩陣:Random Forest 非線性需對位 regime 切換)(附註:2026-07-30 period_system 變動 — `period` 已是 PeriodDetector 真值,`source` 欄位正名 `regime_source` / `period_source`)
