@@ -40,8 +40,8 @@ check-skill-pages:      ## 內部 target:一次跑 size + frontmatter(被 size/f
 check-size:             ## 3. SK 頁大小 ≤ 9000 bytes
 check-size: check-skill-pages
 
-check-freshness:        ## 3j. 時效宣告與逾期 S6（warn；待 18 頁補完後 --strict）
-	@$(PY) skills/_scripts/check-freshness.py --repo-root $(CURDIR)
+check-freshness:        ## 3j. 時效宣告與逾期 S6（strict；18 頁已補完）
+	@$(PY) skills/_scripts/check-freshness.py --repo-root $(CURDIR) --strict
 
 check-source-tiers:     ## 3i. 外部事實來源可追溯性 S3（strict；25 頁已補完）
 	@$(PY) skills/_scripts/check-source-tiers.py --repo-root $(CURDIR) --strict
