@@ -128,6 +128,18 @@
 > kaecer 8/21 21:20 拍板：skills map 分層索引只是 metadata，必須在 agents.md 建立索引紀律 SOP，避免「該呼叫的 skill 卻呼叫不到」的參數錯誤。
 > 規範本體見 `~/.hermes/skills/skills-map.md`「Skills 索引紀律 SOP」段。
 
+### 計數 SSOT（2026-09-27 新增；對位 S4 跨頁矛盾 C5／C6）
+
+入口檔／索引頁的「頁數、模板數」一律寫**實測指令**結果，不得憑記憶或沿用舊值：
+
+| 計數 | SSOT 指令 | 2026-09-27 實測 |
+|------|-----------|----------------|
+| SK 頁 | `ls skills/SK-*.md \| wc -l` | **40**（39 編號 + SK-00） |
+| repo `.md` | `git ls-files '*.md' \| wc -l` | **138**（另有 3 檔未追蹤） |
+| trigger 模板 | `ls templates/trigger-*.md \| wc -l` | **21**（monitor 實際 wire **17**；核心 **12**） |
+
+改到 skills/ 或上述任一計數時，`README.md`／`index.md`／`skills/SK-00-skill-index.md` 三處同步；版本段寫的數字須標明為「首發當時」歷史值。
+
 ### 5 條必跑 SOP（每次 session 啟動 + 任務開始前）
 
 | # | SOP | 失敗後果 |

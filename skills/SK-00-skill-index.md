@@ -44,8 +44,8 @@ SK-00 在 atlas 是「所有 SK 頁的目錄 + pipeline 組裝藍圖」——給
 
 ## atlas 對位
 | 論文概念 | atlas-mcp 對位 |
-| 33 個 SK 索引 | 本檔 + `~/workspace/atlas-wiki/skills/SK-*.md`(已 33 頁) |
-| 33 個 SK 索引(2026-08-07 +SK-33 → 34) | 本檔 + `~/workspace/atlas-wiki/skills/SK-*.md`(已 34 頁;SK-33 audience-routing 是元能力頁) |
+| 33 個 SK 索引(論文版原始計數) | 本檔 + `~/workspace/atlas-wiki/skills/SK-*.md`(2026-08-03 時 33 頁;歷史值) |
+| 33 個 SK 索引(2026-08-07 +SK-33 → 34) | 本檔 + `~/workspace/atlas-wiki/skills/SK-*.md`(2026-08-07 時 34 頁,歷史值;SK-33 audience-routing 是元能力頁) |
 | **40 個 SK 索引(2026-09-27 實測)** | 本檔 + `skills/SK-*.md`(40 頁,含本索引頁;SK-27/30 已 archive) |
 | 三條 pipeline | 對位 atlas `universe_get_sessions`(SL/RL session 結構) |
 | 跨 SK 依賴 | `experiment_history`(audit trail) |

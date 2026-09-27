@@ -26,7 +26,7 @@ atlas-wiki/
 │   ├── _inbox.md          # 跨 SK 待辦
 │   ├── _index-finskills.md
 │   ├── _methodology_alignment_audit.md  # 對位憲章審計
-│   └── _scripts/          # 驗證工具 15 檔(見 §CI 表)
+│   └── _scripts/          # 驗證工具 16 檔(見 §CI 表)
 ├── templates/
 │   ├── audit-report.md    # 審計報告模板
 │   └── trigger-*.md       # 21 檔觸發模板(2026-09-27 實測,§12)
@@ -43,7 +43,7 @@ atlas-wiki/
 
 - 單頁大小 **依類別**(2026-09-27 kaecer 拍板,取代「所有 .md ≤ 9,000」):SK 頁/入口檔 ≤ 9,000、`concepts/**`+`entities/**` ≤ 30,000、`docs/**` ≤ 12,000、append-only(log/_self-audit/_inbox/_archive)無硬上限但需分流歸檔、`_internal/**` 無硬上限但結案即瘦身(表見 `_method.md` 六條鐵律 6)
 - frontmatter 核心欄位:title / type / source / ingested_at / status / tier / confidence / atlas_go_relevance / mcp_tools_used / verification
-- 六條鐵律(2026-09-27 校正:原記 5 條;正本 `_method.md` §六條鐵律):① 不搬運,翻譯 ② 不瞎寫 ③ 不裝完成 ④ 不違背憲章 ⑤ 派工備份 ⑥ size **依類別**(SK 頁 9,000 / 參考 `concepts`+`entities` 30,000 / `docs` 12,000 / append-only＋`_internal` 無硬上限)
+- 六條鐵律(2026-09-27 校正:原記 5 條;正本 `_method.md` §六條鐵律):① 不搬運,翻譯 ② 不瞎寫 ③ 不裝完成 ④ 不違背憲章 ⑤ 派工備份 ⑥ size **依類別**(表見上一條)
 - 另見 `_method.md` §第五條鐵律(快照值必附 timestamp)+ §第六條鐵律(外部權威報告週期稽核)
 - 每日 quota:D1 示範 1 頁 → D2+ 每日 3 頁上限(2026-07-29 降標)
 
@@ -69,7 +69,7 @@ push / PR 到 `main` 觸發 `validate-wiki`（2026-09-27 實測 9 個 job:8 個�
 8. **trigger-endpoint-validation** — 12 核心觸發模板對位 atlas 端點
 9. **notify-telegram** — 任一 job 失敗才跑（`if: failure()`）
 
-### 本地驗證腳本（`skills/_scripts/`;2026-09-27 實測 14 檔 `*.py`）
+### 本地驗證腳本（`skills/_scripts/`;2026-09-27 實測 16 檔 `*.py`）
 
 | 腳本 | 用途(取自該檔 docstring) |
 |------|--------------------------|
@@ -97,7 +97,7 @@ push / PR 到 `main` 觸發 `validate-wiki`（2026-09-27 實測 9 個 job:8 個�
 
 ## 版本
 
-[v1.0.0](https://github.com/kaecer68/atlas-wiki/releases/tag/v1.0.0)(2026-08-03)— 首發版。33 SK 頁 + 9 索引 + CI validate-wiki(首發當時 4 檢查 + Telegram 通知)+ audit 模板。
+[v1.0.0](https://github.com/kaecer68/atlas-wiki/releases/tag/v1.0.0)(2026-08-03)— 首發版。**首發當時** 33 SK 頁(v1.0.0 tag 實測;現行 40,見 §Mission)+ 9 索引 + CI validate-wiki(首發當時 4 檢查 + Telegram 通知)+ audit 模板。
 
 版本紀律遵循 semver:
 - **MAJOR**:憲章對位/鐵律變更(對位憲章 §1)
@@ -114,15 +114,15 @@ push / PR 到 `main` 觸發 `validate-wiki`（2026-09-27 實測 9 個 job:8 個�
 
 ## 12 觸發模板自動化(2026-08-03 v6.18)
 
-atlas-wiki v6.18 含 **12 觸發模板** 落 `templates/` = 自動信號捕捉系統(對位 ATLAS 憲章 7 層因果鏈 + 12 strategy):
+atlas-wiki v6.18 含 **12 核心觸發模板** 落 `templates/` = 自動信號捕捉系統(對位 ATLAS 憲章 7 層因果鏈 + 12 strategy):
 - trigger-nvda-tsm / trigger-usd-twd-32 / trigger-dxy-us10y-weak / trigger-margin-350b
 - trigger-foreign-3day-inflow / trigger-sox-foreignflow / trigger-taiwan-strait-tension
 - trigger-china-slowdown / trigger-tariff-shock / trigger-etf-rebalance
 - trigger-cb-fx-intervention / trigger-retail-margin-decrease
 
-跑 `atlas-mcp-trigger-monitor.py` 每 5 分鐘觸發 1 次 + 自動 §6 紀錄 + Telegram 通知。
+跑 `atlas-mcp-trigger-monitor.py`(每 5 分鐘)+ 自動 §6 紀錄 + Telegram 通知。
 
-**現況(2026-09-27 實測)**:`ls templates/trigger-*.md | wc -l` = **21**(templates/ 共 22 檔,含 `audit-report.md`)。v6.18 之後新增 9 檔(名稱取自各檔 H1):
+**現況(2026-09-27 實測)**:`ls templates/trigger-*.md | wc -l` = **21**(templates/ 共 22 檔,含 `audit-report.md`);`atlas-mcp-trigger-monitor.py` 實際 wire **17** 檔(= 12 核心 + 5 新增)。v6.18 之後新增 9 檔(名稱取自各檔 H1):
 
 - `trigger-2330-tsmc-swing` — 2330 台積電報價觸發(盤中振幅逾 ±3%)
 - `trigger-ai-capex-guidance-cut` — AI capex 指引下修(對位 2026 韓股 HBM 降溫)

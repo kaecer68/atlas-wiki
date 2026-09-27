@@ -1,11 +1,18 @@
 #!/usr/bin/env python3
 """
-atlas-mcp-trigger-monitor.py — 14 觸發模板自動信號捕捉(對位 kaecer v6.21) — v0.4
+atlas-mcp-trigger-monitor.py — 觸發模板自動信號捕捉(對位 kaecer v6.21) — v0.4
 對位 SOUL §3.4「促進理解」+ ATLAS 憲章 7 層因果鏈
+
+模板計數(2026-09-27 實測;三個數字勿混):
+- **21** = `templates/trigger-*.md` 全部檔數(`ls templates/trigger-*.md | wc -l`;templates/ 共 22 檔,含 audit-report.md)
+- **12** = v6.18 核心觸發模板(README §12 首段;CI 的 trigger-template-existence / trigger-endpoint-validation 只驗這 12 檔)
+- **17** = 本腳本實際 wire 數 = `len(TEMPLATES)`(12 核心 + 5 新增:2330-tsmc-swing / megaproject-2-quarter-lag / hbm-cycle-cooling / ai-capex-guidance-cut / hedge-fund-unwind)
+- 未 wire 4 檔(有模板檔、本腳本未接):cb-emergency-intervention / equipment-capex-external-report-cycle / msci-rebalance-pressure / renewable-energy-divergence
+- 舊 docstring 記「14 觸發模板」與程式碼不符,2026-09-27 更正;往後一律以 `len(TEMPLATES)` 為準
 
 設計:
 - 每 5 分鐘跑 1 次(hermes cron 觸發)
-- 12 觸發模板信號捕捉(對位 templates/trigger-*.md)
+- 觸發模板信號捕捉(對位 templates/trigger-*.md;實際 wire 數見上表)
 - 觸發成功 → 落 §6 紀錄 + Telegram 通知
 - 觸發失敗 → 跳過(節省資源)
 - 整體失敗率 > 50% → 通知 atlas 端故障
@@ -30,7 +37,7 @@ import argparse
 
 ATLAS_HTTP_BASE = "http://127.0.0.1:18080"
 
-# 12 觸發模板定義
+# 觸發模板定義（實際 wire 17 檔；21/12/17 三數差別見頂部 docstring）
 TEMPLATES = {
     "nvda-tsm": {
         "name": "NVDA+TSM 觸發",
