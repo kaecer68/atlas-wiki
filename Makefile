@@ -10,17 +10,17 @@ PY    := python3
 help:                   ## 列出所有 target
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN{FS=":.*?## "}{printf "  %-22s %s\n", $$1, $$2}'
 
-ci-gate:                ## 快速門禁(對位 GitHub CI 9 job=8 驗證+notify(2026-09-27 實測) + skills 索引同步 R1/R3)
-ci-gate: check-timestamp check-audit check-size check-skill-structure check-frontmatter check-actionlint check-skill-index-sync-basic
+ci-gate:                ## 快速門禁(對位 GitHub CI 9 job=8 驗證+notify(2026-09-27 實測) + skills 索引同步 R1+R3+R4)
+ci-gate: check-timestamp check-audit check-size check-skill-structure check-frontmatter check-actionlint check-skill-index-sync
 	@echo ""
-	@echo "✅ local ci-gate: all 5 checks passed (R1+R3 skills 同步)"
+	@echo "✅ local ci-gate: 7 targets passed(含 R1+R3+R4 skills 同步)"
 
-ci-strict:              ## 嚴格模式(含 R4 frontmatter 檢查,需 112 個 SKILL.md 標 status)
-ci-strict: ci-gate check-skill-index-sync
+ci-strict:              ## 別名(2026-09-27 起 R4 已併入 ci-gate;保留此 target 以免既有引用斷鏈)
+ci-strict: ci-gate
 	@echo ""
-	@echo "✅ local ci-strict: all 6 checks passed (R1+R3+R4)"
+	@echo "✅ local ci-strict == ci-gate(R1+R3+R4 已在 ci-gate 內)"
 
-check-skill-index-sync-basic: ## 5b. skills 索引同步 R1+R3(跳過 R4 frontmatter,等 Plan F Week 3 補完)
+check-skill-index-sync-basic: ## 逃生口:只跑 R1+R3(跳過 R4)。ci-gate 自 2026-09-27 起改用下面的完整版
 	@$(PY) skills/_scripts/check-skill-index-sync.py --repo-root $(CURDIR) --skip-r4
 
 ci-fast: ci-gate        ## 別名
