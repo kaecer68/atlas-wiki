@@ -5,13 +5,13 @@
 SHELL := /bin/bash
 PY    := python3
 
-.PHONY: help ci-gate ci-fast ci-full check-actionlint check-timestamp check-audit check-skill-pages check-skill-structure check-stale structure-metrics check-size check-frontmatter pre-commit-install uninstall-hooks verify-clean test sync-imac
+.PHONY: help ci-gate ci-fast ci-full check-actionlint check-timestamp check-audit check-skill-pages check-skill-structure check-stale check-retrieval structure-metrics check-size check-frontmatter pre-commit-install uninstall-hooks verify-clean test sync-imac
 
 help:                   ## 列出所有 target
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN{FS=":.*?## "}{printf "  %-22s %s\n", $$1, $$2}'
 
 ci-gate:                ## 快速門禁(對位 GitHub CI 9 job=8 驗證+notify(2026-09-27 實測) + skills 索引同步 R1+R3+R4)
-ci-gate: check-timestamp check-audit check-size check-skill-structure check-frontmatter check-actionlint check-skill-index-sync
+ci-gate: check-timestamp check-audit check-size check-skill-structure check-frontmatter check-actionlint check-skill-index-sync check-retrieval
 	@echo ""
 	@echo "✅ local ci-gate: 7 targets passed(含 R1+R3+R4 skills 同步)"
 
@@ -39,6 +39,9 @@ check-skill-pages:      ## 內部 target:一次跑 size + frontmatter(被 size/f
 
 check-size:             ## 3. SK 頁大小 ≤ 9000 bytes
 check-size: check-skill-pages
+
+check-retrieval:        ## 3e. 檢索性完整性 S5（載入條件／索引／入口可達性；**warn 模式**，待 description 覆蓋達標後升硬門檻）
+	@$(PY) skills/_scripts/check-retrieval-integrity.py --repo-root $(CURDIR)
 
 check-skill-structure:  ## 3b. SK 頁結構（SSOT: skills/_scripts/skill-page-schema.json；失敗輸出最小重構處方）
 	@$(PY) skills/_scripts/check-skill-structure.py --skills-dir skills

@@ -78,9 +78,10 @@ push / PR 到 `main` 觸發 `validate-wiki`（2026-09-27 實測 9 個 job:8 個�
 | `check-skill-pages.py` | 一次跑 SK 頁 size + frontmatter |
 | `check-skill-structure.py` | SK 頁結構守衛(反補丁 M2/M2′) |
 | `check-stale-worktree.py` | skills/ 未提交內容偵測(反補丁 M5) |
+| `check-retrieval-integrity.py` | 檢索性完整性 S5(載入條件/索引/入口可達性;warn) |
 | `check-skill-index-sync.py` | 強制 skills 建立/修改時索引同步更新 |
 | `new-skill-page.py` | SK 頁骨架產生器(反補丁 M6) |
-| `structure-health-metrics.py` | 結構健康度量測(反補丁 M7;含指標 8 = L3 覆蓋率＋無 L3 證據 watch list,非門檻) |
+| `structure-health-metrics.py` | 結構健康度量測(M7;含指標 8 = L3 覆蓋率＋watch list,非門檻) |
 | `audit-file-index-sync.py` | 驗證 wiki 內落檔是否被索引引用 |
 | `atlas-mcp-trigger-monitor.py` | 觸發模板自動信號捕捉(每 5 分鐘) |
 | `handle-atlas-failures.py` | atlas-mcp 端點失敗降級處理 |
