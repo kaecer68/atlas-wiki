@@ -23,7 +23,7 @@ amendable_by: kaecer
 
 ## 為什麼存在
 
-救活 32 個 Fin-Skills → atlas 可對位 wiki skill(對位憲法 §1 + mission「找信息差」);起源見 `_method_amendment_history.md`。
+救活 32 個 Fin-Skills → atlas 對位 wiki skill(憲法 §1 + mission「找信息差」);起源見 `_method_amendment_history.md`。
 
 ## 六條鐵律(v6.37 拍板;第 6 條 2026-09-27 改為類別制)
 
@@ -32,7 +32,7 @@ amendable_by: kaecer
 3. 不裝完成——L3 端點驗證沒跑 = draft
 4. 不違背憲章——`ATLAS_METHODOLOGY.md` v1.0 真理源頭;七時期+3+2+2+三分類
 5. 派工備份——改動前後各備份一次(byte-perfect 對位,§5.1 SOP)
-6. **size 上限依類別**(2026-09-27 kaecer 拍板,取代 v6.37「所有 .md ≤ 9000」):
+6. **size 上限依類別**(2026-09-27 kaecer 拍板,取代 v6.37 全 .md ≤ 9000):
 
 | 類別 | 上限 | 理由(量測 2026-09-27) |
 |---|---|---|
@@ -51,13 +51,13 @@ amendable_by: kaecer
 
 ## 第五條鐵律(2026-08-02 k拍):快照值必附 timestamp
 
-對位 SOUL §0.1 例外 6(規範修改需拍板),2026-08-02 22:30 kaecer 拍板新增:
+對位 SOUL §0.1 例外 6;2026-08-02 22:30 kaecer 拍板新增:
 
 - **觸發條件**:任何數字引用(session_count / sharpe / max_drawdown / universe_overlap 等)若**隨時間變動** = 必須附 `timestamp + 端點名稱`
 - **正確格式**:`2026-08-01 23:15 結算 snapshot,risk_get_metrics session_count=147`(歷史快照)vs `2026-08-02 20:40 當下,risk_get_metrics session_count=150`(當下值)
-- **不規範寫法**:`risk_get_metrics session_count=147`(沒附 timestamp,讀者無從判斷是歷史快照或當下值)
+- **不規範寫法**:`risk_get_metrics session_count=147`(沒附 timestamp,不知是歷史快照或當下值)
 - **跨 session 同步**:發現新事實時必跑全文 `grep` 同步所有頁,**不盲目全改**;分「歷史快照保留」vs「當下值修」兩類處理
-- **教訓**:2026-08-02 20:40 重跑確認 universe_get_sessions 150 sessions 後,SK-16/17/29 + _inbox 已修當下值,但 14+ 條 2026-08-01 23:15 結算時點的 session_count=147 殘留是**歷史快照,保留不修**(修壞會失真)
+- **教訓**:2026-08-02 重跑確認 session_count 150 後只改當下值;14+ 條 2026-08-01 23:15 的 147 屬歷史快照,保留不修(修壞失真)
 - **本條與第 4 條對位**:第 4 條「不違背憲章」是**內容對位**,第 5 條「快照值必附 timestamp」是**形式紀律**,兩條並列
 - **降級觸發**:任何頁違反第 5 條 = M7 結算分降 1
 - **升級觸發**:全 SK 頁跑結構驗證全綠(快照值都附 timestamp) = M7 結算分 +1
@@ -93,7 +93,7 @@ amendable_by: kaecer
 
 ## 第六條鐵律(2026-08-04 T3-A248 k拍「B+C」):外部權威報告週期稽核
 
-對位 SOUL §0.1 例外 6 + kaecer 2026-08-04「B+C 才是正確的」拍板。
+對位 SOUL §0.1 例外 6 + kaecer 2026-08-04「B+C」拍板。
 
 - **觸發條件**:對位 narrative model 之 `hit_rate` / `weight` 引用,必附 (a) 報告來源 + (b) release 日期 + (c) PDF link
 - **5 錨點**(對位 `templates/trigger-equipment-capex-external-report-cycle.md`):
@@ -117,7 +117,9 @@ amendable_by: kaecer
 2. 讀本檔確認規範
 3. `ls SK-*.md + cat _inbox.md` 看現況
 
-自動歸位:6 段格式 / 9 欄 frontmatter / Quota(3 頁)/ 路徑(憲法在 atlas-notes)/ 命名(atlas≠atlas-go)/ 精選序(SK-01→16→18→20→29)。
+自動歸位:6 段格式 / 9 欄 frontmatter / Quota(3 頁 SK)/ 路徑(憲法在 atlas-notes)/ 命名(atlas≠atlas-go)/ 精選序(SK-01→16→18→20→29)。
+
+**模板不佔 quota(2026-09-27 kaecer 拍板)**:`templates/trigger-*.md` = cron 觸發定義(非知識頁)→ 不計入 3 頁;**交換義務** = 結算記「trigger 模板現數」(2026-09-27:20 檔)。反例照實記:`_manifest_coverage_routing.md:134` 曾把 `concepts/` 頁記「計入 1/3」——不推翻,因 templates 是觸發定義非知識頁。
 
 **權威等級 = 憲法 §1**。
 
@@ -139,19 +141,18 @@ amendable_by: kaecer
 
 **判準一句話**:決策所需資訊不對稱在 agent 側 → agent 自決;在 kaecer 側(意圖 / 風險承受 / 金錢)→ 拍板。
 
-對位:SOUL §0.1 例外 6(規範修改需拍板——本條即經 2026-08-22 拍板)。
+對位:SOUL §0.1 例外 6(本條即經 2026-08-22 拍板)。
 
 ## 第七條例外（2026-09-02 kaecer 拍板，v1.0 修訂）：精確化
 
-**v1.0 修訂要點**：原第七條例外只管 `_inbox.md` size 上限，但 M10 觸發「size 持續擴張」模糊地帶 → 本次**精確化 size 例外邊界**：
+**v1.0 修訂要點**：原第七條只管 `_inbox.md` size 上限,M10 觸發「size 持續擴張」模糊地帶 → 本次精確化例外邊界：
 
-- **規範**：`_inbox.md` ≤ 12000 bytes（size 上限例外**只針對**§3 結算頻率 / §5.3 觸發器 / M10 健康度子項事實紀錄，**不適用於評分維度新增**）
-- **CI**：強制範圍見六條鐵律 6（SK 頁硬檢／`_inbox.md` warn-only）
+- **規範**：`_inbox.md` ≤ 12000 bytes（size 上限例外**只針對**§3 結算頻率 / §5.3 觸發器 / M10 健康度子項事實紀錄）
+- **CI**：強制範圍見六條鐵律 6。
 - **歸檔 SOP**：連 2 次 session append 後 > 12000，agent 自動評估把 §6 §6.1 §6.2 完成段落移 `_inbox_archive.md`，主檔只留最新 2 版本結算
-- **v1.0 新增**：評分維度新增 = §2 結構變更，**需走 §2 修訂 SOP + kaecer 拍板**，**不適用第七條例外**
-- **v1.0 新增**：M10 評分所需 evidence 不算 size 例外（仍按 §6 SOP）
+- **v1.0 新增**：評分維度新增(= §2 結構變更,走 §2 修訂 SOP + kaecer 拍板)與 M10 evidence,**均不適用**本例外
 
-對位：SOUL §0.1 例外 6（規範修改需拍板——本條即經 2026-09-02 拍板）。
+對位：SOUL §0.1 例外 6（本條即經 2026-09-02 拍板）。
 
 ---
 
