@@ -12,14 +12,14 @@ verification: 2026-09-27 L3 實跑 9 端點、全部附 http_code 與 UTC timest
 l3_run_at: 2026-09-27
 l3_run_by: prime-agent（PR feat/20260927-sk37-liquidity-and-attribution）
 l3_endpoints_probed:
-  - "/api/stock/quote?symbol=2330 → 200"
-  - "/api/stock/chips?symbol=2330 → 200"
-  - "/api/stock/technical?symbol=2330&days=10 → 200"
-  - "/api/stock/volume_divergence?symbol=2330&window=30 → 200"
-  - "/api/field-contract → 200"
-  - "/api/dashboard/data-channels → 200"
-  - "/api/parameters → 200"
-  - "/api/dashboard/sessions/session-20260927-daily → 200"
+  - "/api/stock/quote?symbol=2330 → 200（2026-09-27T16:56:23+08:00）"
+  - "/api/stock/chips?symbol=2330 → 200（2026-09-27T16:56:24+08:00）"
+  - "/api/stock/technical?symbol=2330&days=10 → 200（2026-09-27T16:56:24+08:00）"
+  - "/api/stock/volume_divergence?symbol=2330&window=30 → 200（2026-09-27T16:56:24+08:00）"
+  - "/api/field-contract → 200（2026-09-27T16:56:23+08:00）"
+  - "/api/dashboard/data-channels → 200（2026-09-27T16:56:23+08:00）"
+  - "/api/parameters → 200（2026-09-27T16:56:24+08:00）"
+  - "/api/dashboard/sessions/session-20260927-daily → 200（2026-09-27T16:56:46+08:00）"
 numbering_note: 編號 SK-37 曾於 2026-08-22 因品質整頁撤回到 `skills/_archive/2026-08-22-sk37-revert/`（主題 = fin-skill decision index）。本頁主題不同（流動性/價差），非復活該檔內容；舊檔續留 _archive。
 related:
   - skills/SK-21-penny-stock-exclusion.md（缺口來源頁；本 PR 同步更正其工具建議）
@@ -71,7 +71,7 @@ related:
 
 ## 驗證方式
 
-### L3 端點實跑（2026-09-27,本 PR;每列附 http_code 與 UTC timestamp）
+### L3 端點實跑（2026-09-27；UTC timestamp 見表）
 
 | # | 端點（GET） | http_code | UTC timestamp |
 |---|---|---|---|
@@ -92,7 +92,7 @@ related:
 - 第 7 列回 1669 key。
 - 斷線證據（源碼 grep,2026-09-27）:`NewMicrostructureProvider` 命中數 = 1（只有定義處）。
 
-### 可重現步驟
+### 重現
 
 Step 1: `curl -s "http://127.0.0.1:18080/api/stock/quote?symbol=2330"` → 取 `volume` 與 `last`。
 Step 2: 對 universe 逐檔重複 Step 1,算 `turnover=volume*last`,排名取分位（本頁用 14 檔示範方法,非全量）。
