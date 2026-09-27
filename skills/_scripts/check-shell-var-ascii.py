@@ -21,10 +21,24 @@ import argparse, glob, json, os, re, sys
 BAD = re.compile(r"\$[A-Za-z_][A-Za-z0-9_]*[^\x00-\x7F]")
 
 
+def strip_literals(line):
+    """去掉單引號內的字面值（bash 不展開）與 `#` 註解，避免假陽性。"""
+    out, in_sq = [], False
+    for i, c in enumerate(line):
+        if c == "'":
+            in_sq = not in_sq
+            out.append(" ")
+            continue
+        if not in_sq and c == "#" and (i == 0 or line[i - 1] in " \t;|"):
+            break
+        out.append(" " if in_sq else c)
+    return "".join(out)
+
+
 def scan_text(text):
     out = []
     for i, line in enumerate(text.split("\n"), 1):
-        for m in BAD.finditer(line):
+        for m in BAD.finditer(strip_literals(line)):
             out.append({"line": i, "match": m.group(0), "text": line.strip()[:120]})
     return out
 
@@ -37,12 +51,38 @@ def targets(repo_root):
 
 
 def workflow_blocks(repo_root):
+    """回傳 workflow 內 `run:` 區塊的所有行（含 `run: cmd` 單行形式）。
+
+    以縮排追蹤：找到 `run:` 後，縮排更深的行都算區塊內容；縮排回到 <= 該鍵或遇到
+    非空且同層的鍵即結束。逐行保留行號以便定位。
+    """
     out = []
     for wf in sorted(glob.glob(os.path.join(repo_root, ".github", "workflows", "*.yml"))):
-        text = open(wf, encoding="utf-8").read()
-        for i, line in enumerate(text.split("\n"), 1):
-            if line.strip().startswith("run:") or line.startswith("          "):
-                out.append((wf, i, line))
+        lines = open(wf, encoding="utf-8").read().split("\n")
+        i = 0
+        while i < len(lines):
+            line = lines[i]
+            m = re.match(r"^(\s*)run:\s*(.*)$", line)
+            if not m:
+                i += 1
+                continue
+            base = len(m.group(1))
+            rest = m.group(2).strip()
+            if rest and rest not in ("|", ">", "|-", ">-"):
+                out.append((wf, i + 1, line))  # 單行形式 run: cmd
+                i += 1
+                continue
+            i += 1
+            while i < len(lines):
+                nxt = lines[i]
+                if nxt.strip() == "":
+                    i += 1
+                    continue
+                indent = len(nxt) - len(nxt.lstrip())
+                if indent <= base:
+                    break
+                out.append((wf, i + 1, nxt))
+                i += 1
     return out
 
 

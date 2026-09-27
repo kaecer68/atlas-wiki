@@ -75,7 +75,34 @@ def get_git_changes(repo_root: Path, paths: list) -> dict:
     return changes
 
 
-def check_skill_index_sync(repo_root: Path, dry_run: bool = False, repo_only: bool = False) -> list:
+def change_set_vs_base(repo_root: Path, base_ref: str) -> dict:
+    """以 `git diff --name-status -M <base_ref>...HEAD` 取變更集（CI 用）。
+
+    為什麼需要：R3 若只看「工作區 vs HEAD」，在 CI 的乾淨 checkout 下變更集**恆為空**
+    ⇒ 護欄永遠通過（假綠）。2026-09-28 由獨立審查實測發現。
+    """
+    changes = {"A": [], "M": [], "D": []}
+    res = subprocess.run(
+        ["git", "diff", "--name-status", "-M", f"{base_ref}...HEAD"],
+        cwd=str(repo_root), capture_output=True, text=True, timeout=60,
+    )
+    if res.returncode != 0:
+        raise RuntimeError(f"git diff {base_ref}...HEAD 失敗：{res.stderr.strip()[:200]}")
+    for line in res.stdout.strip().split("\n"):
+        if not line.strip():
+            continue
+        parts = line.split("\t")
+        status = parts[0][0]
+        for p in parts[1:]:          # rename/copy 會給舊路徑與新路徑，全部納入
+            if status in changes:
+                changes[status].append(p)
+            elif status == "R":      # 舊路徑視為刪除、新路徑視為新增
+                pass
+    return changes
+
+
+def check_skill_index_sync(repo_root: Path, dry_run: bool = False, repo_only: bool = False,
+                           base_ref=None) -> list:
     violations = []
 
     # === R1: hermes SKILL.md 變更 → skills-map.md 必同步 ===
@@ -117,7 +144,18 @@ def check_skill_index_sync(repo_root: Path, dry_run: bool = False, repo_only: bo
             "files": [],
             "fix": "確認 --repo-root 指向 atlas-wiki repo",
         })
-    atlas_changes = get_git_changes(repo_root, ["skills/"])
+    if base_ref:
+        try:
+            atlas_changes = change_set_vs_base(repo_root, base_ref)
+        except RuntimeError as e:
+            violations.append({
+                "rule": "R3: 無法對 base ref 取變更集 — 護欄不得靜默通過",
+                "details": str(e), "files": [],
+                "fix": "確認 --base-ref 指向存在的 commit（CI 應傳 PR base SHA）",
+            })
+            atlas_changes = {"A": [], "M": [], "D": []}
+    else:
+        atlas_changes = get_git_changes(repo_root, ["skills/"])
     sk_page_added_or_deleted = [
         f for f in (atlas_changes["A"] + atlas_changes["D"])
         if re.match(r"^skills/SK-(?!00)\d", f)
@@ -186,6 +224,8 @@ def main():
     parser.add_argument("--dry-run", action="store_true", help="只顯示違規,不退出")
     parser.add_argument("--skip-r4", action="store_true", help="跳過 R4 frontmatter 檢查（Plan F Week 3 補完前用）")
     parser.add_argument("--repo-only", action="store_true", help="只檢查 atlas-wiki repo 側（R3）；CI 用（CI 無 ~/.hermes）")
+    parser.add_argument("--base-ref", default=None,
+                        help="對 base ref 取變更集（CI 必須傳 PR base SHA；不傳則只看工作區 vs HEAD ⇒ CI 下恆空＝假綠）")
     args = parser.parse_args()
 
     repo_root = Path(args.repo_root).resolve()
@@ -196,7 +236,8 @@ def main():
     print(f"dry-run: {args.dry_run}")
     print()
 
-    violations = check_skill_index_sync(repo_root, dry_run=args.dry_run, repo_only=args.repo_only)
+    violations = check_skill_index_sync(repo_root, dry_run=args.dry_run, repo_only=args.repo_only,
+                                        base_ref=args.base_ref)
     if args.skip_r4:
         violations = [v for v in violations if not v["rule"].startswith("R4")]
 

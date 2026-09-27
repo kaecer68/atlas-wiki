@@ -203,7 +203,7 @@ gh pr merge <N> --squash --delete-branch --admin
 
 **2026-09-27 補牙（incident 後）**：本條原無機械強制；當日 **22 個治理檔 PR 被自動合併**（慣犯：`auto-commit-pr.sh` 無排除檢查＋`--admin`）。三道防線：**C** `validate-wiki.yml` 的 `governance-review-gate`（無 `kaecer-reviewed` 標籤 ⇒ 紅燈，已列 required checks）；**D** 該腳本 Step 6.5（治理檔或 >5 檔／>300 行 ⇒ 只開 PR、移除 `--admin`）；**A** R3 收窄為「SK 頁新增/刪除 ⇒ 同步 `SK-00-skill-index.md`」（舊版強制改 `AGENTS.md` = 互撞根因）。
 
-**限度**：共用單一帳號（`mergedBy` 一律 `kaecer68`）⇒ `required reviewers`／`CODEOWNERS` 不可行（作者不可自審）；標籤可自貼、`--admin` 仍可用 ⇒ 屬**留痕**非**授權**。真解＝第二個 bot 帳號（§9）。
+**限度**：共用單一帳號（`mergedBy` 一律 `kaecer68`）⇒ `required reviewers`／`CODEOWNERS` 不可行（作者不可自審）；標籤可自貼 ⇒ 屬**留痕**非**授權**。真解＝第二個 bot 帳號（§9）。
 
 #### 6.4.3 合夥人制判斷速查
 
@@ -260,7 +260,7 @@ Tag 必含 commit 註明:範圍 / 對位 / 風險。
 
 ## 9. 緊急繞過
 
-> **2026-09-28 限度**：① `--admin` **仍可用**（token 具 admin）⇒ C/D 僅留痕，非平台屏障。② workflow 故障時 required check 不回報 ⇒ PR 停在 BLOCKED，須修 workflow 或 kaecer admin 合併＋補 incident。
+> **2026-09-28 限度**：① `--admin` 能否繞過 **未驗證**（token 具 admin 但 `enforce_admins=true`；唯讀審查無法實測）⇒ 不得當保證。② workflow 故障時 required check 不回報 ⇒ PR 停在 BLOCKED，須修 workflow 或 kaecer 處理。
 
 | 情境 | 命令 | 風險 |
 |------|------|------|

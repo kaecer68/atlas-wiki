@@ -14,6 +14,9 @@ SK 頁另有 `skill-page-schema.json` ＋ `check-skill-pages.py`，兩者欄位�
 import argparse, glob, json, os, re, sys
 from collections import defaultdict
 
+# 只有這些類別可宣告「本質上無 frontmatter」（避免任一類別靜默關掉檢查；2026-09-28 審查建議）
+ALLOW_NO_FM_GROUPS = {"docs"}
+
 def load(p):
     try: return open(p, encoding="utf-8").read()
     except Exception: return ""
@@ -48,7 +51,7 @@ def main():
                 report["size"].append(f"{name}: {size} > {spec['size_limit_bytes']}")
             fm = fm_of(text)
             if fm is None:
-                if spec.get("allow_no_frontmatter"):
+                if spec.get("allow_no_frontmatter") and g in ALLOW_NO_FM_GROUPS:
                     continue  # 例：docs/** 本質上無 frontmatter（2026-09-28）
                 report["no_frontmatter"].append(name); continue
             if HAS_YAML:
@@ -89,6 +92,9 @@ def main():
             report["entry_size"].append(f"{rel}: {sz} > {cap}")
 
     total = sum(v for k, v in counts.items() if k != "entry") + counts.get("entry", 0)
+    if sum(v for k, v in counts.items() if k != "entry") == 0:
+        print(f"❌ 掃到 0 頁（--repo-root={'R'} 可能錯）— 護欄不得在空集合上通過")
+        return 1
     if a.json:
         print(json.dumps({"counts": counts, "violations": {k: v for k, v in report.items()}}, ensure_ascii=False, indent=1))
         return 0

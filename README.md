@@ -57,17 +57,18 @@ atlas-wiki/
 
 ## CI
 
-push / PR 到 `main` 觸發 `validate-wiki`（2026-09-27 實測 9 個 job:8 個驗證 + 1 個失敗通知）：
+push / PR 到 `main` 觸發 `validate-wiki`（2026-09-28 實測 10 個 job:9 個驗證 + 1 個失敗通知）：
 
 1. **validate-timestamp-rule** — 第 5 條鐵律(快照值必附 timestamp)
-2. **audit-atlas-endpoints** — 掃描 atlas-mcp 端點(2026-09-27 實測 **115** 端點;舊記 109。對位 `kaecer68/atlas-go`)
-3. **skill-structure-check** — SK 頁段名/段序/禁用標記(SSOT `skill-page-schema.json`)
-4. **size-check** — SK 頁 ≤ 9,000 bytes（`_inbox.md` > 12,000 僅警告;類別表見 `_method.md` 六條鐵律 6）
-5. **frontmatter-check** — frontmatter 核心 10 欄齊全
-6. **audit-file-index-sync** — SK/concepts/entities/triggers/scripts 索引同步
-7. **trigger-template-existence** — 12 核心觸發模板存在 + 結構關鍵字
-8. **trigger-endpoint-validation** — 12 核心觸發模板對位 atlas 端點
-9. **notify-telegram** — 任一 job 失敗才跑（`if: failure()`）
+2. **governance-review-gate** — 觸碰治理檔需 `kaecer-reviewed` 標籤（§6.4.2）
+3. **audit-atlas-endpoints** — 掃描 atlas-mcp 端點(實測 **115**;對位 `kaecer68/atlas-go`)
+4. **skill-structure-check** — SK 結構＋S2/S3/S5/S6/S7＋R3（SSOT `skill-page-schema.json`）
+5. **size-check** — SK 頁 ≤ 9,000 bytes（類別表見 `_method.md` 六條鐵律 6）
+6. **frontmatter-check** — frontmatter 核心 10 欄齊全
+7. **audit-file-index-sync** — 索引同步
+8. **trigger-template-existence** — 12 核心觸發模板存在 + 結構關鍵字
+9. **trigger-endpoint-validation** — 12 核心觸發模板對位 atlas 端點
+10. **notify-telegram** — 任一 job 失敗才跑（`if: failure()`）
 
 ### 本地驗證腳本（`skills/_scripts/`;2026-09-27 實測 16 檔 `*.py`）
 
