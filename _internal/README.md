@@ -22,6 +22,12 @@
 | `hermes-agent-maintenance-redirect.md` | hermes-agent fork 安裝／維護／升級工作已遷移（2026-08-22） | `~/.hermes/hermes-agent/` 相關文件 |
 | `hermes-gateway-multiplex-migration-2026-09-27.md` | hermes gateway 收斂至單一 default multiplexer 的遷移紀錄（2026-09-27） | `~/workspace/atlas-notes/03-system-health/hermes-gateway-multiplex-migration-2026-09-27.md` |
 
+## 操作程序（recipe）
+
+| 檔案 | 一句話 |
+|------|--------|
+| `_l3-backfill-recipe.md` | SK 頁 L3 端點實跑回填做法（2026-09-27,batch #1 起用）:工具→端點 SSOT（`tools_canary_test.go` 的 `canaryRoutes`）、probe 範本、合格 L3 四條件、page 更新格式與 9,000 B 上限處理、claim 被推翻時的更正規則、批量與額度、已解／未解清單。消費端:`make structure-metrics` 指標 8（L3 覆蓋率＋watch list） |
+
 ## 稽核報告
 
 | 目錄 | 一句話 |

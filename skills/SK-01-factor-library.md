@@ -8,7 +8,19 @@ tier: T3
 confidence: medium
 atlas_go_relevance: high
 mcp_tools_used: [data_get_field_contract, stock_get_fundamentals, stock_get_chips, stock_get_technical, macro_get_snapshot_latest, universe_get_sessions]
-verification: 2026-08-02 v0.9 結算跑過 L3 升 active:client 端 sklearn 1.8.0 完成 86 因子 × 336 樣本(1994-01-01~2022-04-30 對位)DataFrame 建構,winsorize 1%-99% + median 填補,矩陣 shape (336, 86),atlas 端 data_get_field_contract 41 個因子欄位已對位(2026-07-30),industry 中位數填補橫斷面邏輯與 Group Lasso 跨層驗證仍待 client 端擴充;**2026-08-02 20:40 修 frontmatter 結構失真(原 mcp_tools_used 後塞 4 行 stock_* 工具 + verification 重複 2 次,本次合併清理,read_file 報 binary 假警報消失)**;**2026-08-02 20:40 L3 頁面驗證 Step 確認:用 universe_get_sessions 跑 supervised pipeline,150 sessions 從 2026-01-01~2026-07-20,outcome_count 大多 25-75(正常),但 3/16~3/23 高達 2700-2900 異常(已知)、6/7~6/8、6/11 多日 outcome_count=0(失敗空 session)**;**2026-08-02 21:30 paper 對位(對應 v0.8 M1 升分條件):M1 6.5→7 達標** — 2 個真實 paper 對位 SK-01 86 因子:(1) **Fama-French 1993 「Common Risk Factors in the Returns on Stocks and Bonds」(JFE 33, 3-56)** 對位 atlas 端 `pb`(HML/Value)+ `momentum`(WML/Momentum)+ `market`(MKT/Rm-Rf)三因子,3/4 對位,缺 size(SMB) 因 atlas 無對位欄位;(2) **Jegadeesh-Titman 1993 「Returns to Buying Winners and Selling Losers」(JF 48, 65-91)** 對位 atlas 端 `momentum_20d` + `mom12m` 命名直接對位論文 12 月動量 skip 1 個月口徑,100% 對位;**綜合對位率 ≈ 60-70% 因子庫** = M1 升分達標(2 paper 找齊)
+verification: 2026-09-27 L3 端點實跑 8 端點全 200（http_code + timestamp 見 `l3_endpoints_probed`；明細與更正見 §驗證方式「L3 端點實跑」）。兩項實測更正:(1) `universe_get_sessions` 今日回 90 sessions（滾動窗），頁內 147/150 為 2026-08-02 當日快照（第五條鐵律:快照值需附時戳）;(2) 頁內列舉的因子欄位 `factor_score` 今日已不在 field-contract。歷史：2026-08-02 v0.9 結算升 active（client sklearn 1.8.0 建 86 因子 × 336 樣本，winsorize 1–99% + median 填補，shape (336, 86)）；2026-07-30 field-contract 對位 41 欄；2026-08-02 M1 6.5→7。
+l3_run_at: 2026-09-27
+l3_run_by: prime-agent（feat/20260927-l3-backfill-b1）
+l3_endpoints_probed:
+  - /api/field-contract → 200（2026-09-27T19:27:52+08:00）
+  - /api/macro/snapshot/latest → 200（2026-09-27T19:27:54+08:00）
+  - /api/stock/fundamentals?symbol=2330 → 200（2026-09-27T19:27:52+08:00）
+  - /api/stock/chips?symbol=2330 → 200（2026-09-27T19:27:52+08:00）
+  - /api/stock/technical?symbol=2330&days=10 → 200（2026-09-27T19:27:54+08:00）
+  - /api/stock/quote?symbol=2330 → 200（2026-09-27T19:28:18+08:00）
+  - /api/industry/sector-lookup?symbol=2330 → 200（2026-09-27T19:28:18+08:00）
+  - /api/dashboard/sessions → 200（90 sessions）（2026-09-27T19:27:54+08:00）
+
 methodology_aligned: true
 atlas_constitution_ref: ATLAS_METHODOLOGY.md §一(投資哲學)+ §五(策略矩陣)(附註:2026-07-30 period_system 變動 — `period` 已是 PeriodDetector 真值,`source` 欄位正名 `regime_source` / `period_source`)
 related:
@@ -16,7 +28,6 @@ related:
 ---
 
 <!-- methodology_alignment_tip: 本檔術語:七時期(PeriodDetector 真值) / 七維錢潮雷達 3+2+2(非「七大資金勢力」混稱) / 策略三分類正名 = 跟隨聰明錢／事件套利／資金對抗(2026-07-30 kaecer 裁定) -->
-<!-- methodology_alignment_tip: 2026-07-30 period_system 變動 — `period` 已是 PeriodDetector 真值;`source` 欄位正名 `regime_source` / `period_source` -->
 
 ## 一句話定位
 
@@ -38,9 +49,7 @@ SK-01 定義從原始台股個股數據(月頻)計算 86 個股票層面特徵,�
 - **陳安琳 2002**「台股穩定因子」 — 對位 atlas:`factor_weight_*` + `pb` + `pe` + `earnings_quality`。
 - **Chan-Hameed-Tong 2000**「Profitability of Momentum Strategies in International Equity Markets」(JFQA 35(2), 153) — 國際 momentum 跨市場。對位 atlas:`momentum_20d` + `mom12m` + `volume_spike_multiplier`✅。
 
-**結論**:SK-01 86 因子 ≈ **90%+ 對位主流 + 在地 + 國際學術**;7 框架找齊。剩 <10% 為非學術因子(籌碼/事件/技術),atlas 端擴充合理。
-
-**M1 升 8 觸發**:6 大學術框架 + 對位率 ≥ 80% + 台灣在地化 = 達標。
+**結論**:86 因子 ≈ **90%+ 對位主流 + 在地 + 國際學術**（7 框架找齊),剩 <10% 為非學術因子(籌碼/事件/技術);M1 升 8 觸發 = 6 框架 + 對位率 ≥ 80% + 台灣在地化。
 
 **關鍵設計**:
 - 頻率:月頻(M)
@@ -85,19 +94,24 @@ atlas-mcp 沒有單一「build factor library」端點,但對位的底層數據�
 **Step 2**:用 `universe_get_sessions` 看最近一次 supervised 模擬,確認因子層(L1-L2)有 momentum / value / size 三類。
 **Step 3**:若 Step 1 失敗——在「未消化 / 待補」段記錄「需找 atlas backend 補因子填補流程」。
 
-**Step 1 實跑結果(2026-07-30 04:10,atlas-mcp `data_get_field_contract`)**:回傳 1500+ 欄位,其中與因子庫直接相關的有 41 個,對位 SK-01 三類如下:
+### L3 端點實跑（2026-09-27,本 PR;帶 `X-API-Key`,timeout 6s）
 
-| 類別 | 欄位數 | 範例欄位 |
-|------|--------|---------|
-| **value** | 7 | `pe` / `pb` / `dividend_yield` / `value_yield` / `value_pb_range_center` / `value_pe_range_center` / `value_ps_range_center` |
-| **momentum** | 6 | `momentum` / `momentum_20d` / `volatility_20d` / `momentum_high_threshold` / `momentum_mod_threshold` / `momentum_weak_threshold` |
-| **quality** | 5 | `quality` / `quality_score` / `quality_weight` / `rsi_tw` / `rsi_tw_score` |
-| 配置欄位 | 4 | `factor_score_max_age_days` / `factor_weight_momentum` / `factor_weight_value` / `factor_weight_quality` |
-| 風險側因子 | 3 | `factor_exposure` / `factor_score` / `factor_weight` |
-| 其他 | 16 | regime/momentum/value/quality 四類保守激進變體 |
+| # | 端點（GET） | http_code | 實測結果 | timestamp（2026-09-27 UTC+0800） |
+|---|---|---|---|---|
+| 1 | `/api/field-contract` | 200 | 2262 欄 | 19:27:52+08:00 |
+| 2 | `/api/stock/fundamentals?symbol=2330` | 200 | PE 30.19 / PB 9.57 / DY 1.1 | 19:27:52+08:00 |
+| 3 | `/api/stock/chips?symbol=2330` | 200 | foreign −4667.832 / date 20260924 | 19:27:52+08:00 |
+| 4 | `/api/stock/technical?symbol=2330&days=10` | 200 | close 2475；rsi14/sma20/sma50 皆 0 | 19:27:54+08:00 |
+| 5 | `/api/macro/snapshot/latest` | 200 | 41 序列 | 19:27:54+08:00 |
+| 6 | `/api/dashboard/sessions` | 200 | 90 sessions（滾動窗 2026-06-25~2026-09-27） | 19:27:54+08:00 |
+| 7 | `/api/stock/quote?symbol=2330` | 200 | last 2475 / source fugle | 19:28:18+08:00 |
+| 8 | `/api/industry/sector-lookup?symbol=2330` | 200 | found true / semiconductor | 19:28:18+08:00 |
 
-**結論**:86 因子中 value/momentum/quality/size **結構對位存在**,atlas 後端用 `factor_weight_*` 與 `factor_score_max_age_days` 表達「因子權重配置」與「老化期」,但學術命名 (`mom12m`) 與 atlas 命名 (`momentum_20d`) **不一致**——保留學術命名 + 在每頁加 atlas 對應欄。
-- `data_get_field_contract` 回傳欄位驗證（2026-07-30）：**41 個因子欄位**已對位。
+**實測更正（2026-09-27）**：
+- 第 6 列回 **90** sessions,非頁內舊記 147/150——該端點回滾動窗,舊數字為 2026-08-02 當日快照。
+- 頁內「風險側因子」列舉的 `factor_score` **今日不在** field-contract（僅 `factor_scores`、`factor_score_max_age_days`）;其餘 22 個列舉欄位名全部命中。
+- 第 4 列 `rsi14` / `sma20` / `sma50` 今日皆回 0（欄位在、值為 0）→「用 `stock_get_technical` 拼 momentum 因子」目前無法由此端點取到非零指標。
+- 歷史（2026-07-30 04:10）:field-contract 1500+ 欄位中 41 個與因子庫相關（value 7/momentum 6/quality 5/配置 4/風險側 3/其他 16）;結構對位存在,但學術命名 `mom12m` ≠ atlas 命名 `momentum_20d`。
 
 ## 未消化 / 待補
 
