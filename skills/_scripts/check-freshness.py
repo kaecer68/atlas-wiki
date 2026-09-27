@@ -74,7 +74,10 @@ def main():
     if len(overdue) > 15: print(f"   … 另有 {len(overdue)-15} 頁")
     if a.strict and undeclared:
         return 1
-    print(f"\n（warn 模式{'' if not undeclared else '；待上述未宣告頁補完後改 --strict'}）")
+    if a.strict:
+        print("\n（strict 模式：未宣告即失敗；逾期僅警告）")
+    else:
+        print(f"\n（warn 模式{'' if not undeclared else '；待上述未宣告頁補完後改 --strict'}）")
     return 0
 
 if __name__ == "__main__":
