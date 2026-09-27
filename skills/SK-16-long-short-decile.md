@@ -3,6 +3,8 @@ title: SK-16 多空十分位數投資組合（atlas 對位版）
 description: "問「做多最強 10%、做空最弱 10% 怎麼跑」時載入。"
 type: skill-inbound
 source: ~/workspace/Fin-Skills/Fin-Skills.md §SK-16
+sources:
+  - "制度面引文見 concepts/tw-short-cost-sources.md（操作辦法 115.01.09；2026-09-27 實測 200）"
 ingested_at: 2026-07-29
 status: active
 tier: T3
@@ -43,7 +45,7 @@ SK-16 將股票池每月依模型預測值排序,切 10 等分,做多最高分�
 
 ## atlas 對位
 
-atlas 沒有單一「long_short_decile」端點,但核心數據 + 驗證鏈已存在:
+atlas 無單一「long_short_decile」端點,但核心數據 + 驗證鏈已存在:
 
 | 論文概念 | atlas-mcp 對位 | tool_name |
 |---------|---------------|-----------|
@@ -75,7 +77,7 @@ atlas 沒有單一「long_short_decile」端點,但核心數據 + 驗證鏈已�
 | **轉折下壓（Turnaround Down）** | ❌ **不可信** — VaR 飆升 | **資金對抗**（低位布局） |
 | **黑天鵝（Black Swan）** | ❌ **不可信 + 停損** | 暫停所有策略 |
 
-**給散戶的話**:**同一個多空十分位訊號,在不同時期可用性完全不同；同一個 sharpe 要看當期才有意義**。
+**給散戶的話**:**同一訊號在不同時期可用性完全不同;sharpe 要看當期才有意義**。
 
 ## 散戶解讀（GROW+）
 
@@ -93,9 +95,9 @@ atlas 沒有單一「long_short_decile」端點,但核心數據 + 驗證鏈已�
 
 **L1** ✅（10 欄／6 段齊全）　**L2** ✅（4 個 atlas-mcp tool 已標用法）
 
-**L3 舊跑（2026-08-01，快照已過期）**：`backtest_signals` sharpe_long=0.27、sharpe_short=0.49、var_95=-0.0225；`risk_get_metrics` session_count=147。升 active 判準（2026-08-01 結算）：兩 sharpe 皆 > 0.2 通過。
+**L3 舊跑（2026-08-01，快照已過期）**：`backtest_signals` sharpe_long=0.27、sharpe_short=0.49、var_95=-0.0225；`risk_get_metrics` session_count=147。
 
-**L3 端點（2026-09-27 重跑，本 PR）**：
+**L3 端點（2026-09-27 重跑）**：
 - `universe_get_sessions` 200（11:30:41Z）：**90 sessions**，2026-06-27T23:26Z～2026-09-27T03:19Z；RISK_ON 49／RISK_OFF 40／NEUTRAL 1；78 筆 `top_strategies` 的 `side` 全為空字串。
 - `risk_get_metrics` 200（11:30:42Z）：session_count=210、data_points=209、var_95=0、var_99=0、max_drawdown_pct=0.722、insufficient_data=1、source=postgres、gate_mode=NORMAL。
 - `backtest_signals` 200（11:30:42Z）：**全 0**（active_signals=null），與 2026-08-01 的 0.27/0.49 不同 ⇒ 今日價值為 0，舊值不得當現值。

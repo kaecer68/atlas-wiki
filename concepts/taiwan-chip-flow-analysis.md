@@ -11,6 +11,9 @@ sources:
   - atlas-mcp:strategy_list_active
   - concepts/taiwan-money-flow-seven-institutional-buckets.md
   - concepts/taiwan-financial-domain-model.md
+  - "TWSE 三大法人買賣金額統計表 https://www.twse.com.tw/zh/trading/foreign/bfi82u.html ＋ 三大法人買賣超日報 https://www.twse.com.tw/zh/trading/foreign/t86.html（2026-09-27 curl 皆 200）— 頁內法人買賣超一級來源"
+  - "實務慣例（當沖比 30%／50%／70% 門檻：證交所無法定門檻，頁內 2026-09-27 已註）"
+  - "待查（2026-09-27）：外資持股市值 40–45%／單日成交 25–35% 兩項未附來源與期間"
 confidence: medium
 contested: true
 contradictions: [外資佔台股成交比重 25–35% 與 concepts/t1-t4-signal-light.md 的「4 成成交」不一致（孰為正待查，2026-09-27）]
