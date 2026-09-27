@@ -107,7 +107,7 @@ scripts/dev/auto-commit-pr.sh "feat(skills): 新增 SK-XX" main "PR title"
 
 ## Verification
 - 本地 `make ci-gate` 5 項全綠
-- push 後 GitHub CI 9 job(8 驗證 + 通知)全綠
+- push 後 GitHub CI 10 job(9 驗證 + 通知)全綠
 - 對位 _method.md 5 條鐵律清單
 ```
 
@@ -133,7 +133,6 @@ PR 建立後 **不可停留**在「compare & pull request」未完成狀態。�
 ### 5.3 Branch protection
 
 - `required_status_checks`:**9 條**(2026-09-27 實測;含 `governance-review-gate`)；`enforce_admins=true`
-- `enforce_admins: true` — admin 也要守 linear history
 - `required_linear_history: true` — 禁止 merge commit 製造非線性歷史
 - `allow_force_pushes: false` — 禁止 force push
 - `allow_deletions: false` — 禁止刪 main
@@ -183,8 +182,8 @@ gh pr merge <N> --squash --delete-branch --admin
 1. **變更範圍**限: `skills/SK-*.md`（SK 頁新增/修正）或 `concepts/` 或 `templates/` 或 `skills/_scripts/` 工具修正（**2026-09-27 修正路徑 typo**：舊記 `scripts/_scripts/` 不存在）
 2. **CI 全綠**: 本地 `make ci-gate` + GitHub `validate-wiki` 10 job success
 3. **變更量**: < 300 lines（比 §6.3 的 200 放寬, 因 SK 頁 quota 產出）
-4. **不觸碰**: 憲法 / `_method.md` / `AGENTS.md` / `git-merge-protocol.md` / `.github/workflows/` / `SCHEMA.md`（這些是治理檔, 見 6.4.2）
-5. **SK 頁品質**: 對位 `_method.md` 六條鐵律；size **依類別**（SK 9,000B／concepts+entities 30,000B／docs 12,000B／append-only 無硬上限）
+4. **不觸碰**: 憲法 / `_method.md` / `_method_amendment_history.md` / `AGENTS.md` / `git-merge-protocol.md` / `.github/workflows/` / `SCHEMA.md`（治理檔, 見 6.4.2）
+5. **SK 頁品質**: 對位 `_method.md` 六條鐵律；size **依類別**（SK 9,000B／concepts+entities 30,000B／docs 12,000B 無機械護欄／append-only 無上限）
 6. **執行工具**: `scripts/dev/auto-commit-pr.sh "<msg>" main "<title>"`（自動: ci-gate → commit → push → PR → 等 CI → squash merge）
 
 #### 6.4.2 重大變更（必須人工 review, hermes 只開 PR 不等 merge）

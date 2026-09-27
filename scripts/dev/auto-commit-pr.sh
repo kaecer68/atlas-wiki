@@ -109,7 +109,7 @@ GOV_RE='^(AGENTS\.md|SCHEMA\.md|skills/_method\.md|skills/_method_amendment_hist
 # BASE 以「遠端」為準：本地 main 可能落後 origin/main，用本地名會把別人的 commit 算進本 PR
 # （2026-09-27 實測：本地落後 3 個 commit 時，真實 2 檔的 routine PR 被判成 24 檔 + 治理檔）
 if ! git fetch -q origin "$BASE" 2>/dev/null; then
-    echo "⚠️  無法 fetch origin/$BASE（離線或遠端不可用）⇒ 以本地既有的 origin/$BASE 判斷；若它已過期，規模判定可能失真。"
+    echo "⚠️  無法 fetch origin/${BASE}（離線或遠端不可用）⇒ 以本地既有的 origin/${BASE} 判斷；若它已過期，規模判定可能失真。"
 fi
 BASE_REF="origin/$BASE"
 if ! git rev-parse --verify -q "$BASE_REF" >/dev/null 2>&1; then BASE_REF="$BASE"; fi
