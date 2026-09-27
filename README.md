@@ -26,12 +26,10 @@ atlas-wiki/
 │   ├── _inbox.md          # 跨 SK 待辦
 │   ├── _index-finskills.md
 │   ├── _methodology_alignment_audit.md  # 對位憲章審計
-│   └── _scripts/          # 驗證工具(Python)
-│       ├── validate-timestamp-rule.py   # 第 5 條鐵律 enforcement
-│       └── audit-atlas-endpoints.py     # atlas-mcp 端點 audit
+│   └── _scripts/          # 驗證工具 14 檔(Python;逐一用途見 §CI 表)
 ├── templates/
 │   ├── audit-report.md    # 審計報告模板
-│   └── trigger-*.md       # 20 檔觸發模板(2026-09-27 實測,§12)
+│   └── trigger-*.md       # 21 檔觸發模板(2026-09-27 實測,§12)
 ├── concepts/              # 台股市場概念 / 領域模型
 ├── entities/              # L1 宏觀實體研究
 ├── summaries/             # 階段總結(分工藍圖)＋ HTTP path drift 記錄
@@ -122,16 +120,17 @@ atlas-wiki v6.18 含 **12 觸發模板** 落 `templates/` = 自動信號捕捉�
 
 跑 `atlas-mcp-trigger-monitor.py` 每 5 分鐘觸發 1 次 + 自動 §6 紀錄 + Telegram 通知。
 
-**現況(2026-09-27 實測)**:`ls templates/trigger-*.md | wc -l` = **20**(templates/ 共 21 檔,含 `audit-report.md`)。v6.18 之後新增 8 檔(名稱取自各檔 H1):
+**現況(2026-09-27 實測)**:`ls templates/trigger-*.md | wc -l` = **21**(templates/ 共 22 檔,含 `audit-report.md`)。v6.18 之後新增 9 檔(名稱取自各檔 H1):
 
-- `trigger-2330-tsmc-swing` — 2330 台積電報價觸發(單日版;盤中漲跌幅逾 ±3%)
-- `trigger-ai-capex-guidance-cut` — AI capex 指引下修觸發(對位 2026 韓股 HBM 預期降溫)
-- `trigger-cb-emergency-intervention` — 央行緊急干預匯市(對位 1997 IMF + 2022 BOK 教訓)
-- `trigger-equipment-capex-external-report-cycle` — 設備 capex 外部報告週期(年/半年,週期型)
-- `trigger-hbm-cycle-cooling` — HBM/AI 半導體敘事降溫(對位 2026 韓股崩盤)
-- `trigger-hedge-fund-unwind` — 對沖基金集中持倉爆倉連鎖(對位 2021 Archegos)
-- `trigger-megaproject-2-quarter-lag` — 巨型專案 2 季落後(訂單時序執行端)
+- `trigger-2330-tsmc-swing` — 2330 台積電報價觸發(盤中振幅逾 ±3%)
+- `trigger-ai-capex-guidance-cut` — AI capex 指引下修(對位 2026 韓股 HBM 降溫)
+- `trigger-cb-emergency-intervention` — 央行緊急干預匯市(1997 IMF + 2022 BOK)
+- `trigger-equipment-capex-external-report-cycle` — 設備 capex 外部報告週期(年/半年)
+- `trigger-hbm-cycle-cooling` — HBM/AI 敘事降溫(對位 2026 韓股崩盤)
+- `trigger-hedge-fund-unwind` — 對沖基金集中持倉爆倉(對位 2021 Archegos)
+- `trigger-megaproject-2-quarter-lag` — 巨型專案 2 季落後(訂單時序)
 - `trigger-msci-rebalance-pressure` — MSCI 季度再平衡壓力(被動 ETF 增減持)
+- `trigger-renewable-energy-divergence` — 綠能發電 vs 電網/重電雙臂分歧(第 16 模板,月頻+日頻雙確認)
 
 ## 貢獻
 
