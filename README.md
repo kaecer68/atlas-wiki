@@ -20,7 +20,7 @@ atlas-wiki/
 ├── SCHEMA.md              # 知識結構 schema
 ├── index.md / log.md      # 知識索引 / 演進日誌
 ├── skills/                # 37 個 SK 知識檔(SK-00~SK-36,SK-27/30 已 archive)
-│   ├── _method.md         # 寫入規範(5 條鐵律 + 格式)
+│   ├── _method.md         # 寫入規範(六條鐵律 + 格式)
 │   ├── _consult-index.md  # 跨頁查詢索引
 │   ├── _consult-index_archive.md  # 諮詢索引歷史段歸檔(2026-08-22 audit-fix)
 │   ├── _inbox.md          # 跨 SK 待辦
@@ -30,19 +30,21 @@ atlas-wiki/
 │       ├── validate-timestamp-rule.py   # 第 5 條鐵律 enforcement
 │       └── audit-atlas-endpoints.py     # atlas-mcp 端點 audit
 ├── templates/
-│   └── audit-report.md    # 審計報告模板
+│   ├── audit-report.md    # 審計報告模板
+│   └── trigger-*.md       # 20 檔觸發模板(2026-09-27 實測,§12)
 ├── concepts/              # 台股市場概念 / 領域模型
 ├── entities/              # L1 宏觀實體研究
 ├── summaries/             # 階段總結(分工藍圖)
 └── .github/workflows/
-    └── validate-wiki.yml  # CI(四項檢查 + Telegram 通知)
+    └── validate-wiki.yml  # CI(9 jobs:8 驗證 + Telegram 通知;2026-09-27 實測)
 ```
 
 ## 規範速查(詳見 `skills/_method.md`)
 
 - 單頁大小 ≤ 9,000 bytes(2026-07-30 kaecer 拍板 bump 自 6000)
 - frontmatter 核心欄位:title / type / source / ingested_at / status / tier / confidence / atlas_go_relevance / mcp_tools_used / verification
-- 5 條鐵律:① 不搬運,翻譯 ② 不瞎寫 ③ 不裝完成 ④ 不違背憲章 ⑤ 快照值必附 timestamp
+- 六條鐵律(2026-09-27 校正:原記 5 條;正本 `_method.md` §六條鐵律):① 不搬運,翻譯 ② 不瞎寫 ③ 不裝完成 ④ 不違背憲章 ⑤ 派工備份 ⑥ 所有 .md ≤ 9,000 bytes
+- 另見 `_method.md` §第五條鐵律(快照值必附 timestamp)+ §第六條鐵律(外部權威報告週期稽核)
 - 每日 quota:D1 示範 1 頁 → D2+ 每日 3 頁上限(2026-07-29 降標)
 
 ## Repo 邊界(不進 git)
@@ -55,12 +57,36 @@ atlas-wiki/
 
 ## CI
 
-push / PR 到 `main` 觸發 `validate-wiki`：
+push / PR 到 `main` 觸發 `validate-wiki`（2026-09-27 實測 9 個 job:8 個驗證 + 1 個失敗通知）：
 
 1. **validate-timestamp-rule** — 第 5 條鐵律(快照值必附 timestamp)
-2. **audit-atlas-endpoints** — 掃描 atlas-mcp 109 端點(對位 `kaecer68/atlas-go`)
-3. **size-check** — 每頁 ≤ 9,000 bytes
-4. **frontmatter-check** — frontmatter 核心欄位齊全
+2. **audit-atlas-endpoints** — 掃描 atlas-mcp 端點(2026-09-27 實測 **115** 端點;舊記 109。對位 `kaecer68/atlas-go`)
+3. **skill-structure-check** — SK 頁段名/段序/禁用標記(SSOT `skill-page-schema.json`)
+4. **size-check** — SK 頁 ≤ 9,000 bytes（`_inbox.md` > 12,000 僅警告）
+5. **frontmatter-check** — frontmatter 核心 10 欄齊全
+6. **audit-file-index-sync** — SK/concepts/entities/triggers/scripts 索引同步
+7. **trigger-template-existence** — 12 核心觸發模板存在 + 結構關鍵字
+8. **trigger-endpoint-validation** — 12 核心觸發模板對位 atlas 端點
+9. **notify-telegram** — 任一 job 失敗才跑（`if: failure()`）
+
+### 本地驗證腳本（`skills/_scripts/`;2026-09-27 實測 14 檔 `*.py`）
+
+| 腳本 | 用途(取自該檔 docstring) |
+|------|--------------------------|
+| `validate-timestamp-rule.py` | 第 5 條鐵律 enforcement(快照值 timestamp) |
+| `audit-atlas-endpoints.py` | atlas-mcp 端點 audit + 抓 Description |
+| `check-skill-pages.py` | 一次跑 SK 頁 size + frontmatter |
+| `check-skill-structure.py` | SK 頁結構守衛(反補丁 M2/M2′) |
+| `check-stale-worktree.py` | skills/ 未提交內容偵測(反補丁 M5) |
+| `check-skill-index-sync.py` | 強制 skills 建立/修改時索引同步更新 |
+| `new-skill-page.py` | SK 頁骨架產生器(反補丁 M6) |
+| `structure-health-metrics.py` | 結構健康度量測(反補丁 M7) |
+| `audit-file-index-sync.py` | 驗證 wiki 內落檔是否被索引引用 |
+| `atlas-mcp-trigger-monitor.py` | 觸發模板自動信號捕捉(每 5 分鐘) |
+| `handle-atlas-failures.py` | atlas-mcp 端點失敗降級處理 |
+| `atlas-failures-telegram-report.py` | 每日 atlas 端點健康檢查 + Telegram |
+| `cron-health-monitor.py` | cron job 健康監控 |
+| `_A977_ground_truth.py` | A977 ground truth 檢查(importlib 雙副本 + curl) |
 
  任一失敗 → **Telegram 通知**。需在 GitHub repo Settings → Secrets and variables 設定：
 
@@ -69,7 +95,7 @@ push / PR 到 `main` 觸發 `validate-wiki`：
 
 ## 版本
 
-[v1.0.0](https://github.com/kaecer68/atlas-wiki/releases/tag/v1.0.0)(2026-08-03)— 首發版。33 SK 頁 + 9 索引 + CI validate-wiki(4 檢查 + Telegram 通知)+ audit 模板。
+[v1.0.0](https://github.com/kaecer68/atlas-wiki/releases/tag/v1.0.0)(2026-08-03)— 首發版。33 SK 頁 + 9 索引 + CI validate-wiki(首發當時 4 檢查 + Telegram 通知)+ audit 模板。
 
 版本紀律遵循 semver:
 - **MAJOR**:憲章對位/鐵律變更(對位憲章 §1)
@@ -94,9 +120,20 @@ atlas-wiki v6.18 含 **12 觸發模板** 落 `templates/` = 自動信號捕捉�
 
 跑 `atlas-mcp-trigger-monitor.py` 每 5 分鐘觸發 1 次 + 自動 §6 紀錄 + Telegram 通知。
 
+**現況(2026-09-27 實測)**:`ls templates/trigger-*.md | wc -l` = **20**(templates/ 共 21 檔,含 `audit-report.md`)。v6.18 之後新增 8 檔(名稱取自各檔 H1):
+
+- `trigger-2330-tsmc-swing` — 2330 台積電報價觸發(單日版;盤中漲跌幅逾 ±3%)
+- `trigger-ai-capex-guidance-cut` — AI capex 指引下修觸發(對位 2026 韓股 HBM 預期降溫)
+- `trigger-cb-emergency-intervention` — 央行緊急干預匯市(對位 1997 IMF + 2022 BOK 教訓)
+- `trigger-equipment-capex-external-report-cycle` — 設備 capex 外部報告週期(年/半年,週期型)
+- `trigger-hbm-cycle-cooling` — HBM/AI 半導體敘事降溫(對位 2026 韓股崩盤)
+- `trigger-hedge-fund-unwind` — 對沖基金集中持倉爆倉連鎖(對位 2021 Archegos)
+- `trigger-megaproject-2-quarter-lag` — 巨型專案 2 季落後(訂單時序執行端)
+- `trigger-msci-rebalance-pressure` — MSCI 季度再平衡壓力(被動 ETF 增減持)
+
 ## 貢獻
 
-以 PR 形式提交至 `main` 分支。CI 會自動跑 4 項檢查;需遵守 `skills/_method.md` 5 條鐵律(尤其第 5 條:快照值必附 timestamp)。貢獻前請閱讀:
+以 PR 形式提交至 `main` 分支。CI 會自動跑 8 項驗證(共 9 jobs);需遵守 `skills/_method.md` 六條鐵律(尤其快照值必附 timestamp,見該檔 §第五條鐵律)。貢獻前請閱讀:
 
 1. `AGENTS.md`(專案 context)
 2. `skills/_method.md`(寫入規範)

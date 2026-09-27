@@ -2,42 +2,47 @@
 
 > 散戶 AI 實戰金融工程 知識圖譜
 > 從 2026-07-15 開始建立
-> Last updated: 2026-08-22 | Knowledge entries: 36 (this index) / Repo .md 總數: 155（2026-08-22 快照,find 實測,含 _knowledge-router） / SK 知識檔: 37（36 編號 + 索引,SK-27/30 已 archive）
+> Last updated: 2026-09-27 | Knowledge entries: 36 (this index;重數於 2026-09-27) / Repo .md 總數: 148（2026-09-27 快照,`git ls-files "*.md"` 實測;舊記 155 為 2026-08-22 值） / SK 知識檔: 37（36 編號 + 索引,SK-27/30 已 archive;2026-09-27 實測）
 > 2026-08-03 repo 公開化(MIT + v1.0.0 + CI validate-wiki)
 > 2026-08-22 知識路由：raw/queries/comparisons/summaries-handoff+manifests 共 18 檔遷移至 atlas-notes（純知識回原料庫）
 
 ## Entities
 <!-- 從 raw/ 抽取的具體實體:事件、論文、audit 報告 -->
 
-- [[entities/l1-t3-five-chains]] — L1-T.3 五鏈耦合鐵律(2026/4-7 真實事件)
-- [[entities/l1-t-overview]] — L1-T 系列範式架構總覽(Day 3 補做,6 條子範式入口)
-- [[entities/l1-t1-energy-transition]] — L1-T.1 能源轉型
-- [[entities/l1-t2-petrodollar-hormuz]] — L1-T.2 石油美元與霍爾木茲
-- [[entities/l1-t4-critical-minerals]] — L1-T.4 礦物資源斷供鏈
-- [[entities/l1-t5-ai-semiconductor]] — L1-T.5 AI 與半導體科技奇點
-- [[entities/l1-t6-demographic-turning-point]] — L1-T.6 人口轉折
+- [[entities/l1-t3-five-chains]] — L1-T.3 五鏈耦合鐵律(2026/4-7 真實事件)。檔案:`entities/l1-t3-five-chains.md`
+- [[entities/l1-t-overview]] — L1-T 系列範式架構總覽(Day 3 補做,6 條子範式入口)。檔案:`entities/l1-t-overview.md`
+- [[entities/l1-t1-energy-transition]] — L1-T.1 能源轉型。檔案:`entities/l1-t1-energy-transition.md`
+- [[entities/l1-t2-petrodollar-hormuz]] — L1-T.2 石油美元與霍爾木茲。檔案:`entities/l1-t2-petrodollar-hormuz.md`
+- [[entities/l1-t4-critical-minerals]] — L1-T.4 礦物資源斷供鏈。檔案:`entities/l1-t4-critical-minerals.md`
+- [[entities/l1-t5-ai-semiconductor]] — L1-T.5 AI 與半導體科技奇點。檔案:`entities/l1-t5-ai-semiconductor.md`
+- [[entities/l1-t6-demographic-turning-point]] — L1-T.6 人口轉折。檔案:`entities/l1-t6-demographic-turning-point.md`
 
 ## Concepts
 <!-- 從 source 抽取的概念:範式、訊號、策略 -->
 
-- [[concepts/s-paradigm-redefinition]] — S 範式重新定義(不等於盤整期)
-- [[concepts/t1-t4-signal-light]] — T1→T4 訊號燈四層驅動結構
-- [[concepts/atlas-mcp-interpretation-guide]] — atlas-mcp 工具解讀指南
-- [[concepts/taiwan-money-flow-seven-institutional-buckets]] — 台灣法人錢潮追蹤：七類核心機構與散戶可觀測代理
-- [[concepts/funding-forces-taxonomy-e05-pending-approval]] — 資金勢力分類學修正版（E05 待業主簽核）
-- [[concepts/eight-banks-government-signal-reading-2026-07-22]] — 八大行庫買賣超 — 反推政府護盤訊號的實戰方法
-- [[concepts/taiwan-financial-domain-model]] — 台股金融領域模型：十類核心術語與體系（2026-08-02 補入,系統性參考字典）
-- [[concepts/taiwan-stock-market-structure]] — 台灣證券市場結構與交易制度（2026-08-02 補入）
-- [[concepts/taiwan-technical-analysis-guide]] — 台股技術分析指南（2026-08-02 補入）
-- [[concepts/taiwan-fundamental-analysis-guide]] — 台股基本面分析指南（2026-08-02 補入）
-- [[concepts/taiwan-chip-flow-analysis]] — 台股籌碼面分析指南（2026-08-02 補入）
-- [[concepts/atlas-platform-overview]] — atlas 平台概覽（2026-08-02 補入）
-- [[concepts/atlas-simulation-guide]] — atlas 策略模擬指南（2026-08-02 補入）
-- [[concepts/atlas-mcp-tools-reference]] — atlas MCP 工具參考（2026-08-02 補入）
-- [[concepts/atlas-strategy-taxonomy]] — atlas L1-L5 策略分類體系（2026-08-02 補入；層名對齊 atlas internal/strategy_techniques/enums.go canonical [2026-08-22 iter2]）
-- [[concepts/atlas-risk-management-framework]] — atlas 風險管理框架（2026-08-02 補入）
+- [[concepts/s-paradigm-redefinition]] — S 範式重新定義(不等於盤整期)。檔案:`concepts/s-paradigm-redefinition.md`
+- [[concepts/t1-t4-signal-light]] — T1→T4 訊號燈四層驅動結構。檔案:`concepts/t1-t4-signal-light.md`
+- [[concepts/atlas-mcp-interpretation-guide]] — atlas-mcp 工具解讀指南。檔案:`concepts/atlas-mcp-interpretation-guide.md`
+- [[concepts/taiwan-money-flow-seven-institutional-buckets]] — 台灣法人錢潮追蹤：七類核心機構與散戶可觀測代理。檔案:`concepts/taiwan-money-flow-seven-institutional-buckets.md`
+- [[concepts/funding-forces-taxonomy-e05-pending-approval]] — 資金勢力分類學修正版（已被 3+2+2 spec 取代；原 E05 待簽核）。檔案:`concepts/funding-forces-taxonomy-e05-pending-approval.md`
+- [[concepts/eight-banks-government-signal-reading-2026-07-22]] — 八大行庫買賣超 — 反推政府護盤訊號的實戰方法。檔案:`concepts/eight-banks-government-signal-reading-2026-07-22.md`
+- [[concepts/taiwan-financial-domain-model]] — 台股金融領域模型：十類核心術語與體系（2026-08-02 補入,系統性參考字典）。檔案:`concepts/taiwan-financial-domain-model.md`
+- [[concepts/taiwan-stock-market-structure]] — 台灣證券市場結構與交易制度（2026-08-02 補入）。檔案:`concepts/taiwan-stock-market-structure.md`
+- [[concepts/taiwan-technical-analysis-guide]] — 台股技術分析指南（2026-08-02 補入）。檔案:`concepts/taiwan-technical-analysis-guide.md`
+- [[concepts/taiwan-fundamental-analysis-guide]] — 台股基本面分析指南（2026-08-02 補入）。檔案:`concepts/taiwan-fundamental-analysis-guide.md`
+- [[concepts/taiwan-chip-flow-analysis]] — 台股籌碼面分析指南（2026-08-02 補入）。檔案:`concepts/taiwan-chip-flow-analysis.md`
+- [[concepts/atlas-platform-overview]] — atlas 平台概覽（2026-08-02 補入）。檔案:`concepts/atlas-platform-overview.md`
+- [[concepts/atlas-simulation-guide]] — atlas 策略模擬指南（2026-08-02 補入）。檔案:`concepts/atlas-simulation-guide.md`
+- [[concepts/atlas-mcp-tools-reference]] — atlas MCP 工具參考（2026-08-02 補入）。檔案:`concepts/atlas-mcp-tools-reference.md`
+- [[concepts/atlas-strategy-taxonomy]] — atlas L1-L5 策略分類體系（2026-08-02 補入；層名對齊 atlas internal/strategy_techniques/enums.go canonical [2026-08-22 iter2]）。檔案:`concepts/atlas-strategy-taxonomy.md`
+- [[concepts/atlas-risk-management-framework]] — atlas 風險管理框架（2026-08-02 補入）。檔案:`concepts/atlas-risk-management-framework.md`
 
-- [[concepts/atlas-three-paradigms-v0.2-summary]] — L/T/S 三範式摘要(Stage 1C)
+- [[concepts/atlas-three-paradigms-v0.2-summary]] — L/T/S 三範式摘要(Stage 1C)。檔案:`concepts/atlas-three-paradigms-v0.2-summary.md`
+- [[concepts/atlas-mcp-failover-policy]] — atlas-mcp 失效時 fail-over 政策（來源標籤 + 網路替代源清單）。檔案:`concepts/atlas-mcp-failover-policy.md`
+- [[concepts/content-attribution-policy-2026-07-20]] — 內容歸屬守則:wiki vs notes 邊界。檔案:`concepts/content-attribution-policy-2026-07-20.md`
+- [[concepts/retail-sentiment-indicators]] — 散戶情緒指標:因果鏈第六層反向指標補課。檔案:`concepts/retail-sentiment-indicators.md`
+- [[concepts/taiwan-export-orders-semiconductor-cycle]] — 台灣出口與半導體景氣:因果鏈第二層補課。檔案:`concepts/taiwan-export-orders-semiconductor-cycle.md`
+- **2026-09-27 補列**:以上 4 檔原未列本索引（audit-file-index-sync.py 實測）
 - [[atlas-notes/03-system-health/investigations/2026-07-20-open-work-inventory]]（已搬到 atlas-notes，10.7KB；屬盤查類不應留在 wiki）
 
 > 2026-08-22 知識路由：queries/ 8 檔 + comparisons/ 1 檔已遷移至 atlas-notes/02-knowledge/，此兩區從 wiki 移除（純知識回原料庫）。歷史條目見 git log 與 log.md。
