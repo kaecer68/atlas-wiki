@@ -12,11 +12,11 @@ verification: 2026-09-27 L3 端點實跑（http_code + timestamp 見 `l3_endpoin
 l3_run_at: 2026-09-27
 l3_run_by: prime-agent（feat/20260927-l3-backfill-b3）
 l3_endpoints_probed:
-  - /api/stock/fundamentals?symbol=2330 → 200（PE 30.19／PB 9.57／DY 1.1）（2026-09-27T20:12:12+08:00）
-  - /api/stock/technical?symbol=2330&days=10 → 200（rsi14／sma20／sma50 皆 0）（2026-09-27T20:12:12+08:00）
-  - /api/backtest/signals → 200（active_signals null ⇒ 無 y）（2026-09-27T20:12:12+08:00）
-  - /api/dashboard/risk → 200（session_count 210;無 sharpe／R² 欄位）（2026-09-27T20:12:12+08:00）
-  - /api/regime/history?days=7 → 200（5 sessions;regime 全 RISK_ON;period consolidation／turnaround_up／turnaround_down）（2026-09-27T20:12:13+08:00）
+  - "/api/stock/fundamentals?symbol=2330 → 200（PE 30.19／PB 9.57／DY 1.1）（2026-09-27T20:12:12+08:00）"
+  - "/api/stock/technical?symbol=2330&days=10 → 200（rsi14／sma20／sma50 皆 0）（2026-09-27T20:12:12+08:00）"
+  - "/api/backtest/signals → 200（active_signals null ⇒ 無 y）（2026-09-27T20:12:12+08:00）"
+  - "/api/dashboard/risk → 200（session_count 210;無 sharpe／R² 欄位）（2026-09-27T20:12:12+08:00）"
+  - "/api/regime/history?days=7 → 200（5 sessions;regime 全 RISK_ON;period consolidation／turnaround_up／turnaround_down）（2026-09-27T20:12:13+08:00）"
   - 源碼代理（無 HTTP 端點）＝ internal/eval/pdp.go 的 PartialDependence;`go test ./internal/eval/` → 22 PASS／0 FAIL（含 TestPartialDependence）（2026-09-27T20:12:14+08:00）
 ---
 

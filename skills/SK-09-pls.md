@@ -12,15 +12,15 @@ verification: 2026-09-27 L3 端點實跑 (http_code + timestamp 見 `l3_endpoint
 l3_run_at: 2026-09-27
 l3_run_by: prime-agent（feat/20260927-l3-backfill-b2）
 l3_endpoints_probed:
-  - /api/stock/fundamentals?symbol=2330 → 200（PE 30.19/PB 9.57/DY 1.1）（2026-09-27T20:02:26+08:00）
-  - /api/stock/technical?symbol=2330&days=10 → 200（rsi14/sma20/sma50 皆 0）（2026-09-27T20:02:26+08:00）
-  - /api/dashboard/sessions → 200（90 sessions）（2026-09-27T20:03:05+08:00）
-  - /api/dashboard/risk → 200（無 R²/Sharpe → 不區分 IS/OOS）（2026-09-27T20:02:26+08:00）
-  - /api/dashboard/agent-observatory → 200（含 is_sharpe/oos_sharpe/is_oos_ratio/overfit_warning）（2026-09-27T20:05:30+08:00）
-  - /api/parameters → 200（oos_window_days 30、walk_forward_embargo_days 5）（2026-09-27T20:03:04+08:00）
-  - /api/strategies/layers → 200（L1:1/L2:2/L3:2/L4:4/L5:3）（2026-09-27T20:02:48+08:00）
-  - CLI（非 HTTP）: `-synthetic -model pls` → R²_OOS +0.9993（PASS）（2026-09-27T20:02:28+08:00）
-  - CLI 真實資料（負面）: `-model pls -data data/replay/merged.csv -symbol 0050.TW` → EXIT 1（stop_year=2020 / empty training data）（2026-09-27T20:05:30+08:00）
+  - "/api/stock/fundamentals?symbol=2330 → 200（PE 30.19/PB 9.57/DY 1.1）（2026-09-27T20:02:26+08:00）"
+  - "/api/stock/technical?symbol=2330&days=10 → 200（rsi14/sma20/sma50 皆 0）（2026-09-27T20:02:26+08:00）"
+  - "/api/dashboard/sessions → 200（90 sessions）（2026-09-27T20:03:05+08:00）"
+  - "/api/dashboard/risk → 200（無 R²/Sharpe → 不區分 IS/OOS）（2026-09-27T20:02:26+08:00）"
+  - "/api/dashboard/agent-observatory → 200（含 is_sharpe/oos_sharpe/is_oos_ratio/overfit_warning）（2026-09-27T20:05:30+08:00）"
+  - "/api/parameters → 200（oos_window_days 30、walk_forward_embargo_days 5）（2026-09-27T20:03:04+08:00）"
+  - "/api/strategies/layers → 200（L1:1/L2:2/L3:2/L4:4/L5:3）（2026-09-27T20:02:48+08:00）"
+  - "CLI（非 HTTP）: `-synthetic -model pls` → R²_OOS +0.9993（PASS）（2026-09-27T20:02:28+08:00）"
+  - "CLI 真實資料（負面）: `-model pls -data data/replay/merged.csv -symbol 0050.TW` → EXIT 1（stop_year=2020 / empty training data）（2026-09-27T20:05:30+08:00）"
 ---
 
 ## 一句話定位

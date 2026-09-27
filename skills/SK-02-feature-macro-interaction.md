@@ -12,11 +12,11 @@ verification: 2026-09-27 L3 端點實跑 4 端點全 200（http_code + timestamp
 l3_run_at: 2026-09-27
 l3_run_by: prime-agent（feat/20260927-l3-backfill-b1）
 l3_endpoints_probed:
-  - /api/macro/snapshot/latest → 200（41 序列）（2026-09-27T19:27:54+08:00）
-  - /api/macro/snapshot/timeline → 200（30 天日頻、missing_dates null）（2026-09-27T19:29:39+08:00）
-  - /api/stock/fundamentals?symbol=2330 → 200（PE 30.19/PB 9.57/DY 1.1）（2026-09-27T19:27:52+08:00）
-  - /api/stock/quote?symbol=2330 → 200（last 2475）（2026-09-27T19:28:18+08:00）
-  - /api/dashboard/sessions → 200（90 sessions）（2026-09-27T19:27:54+08:00）
+  - "/api/macro/snapshot/latest → 200（41 序列）（2026-09-27T19:27:54+08:00）"
+  - "/api/macro/snapshot/timeline → 200（30 天日頻、missing_dates null）（2026-09-27T19:29:39+08:00）"
+  - "/api/stock/fundamentals?symbol=2330 → 200（PE 30.19/PB 9.57/DY 1.1）（2026-09-27T19:27:52+08:00）"
+  - "/api/stock/quote?symbol=2330 → 200（last 2475）（2026-09-27T19:28:18+08:00）"
+  - "/api/dashboard/sessions → 200（90 sessions）（2026-09-27T19:27:54+08:00）"
 
 methodology_aligned: true
 atlas_constitution_ref: ATLAS_METHODOLOGY.md §五(策略矩陣:特徵工程需對位 7 時期 × 策略三分類,跨 regime 表現可能天差地別)(附註:2026-07-30 period_system 變動 — `period` 已是 PeriodDetector 真值,`source` 欄位正名 `regime_source` / `period_source`)

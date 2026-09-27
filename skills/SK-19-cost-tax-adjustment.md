@@ -12,7 +12,7 @@ verification: 2026-08-01 v0.9 結算跑過 L3 升 active:backtest_signals sharpe
 l3_run_at: 2026-09-27
 l3_run_by: prime-agent（PR feat/20260927-sk39-short-cost）
 l3_endpoints_probed:
-  - /api/parameters → 200 (11:30:42Z)｜/api/parameters/audit-log → 200 (11:31:04Z)
+  - "/api/parameters → 200 (11:30:42Z)｜/api/parameters/audit-log → 200 (11:31:04Z)"
   - /api/dashboard/tax-snapshot → 200 (11:30:42Z)｜/api/backtest/signals → 200 (11:30:42Z)｜/api/dashboard/risk → 200 (11:30:42Z)
 ---
 

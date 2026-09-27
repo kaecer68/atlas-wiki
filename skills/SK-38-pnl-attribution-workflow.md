@@ -12,11 +12,11 @@ verification: 2026-09-27 L3 實跑 5 端點(附 http_code 與 UTC timestamp,§�
 l3_run_at: 2026-09-27
 l3_run_by: prime-agent(PR feat/20260927-sk37-liquidity-and-attribution)
 l3_endpoints_probed:
-  - /api/dashboard/pnl-attribution → 200
-  - /api/strategies/foreign-3day-inflow/attribution → 200(attribution 為空)
-  - /api/field-contract → 200
-  - /api/experiment/diff?experiment_id=exec-growth-momentum-01-1775435882 → 404
-  - /api/experiment/history → 200(history 為空)
+  - "/api/dashboard/pnl-attribution → 200"
+  - "/api/strategies/foreign-3day-inflow/attribution → 200(attribution 為空)"
+  - "/api/field-contract → 200"
+  - "/api/experiment/diff?experiment_id=exec-growth-momentum-01-1775435882 → 404"
+  - "/api/experiment/history → 200(history 為空)"
 related:
   - skills/SK-22-ablation-analysis.md(缺口來源頁;本 PR 同步更新其未消化條目)
   - skills/SK-13-permutation-importance.md(排列重要性 vs 歸因)

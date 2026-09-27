@@ -12,14 +12,14 @@ verification: 2026-09-27 L3 端點實跑 8 端點全 200（http_code + timestamp
 l3_run_at: 2026-09-27
 l3_run_by: prime-agent（feat/20260927-l3-backfill-b1）
 l3_endpoints_probed:
-  - /api/field-contract → 200（2026-09-27T19:27:52+08:00）
-  - /api/macro/snapshot/latest → 200（2026-09-27T19:27:54+08:00）
-  - /api/stock/fundamentals?symbol=2330 → 200（2026-09-27T19:27:52+08:00）
-  - /api/stock/chips?symbol=2330 → 200（2026-09-27T19:27:52+08:00）
-  - /api/stock/technical?symbol=2330&days=10 → 200（2026-09-27T19:27:54+08:00）
-  - /api/stock/quote?symbol=2330 → 200（2026-09-27T19:28:18+08:00）
-  - /api/industry/sector-lookup?symbol=2330 → 200（2026-09-27T19:28:18+08:00）
-  - /api/dashboard/sessions → 200（90 sessions）（2026-09-27T19:27:54+08:00）
+  - "/api/field-contract → 200（2026-09-27T19:27:52+08:00）"
+  - "/api/macro/snapshot/latest → 200（2026-09-27T19:27:54+08:00）"
+  - "/api/stock/fundamentals?symbol=2330 → 200（2026-09-27T19:27:52+08:00）"
+  - "/api/stock/chips?symbol=2330 → 200（2026-09-27T19:27:52+08:00）"
+  - "/api/stock/technical?symbol=2330&days=10 → 200（2026-09-27T19:27:54+08:00）"
+  - "/api/stock/quote?symbol=2330 → 200（2026-09-27T19:28:18+08:00）"
+  - "/api/industry/sector-lookup?symbol=2330 → 200（2026-09-27T19:28:18+08:00）"
+  - "/api/dashboard/sessions → 200（90 sessions）（2026-09-27T19:27:54+08:00）"
 
 methodology_aligned: true
 atlas_constitution_ref: ATLAS_METHODOLOGY.md §一(投資哲學)+ §五(策略矩陣)(附註:2026-07-30 period_system 變動 — `period` 已是 PeriodDetector 真值,`source` 欄位正名 `regime_source` / `period_source`)

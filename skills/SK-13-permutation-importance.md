@@ -12,11 +12,11 @@ verification: 2026-09-27 L3 端點實跑（明細見 §驗證方式）:5 個端�
 l3_run_at: 2026-09-27
 l3_run_by: prime-agent（feat/20260927-l3-backfill-b3）
 l3_endpoints_probed:
-  - /api/stock/fundamentals?symbol=2330 與 /api/stock/technical?symbol=2330&days=10 → 皆 200（前者僅 4 欄;後者 rsi14／sma20／sma50 皆 0 ⇒ 不供應因子值）（2026-09-27T20:12:12+08:00）
-  - /api/backtest/signals → 200（active_signals null ⇒ 無 OOS y）（2026-09-27T20:12:12+08:00）
-  - /api/dashboard/risk → 200（session_count 210;無 importance／R² 欄位）（2026-09-27T20:12:12+08:00）
-  - /api/dashboard/correlation-matrix → 200（20 個策略／類股標的,非特徵層）（2026-09-27T20:12:13+08:00）
-  - /api/experiment/history → 200（空）;diff 缺 id／不存在 id → 400／404（2026-09-27T20:12:13+08:00）
+  - "/api/stock/fundamentals?symbol=2330 與 /api/stock/technical?symbol=2330&days=10 → 皆 200（前者僅 4 欄;後者 rsi14／sma20／sma50 皆 0 ⇒ 不供應因子值）（2026-09-27T20:12:12+08:00）"
+  - "/api/backtest/signals → 200（active_signals null ⇒ 無 OOS y）（2026-09-27T20:12:12+08:00）"
+  - "/api/dashboard/risk → 200（session_count 210;無 importance／R² 欄位）（2026-09-27T20:12:12+08:00）"
+  - "/api/dashboard/correlation-matrix → 200（20 個策略／類股標的,非特徵層）（2026-09-27T20:12:13+08:00）"
+  - "/api/experiment/history → 200（空）;diff 缺 id／不存在 id → 400／404（2026-09-27T20:12:13+08:00）"
   - 源碼代理（無 HTTP 端點）＝ internal/eval/importance.go ＋ internal/experiment/importance.go ＋ judge 掛載;`go test ./internal/eval/` → 22 PASS／0 FAIL（含 TestPermutationImportance）（2026-09-27T20:12:14+08:00）
 ---
 

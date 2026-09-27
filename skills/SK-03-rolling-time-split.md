@@ -8,19 +8,19 @@ tier: T3
 confidence: medium
 atlas_go_relevance: high
 mcp_tools_used: [universe_get_sessions]
-verification: 2026-09-27 L3 端點實跑 7 端點（http_code+ts 見 `l3_endpoints_probed`;明細見 §驗證方式）。實測更正與新證據:(1) `universe_get_sessions` 今日回 **90** sessions（滾動窗 2026-06-25~2026-09-27）,頁內「147」為 2026-08-02 快照（第五條鐵律）;(2) `universe_get_session_detail` 真實路徑 = `/api/dashboard/sessions/{session_id}`（session-20260927-daily → 200,outcome_count 24、position_count 5）;canary 值 `/api/dashboard/sessions/latest` → **404**（與 SK-37 同日一致,路徑陷阱）;(3) `parameters_get` 1669 keys 中 0 個命中 step_year/valid_length/first_train/test_end/split →「atlas 未由 HTTP 暴露 SK-03 三軸」由待查升為**已驗證的否定**;(4) **源碼級代理驗證（atlas 無此端點）**:`atlas/internal/backtest/rolling_split.go` 明寫「following the SK-03 specification」,預設 FirstTrainEnd=2007-12-31 / ValidLengthYears=2 / StepYears=1 / TestEnd=2022-04-30 / stopYear=2020 **與本頁規格逐項相同**,並由 `cmd/backtest-pipeline` 的 `-first-train-end/-valid-years/-step-years/-test-end` 暴露 → 三軸存在,只是不在 MCP／HTTP 面;(5) `risk_get_metrics`（`/api/dashboard/risk`）今日 session_count **210**、**無 sharpe 欄位**（0 值僅 var_95/99、cvar_95,`insufficient_data=1`）→ 仍無法由此端點做分段績效對比。歷史:2026-08-02 v0.9 結算 L3 升 active（client pandas 三段式 168/24/144 月）。
+verification: 2026-09-27 L3 端點實跑 7 端點（http_code+ts 見 `l3_endpoints_probed`;明細見 §驗證方式）。實測更正:(1) `universe_get_sessions` 今日回 **90** sessions（滾動窗）,頁內「147」為 2026-08-02 快照（第五條鐵律）;(2) `universe_get_session_detail` 真實路徑 = `/api/dashboard/sessions/{session_id}`（session-20260927-daily → 200,outcome_count 24、position_count 5）;canary 值 `/api/dashboard/sessions/latest` → **404**（同日 SK-37 一致）;(3) `parameters_get` 1669 keys 中 0 個命中 step_year/valid_length/first_train/test_end/split →「atlas 未由 HTTP 暴露 SK-03 三軸」由待查升為**已驗證的否定**;(4) **源碼級代理驗證（atlas 無此端點）**:`atlas/internal/backtest/rolling_split.go` 明寫「following the SK-03 specification」,預設 FirstTrainEnd=2007-12-31 / ValidLengthYears=2 / StepYears=1 / TestEnd=2022-04-30 / stopYear=2020 **與本頁規格逐項相同**,並由 `cmd/backtest-pipeline` 的 `-first-train-end/-valid-years/-step-years/-test-end` 暴露 → 三軸存在,只是不在 MCP／HTTP 面;(5) `risk_get_metrics`（`/api/dashboard/risk`）今日 session_count **210**、**無 sharpe 欄位**（0 值僅 var_95/99、cvar_95,`insufficient_data=1`）→ 仍無法由此端點做分段績效對比。歷史:2026-08-02 v0.9 結算 L3 升 active（client pandas 三段式 168/24/144 月）。
 l3_run_at: 2026-09-27
 l3_run_by: prime-agent（feat/20260927-l3-backfill-b1）
 l3_endpoints_probed:
-  - /api/dashboard/sessions → 200（90 sessions）（2026-09-27T19:27:54+08:00）
-  - /api/dashboard/sessions/session-20260927-daily → 200（outcome_count 24）（2026-09-27T19:28:05+08:00）
-  - /api/dashboard/sessions/latest → 404（canary 對照值,路徑陷阱）（2026-09-27T19:27:54+08:00）
-  - /api/dashboard/risk → 200（session_count 210;**無 sharpe 欄位**;var_95/99、cvar_95 皆 0 且 insufficient_data=1）（2026-09-27T19:27:54+08:00）
-  - /api/backtest/status → 200（last_auto_date 2026-09-23）（2026-09-27T19:27:54+08:00）
-  - /api/backtest/signals → 200（active_signals null）（2026-09-27T19:27:54+08:00）
-  - /api/parameters → 200（1669 keys;step_year/valid_length/first_train/test_end 皆 0 命中）（2026-09-27T19:27:54+08:00）
-  - /api/backtest/snapshots → 200（20 筆日快照 2026-08-25~09-23,17 筆 sharpe_short 非 0）（2026-09-27T19:30:53+08:00）
-  - 源碼級代理（無 HTTP 端點）: atlas/internal/backtest/rolling_split.go + atlas/cmd/backtest-pipeline（2026-09-27T19:30:33+08:00）
+  - "/api/dashboard/sessions → 200（90 sessions）（2026-09-27T19:27:54+08:00）"
+  - "/api/dashboard/sessions/session-20260927-daily → 200（outcome_count 24）（2026-09-27T19:28:05+08:00）"
+  - "/api/dashboard/sessions/latest → 404（canary 對照值,路徑陷阱）（2026-09-27T19:27:54+08:00）"
+  - "/api/dashboard/risk → 200（session_count 210;**無 sharpe 欄位**;var_95/99、cvar_95 皆 0 且 insufficient_data=1）（2026-09-27T19:27:54+08:00）"
+  - "/api/backtest/status → 200（last_auto_date 2026-09-23）（2026-09-27T19:27:54+08:00）"
+  - "/api/backtest/signals → 200（active_signals null）（2026-09-27T19:27:54+08:00）"
+  - "/api/parameters → 200（1669 keys;step_year/valid_length/first_train/test_end 皆 0 命中）（2026-09-27T19:27:54+08:00）"
+  - "/api/backtest/snapshots → 200（20 筆日快照 2026-08-25~09-23,17 筆 sharpe_short 非 0）（2026-09-27T19:30:53+08:00）"
+  - "源碼級代理（無 HTTP 端點）: atlas/internal/backtest/rolling_split.go + atlas/cmd/backtest-pipeline（2026-09-27T19:30:33+08:00）"
 
 ---
 
@@ -61,7 +61,7 @@ Step 3: 呼叫 `risk_get_metrics` 比對該 session 樣本外指標(drawdown、S
 
 | # | 端點（GET） | http_code | 實測結果 | timestamp（UTC+0800） |
 |---|---|---|---|---|
-| 1 | `/api/dashboard/sessions` | 200 | 90 sessions（滾動窗 2026-06-25~2026-09-27） | 2026-09-27T19:27:54+08:00 |
+| 1 | `/api/dashboard/sessions` | 200 | 90 sessions（滾動窗） | 2026-09-27T19:27:54+08:00 |
 | 2 | `/api/dashboard/sessions/session-20260927-daily` | 200 | outcome_count 24 / summary.position_count 5 | 2026-09-27T19:28:05+08:00 |
 | 3 | `/api/dashboard/sessions/latest` | **404** | canary 對照值（路徑陷阱） | 2026-09-27T19:27:54+08:00 |
 | 4 | `/api/dashboard/risk` | 200 | session_count 210；**無 sharpe 欄位**；`risk_snapshot` 的 var_95 為 0（insufficient_data=1） | 2026-09-27T19:27:54+08:00 |

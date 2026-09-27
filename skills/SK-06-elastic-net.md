@@ -8,15 +8,15 @@ tier: T3
 confidence: medium
 atlas_go_relevance: high
 mcp_tools_used: [stock_get_fundamentals, backtest_signals, risk_get_metrics]
-verification: 2026-09-27 L3 端點實跑 (http_code + timestamp 見 `l3_endpoints_probed`;明細見 §驗證方式):4 個 HTTP 端點全 200,但**皆無 R²_oos／係數欄位** → 本頁 `R²_oos=0.9996` 為 2026-08-02 client 端 sklearn 快照,今日無法由 atlas 複驗。新增:**atlas repo 內有原生 ElasticNet**(`internal/ml/elasticnet.go`,座標下降 + 標準化 + 內建 `AlphaAuto` 3-fold CV,另有 `UseHuber`/`Xi` 穩健加權),可用 `cmd/backtest-pipeline -model elasticnet` 實跑 → 今日 `-synthetic` exit 0 但 **R²_OOS +0.6406（✗ WARN;同批同 binary 的 OLS 為 +0.9992）**,原因是 CLI 的 `newModel("elasticnet")` 傳入 `AlphaAuto: false, Alpha: 1.0` 固定值 → **本頁「alpha 由 CV 自動選」在 CLI 路徑不成立**;`UseHuber` 全 repo 無任何呼叫者啟用（只有 `internal/ml/elasticnet.go` 自身引用）。歷史:2026-08-02 v0.9 結算跑過 L3 升 active（client 端 sklearn 1.8.0 ElasticNetCV,l1_ratio=[0.1,0.5,0.9],R²_oos=0.9996）。
+verification: "2026-09-27 L3 端點實跑 (http_code + timestamp 見 `l3_endpoints_probed`;明細見 §驗證方式):4 個 HTTP 端點全 200,但**皆無 R²_oos／係數欄位** → 本頁 `R²_oos=0.9996` 為 2026-08-02 client 端 sklearn 快照,今日無法由 atlas 複驗。新增:**atlas repo 內有原生 ElasticNet**(`internal/ml/elasticnet.go`,座標下降 + 標準化 + 內建 `AlphaAuto` 3-fold CV,另有 `UseHuber`/`Xi` 穩健加權),可用 `cmd/backtest-pipeline -model elasticnet` 實跑 → 今日 `-synthetic` exit 0 但 **R²_OOS +0.6406（✗ WARN;同批同 binary 的 OLS 為 +0.9992）**,原因是 CLI 的 `newModel(\"elasticnet\")` 傳入 `AlphaAuto: false, Alpha: 1.0` 固定值 → **本頁「alpha 由 CV 自動選」在 CLI 路徑不成立**;`UseHuber` 全 repo 無任何呼叫者啟用（只有 `internal/ml/elasticnet.go` 自身引用）。歷史:2026-08-02 v0.9 結算跑過 L3 升 active（client 端 sklearn 1.8.0 ElasticNetCV,l1_ratio=[0.1,0.5,0.9],R²_oos=0.9996）。"
 l3_run_at: 2026-09-27
 l3_run_by: prime-agent（feat/20260927-l3-backfill-b2）
 l3_endpoints_probed:
-  - /api/stock/fundamentals?symbol=2330 → 200（PE 30.19/PB 9.57/DY 1.1,X 來源）（2026-09-27T20:02:26+08:00）
-  - /api/backtest/signals → 200（active_signals null,無 OOS y）（2026-09-27T20:02:26+08:00）
-  - /api/dashboard/risk → 200（session_count 210;無 R²／係數欄位）（2026-09-27T20:02:26+08:00）
-  - /api/field-contract → 200（2262 欄;r2 / r_squared 0 命中）（2026-09-27T20:03:56+08:00）
-  - CLI 代理（無 HTTP 端點）: atlas repo `-synthetic -model elasticnet` → R²_OOS +0.6406（WARN;同批 OLS +0.9992）（2026-09-27T20:02:28+08:00）
+  - "/api/stock/fundamentals?symbol=2330 → 200（PE 30.19/PB 9.57/DY 1.1,X 來源）（2026-09-27T20:02:26+08:00）"
+  - "/api/backtest/signals → 200（active_signals null,無 OOS y）（2026-09-27T20:02:26+08:00）"
+  - "/api/dashboard/risk → 200（session_count 210;無 R²／係數欄位）（2026-09-27T20:02:26+08:00）"
+  - "/api/field-contract → 200（2262 欄;r2 / r_squared 0 命中）（2026-09-27T20:03:56+08:00）"
+  - "CLI 代理（無 HTTP 端點）: atlas repo `-synthetic -model elasticnet` → R²_OOS +0.6406（WARN;同批 OLS +0.9992）（2026-09-27T20:02:28+08:00）"
 ---
 
 ## 一句話定位

@@ -12,11 +12,11 @@ verification: 2026-09-27 L3 端點實跑（http_code + timestamp 見 `l3_endpoin
 l3_run_at: 2026-09-27
 l3_run_by: prime-agent（feat/20260927-l3-backfill-b3）
 l3_endpoints_probed:
-  - /api/stock/fundamentals?symbol=2330 → 200（PE 30.19／PB 9.57／DY 1.1;與 2026-07-30 快照逐字相同）（2026-09-27T20:12:12+08:00）
-  - /api/stock/technical?symbol=2330&days=10 → 200（close 2475、date 2026-09-24;rsi14／sma20／sma50 皆 0）（2026-09-27T20:12:12+08:00）
-  - /api/backtest/signals → 200（active_signals null ⇒ 無 OOS y 可取）（2026-09-27T20:12:12+08:00）
-  - /api/dashboard/risk → 200（session_count 210;無 NN／R² 欄位）（2026-09-27T20:12:12+08:00）
-  - 源碼代理（無 HTTP 端點）＝ atlas `git grep -i` neural／MLP／hidden_layer／backprop／relu → 0 命中;`ls internal/ml/` ＝ ols／pcr／pls／elasticnet／randomforest／spline／trainer（2026-09-27T20:12:14+08:00）
+  - "/api/stock/fundamentals?symbol=2330 → 200（PE 30.19／PB 9.57／DY 1.1;與 2026-07-30 快照逐字相同）（2026-09-27T20:12:12+08:00）"
+  - "/api/stock/technical?symbol=2330&days=10 → 200（close 2475、date 2026-09-24;rsi14／sma20／sma50 皆 0）（2026-09-27T20:12:12+08:00）"
+  - "/api/backtest/signals → 200（active_signals null ⇒ 無 OOS y 可取）（2026-09-27T20:12:12+08:00）"
+  - "/api/dashboard/risk → 200（session_count 210;無 NN／R² 欄位）（2026-09-27T20:12:12+08:00）"
+  - "源碼代理（無 HTTP 端點）＝ atlas `git grep -i` neural／MLP／hidden_layer／backprop／relu → 0 命中;`ls internal/ml/` ＝ ols／pcr／pls／elasticnet／randomforest／spline／trainer（2026-09-27T20:12:14+08:00）"
   - CLI 代理 ＝ `go run ./cmd/backtest-pipeline -synthetic -model nn` → exit 1 被拒;-model ols R²_OOS +0.9992、-model rf +0.9909（2026-09-27T20:12:13+08:00）
 ---
 

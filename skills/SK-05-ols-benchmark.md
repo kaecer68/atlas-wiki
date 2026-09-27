@@ -12,12 +12,12 @@ verification: 2026-09-27 L3 端點實跑 (http_code + timestamp 見 `l3_endpoint
 l3_run_at: 2026-09-27
 l3_run_by: prime-agent（feat/20260927-l3-backfill-b1）
 l3_endpoints_probed:
-  - /api/stock/fundamentals?symbol=2330 → 200（PE 30.19/PB 9.57/DY 1.1,X 來源）（2026-09-27T19:27:52+08:00）
-  - /api/backtest/signals → 200（active_signals null，無 OOS y）（2026-09-27T19:27:54+08:00）
-  - /api/dashboard/risk → 200（session_count 210；無 R² 欄位）（2026-09-27T19:27:54+08:00）
-  - /api/field-contract → 200（2262 欄；r2/r_squared 0 命中）（2026-09-27T19:27:52+08:00）
-  - /api/parameters → 200（`experiment.oos_window_days`=30、`experiment.walk_forward_embargo_days`=5）（2026-09-27T19:27:54+08:00）
-  - CLI 代理（無 HTTP 端點）: go run ./cmd/backtest-pipeline -synthetic -model ols → R²_OOS +0.9993（2026-09-27T19:30:33+08:00）
+  - "/api/stock/fundamentals?symbol=2330 → 200（PE 30.19/PB 9.57/DY 1.1,X 來源）（2026-09-27T19:27:52+08:00）"
+  - "/api/backtest/signals → 200（active_signals null，無 OOS y）（2026-09-27T19:27:54+08:00）"
+  - "/api/dashboard/risk → 200（session_count 210；無 R² 欄位）（2026-09-27T19:27:54+08:00）"
+  - "/api/field-contract → 200（2262 欄；r2/r_squared 0 命中）（2026-09-27T19:27:52+08:00）"
+  - "/api/parameters → 200（`experiment.oos_window_days`=30、`experiment.walk_forward_embargo_days`=5）（2026-09-27T19:27:54+08:00）"
+  - "CLI 代理（無 HTTP 端點）: go run ./cmd/backtest-pipeline -synthetic -model ols → R²_OOS +0.9993（2026-09-27T19:30:33+08:00）"
 
 ---
 
