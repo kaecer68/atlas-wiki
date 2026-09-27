@@ -48,7 +48,7 @@ python3 skills/_scripts/new-skill-page.py --id SK-37 --title "..."   # 產生合
 
 ## size 分類上限（配套 `_method.md` 六條鐵律 6；2026-09-27 kaecer 拍板）
 
-**為什麼改**：舊制「所有 .md ≤ 9000 bytes」與現實脫節——基準 `main b4f9524`（PR #75 後）tracked `.md` 138 檔 / 1,081,291 B，其中 **32 檔 / 556,389 B（51.5%）> 9,000**。抽樣證明超標不是冗餘：`concepts/` 13 個超標檔兩兩 line-set **Jaccard < 5%**；`entities/` 重疊 5–10% 且只來自頁面樣板（`未消化` / `atlas 對位` / `散戶解讀`）⇒ **錯的是規則文字，不是內容**。
+**為什麼改**：舊制「所有 .md ≤ 9000」與現實脫節——基準 `main b4f9524` tracked `.md` 138 檔 / 1,081,291 B，**32 檔（51.5%）> 9,000**。超標不是冗餘：`concepts/` 13 個超標檔兩兩 line-set **Jaccard < 5%**；`entities/` 重疊 5–10% 只來自頁面樣板 ⇒ **錯的是規則文字，不是內容**。
 
 | 類別 | 上限 | 量測（2026-09-27） | 強制 |
 |---|---|---|---|
@@ -59,23 +59,24 @@ python3 skills/_scripts/new-skill-page.py --id SK-37 --title "..."   # 產生合
 | `entities/**`（7 檔 / 86,003 B） | 30,000 B | 最大 `l1-t2-petrodollar-hormuz.md` **25,016** | advisory |
 | `docs/**`（2 檔 / 15,526 B） | 12,000 B | 最大 `git-merge-protocol.md` **11,190** | advisory |
 | `_method.md` / `_method_amendment_history.md` | 9,000 / 5,000 B | **8,968** / 2,783 | advisory |
-| append-only（11 檔 / 206,936 B） | 無硬上限 | `skills/_inbox_archive.md` 50,331、`_archive/log-2026-07.md` 38,951、`skills/_archive/_methodology_alignment_audit_with_fileline.md` 30,522；**需分流**（超門檻即歸檔/切月；PR #76 已示範 `log.md` 月切 46,017 → 2,302） | — |
+| append-only（11 檔 / 206,936 B） | 無硬上限 | 最大 `skills/_inbox_archive.md` 50,331；**需分流**（超門檻即歸檔/切月；PR #76 示範 `log.md` 46,017 → 2,302） | — |
 | `_internal/**`（14 檔 / 81,195 B） | 無硬上限 | **結案即瘦身**（2026-09-27 示範 16 → 4 檔，−133,433 B） | — |
-| 未列 `*.md`（templates / summaries / `skills/_*.md`） | 9,000 B（舊制沿用） | 最大 `skills/_manifest_coverage_routing.md` 19,810 | advisory |
+| `SCHEMA.md`（1 檔 / 9,580 B） | 12,000 B | 與 `docs/**` 同類（規格/協定本體，非知識頁）；**原被入口類 9,000 誤涵蓋** | advisory |
+| `templates/**`（21 檔 / 76,708 B） | 12,000 B | 觸發模板＝cron 觸發定義（產物類，非知識頁）；最大 `trigger-megaproject-2-quarter-lag.md` **9,996** | advisory |
+| `skills/_manifest_coverage_routing.md`（1 檔 / 19,810 B） | 30,000 B | 歸屬判準表/manifest（資料型參考，非敘事頁）；現 **19,810** | advisory |
+| 未列 `*.md`（summaries / 其餘 `skills/_*.md`） | 9,000 B（舊制沿用） | 目前無超標者 | advisory |
 
-**理由欄**：`concepts/**`、`entities/**` 是參考字典/指南，硬砍到 9,000 B 會毀損完整條目——上限的目的是擋膨脹，不是逼人刪事實。`docs/**` 是治理文件（協定/流程），比 SK 決策卡長是常態。append-only 日誌（含 `_archive/**`、`skills/_archive/**` 既有歸檔）只受**分流紀律**管（歸檔/切月），不受硬上限管；`skills/_self-audit*.md` 不入 git（`.gitignore`），膨脹時重組格式而非精簡內容。
+**理由欄**：`concepts/**`、`entities/**`、`_manifest_coverage_routing.md` 屬**參考/資料型**（字典、指南、判準表），硬砍會刪事實；`docs/**`、`SCHEMA.md`、`templates/**` 屬**規格/產物型**（協定、schema、cron 觸發定義），本質較長。append-only 只受**分流紀律**管（歸檔/切月），不受硬上限管（`_archive/**`、`skills/_archive/**` 於 PR #76 月切後併入）；`skills/_self-audit*.md` 不入 git，膨脹時重組格式而非精簡內容。
 
-**誤判更正**：`docs/git-merge-protocol.md` 先前被記為違規，只因舊規則寫「所有 .md ≤ 9000」；依類別制上限 12,000 B，該檔（11,190 B）**本來就合規**。
+**誤判更正**：`docs/git-merge-protocol.md`（11,190）與 `SCHEMA.md`（9,580）先前被記為違規，只因舊制「所有 .md ≤ 9000」；依類別制**本來就合規**。
 
-**2026-09-27 補**：`_archive/**`＋`skills/_archive/**` 於 PR #76（`log.md` 月切）後補入 append-only 類——原表只列 `*_archive.md`，未涵蓋歸檔目錄。
-
-**已知落差（advisory，不擋 CI）**：`skills/_manifest_coverage_routing.md` 19,810 B（未列類別）、`SCHEMA.md` 9,580 B（入口/索引 9,000）、`templates/trigger-megaproject-2-quarter-lag.md` 9,996 B（未列類別）。處理方式：歸類或瘦身，另案。
+**已知落差：0**（2026-09-27 歸類完成）。上表已涵蓋 repo 內全部 tracked `.md`；`git ls-files '*.md' | xargs wc -c | sort -n | tail -40` 逐檔可驗。
 
 **驗收（本機唯讀）**：
 
 ```bash
-git ls-files '*.md' | xargs wc -c | sort -n | tail -40   # 逐檔 size，對照上表類別
-make check-skill-pages                                    # CI 唯一硬檢項：SK 頁 ≤ 9000 + frontmatter
+git ls-files '*.md' | xargs wc -c | sort -n | tail -40   # 逐檔對照上表類別
+make check-skill-pages                                    # CI 唯一硬檢：SK 頁 ≤ 9000 + frontmatter
 ```
 
 

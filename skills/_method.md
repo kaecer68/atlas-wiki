@@ -37,14 +37,14 @@ amendable_by: kaecer
 | 類別 | 上限 | 理由(量測 2026-09-27) |
 |---|---|---|
 | `skills/SK-*.md` | 9,000 B | CI **實檢**;最大 8,989 |
-| 入口/索引 `SK-00`/`_knowledge-router`/`_consult-index`/`index.md`/`README.md`/`SCHEMA.md` | 9,000 B | 只導向不承載內容;最大 8,851 |
+| 入口/索引 `SK-00`/`_knowledge-router`/`_consult-index`/`index.md`/`README.md` | 9,000 B | 只導向不承載內容;最大 8,851 |
 | `AGENTS.md` | 12,500 B | §10 自訂(注入檔 token 預算);現 11,027 |
-| `concepts/**`、`entities/**` | 30,000 B | 參考字典/指南勿硬砍;最大 28,029 |
-| `docs/**` | 12,000 B | 治理文件;最大 11,190(舊制誤判為違規) |
+| `concepts/**`、`entities/**`、`_manifest_coverage_routing.md` | 30,000 B | 參考/資料型勿硬砍;最大 28,029 |
+| `docs/**`、`SCHEMA.md`、`templates/**` | 12,000 B | 規格/產物型;最大 11,190(舊制誤判) |
 | `_method.md`/`_method_amendment_history.md` | 9,000/5,000 B | 規範本體自限 |
 | append-only `log.md`/`_self-audit*.md`/`_inbox.md`/`*_archive.md`/`_archive/**`+`skills/_archive/**` | 無上限 | 超門檻即歸檔/切月(如 `log.md` 月切);`_inbox.md` ≤ 12,000 |
 | `_internal/**` | 無上限 | 結案即瘦身(2026-09-27 示範 16→4 檔) |
-| 未列 `*.md`(templates/summaries/`skills/_*.md`) | 9,000 B | 舊制沿用,未逐類量測 |
+| 未列 `*.md`(summaries/其餘 `skills/_*.md`) | 9,000 B | 舊制沿用 |
 
 **強制**:CI `size-check` 只硬檢 SK 頁(`_inbox.md` warn-only);餘類別 advisory。明細/落差/驗收見 `_skill-structure-guard.md §size 分類上限`。
 
