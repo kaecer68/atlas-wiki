@@ -94,7 +94,7 @@ contradictions: []
 | 主力 | Major Players | 市場口語，指大額交易人或具備資訊優勢的群體 | → 大額交易人、→ 主力指標 |
 | 大額交易人 | Block Trader | 單筆成交達一定金額（如 100 萬以上）的買賣方，常見於董監事或法人交易 | → 主力、→ 內部人持股 |
 | 內部人 | Insider | 公司董監事、經理人、大股東，受《證交法》規範持股異動申報 | → 內部人持股、→ 申報 |
-| [[concepts/taiwan-money-flow-seven-institutional-buckets\|三大法人]] | Three Major Institutional Investors | 外資 + 投信 + 自營商 的合稱，每日買賣超合計為籌碼面核心訊號 | → 法人、→ 買賣超 |
+| [[concepts/taiwan-money-flow-seven-institutional-buckets|三大法人]] | Three Major Institutional Investors | 外資 + 投信 + 自營商 的合稱，每日買賣超合計為籌碼面核心訊號 | → 法人、→ 買賣超 |
 
 ---
 

@@ -145,4 +145,4 @@ l3_endpoints_probed:
 - ❌ 不要在未完成 60 交易日校準前把狀態改成 `active`。
 - ❌ 不要繞過 `_consult-index.md` 留痕。
 
-參見:[[SK-31-ai-investment-cycle-2026]](本模板的母頁)、[[templates/trigger-equipment-capex-external-report-cycle.md]](#15,週期型)、[[templates/trigger-megaproject-2-quarter-lag.md]](#14,設備鏈 lag)
+參見:[[SK-31-ai-investment-cycle-2026]](本模板的母頁)、[[templates/trigger-equipment-capex-external-report-cycle]](#15,週期型)、[[templates/trigger-megaproject-2-quarter-lag]](#14,設備鏈 lag)
