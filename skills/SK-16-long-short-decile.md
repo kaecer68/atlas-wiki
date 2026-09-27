@@ -105,7 +105,7 @@ atlas 沒有單一「long_short_decile」端點,但對位的核心數據 + 驗�
 
 ## 未消化 / 待補
 
-- [ ] SK-17 加權公式與 atlas 權重口徑的差異**只做了一半**:2026-09-27 實跑確認 `risk_get_metrics` **根本沒有權重欄位**(只回 var_95/99、cvar_95、max_drawdown_pct、session_count 210、data_points 209、insufficient_data 1),權重改看 `risk_exposure`(同日 200:position_count 3、cash_ratio 0.5228、sector_exposure)。**實際加權公式逐項比對仍未做**,需與 SK-17 一起跑。
+> **2026-09-27 batch#4 結案（移出本段）**:加權公式比對**已完成** —— atlas 唯一權重欄位 `risk_exposure.concentration[].weight` = `market_value / portfolio_value`（**現金入分母**）:2609.TW 0.16183、00713.TW 0.16134、2603.TW 0.15399,合計 0.4771 = 1 − cash_ratio 0.5228 ⇒ 與 SK-17 的 equal-weight `1/N` **不同口徑**（3 檔等權各 0.3333、不含現金）。明細見 SK-17 §驗證方式。
 
 ## 反向鏈接
 
