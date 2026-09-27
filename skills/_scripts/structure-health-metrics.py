@@ -15,6 +15,12 @@ structure-health-metrics.py — 結構健康度量測（反補丁機制 M7，202
   5. 超 9000 bytes 頁數                                  ← 目標 0
   6. frontmatter 缺欄頁數                                ← 目標 0
   7. skills/ 未提交檔數＋最舊年齡（>48h 視為漂移）          ← 目標 0
+  8. L3 覆蓋率：active 頁中具備三項 l3_* 欄位者（N/M ＋ %），並列出
+     「active 但無 L3 證據」清單（claimed but unverified watch list）
+     ※ 2026-09-27 kaecer 拍板：只做**可見度**，不設硬門檻、不進 verdict
+       （37 頁合法頁從未跑過 L3；把 L3 變成硬 gate 會誤殺它們）。
+       JSON key：active_pages / l3_covered_pages / l3_coverage_pct /
+                 active_without_l3_pages（完整清單；Markdown 會截斷）
 
 用法:
   python3 skills/_scripts/structure-health-metrics.py [--skills-dir skills] [--json]
@@ -25,11 +31,18 @@ import argparse
 import importlib.util
 import json
 import os
+import re
 import sys
 import time
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
+
+# 指標 8：L3 端點實測證據（三欄齊全才算「有證據」）
+L3_FIELDS = ("l3_run_at", "l3_run_by", "l3_endpoints_probed")
+# Markdown 的 watch list 最多列幾個名字（完整清單見 --json）
+WATCHLIST_MD_LIMIT = 8
+FM_RE = re.compile(r"^---\n(.*?)\n---", re.DOTALL)
 
 
 def _load(name, filename):
@@ -37,6 +50,30 @@ def _load(name, filename):
     mod = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(mod)
     return mod
+
+
+def l3_coverage(files):
+    """指標 8：L3 覆蓋率（只做可見度,不設門檻）。
+
+    回傳 (active 頁名, 具三欄 l3_* 的頁名, active 但無 L3 證據的頁名)。
+    「有證據」= frontmatter 同時出現 l3_run_at / l3_run_by / l3_endpoints_probed。
+    """
+    active, covered, missing = [], [], []
+    for f in files:
+        m = FM_RE.match(Path(f).read_text(encoding="utf-8"))
+        if not m:
+            continue
+        fm = m.group(1)
+        st = re.search(r"^status:\s*(\S+)", fm, re.MULTILINE)
+        if not st or st.group(1) != "active":
+            continue
+        name = os.path.basename(f)
+        active.append(name)
+        if all(re.search(rf"^{k}:", fm, re.MULTILINE) for k in L3_FIELDS):
+            covered.append(name)
+        else:
+            missing.append(name)
+    return active, covered, missing
 
 
 def collect(skills_dir, repo_root):
@@ -76,6 +113,8 @@ def collect(skills_dir, repo_root):
             ages.append((now - f.stat().st_mtime) / 3600.0)
     oldest = max(ages) if ages else 0.0
 
+    active, l3_covered, l3_missing = l3_coverage(files)
+
     return {
         "generated_at": time.strftime("%Y-%m-%dT%H:%M:%S%z"),
         "pages": len(files),
@@ -87,7 +126,27 @@ def collect(skills_dir, repo_root):
         "frontmatter_incomplete_pages": fm_bad,
         "uncommitted_skill_files": len(paths),
         "oldest_uncommitted_hours": round(oldest, 1),
+        "active_pages": len(active),
+        "l3_covered_pages": len(l3_covered),
+        "l3_coverage_pct": round(100.0 * len(l3_covered) / len(active), 1) if active else 0.0,
+        "active_without_l3_pages": l3_missing,
     }
+
+
+def l3_md_lines(m):
+    """指標 8 的 Markdown 兩行（覆蓋率＋watch list；watch list 過長則截斷）。"""
+    missing = m["active_without_l3_pages"]
+    lines = [
+        f"- L3 覆蓋率：{m['l3_covered_pages']}/{m['active_pages']}"
+        f"（{m['l3_coverage_pct']}%｜active 頁具 l3_run_at／l3_run_by／l3_endpoints_probed；可見度指標，非門檻）"
+    ]
+    if not missing:
+        lines.append("- active 但無 L3 證據（claimed but unverified）：0 頁")
+        return lines
+    shown = "、".join(n[:-3] if n.endswith(".md") else n for n in missing[:WATCHLIST_MD_LIMIT])
+    tail = f"…（餘 {len(missing) - WATCHLIST_MD_LIMIT} 頁見 --json）" if len(missing) > WATCHLIST_MD_LIMIT else ""
+    lines.append(f"- active 但無 L3 證據（claimed but unverified）：{len(missing)} 頁｜{shown}{tail}")
+    return lines
 
 
 def verdict(m):
@@ -125,6 +184,8 @@ def main():
     print(f"- 超 9000 bytes 頁數：{m['size_over_limit_pages']}（目標 0）")
     print(f"- frontmatter 缺欄頁數：{m['frontmatter_incomplete_pages']}（目標 0）")
     print(f"- skills/ 未提交：{m['uncommitted_skill_files']} 檔，最舊 {m['oldest_uncommitted_hours']}h（目標：0 檔 >48h）")
+    for line in l3_md_lines(m):
+        print(line)
     if v != "PASS":
         print()
         print(f"⚠️ 漂移項：{'、'.join(bad) if bad else ''}{'｜未提交超過 48h' if stale else ''}")

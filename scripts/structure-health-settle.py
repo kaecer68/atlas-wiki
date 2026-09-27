@@ -11,6 +11,12 @@ structure-health-settle.py — 把結構健康度**自動接進結算**（M7 常
 2. `skills/_self-audit.md` 尾端（若存在）— 追加同一筆（該檔為跨 session 審計日誌，本 repo 既有結算落點；gitignored）
    ※ 只在檔案已存在時追加，不建立也不覆寫 hermes 的結算流程
 
+## L3 覆蓋率（2026-09-27 kaecer 拍板：可見度,非門檻）
+指標 8（L3 覆蓋率 ＋ 「active 但無 L3 證據」watch list）由
+`skills/_scripts/structure-health-metrics.py` 輸出；本檔對該輸出是**整段轉貼**，
+故新指標自動帶進結算，無需在此另寫邏輯，也不新增任何硬門檻
+（37 頁合法頁從未跑過 L3；設成 gate 會誤殺它們）。
+
 ## 用法
   python3 scripts/structure-health-settle.py            # 追加一筆
   python3 scripts/structure-health-settle.py --dry-run  # 只印不寫
