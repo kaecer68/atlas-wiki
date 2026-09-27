@@ -33,9 +33,12 @@ jobs:
           path: atlas-go
           sparse-checkout: |
             cmd/atlas-mcp/server
+            internal/narrative
       - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
+      - name: detector 數對齊（wiki ↔ atlas-go 權威值）
+        run: python3 skills/_scripts/check-detector-count-sync.py --atlas-go-dir atlas-go
       - name: 執行 audit 並驗證輸出
         run: |
           OUT=$(python3 skills/_scripts/audit-atlas-endpoints.py --atlas-mcp-dir atlas-go/cmd/atlas-mcp/server 2>&1)
@@ -208,6 +211,7 @@ jobs:
           path: atlas-go
           sparse-checkout: |
             cmd/atlas-mcp/server
+            internal/narrative
       - uses: actions/setup-python@v6
         with:
           python-version: "3.12"

@@ -5,13 +5,13 @@
 SHELL := /bin/bash
 PY    := python3
 
-.PHONY: help ci-gate ci-fast ci-full check-actionlint check-timestamp check-audit check-skill-pages check-skill-structure check-stale check-retrieval check-wiki-pages structure-metrics check-size check-frontmatter pre-commit-install uninstall-hooks verify-clean test sync-imac
+.PHONY: help ci-gate ci-fast ci-full check-actionlint check-timestamp check-audit check-skill-pages check-skill-structure check-stale check-retrieval check-wiki-pages check-detector-count structure-metrics check-size check-frontmatter pre-commit-install uninstall-hooks verify-clean test sync-imac
 
 help:                   ## 列出所有 target
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN{FS=":.*?## "}{printf "  %-22s %s\n", $$1, $$2}'
 
 ci-gate:                ## 快速門禁(對位 GitHub CI 9 job=8 驗證+notify(2026-09-27 實測) + skills 索引同步 R1+R3+R4)
-ci-gate: check-timestamp check-audit check-size check-skill-structure check-frontmatter check-actionlint check-skill-index-sync check-retrieval check-wiki-pages
+ci-gate: check-timestamp check-audit check-size check-skill-structure check-frontmatter check-actionlint check-skill-index-sync check-retrieval check-wiki-pages check-detector-count
 	@echo ""
 	@echo "✅ local ci-gate: 9 targets passed（含 R1+R3+R4、L3 覆蓋率／文法、S2 非 SK schema、S5 檢索性）"
 
@@ -39,6 +39,9 @@ check-skill-pages:      ## 內部 target:一次跑 size + frontmatter(被 size/f
 
 check-size:             ## 3. SK 頁大小 ≤ 9000 bytes
 check-size: check-skill-pages
+
+check-detector-count:   ## 3g. detector 數對齊（wiki ↔ atlas-go；SSOT = atlas-go 的 gate test／registry）
+	@$(PY) skills/_scripts/check-detector-count-sync.py --repo-root $(CURDIR) --atlas-go-dir $${ATLAS_GO_DIR:-$$HOME/workspace/atlas}
 
 check-wiki-pages:       ## 3f. 非 SK 類頁面 schema（S2；SSOT: wiki-page-schema.json）
 	@$(PY) skills/_scripts/check-wiki-pages.py --repo-root $(CURDIR)

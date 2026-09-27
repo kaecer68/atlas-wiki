@@ -21,16 +21,16 @@ atlas-wiki/
 ├── index.md / log.md      # 知識索引 / 日誌(月切)
 ├── skills/                # 40 個 SK 知識檔(SK-00~SK-39)
 │   ├── _method.md         # 寫入規範(六條鐵律)
-│   ├── _consult-index.md  # 跨頁查詢索引
+│   ├── _consult-index.md  # 跨頁查詢
 │   ├── _consult-index_archive.md  # 諮詢索引歷史歸檔
 │   ├── _inbox.md          # 跨 SK 待辦
 │   ├── _index-finskills.md
 │   ├── _methodology_alignment_audit.md  # 對位憲章審計
-│   └── _scripts/          # 驗證工具 16 檔(見 §CI 表)
+│   └── _scripts/          # 驗證工具 17 檔(見 §CI 表)(見 §CI 表)
 ├── templates/
 │   ├── audit-report.md    # 審計報告模板
 │   └── trigger-*.md       # 21 檔觸發模板(2026-09-27 實測,§12)
-├── concepts/              # 台股市場概念 / 領域模型
+├── concepts/              # 台股概念 / 領域模型
 ├── entities/              # L1 宏觀實體研究
 ├── summaries/             # 階段總結＋ HTTP path drift
 ├── _internal/            # 內部設計/維運紀錄(索引見其 README.md)
@@ -41,7 +41,7 @@ atlas-wiki/
 
 ## 規範速查(詳見 `skills/_method.md`)
 
-- 單頁大小 **依類別**(2026-09-27 kaecer 拍板,取代「所有 .md ≤ 9,000」):SK 頁/入口檔 ≤ 9,000、`concepts/**`+`entities/**` ≤ 30,000、`docs/**` ≤ 12,000、append-only(log/_self-audit/_inbox/_archive)無硬上限但需分流歸檔、`_internal/**` 無硬上限但結案即瘦身(表見 `_method.md` 六條鐵律 6)
+- 單頁大小 **依類別**(2026-09-27 拍板,取代「所有 .md ≤ 9,000」):SK 頁/入口檔 ≤ 9,000、`concepts/**`+`entities/**` ≤ 30,000、`docs/**` ≤ 12,000、append-only(log/_self-audit/_inbox/_archive)無硬上限但需分流歸檔、`_internal/**` 無硬上限但結案即瘦身(表見 `_method.md` 六條鐵律 6)
 - frontmatter 核心欄位:title / type / source / ingested_at / status / tier / confidence / atlas_go_relevance / mcp_tools_used / verification
 - 六條鐵律(2026-09-27 校正:原記 5 條;正本 `_method.md` §六條鐵律):① 不搬運,翻譯 ② 不瞎寫 ③ 不裝完成 ④ 不違背憲章 ⑤ 派工備份 ⑥ size **依類別**(表見上一條)
 - 另見 `_method.md` §第五條鐵律(快照值必附 timestamp)+ §第六條鐵律(外部權威報告週期稽核)
@@ -77,9 +77,10 @@ push / PR 到 `main` 觸發 `validate-wiki`（2026-09-27 實測 9 個 job:8 個�
 | `audit-atlas-endpoints.py` | atlas-mcp 端點 audit + 抓 Description |
 | `check-skill-pages.py` | 一次跑 SK 頁 size + frontmatter |
 | `check-skill-structure.py` | SK 頁結構守衛(反補丁 M2/M2′) |
-| `check-stale-worktree.py` | skills/ 未提交內容偵測(反補丁 M5) |
-| `check-retrieval-integrity.py` | 檢索性完整性 S5(載入條件/索引/入口可達性;strict) |
-| `check-wiki-pages.py` | 非 SK 類頁面 schema S2(concepts/entities/summaries/templates;strict) |
+| `check-stale-worktree.py` | skills/ 未提交偵測(M5) |
+| `check-retrieval-integrity.py` | 檢索性 S5(載入條件/索引/入口可達性) |
+| `check-wiki-pages.py` | 非 SK 類 schema S2(4 類頁面) |
+| `check-detector-count-sync.py` | detector 數對齊(wiki ↔ atlas-go;取不到即失敗) |
 | `check-skill-index-sync.py` | 強制 skills 建立/修改時索引同步更新 |
 | `new-skill-page.py` | SK 頁骨架產生器(反補丁 M6) |
 | `structure-health-metrics.py` | 結構健康度量測(M7;含 L3 覆蓋率＋watch list) |
