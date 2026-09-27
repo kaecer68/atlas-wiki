@@ -9,17 +9,11 @@
 >
 > 最後更新：2026-09-27
 
-## 設計計畫（Plan A/B/F/H）
+## 已結案計畫（Plan A/B/F/H ＋ 索引／競爭 SOP，2026-08-21~08-22）
 
 | 檔案 | 一句話 |
 |------|--------|
-| `plan-A-skills-lifecycle-design-2026-08-21.md` | Plan A — Skills 生命週期落實設計（2026-08-21） |
-| `plan-B-tool-filter-design-2026-08-21.md` | Plan B — Tool 過濾機制設計（2026-08-21） |
-| `plan-F-skill-refactor-2026-08-21.md` | Plan F — Top 5 SKILL.md 拆分 + 未來護欄（執行計畫） |
-| `plan-F-progress-2026-08-21.md` | Plan F Week 1–3 + runtime 串接進度最終摘要（2026-08-22 00:50） |
-| `plan-H-cron-toolset-filter-2026-08-21.md` | Plan H — Cron Toolset 過濾（2026-08-21） |
-| `skills-map-tier-index-design-2026-08-21.md` | Skills Map 分層索引機制（三層索引架構）設計 |
-| `skill-competitive-sop-design-2026-08-22.md` | Skill 競爭 SOP 設計（防 skills 膨脹失控） |
+| `_completed-plans-2026-08.md` | 7 份已結案計畫合併摘要：skills 生命週期（Plan A）、tool 過濾（Plan B）、Top 5 SKILL 拆分＋護欄（Plan F/F-progress）、cron toolset（Plan H）、分層索引、競爭 SOP。含各計畫最終結果、落地位置、原文取回指令（2026-09-27 合併，原 35,845 B → 5,436 B） |
 
 ## 跨專案 redirect（內容正本不在本 repo）
 

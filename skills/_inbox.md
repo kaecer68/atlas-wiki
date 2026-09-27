@@ -93,7 +93,7 @@ archive_owner: agent(autonomous, see _inbox_archive.md)
 **非新頁但缺口更大（另案）**：T9 Task 3「L3 批次 105 步」本日查核**從未執行**（37 頁僅 SK-34 有 `l3_*`）;`_inbox.md` D6 的「SK-20 60 日歷史端點缺口」＝SK-03/12/29 的共同前置依賴。
 
 **建議排序（提案,需核可）**：**1 → 2 → 3**。理由:三者皆結構性缺口（不會因再試參數而消失）、且直對 mission（找漏洞／成本誠實／流動性風險）。
-**不建議重提**：`_archive/2026-08-22-sk37-revert/SK-37-fin-skill-decision-index.md`——kaecer 2026-08-22 00:45 已以「品質不符 top 6 標準」撤回（`_internal/plan-F-progress-2026-08-21.md`）。
+**不建議重提**：`_archive/2026-08-22-sk37-revert/SK-37-fin-skill-decision-index.md`——kaecer 2026-08-22 00:45 已以「品質不符 top 6 標準」撤回（`_internal/_completed-plans-2026-08.md`）。
 
 **待 kaecer 拍板（未自作決定）**：① 候選 1–3 是否開頁、編號自 SK-37 起 ② 模板類是否佔 quota ③ (i) 的「來源不可考」定調 ＋ 兩處幽靈引用是否修 ④ 來源是否在他機（E 條）。
 
