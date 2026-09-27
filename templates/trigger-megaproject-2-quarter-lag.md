@@ -76,7 +76,7 @@ UNCTAD WIR 2026 figure III.1 顯示半導體 greenfield 5 年 CAGR +54%(2020→2
 
 ### C. 測試 checklist
 
-- [ ] 本地手動:`curl "http://127.0.0.1:18080/api/stock/fundamentals?symbol=3680"` 確認 200 + `monthly_revenue_yoy_pct` 欄位存在
+- [ ] 本地手動:改驗 **`curl "http://127.0.0.1:18080/api/stock/monthly_revenue?symbol=3680"`** 確認 200 + `yoy_pct` 欄位存在(2026-09-27 實測 2330 已 200;`fundamentals` 那條已知不帶此欄位,見 §10)
 - [ ] 加模板後跑:`python3 atlas-mcp-trigger-monitor.py` 確認 14 模板全綠
 - [ ] 結構性誠實測試:手動 mock 月營收 YoY +35% → 觸發 → 對位 narrative score < 0.4 → 標「事件層與週期層分歧」
 - [ ] **禁用場景**:模擬連 3 月 YoY < +30% → 不能觸發,**不要改邏輯繞過**
@@ -131,6 +131,7 @@ UNCTAD WIR 2026 figure III.1 顯示半導體 greenfield 5 年 CAGR +54%(2020→2
 **v0.1 / v0.2 (T3-A248 commit eeb20aa 已落,但 dormant)**:
 - 設計依賴 `monthly_revenue_yoy_pct` 欄位
 - 真實 atlas-mcp `/api/stock/fundamentals` 不暴露此欄位(只有 `DividendYield / PB / PE / PS / Sector` 5 欄)
+- **2026-09-27 更新(實測,T3 補登)**:上述限制**成立但不再阻塞** —— 所需資料改由**另一個端點**取得:`GET /api/stock/monthly_revenue?symbol=2330` → **200**,含 `yoy_pct` / `mom_pct` / `revenue` / `source: finmind`(實測值 2330: yoy_pct=**44.6876**、mom_pct=**5.6250**、revenue=467,580,548,000、timestamp 2026-09-27)。⇒ 原本 dormant 的 v0.1/v0.2 設計**有可用資料路徑**:把資料來源從 `fundamentals` 換成 `monthly_revenue` 即可;`fundamentals` 仍只回 4 欄(PE/PB/DividendYield/Sector,同時實測)
 - 真實跑結果:`failed reason=monthly_revenue_yoy_threshold_not_met`(結構性誠實,未編造)
 - dormant 原因 = 設計 vs endpoint 暴露面不匹配
 
