@@ -8,14 +8,14 @@ tier: T3
 confidence: medium
 atlas_go_relevance: high
 mcp_tools_used: [universe_get_sessions]
-verification: 2026-09-27 L3 端點實跑 7 端點（http_code + timestamp 見 `l3_endpoints_probed`;明細見 §驗證方式）。實測更正與新證據:(1) `universe_get_sessions` 今日回 **90** sessions（滾動窗 2026-06-25~2026-09-27）,頁內「147 sessions 對位」為 2026-08-02 當日快照（第五條鐵律）;(2) `universe_get_session_detail` 真實路徑 = `/api/dashboard/sessions/{session_id}`（今日 session-20260927-daily → 200,outcome_count 24、summary.position_count 5）;canary 值 `/api/dashboard/sessions/latest` → **404**（與 SK-37 同日一致,路徑陷阱）;(3) `parameters_get` 1669 keys 中 **0 個**命中 step_year / valid_length / first_train / test_end / split →「atlas 未由 HTTP 暴露 SK-03 三軸」由待查升為**已驗證的否定**;(4) **源碼級代理驗證（atlas 無此 HTTP 端點）**:`atlas/internal/backtest/rolling_split.go` 明寫「following the SK-03 specification」,預設 FirstTrainEnd=2007-12-31 / ValidLengthYears=2 / StepYears=1 / TestEnd=2022-04-30 / stopYear=2020 **與本頁規格逐項相同**,並由 `atlas/cmd/backtest-pipeline` 的 `-first-train-end/-valid-years/-step-years/-test-end` 旗標暴露 → 三軸存在,只是不在 MCP／HTTP 面;(5) `risk_get_metrics` 今日 session_count **210**、`sharpe_short/long` 與 var 皆 0 → 仍無法由此端點做 valid/test 分段績效對比。歷史:2026-08-02 v0.9 結算跑過 L3 升 active（client 端 pandas 三段式 train 168 月 / valid 24 月 / test 144 月）。
+verification: 2026-09-27 L3 端點實跑 7 端點（http_code+ts 見 `l3_endpoints_probed`;明細見 §驗證方式）。實測更正與新證據:(1) `universe_get_sessions` 今日回 **90** sessions（滾動窗 2026-06-25~2026-09-27）,頁內「147」為 2026-08-02 快照（第五條鐵律）;(2) `universe_get_session_detail` 真實路徑 = `/api/dashboard/sessions/{session_id}`（session-20260927-daily → 200,outcome_count 24、position_count 5）;canary 值 `/api/dashboard/sessions/latest` → **404**（與 SK-37 同日一致,路徑陷阱）;(3) `parameters_get` 1669 keys 中 0 個命中 step_year/valid_length/first_train/test_end/split →「atlas 未由 HTTP 暴露 SK-03 三軸」由待查升為**已驗證的否定**;(4) **源碼級代理驗證（atlas 無此端點）**:`atlas/internal/backtest/rolling_split.go` 明寫「following the SK-03 specification」,預設 FirstTrainEnd=2007-12-31 / ValidLengthYears=2 / StepYears=1 / TestEnd=2022-04-30 / stopYear=2020 **與本頁規格逐項相同**,並由 `cmd/backtest-pipeline` 的 `-first-train-end/-valid-years/-step-years/-test-end` 暴露 → 三軸存在,只是不在 MCP／HTTP 面;(5) `risk_get_metrics`（`/api/dashboard/risk`）今日 session_count **210**、**無 sharpe 欄位**（0 值僅 var_95/99、cvar_95,`insufficient_data=1`）→ 仍無法由此端點做分段績效對比。歷史:2026-08-02 v0.9 結算 L3 升 active（client pandas 三段式 168/24/144 月）。
 l3_run_at: 2026-09-27
 l3_run_by: prime-agent（feat/20260927-l3-backfill-b1）
 l3_endpoints_probed:
   - /api/dashboard/sessions → 200（90 sessions）（2026-09-27T19:27:54+08:00）
   - /api/dashboard/sessions/session-20260927-daily → 200（outcome_count 24）（2026-09-27T19:28:05+08:00）
   - /api/dashboard/sessions/latest → 404（canary 對照值,路徑陷阱）（2026-09-27T19:27:54+08:00）
-  - /api/dashboard/risk → 200（session_count 210;sharpe_short/long 皆 0）（2026-09-27T19:27:54+08:00）
+  - /api/dashboard/risk → 200（session_count 210;**無 sharpe 欄位**;var_95/99、cvar_95 皆 0 且 insufficient_data=1）（2026-09-27T19:27:54+08:00）
   - /api/backtest/status → 200（last_auto_date 2026-09-23）（2026-09-27T19:27:54+08:00）
   - /api/backtest/signals → 200（active_signals null）（2026-09-27T19:27:54+08:00）
   - /api/parameters → 200（1669 keys;step_year/valid_length/first_train/test_end 皆 0 命中）（2026-09-27T19:27:54+08:00）
@@ -55,7 +55,7 @@ l3_endpoints_probed:
 ## 驗證方式
 Step 1: 呼叫 `universe_get_sessions` 確認近 90 天 session 數量與切分頻率(月/季/半年)。
 Step 2: 抽一個 session,呼叫 `universe_get_session_detail` 確認 train/valid/test 三段日期範圍與 SK-03 定義是否一致(預期 valid 在 test 之前、test 跨年)。今日實測:session 只有 `recorded_at`/`regime`/`outcome_count`/`summary`,**沒有 train/valid/test 三段日期** → 步驟本身不可由 HTTP 完成（見下）。
-Step 3: 呼叫 `risk_get_metrics` 比對該 session 樣本外指標(drawdown、Sharpe)是否反映 valid+test 兩段,而不是只看 test。今日實測:`/api/dashboard/risk` 的 `sharpe_short`/`sharpe_long`/`var_95` 皆 0,分段對比不可行;可用的最近替代是 `/api/backtest/snapshots`（20 筆日快照、17 筆 `sharpe_short` 非 0）。
+Step 3: 呼叫 `risk_get_metrics` 比對該 session 樣本外指標(drawdown、Sharpe)是否反映 valid+test 兩段,而不是只看 test。今日實測:`/api/dashboard/risk` **無 sharpe 欄位**（var_95=0 且 insufficient_data=1）,分段對比不可行;可用的最近替代是 `/api/backtest/snapshots`（20 筆日快照、17 筆 `sharpe_short` 非 0）。
 
 ### L3 端點實跑（2026-09-27,本 PR;帶 `X-API-Key`,timeout 6s）
 
@@ -64,7 +64,7 @@ Step 3: 呼叫 `risk_get_metrics` 比對該 session 樣本外指標(drawdown、S
 | 1 | `/api/dashboard/sessions` | 200 | 90 sessions（滾動窗 2026-06-25~2026-09-27） | 2026-09-27T19:27:54+08:00 |
 | 2 | `/api/dashboard/sessions/session-20260927-daily` | 200 | outcome_count 24 / summary.position_count 5 | 2026-09-27T19:28:05+08:00 |
 | 3 | `/api/dashboard/sessions/latest` | **404** | canary 對照值（路徑陷阱） | 2026-09-27T19:27:54+08:00 |
-| 4 | `/api/dashboard/risk` | 200 | session_count 210；sharpe_short/long、var_95 皆 0 | 2026-09-27T19:27:54+08:00 |
+| 4 | `/api/dashboard/risk` | 200 | session_count 210；**無 sharpe 欄位**；`risk_snapshot` 的 var_95 為 0（insufficient_data=1） | 2026-09-27T19:27:54+08:00 |
 | 5 | `/api/backtest/status` | 200 | last_auto_date 2026-09-23 | 2026-09-27T19:27:54+08:00 |
 | 6 | `/api/backtest/signals` | 200 | active_signals null，全 0 | 2026-09-27T19:27:54+08:00 |
 | 7 | `/api/backtest/snapshots` | 200 | 20 筆日快照 2026-08-25~09-23，17 筆 sharpe_short 非 0 | 2026-09-27T19:30:53+08:00 |

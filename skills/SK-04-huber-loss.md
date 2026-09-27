@@ -8,11 +8,11 @@ tier: T3
 confidence: medium
 atlas_go_relevance: high
 mcp_tools_used: [backtest_signals, risk_get_metrics]
-verification: 2026-09-27 L3 端點實跑 4 端點全 200（http_code + timestamp 見 `l3_endpoints_probed`;明細見 §驗證方式）。實測更正:(1) 頁內「risk_get_metrics live session_count=147」已過時——`/api/dashboard/risk` 今日回 **session_count 210**（第五條鐵律:快照值需附時戳）;(2) `risk_get_metrics` 今日 `sharpe_short` / `sharpe_long` / `var_95` / `cvar_95` 皆 **0**,`backtest_signals` 今日 `active_signals: null` 且全 0 → §驗證方式原 Step 1（取 raw_return 序列）與 Step 3（比較處理前後 Sharpe）**今日不可由此兩端點完成**;可用的最近替代是 `/api/backtest/snapshots`（今日 200,20 筆日快照 2026-08-25~09-23,17 筆 `sharpe_short` 非 0,例 2026-08-30 = 2.0948）;(3) **源碼級代理驗證**:`atlas/internal/ml/elasticnet.go` 實作 Huber **重加權**（`UseHuber` 預設 false、`Xi` 預設 **0.9**,與論文 xi=0.9 相同;權重 `w = 1 (|r|≤xi)` / `xi/|r| (|r|>xi)`）,但 MCP／HTTP／`cmd/backtest-pipeline` 皆未暴露該開關、repo 內 0 個測試引用 → 「atlas 端不能做 loss 替換」在 **MCP 視角成立、repo 視角不成立**。歷史:2026-08-01 v0.9 結算跑過 L3 升 active。
+verification: 2026-09-27 L3 端點實跑 4 端點全 200（http_code + timestamp 見 `l3_endpoints_probed`;明細見 §驗證方式）。實測更正:(1) 頁內「risk_get_metrics live session_count=147」已過時——`/api/dashboard/risk` 今日回 **session_count 210**（第五條鐵律:快照值需附時戳）;(2) `risk_get_metrics`（`/api/dashboard/risk`）今日 **無 sharpe 欄位**（鍵只有 `degraded/gate_mode/risk_snapshot/session_count/source/var_gate`）;`risk_snapshot` 的 `var_95`/`var_99`/`cvar_95` 皆 **0** 但 `insufficient_data=1`（0 = 資料不足，非零風險）,`backtest_signals` 今日 `active_signals: null` 且全 0 → §驗證方式原 Step 1（取 raw_return 序列）與 Step 3（比較處理前後 Sharpe）**今日不可由此兩端點完成**;可用的最近替代是 `/api/backtest/snapshots`（今日 200,20 筆日快照 2026-08-25~09-23,17 筆 `sharpe_short` 非 0,例 2026-08-30 = 2.0948）;(3) **源碼級代理驗證**:`atlas/internal/ml/elasticnet.go` 實作 Huber **重加權**（`UseHuber` 預設 false、`Xi` 預設 **0.9**,與論文 xi=0.9 相同;權重 `w = 1 (|r|≤xi)` / `xi/|r| (|r|>xi)`）,但 MCP／HTTP／`cmd/backtest-pipeline` 皆未暴露該開關、repo 內 0 個測試引用 → 「atlas 端不能做 loss 替換」在 **MCP 視角成立、repo 視角不成立**。歷史:2026-08-01 v0.9 結算跑過 L3 升 active。
 l3_run_at: 2026-09-27
 l3_run_by: prime-agent（feat/20260927-l3-backfill-b1）
 l3_endpoints_probed:
-  - /api/dashboard/risk → 200（session_count 210;sharpe_short/long、var_95 皆 0）（2026-09-27T19:27:54+08:00）
+  - /api/dashboard/risk → 200（session_count 210;**payload 無 sharpe 欄位**;`risk_snapshot` = var_95/99、cvar_95 皆 0（`insufficient_data=1`）、max_drawdown_pct 0.722）（2026-09-27T19:27:54+08:00）
   - /api/backtest/signals → 200（active_signals null，全 0）（2026-09-27T19:27:54+08:00）
   - /api/backtest/snapshots → 200（20 筆日快照,17 筆 sharpe_short 非 0）（2026-09-27T19:30:53+08:00）
   - /api/events/calendar → 200（事件日曆可用）（2026-09-27T19:27:54+08:00）
@@ -55,13 +55,13 @@ SK-04 在 atlas 是「異常報酬處理」——把極端市場事件(2020 疫�
 ## 驗證方式
 Step 1: 呼叫 `backtest_signals` 取最近一次 supervised pipeline 結果,看 raw_return 序列是否有 |return| > 3σ 的極端值(預期 2020-03、2022 年中會有)。**2026-09-27 實測:此端點今日回 `{"active_signals":null,"var_95":0,"var_99":0,"sharpe_short":0,"sharpe_long":0,"drawdown_pct":0}`,沒有任何報酬序列 → Step 1 今日不可行。** 替代:`/api/backtest/snapshots`（日快照,含 `portfolio_value` 與 sharpe,可用來找極端日,但非逐筆報酬）。
 Step 2: client 端實作 `huber_smooth(r, xi=0.9)` 分段 Huber:`|r|≤δ` 為二次方段 `0.5r²`;`|r|>δ` 為線性段 `δ(|r|−0.5δ)`,損失對 |r| 線性增長(相對二次方壓平極端值) [2026-08-22 audit-fix]。
-Step 3: 對比 `risk_get_metrics` 在處理前後的 Sharpe / max_drawdown 變化(預期 Sharpe 微升、drawdown 微降,但變化不應過大)。**2026-09-27 實測:`/api/dashboard/risk` 今日 `sharpe_short`/`sharpe_long`/`var_95`/`cvar_95` 皆 0 → 端點活著但今日無 Sharpe 可對比;`max_drawdown_pct` 有值（0.722）且 `session_count`=210。**
+Step 3: 對比 `risk_get_metrics` 在處理前後的 Sharpe / max_drawdown 變化(預期 Sharpe 微升、drawdown 微降,但變化不應過大)。**2026-09-27 實測:`/api/dashboard/risk` 今日**無 sharpe 欄位**（Sharpe 只在 `/api/backtest/signals`／`/api/backtest/snapshots`）→ 端點活著但本步不可行;`max_drawdown_pct`=0.722、`session_count`=210。**
 
 ### L3 端點實跑（2026-09-27,本 PR;帶 `X-API-Key`,timeout 6s）
 
 | # | 端點（GET） | http_code | 實測結果 | timestamp（UTC+0800） |
 |---|---|---|---|---|
-| 1 | `/api/dashboard/risk` | 200 | session_count 210；sharpe_short/long、var_95/cvar_95 皆 0；max_drawdown_pct 0.722 | 2026-09-27T19:27:54+08:00 |
+| 1 | `/api/dashboard/risk` | 200 | session_count 210；**無 sharpe 欄位**；risk_snapshot: var_95/99、cvar_95 = 0（insufficient_data=1）、max_drawdown_pct 0.722 | 2026-09-27T19:27:54+08:00 |
 | 2 | `/api/backtest/signals` | 200 | active_signals null，其餘全 0 | 2026-09-27T19:27:54+08:00 |
 | 3 | `/api/backtest/snapshots` | 200 | 20 筆日快照（2026-08-25~09-23）;17 筆 sharpe_short 非 0（2026-08-30 = 2.0948） | 2026-09-27T19:30:53+08:00 |
 | 4 | `/api/events/calendar` | 200 | 7 筆事件（對位 §未消化「實盤事件量化」項） | 2026-09-27T19:27:54+08:00 |
