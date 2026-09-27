@@ -1,3 +1,7 @@
+---
+description: narrative detector tariff_shock 觸發（關稅新聞事件）時載入本模板。
+---
+
 # 對中/台晶片關稅 觸發模板(單日版)
 
 **觸發條件(單日,主條件)**:narrative detector `tariff_shock` 觸發(關稅新聞事件)[2026-08-22 audit-fix]

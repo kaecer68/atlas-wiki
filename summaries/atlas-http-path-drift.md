@@ -1,5 +1,6 @@
 ---
 title: atlas HTTP path drift 集中記錄（2026-09-27 建立）
+description: 呼叫 atlas HTTP 端點前要確認路徑、參數或 auth 是否已漂移時載入。
 type: reference
 status: active
 created: 2026-09-27

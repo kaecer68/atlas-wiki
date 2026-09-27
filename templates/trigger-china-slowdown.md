@@ -1,3 +1,7 @@
+---
+description: 台積電月營收 YoY >+50% 且 export_electronics 月增 >0（中國需求轉強）時載入本模板。
+---
+
 # 中國需求強訊號觸發模板
 
 **觸發條件(單日)**:TSMC 月營收 YoY > +50% + export_electronics 月增 > 0

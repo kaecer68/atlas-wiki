@@ -1,5 +1,6 @@
 ---
 title: atlas-mcp 失效時 fail-over 政策 — 來源標籤 + 網路替代源清單
+description: 當 atlas-mcp 端點失敗、超出範圍或資料缺漏，需要改用替代來源並標註強度等級時載入。
 created: 2026-08-07
 updated: 2026-08-07
 type: concept

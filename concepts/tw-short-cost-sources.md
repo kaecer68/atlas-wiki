@@ -1,5 +1,6 @@
 ---
 title: 台股放空成本的一級來源（融券手續費／融券費／SBL 競價費率）
+description: 散戶問「放空要準備多少成本、融券費與借券費怎麼算」時載入。
 created: 2026-09-27
 updated: 2026-09-27
 type: concept

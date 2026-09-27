@@ -1,5 +1,6 @@
 ---
 title: 台灣法人錢潮追蹤：七類核心機構與散戶可觀測代理
+description: 要分辨「這筆買盤是哪一種錢、是哪一類機構在買」時載入。
 created: 2026-07-18
 updated: 2026-07-18
 type: concept

@@ -1,4 +1,5 @@
 ---
+description: UNCTAD WIR、Stanford HAI、BIS、IMF WEO 等外部權威報告發布或宣布時載入本模板。
 template_id: trigger-equipment-capex-external-report-cycle
 template_number: 15
 type: cron-cadence-trigger(週期型)

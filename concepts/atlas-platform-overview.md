@@ -1,5 +1,6 @@
 ---
 title: atlas 平台概覽：台股策略模擬平台架構
+description: 被問「atlas 是什麼、架構分幾層、資料多久更新一次」時載入。
 created: 2026-08-02
 updated: 2026-08-02
 type: concept

@@ -1,5 +1,6 @@
 ---
 title: atlas L1-L5 策略分類體系
+description: 散戶問「atlas 有哪幾個策略、某個訊號屬於哪一類、策略該怎麼挑」時載入。
 created: 2026-08-02
 updated: 2026-08-02
 type: concept

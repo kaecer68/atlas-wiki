@@ -1,5 +1,6 @@
 ---
 title: L1-T.5 科技奇點：AI 與半導體
+description: 討論 AI 資本支出與半導體長期結構（非單日題材）對台股的影響時載入。
 created: 2026-07-17
 updated: 2026-07-17
 type: entity

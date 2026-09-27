@@ -1,5 +1,6 @@
 ---
 title: L1-T.4 礦物資源斷供鏈
+description: 出現關鍵礦物出口管制、斷供或價格急漲的新聞時載入。
 created: 2026-07-17
 updated: 2026-07-17
 type: entity

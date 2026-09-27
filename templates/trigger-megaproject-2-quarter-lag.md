@@ -1,3 +1,7 @@
+---
+description: 2330 月營收 YoY >+5%、設備鏈連 3 月 YoY >+30%、投信連 5 日買超 >+20 億，任一層成立時載入本模板。
+---
+
 # atlas-mcp Trigger Template #14 — trigger-megaproject-2-quarter-lag
 
 > [2026-08-22 快照:21] templates/*.md 實數 21 檔（本檔「現有 N 模板/第 N 模板」為撰寫當下歷史計數，快照統一，數字不一屬歷史演進）

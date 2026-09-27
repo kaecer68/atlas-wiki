@@ -1,5 +1,6 @@
 ---
 title: 八大行庫買賣超 — 反推政府護盤訊號的實戰方法
+description: 散戶問「八大行庫買賣超代表什麼、是不是政府在護盤」時載入。
 created: 2026-07-22
 updated: 2026-07-22
 type: concept

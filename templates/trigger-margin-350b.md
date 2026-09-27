@@ -1,3 +1,7 @@
+---
+description: retail_margin_balance 超過 5000 億台幣時載入本模板。
+---
+
 # 融資 3500 億觸發模板(單日版)
 
 **觸發條件(單日)**:retail_margin_balance > 5000 億台幣

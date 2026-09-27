@@ -1,5 +1,6 @@
 ---
 title: atlas MCP 工具參考：六類 40+ 工具速查
+description: 需要查 atlas-mcp 有哪些工具、某個端點的名稱或參數、該先用哪個工具時載入。
 created: 2026-08-02
 updated: 2026-08-02
 type: concept

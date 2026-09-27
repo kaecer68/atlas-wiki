@@ -1,5 +1,6 @@
 ---
 title: S 範式重新定義 — 不等於盤整期
+description: 要判定「現在是盤整還是 S 範式、S 期間該做什麼」時載入。
 created: 2026-07-15
 updated: 2026-07-15
 type: concept
