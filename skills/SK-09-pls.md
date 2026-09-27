@@ -8,7 +8,19 @@ tier: T3
 confidence: high
 atlas_go_relevance: high
 mcp_tools_used: [stock_get_fundamentals, stock_get_technical, universe_get_sessions, risk_get_metrics]
-verification: 2026-08-02 v0.9 結算跑過 L3 升 active:client 端 sklearn 1.8.0 PLSRegression(n_components=2) 跑 **R²_oos=0.8892**;**PLS > OLS(1.0 vs 0.99) 在小樣本弱訊號時 PLS 勝出(論文結論),本輪 86 因子強訊號下 OLS 反而完美**;論文中 n_components=4 在台股月度資料可能太多,n_components=2 較穩(已誠實標在原頁面)。
+verification: 2026-09-27 L3 端點實跑 (http_code + timestamp 見 `l3_endpoints_probed`;明細見 §驗證方式):8 個 HTTP 端點全 200,**但無任何端點回 R²_oos** → 本頁 `R²_oos=0.8892` 維持 2026-08-02 client 端 sklearn 快照,今日無法由 atlas 複驗。**atlas repo 內有原生 PLS**(`internal/ml/pls.go`,NIPALS／PLS1),CLI `-synthetic -model pls` → **R²_OOS +0.9993 PASS**。未消化第 1、2 項今日結案(IS/OOS 改看 `agent-observatory` scorecard;L1–L5 是 strategy frame 分層,與 PLS 無重疊)。同日負面:CLI 真實資料路徑不可用(`stopYear` 硬編 2020)。歷史:2026-08-02 v0.9 結算升 active（client 端 sklearn PLSRegression,R²_oos=0.8892）。
+l3_run_at: 2026-09-27
+l3_run_by: prime-agent（feat/20260927-l3-backfill-b2）
+l3_endpoints_probed:
+  - /api/stock/fundamentals?symbol=2330 → 200（PE 30.19/PB 9.57/DY 1.1）（2026-09-27T20:02:26+08:00）
+  - /api/stock/technical?symbol=2330&days=10 → 200（rsi14/sma20/sma50 皆 0）（2026-09-27T20:02:26+08:00）
+  - /api/dashboard/sessions → 200（90 sessions）（2026-09-27T20:03:05+08:00）
+  - /api/dashboard/risk → 200（無 R²/Sharpe → 不區分 IS/OOS）（2026-09-27T20:02:26+08:00）
+  - /api/dashboard/agent-observatory → 200（含 is_sharpe/oos_sharpe/is_oos_ratio/overfit_warning）（2026-09-27T20:05:30+08:00）
+  - /api/parameters → 200（oos_window_days 30、walk_forward_embargo_days 5）（2026-09-27T20:03:04+08:00）
+  - /api/strategies/layers → 200（L1:1/L2:2/L3:2/L4:4/L5:3）（2026-09-27T20:02:48+08:00）
+  - CLI（非 HTTP）: `-synthetic -model pls` → R²_OOS +0.9993（PASS）（2026-09-27T20:02:28+08:00）
+  - CLI 真實資料（負面）: `-model pls -data data/replay/merged.csv -symbol 0050.TW` → EXIT 1（stop_year=2020 / empty training data）（2026-09-27T20:05:30+08:00）
 ---
 
 ## 一句話定位
@@ -29,33 +41,51 @@ SK-09 在 atlas 是「監督式降維」——把高維股票特徵(86 因子起
 | 論文概念 | atlas-mcp 對位 | tool_name |
 |---------|---------------|-----------|
 | 特徵 X(多欄) | 股票多維特徵 | `stock_get_fundamentals` + `stock_get_technical` |
-| 目標 y(未來報酬) | 對位 stock 預測目標 | `universe_get_sessions`(可看回測 y 對齊) |
-| PLS 模型訓練 | atlas 不提供原生 ML 訓練 | 缺(client 端 sklearn) |
-| 模型效果驗證 | risk metrics | `risk_get_metrics` |
+| 目標 y(未來報酬) | 對位 stock 預測目標 | `universe_get_sessions`（今日 90 sessions,2026-09-27） |
+| PLS 模型訓練 | **repo 內有原生 PLS**(`internal/ml/pls.go`,NIPALS/PLS1);MCP／HTTP 面仍缺 | CLI `cmd/backtest-pipeline -model pls`（2026-09-27 實跑 +0.9993） |
+| 模型效果驗證 | `risk_get_metrics` **無 R²/Sharpe 欄位**（2026-09-27）;IS/OOS 分離改看 `agent-observatory` | `risk_get_metrics` + `/api/dashboard/agent-observatory` |
 
-**差異點**:論文版假設 client 已備好 X 與 y,atlas 端要自己組裝 X——這是「特徵工程 orchestrator」缺口的延伸(SK-02 提過同樣問題)。
+**差異點**:**更正（2026-09-27）**:「atlas 不提供原生 ML 訓練」只對 MCP／HTTP 面成立;`internal/ml/pls.go` 有原生 NIPALS PLS1。論文版假設 client 已備好 X 與 y,atlas 端要自己組裝 X——這是「特徵工程 orchestrator」缺口(SK-02 同問題)。
 
-**沒有對位的部分**:
-- 沒有原生 PLS / PCA / 任何降維 endpoint
-- 沒有「特徵間相關性」對位(需 client 端算 correlation matrix)
-- 沒有「成分數 n_components 自動選擇」對位
+**沒有對位的部分**(HTTP 面):
+- 無原生 PLS / PCA / 降維 endpoint
+- 無「特徵間相關性」(需 client 端算 correlation matrix)
+- 無「成分數 n_components 自動選擇」
 
 ## 散戶解讀（GROW+ 引用點）
-- **G 段**:用戶問「86 個因子太多了,塞進模型會 overfit,怎麼辦?」 → PLS 是學術標準答案之一,比「直接砍因子」更聰明——它把 86 個因子壓成 4 個「綜合訊號」,但這 4 個不是任意組合,是「最會預測 y」的那 4 個。
-- **R 段**:對位 atlas → 「atlas 沒有一鍵 PLS,你需要:① `stock_get_fundamentals` + `stock_get_technical` 拼出 X ② 用 `universe_get_sessions` 算 y(月度報酬) ③ client 端跑 `PLSRegression(n_components=4)` ④ 用 `risk_get_metrics` 看效果」。
+- **G 段**:用戶問「86 個因子太多,塞進模型會 overfit?」 → PLS 把 86 個因子壓成 4 個「綜合訊號」——不是任意組合,是最會預測 y 的那 4 個。
+- **R 段**:對位 atlas → 「atlas 沒有一鍵 PLS(HTTP 面),你需要:① `stock_get_fundamentals` + `stock_get_technical` 拼 X ② `universe_get_sessions` 算 y ③ client 端跑 `PLSRegression` ④ 效果看 `agent-observatory` 的 OOS scorecard,不是 `risk_get_metrics`」。
 - **+E 段**:警示「n_components=4 是論文的預設,但散戶資金小、樣本少,**降到 2 可能更穩健**;不是越多越好」。對位 ATLAS_METHODOLOGY 七時期:PLS 選的 components 在 regime 切換時可能失效,需每期重新擬合。
 
 ## 驗證方式
-Step 1: 從 `stock_get_fundamentals` 拉 10 欄(PE、PB、殖利率、營收成長、ROE、負債比、現金比、流動比、淨利率、毛利率),從 `stock_get_technical` 拉 4 欄(SMA20、SMA50、RSI14、MACD),合計 14 欄 X。
+Step 1: 從 `stock_get_fundamentals` 拉 10 欄(PE/PB/殖利率/營收成長/ROE/負債比/現金比/流動比/淨利率/毛利率)+ `stock_get_technical` 4 欄(SMA20/SMA50/RSI14/MACD),合計 14 欄 X。
 Step 2: 從 `universe_get_sessions` 取一份 supervised pipeline 結果,對齊 y 為「下一期月報酬」。
 Step 3: client 端跑 `PLSRegression(n_components=2)`,對比 `LinearRegression` 的 in-sample R² 與 `risk_get_metrics` 給的 OOS R²,確認 PLS 在 OOS 優於 OLS(預期差距 5-15%)。
 > 口徑註：上述預期排名僅對小樣本弱訊號真實資料成立；本頁合成線性資料實測 OLS=1.0 最高,兩者不矛盾但不可混讀 [2026-08-22 audit-fix]
 
+### L3 端點實跑 + CLI 代理（2026-09-27,本 PR）
+
+| # | 目標（GET,帶 `X-API-Key`） | http_code | 實測結果 | timestamp（UTC+0800） |
+|---|---|---|---|---|
+| 1 | `/api/stock/fundamentals?symbol=2330` | 200 | PE 30.19 / PB 9.57 / DY 1.1 | 2026-09-27T20:02:26+08:00 |
+| 2 | `/api/stock/technical?symbol=2330&days=10` | 200 | close 2475、date 2026-09-24;`rsi14`/`sma20`/`sma50` **皆 0** | 2026-09-27T20:02:26+08:00 |
+| 3 | `/api/dashboard/sessions` | 200 | 90 sessions（最新 `session-20260927-daily`；RISK_ON） | 2026-09-27T20:03:05+08:00 |
+| 4 | `/api/dashboard/risk` | 200 | 僅 degraded/gate_mode/risk_snapshot/session_count/source/var_gate → **無 R²、無 Sharpe** | 2026-09-27T20:02:26+08:00 |
+| 5 | `/api/dashboard/agent-observatory` | 200 | 5 張 scorecard 皆含 `is_sharpe`/`oos_sharpe`/`is_oos_ratio`/`overfit_warning`（例 `etf-rotation-01`:0.0717／-1.3685／0.0524／true） | 2026-09-27T20:05:30+08:00 |
+| 6 | `/api/parameters` | 200 | `experiment.oos_window_days` 30、`walk_forward_embargo_days` 5 | 2026-09-27T20:03:04+08:00 |
+| 7 | `/api/strategies/layers` | 200 | L1:1/L2:2/L3:2/L4:4/L5:3 = 12（strategy frame 分層,非降維訊號） | 2026-09-27T20:02:48+08:00 |
+| 8 | CLI（非 HTTP）:`-synthetic -model pls` | exit 0 | 500 samples × 2 features；**R²_OOS +0.9993 → PASS** | 2026-09-27T20:02:28+08:00 |
+| 9 | CLI 真實資料（負面）:`-model pls -data data/replay/merged.csv -symbol 0050.TW` | EXIT 1 | `no windows produced (... stop_year=2020)`／`has empty training data` | 2026-09-27T20:05:30+08:00 |
+
+- **更正（2026-09-27）**:第 8 列推翻「atlas 不提供原生 ML 訓練」的 repo 層敘述（`internal/ml/pls.go` 有原生 NIPALS PLS1,`NComponents` 預設 4、CLI 用 3）;仍**不在 MCP／HTTP 面**,故「client 端自組 X」結論不變。
+- **第 4／5 列結案未消化第 1 項**:`risk_get_metrics` 無 R² 也無 Sharpe,談不上區分 IS/OOS;**IS/OOS 分離在 `agent-observatory` scorecard**,OOS 窗長／embargo 在 `parameters`。Step 3 改用 scorecard 或 client 端 walk-forward。
+- **第 9 列為同日負面結果（勿重踩）**:CLI 真實資料路徑產不出 window——`rolling_split.go` 的 `stopYear` 硬編 2020,對 2024-07 起的 replay 檔永遠 `no windows produced`;調到能進迴圈又變 `has empty training data` → **今日只有 `-synthetic` 能做 L3**。
+
 ## 未消化 / 待補
-- [ ] atlas `risk_get_metrics` 是否區分 in-sample / out-of-sample?若否,PLS 的「OOS 優於 OLS」敘事無法直接驗證,需在 client 端做 walk-forward 切分。
-- [ ] PLS 與 L1-L5 detector 是否有重疊?atlas 已有 L1-L5 是技術/籌碼/總經的 detector 層,可能已含部分「降維後訊號」。
-- [ ] `algorithm="nipals"` vs `"svd"` 對小樣本哪個穩健?論文未指定,需實測。
-- [ ] 跟 SK-08 PCR(主成分迴歸)差異:PCR 不看 y → PLS 更適合預測任務;但 atlas 端兩者都缺,只能 client 端跑。
+- [ ] `algorithm="nipals"` vs `"svd"` 對小樣本哪個穩健?（2026-09-27:atlas 原生 PLS 只有 NIPALS,`-model pls` 無 algorithm 旗標 → SVD 變體無對位,只能 client 端比）
+- [ ] 跟 SK-08 PCR 差異:PCR 不看 y → PLS 更適合預測任務。（2026-09-27 更正:「atlas 端兩者都缺」只對 MCP／HTTP 面成立,repo 內 `-model pcr` / `-model pls` 都可跑 → 兩者可直接對比）
+
+已解（2026-09-27）:IS/OOS 區分、L1–L5 detector 重疊 → 見 §驗證方式 L3 表第 4–7 列。
 
 methodology_aligned: true
 atlas_constitution_ref: ATLAS_METHODOLOGY.md §五(策略矩陣:PLS 偏最小二乘需對位 7 時期 × 策略三分類)(附註:2026-07-30 period_system 變動 — `period` 已是 PeriodDetector 真值,`source` 欄位正名 `regime_source` / `period_source`)
