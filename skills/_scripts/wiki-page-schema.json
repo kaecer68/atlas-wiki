@@ -1,0 +1,81 @@
+{
+  "version": 1,
+  "updated": "2026-09-27",
+  "updated_by": "prime-agent（S2，2026-09-27 kaecer 拍板：非 SK 類頁面也要有 schema 與護欄）",
+  "purpose": "定義 knowledge 層非 SK 類頁面（concepts／entities／summaries／templates）的 frontmatter 與 size 標準，供 check-wiki-pages.py 強制。SK 頁另有 skill-page-schema.json（欄位不同，勿混用）。",
+  "groups": {
+    "concepts": {
+      "glob": "concepts/*.md",
+      "size_limit_bytes": 30000,
+      "frontmatter_required": [
+        "title",
+        "description",
+        "created",
+        "updated",
+        "type",
+        "tags",
+        "sources",
+        "confidence",
+        "contested"
+      ],
+      "frontmatter_recommended": [
+        "contradictions"
+      ],
+      "notes": "參考字典／指南類。contested: true 時必須有 contradictions 條目。"
+    },
+    "entities": {
+      "glob": "entities/*.md",
+      "size_limit_bytes": 30000,
+      "frontmatter_required": [
+        "title",
+        "description",
+        "created",
+        "updated",
+        "type",
+        "tags",
+        "sources",
+        "confidence",
+        "contested"
+      ],
+      "frontmatter_recommended": [
+        "contradictions"
+      ],
+      "notes": "L1 宏觀實體研究。同上。"
+    },
+    "summaries": {
+      "glob": "summaries/*.md",
+      "size_limit_bytes": 9000,
+      "frontmatter_required": [
+        "title",
+        "description",
+        "type",
+        "status",
+        "created",
+        "sources"
+      ],
+      "frontmatter_recommended": [
+        "amendable_by"
+      ],
+      "notes": "階段總結／操作性參考。"
+    },
+    "templates": {
+      "glob": "templates/trigger-*.md",
+      "size_limit_bytes": 12000,
+      "frontmatter_required": [
+        "description"
+      ],
+      "frontmatter_recommended": [
+        "template_number",
+        "template_id"
+      ],
+      "notes": "觸發模板＝cron 觸發定義；門檻等細節寫在內文。編號欄位只有部分模板有（atlas 端無對應概念，見 recipe §2）。"
+    }
+  },
+  "rules": [
+    "frontmatter 必須是合法 YAML（PyYAML safe_load）",
+    "size ≤ size_limit_bytes（對位 _method.md 鐵律 6 分類制）",
+    "created/updated 必須是 YYYY-MM-DD 且 updated ≥ created",
+    "contested: true ⇒ contradictions 必須非空（避免標了 contested 卻沒寫爭議點）",
+    "每個知識頁必須有 description（載入條件，S5）"
+  ]
+}
