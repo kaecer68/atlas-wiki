@@ -19,3 +19,5 @@
 - **取回**：`git show 9a8f5e4:_internal/audit-2026-08-22-financial/<檔名>`（本條目前一個 commit = 9a8f5e4）。
 - **不動**：`skills/_archive/_methodology_alignment_audit*` 三檔**刻意保留** —— `AUDIT-REPORT-main.md:117` 明文把它們列為稽核基準（`_VERBATIM` 10,726／`_with_fileline` 30,522），是審計出處不是重複。
 - **量測脈絡**：全 repo tracked `.md` = 150 檔 / 1,212,899 B，其中 >9,000 B 者 36 檔 / 642,948 B（53.0%）。本條只清「已結案的過程工件」，未動 `concepts/`（13 檔 206,480 B，兩兩 line-set Jaccard <5% ⇒ 各自獨立，非重複）與 `entities/`（5 檔 69,048 B，5–10% 重疊僅為頁面樣板）。
+
+- 2026-09-27：`_internal/` 7 份已結案計畫（Plan A/B/F/F-progress/H ＋ 分層索引 ＋ 競爭 SOP，35,845 B）合併為 `_internal/_completed-plans-2026-08.md`（5,436 B，−30,409 B）；原文取回 `git show b4f9524:_internal/<檔名>`。同步更新 3 處引用（`_internal/README.md`、`skills/_inbox.md`、`skills/_scripts/check-skill-index-sync.py` 的 R5 註解）＋ `~/.hermes` 內 2 處（`skills/skills-map.md:61`、`agent-self-judgment-mode/references/skill-competitive-sop-2026-08-22.md:3`）。
