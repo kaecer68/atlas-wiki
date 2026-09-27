@@ -119,6 +119,18 @@ def main():
     summary.append(f'✅ {len(m)}/{len(files)} SK 頁在 SK-00 索引')
 
     # 2-6. 各目錄 → index.md
+    # S8（2026-09-27）：任一類別掃到 0 檔 ⇒ 失敗（避免「這類沒檔案」被誤當「全部索引完成」）
+    empty_groups = []
+    for _kind, _pat in [('SK', 'skills/SK-*.md'), ('concepts', 'concepts/*.md'),
+                        ('entities', 'entities/*.md'), ('summaries', 'summaries/*.md'),
+                        ('trigger', 'templates/trigger-*.md')]:
+        if len(list_files(_pat)) == 0:
+            empty_groups.append(f"{_kind}({_pat})")
+    if empty_groups:
+        print(f'repo: {ROOT}')
+        print(f'❌ 以下類別掃到 0 檔：{empty_groups} — 路徑錯或目錄空；不得靜默全綠')
+        return 1
+
     for kind, pat in [('concepts', 'concepts/*.md'),
                      ('entities', 'entities/*.md'),
                      ('summaries', 'summaries/*.md')]:

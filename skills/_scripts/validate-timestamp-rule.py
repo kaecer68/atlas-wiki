@@ -100,6 +100,9 @@ def main():
                 print(f"    line {i}: {line}")
             total += count
     print()
+    if len(files) == 0:
+        print("❌ 掃到 0 個 SK 頁 — 路徑錯或目錄空；不得靜默全綠")
+        return 1
     if total == 0:
         print(f"✅ 全 {len(files)} 頁第 5 條鐵律合規")
         return 0
