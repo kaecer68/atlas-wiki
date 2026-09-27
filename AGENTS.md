@@ -118,6 +118,7 @@
 | wiki 寫入格式規範 | `~/.hermes/skills/knowledge-harvest/references/wiki-format-guide.md` |
 | wiki-critic 審查清單 | `~/.hermes/skills/wiki-critic/SKILL.md` |
 | Telegram gate 詳細規範 | `~/.hermes/skills/personal-knowledge-copilot/references/cron-telegram-output-gate.md` |
+| **atlas-wiki 內容品質（建內容前必讀）** | `~/.agents/skills/atlas-wiki-quality/SKILL.md`（`~/.hermes/skills/` 與 7 個 profile 各有複本）— 缺口清單 G1–G7、證據文法、來源分級、禁用主張、檢索要求、驗收指令 |
 | 治理日誌（歷史記錄、錯誤範例、ERR 編號） | `~/workspace/atlas-notes/02-knowledge/hermes-governance-log.md` |
 | 阻塞與待解 Issue | `~/workspace/atlas-notes/02-knowledge/hermes-governance-log.md`（待解區） |
 ---
