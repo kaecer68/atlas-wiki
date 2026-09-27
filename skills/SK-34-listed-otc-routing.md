@@ -110,7 +110,7 @@ atlas 系統目前**只涵蓋台灣上市公司 + 上櫃公司**;atlas-wiki 是�
 - [ ] Yahoo Finance 公開端點是否有 rate limit(若被擋,備援 = 公開網站 + 政府開放資料)
 - [ ] 加密貨幣的可靠公開源(Investing.com / CoinGecko / 其他)
 - [ ] 公司名稱模糊解析的常見對照表(目前缺,需建)
-- [ ] 路徑 drift 系統化記錄:已建 `summaries/atlas-http-path-drift.md` 待落(本次新發現 `/api/industry/sectors` 而非 `/api/industry/sector-list`)
+- [ ] 路徑 drift 系統化記錄（2026-09-27 查核更正:原記「已建」有誤,該檔當時**從未落地**;2026-09-27 已實際建立 `summaries/atlas-http-path-drift.md`,內含當日實測 404/200）⇒ 本列僅剩 wrapper 端修復(本次新發現 `/api/industry/sectors` 而非 `/api/industry/sector-list`)
 - [ ] SK-34 與 SK-35 mcp-failover 整合(4 級 fallback 鏈 vs SK-34 L1-L3 架構)
 
 amendable_by: kaecer

@@ -55,26 +55,19 @@
 
 ---
 
-## Task 3: L3 端點批次執行 ❌ 未完成 + 數字需 kaecer 拍板
+## Task 3: L3 端點批次執行 ❌ **從未執行**（2026-09-27 查核）
 
-**狀態**:`_inbox.md` line 35「90」(歷史) vs line 129「**105**」(現況, kaecer 拍板統一, 見拍板 1)。
+**狀態（2026-09-27 查核）**：**從未執行**（已排除「做了沒記」）—— ① `grep -l '^l3_' skills/SK-*.md` ⇒ 只有 SK-34（`l3_run_at: 2026-08-12`，**早於 T9 v2 建立日**）② `git log --since=2026-08-21 -- skills/SK-` ⇒ 空 ③ 載體不存在：`~/.hermes/cron/jobs.json` 僅剩 1 job（enabled=false），原 atlas-skill-inbound 已移除 ④ 四個 tracker（`_inbox`／`_self-audit`／`VERIFICATION-BACKLOG`／`_structure-health-log`）比對 ⇒ 全無 Task 3／105 紀錄。
+- 原文引用「`_inbox.md:129『105』」**錯誤**（該檔僅 121 行、無「105」；`:35` 仍寫「90」）；Task 3 亦**不需 Fin-Skills.md**。
 
-**注意**:Task 3 **不需 Fin-Skills.md**, 與 Fin-Skills 6 天 [FAILED] 是**獨立問題**。
-
-**建議執行**: 在 02:00 每日 cron 批次跑, 每頁 3 step 實跑, 不做「假驗證」, 完成 → 更新該頁 verification + _inbox 進度 + 統一 90 vs 105。
+**建議執行（2026-09-27 更新）**：原 02:00 cron job 已不存在 ⇒ 改**單次批次**，每頁 3 step 實跑，完成一頁即更新該頁 `verification` + `l3_*`。
 
 ---
 
-## Task 4: SK-35 補「論文版」段 ❌ 未做, 未留評估記錄
+## Task 4: SK-35 補「論文版」段 ✅ **已完成**（2026-08-21 PR #31 `c727417`；2026-09-27 查核更正）
 
-**狀態**:SK-35 從 8/7 commit (67e0433) 後**完全無變動**, 也未在 T9 v1 (8/15) 後做任何評估記錄。
-
-**實證** (`git log -3 skills/SK-35-mcp-failover.md`):
-> 「67e0433 2026-08-07 23:57:39 +0800 feat(atlas-wiki): v6.56 F 路徑重構 + 9 條未完成工作全完成 (#16)」
-
-**建議決策** (kaecer 拍板):
-- (A) 不做: 維持「源於 hermes skill」定位, SK-35 仍是 skill-inbound 性質, 不需對位學術論文
-- (B) 做: 加一段「起源說明」+ 找對應學術概念 (容錯/備援設計, 如 failover pattern literature)
+**狀態（2026-09-27 查核更正）**：**已完成** —— `skills/SK-35-mcp-failover.md:28` 已有「## 論文版概念 / 起源說明（忠實還原來源）」段（全檔 5,996 B），隨 PR #31（`c727417`, 2026-08-21 18:36）落地 ⇒ 原 (A)/(B) 決策選項已由實作收斂為 **(B)**。
+原「未做」判定與其「8/7 後無變動」實證屬過期資訊（歷史見 git log）。
 
 ---
 
@@ -131,8 +124,7 @@
 
 1. **L3 攻堅範圍**: ✅ **kaecer 2026-08-21 拍板 = 105** (35 active × 3 step)。
 2. **8/21 是否真的恢復**: PR #27 寫「cron 系統恢復」(對位 hermes agent.log 8/21 04:00 觸發 + 04:04:12 completed), 但 8/21 [FAILED] 條目仍標失敗 (Fin-Skills.md 找不到根因沒解)。**系統 vs 任務** 視角不同, 後續如何標記?
-3. **Task 2 SK-31 衝突**: (a) 合併 / (b) renumber → SK-36 / (c) 保留雙頁? (預設 (b))
-4. **Task 4 SK-35 論文版**: (A) 不做 / (B) 做? (8/21 評估: SK-35 屬 skill-inbound, 學術對位非必要, 預設 (A))
+3./4. ~~Task 2 SK-31 衝突~~／~~Task 4 SK-35 論文版~~：**已解決並移出待拍板清單**（Task 2 renumber 完成；Task 4 已隨 PR #31 落地，見上方各段 2026-09-27 查核）。
 5. **新發現 B Fin-Skills.md 6 天找不到**: (A) 復原 / (B) 切 Phase 2 / (C) 收口停掉?
 6. **CLAUDE.md 第 18 行引用遷移**: 從 8/15 改為 8/21? (治理檔變更, 按 §6.4.2 需人工 review)
 7. **新發現 A 8/20 cron 卡死修復**: 派 hermes 處理 A1 + A2 兩項修復任務?

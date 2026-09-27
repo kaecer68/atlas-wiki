@@ -2,17 +2,10 @@
 
 > 每次在 `~/workspace/atlas-wiki/` 啟動時自動注入。
 > 上游機制：Hermes Context Files（`.hermes.md` / `AGENTS.md` / `CLAUDE.md`）。
-> **版本沿革(節錄;完整沿革見 git log——依 §10「本檔只放現行操作規則」,歷史不進本檔)**：
-> 08-21 v0.9 加 §9.5 Skills 索引紀律 + §10 v0.9 例外條款;08-22 v0.9.1-0.9.7 Plan F 護欄完成／知識路由遷移（raw/queries/comparisons 等 18 檔 → atlas-notes）／_method 第八條拍板／驗證批次 ext+sk 收尾。
-> 08-23 v0.9.8 TWSE 實跑(SK-21/SK-23)＋VERIFICATION-BACKLOG 38/38 結案;08-25 v0.9.9-0.9.10 atlas docs 瘦身＋憲章 v1.1 對位(PR #1691-#1693)。
-> **09-18 v0.9.16：trigger-monitor 加 `--dry-run`／`--no-notify`**——原無參數解析，手動執行（含誤用 --help）會在觸發時送 Telegram；cron 預設行為不變。
-> **09-18 v0.9.15：M7 常態化**——`scripts/structure-health-settle.py` 把結構健康度自動追加進結算（`_structure-health-log.md` ＋ `_self-audit.md`）；launchd `com.goluck.atlas-wiki-structure-health` 每日 09:05 執行（機器層，可 unload 移除）。
-> **09-18 v0.9.14：未消化已結項結清＋strict 開啟**——16 項結清（13 刪／2 改未結／4 折入驗證段）；schema 未消化規則升 hard（新增 [x] 即 CI 紅）。
-> **09-18 v0.9.13：結構健康度量測（M7）**——`make structure-metrics` 輸出結算用 Markdown／JSON（結構硬違規、禁用標記、未消化已結項、size、frontmatter、未提交時長）；基線＝0／0／16 項／0／0／0。
-> **09-18 v0.9.12：反補丁機制（kaecer 拍板）**——SSOT `skills/_scripts/skill-page-schema.json`＋結構守衛 `make check-skill-structure`（附最小重構處方）＋骨架產生器 `new-skill-page.py`＋未提交偵測 `make check-stale`＋PR 模板「內容歸屬判斷」；規範＝`_method.md` 第九條；CI＝`validate-wiki.yml` 新增結構 job（該 workflow 僅在 push→main／PR→main 觸發；stacked PR 需改 base 後再推一次才會跑）。
-> **09-18 v0.9.11：skills/ 內容治理**——SK-22／SK-31 補丁疊加內容重構（移除 alias 補強段與版本史、標準 6 段就位、描述性敘事移出）、SK-34 補「論文版概念」段、`_inbox.md` 依第七條歸檔 SOP 瘦身（23,790 → 11,061）＋第七條例外重複真相源改 cross-ref（SSOT）、`_self-audit*` 家族排除版控、修正 SK-31 段名改名後殘留引用（`§6 層因果鏈框架`→「6 層因果鏈框架」）＋SK-34 段序回標準序（論文版概念移至第 2 段）、AGENTS.md 依 §10 收斂歷史沿革。
-08-21 v0.9：加 §9.5 Skills 索引紀律（kaecer 8/21 21:20 拍板）；上限暫放寬至 12,500 bytes。
-08-22 v0.9.2：金融審計 audit-fix 批次（19 檔 skills/ 內容修正 + _consult-index 瘦身歸檔 + 2 檔衍生審計檔移 _archive/；SK 數 37 不變、無新增/刪除 skill、§3/§9.5 索引不變）。
+> **版本沿革**：依 §10「本檔只放現行操作規則」，**沿革不列於本檔** —— 歷史教訓歸 `skills/_self-audit.md`，完整沿革見 `git log -- AGENTS.md`。
+> **現行機制出處速查**：反補丁／結構守衛 → `skills/_scripts/skill-page-schema.json`、`make check-skill-structure`、`make check-stale`、`_method.md` 第九條；
+> 結構健康度（M7）與結算 → `make structure-metrics`、`scripts/structure-health-settle.py`、`skills/_structure-health-log.md`；
+> `trigger-monitor` 手動執行 → `--dry-run`／`--no-notify`（cron 行為不變）。
 
 ---
 
@@ -187,9 +180,10 @@ hermes prompt-size --json | jq '.skills_index'    # 確認 always-on skills_inde
 
 改 atlas 內容前讀 `~/.hermes/content-routing.md`（先分類 / 一段一檔 / LIMIT MEMORY 2200/USER 1375 / SOUL 只做人）。
 
-驗證：`wc -c` ≤ 10,500 bytes（之後只減不加）；`stat -f '%Sm' ~/.hermes/SOUL.md` 時間戳不變。
+驗證：`wc -c AGENTS.md` ≤ **12,500 bytes**（現行上限）；`stat -f '%Sm' ~/.hermes/SOUL.md` 時間戳不變。
 
-> **v0.9 例外（2026-08-21）**：加 §9.5 Skills 索引紀律（kaecer 拍板），上限暫放寬至 12,500 bytes；後續 §0/§3 精簡後收回 10,500 bytes。
+> **上限沿革**：10,500（原始）→ 2026-08-21 v0.9 例外放寬至 12,500（加 §9.5）。2026-09-27 移除「版本沿革」段後為 **10,722 bytes**（沿革改由 `git log` ＋ `_self-audit.md` 承載）。
+> 距 10,500 尚差 222 bytes：缺口在 §9.5／§9 與外部正本（`~/.hermes/skills/skills-map.md`）的重複敘述，去重後即可收回原上限。
 
 ---
 
