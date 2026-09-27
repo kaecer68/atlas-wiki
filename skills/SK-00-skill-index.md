@@ -8,13 +8,13 @@ tier: T3
 confidence: high
 atlas_go_relevance: high
 mcp_tools_used: []
-verification: 本檔是純索引頁,驗證方式 = `ls ~/workspace/atlas-wiki/skills/SK-*.md | wc -l`; **2026-09-27 實測 = 37**(36 編號 + SK-00 索引;SK-27/30 已 archive)。歷史值:2026-08-21 = 36(原 35 + SK-36 新編號)。
+verification: 本檔是純索引頁,驗證方式 = `ls ~/workspace/atlas-wiki/skills/SK-*.md | wc -l`; **2026-09-27 實測 = 39**(38 編號 + SK-00 索引;SK-27/30 已 archive)。歷史值:同日稍早 = 37(新增 SK-37/38 前);2026-08-21 = 36(原 35 + SK-36 新編號)。
 ---
 
 ## 一句話定位
 SK-00 在 atlas 是「所有 SK 頁的目錄 + pipeline 組裝藍圖」——給散戶一句話看完整套體系怎麼用,不需逐頁翻。
 
-## SK 全表（37 檔;2026-09-27 `ls skills/SK-*.md | wc -l` 實測）
+## SK 全表（39 檔;2026-09-27 `ls skills/SK-*.md | wc -l` 實測）
 
 > 2026-09-27 補:本節補列 17 檔原本未被本索引引用的 SK 頁（audit-file-index-sync.py 實測）。名稱取自各頁 frontmatter `title`。
 
@@ -23,6 +23,7 @@ SK-00 在 atlas 是「所有 SK 頁的目錄 + pipeline 組裝藍圖」——給
 - **SK-10~19 模型與評估**:SK-10 隨機森林模型｜SK-11 多層神經網路(1~5 層)｜SK-12 樣本外評估(R²/夏普/累積報酬)｜SK-13 排列重要性｜SK-14 部分相依圖(邊際效應)｜SK-15 雙特徵交互作用分析｜SK-16 多空十分位數投資組合｜SK-17 加權方式(等權/價值加權)｜SK-18 因子模型風險調整 Alpha｜SK-19 交易成本與稅務調整
 - **SK-20~29 穩健性與強化學習**:SK-20 規模分組穩健性檢驗｜SK-21 排除仙股穩健性檢驗｜SK-22 消去法(排除特定因子集)｜SK-23 產業輪動環境建構｜SK-24 PPO 強化學習訓練框架｜SK-25 獎勵函數設計與評估｜SK-26 經典策略網路(LSTM/Transformer)｜SK-27 量子增強策略網路(已 archive)｜SK-28 獎勵-績效錯配診斷｜SK-29 滾動窗口回測模擬
 - **SK-30~36 治理・判斷・備援**:SK-30 量子模型訓練穩定性分析(已 archive)｜SK-31 2026 AI 投資週期對位台股｜SK-32 獎勵函數敏感性分析｜SK-33 三 audience 表達口徑切換｜SK-34 上市/上櫃分流判斷與備援｜SK-35 atlas-mcp 失敗時 4 級 fallback 鏈｜SK-36 監督學習 vs. 強化學習策略比較
+- **SK-37~38 流動性・歸因(2026-09-27 新增)**:SK-37 流動性分位與買賣價差篩選｜SK-38 PnL 歸因工作流(描述性歸因 vs 消去法)
 
 ## 論文版概念（忠實還原來源）
 - **功能**:編號 + 名稱 + 功能 + 依賴關係 + 典型應用 pipeline
@@ -37,7 +38,7 @@ SK-00 在 atlas 是「所有 SK 頁的目錄 + pipeline 組裝藍圖」——給
 | 論文概念 | atlas-mcp 對位 |
 | 33 個 SK 索引 | 本檔 + `~/workspace/atlas-wiki/skills/SK-*.md`(已 33 頁) |
 | 33 個 SK 索引(2026-08-07 +SK-33 → 34) | 本檔 + `~/workspace/atlas-wiki/skills/SK-*.md`(已 34 頁;SK-33 audience-routing 是元能力頁) |
-| **37 個 SK 索引(2026-09-27 實測)** | 本檔 + `skills/SK-*.md`(37 頁,含本索引頁;SK-27/30 已 archive) |
+| **39 個 SK 索引(2026-09-27 實測)** | 本檔 + `skills/SK-*.md`(39 頁,含本索引頁;SK-27/30 已 archive) |
 | 三條 pipeline | 對位 atlas `universe_get_sessions`(SL/RL session 結構) |
 | 跨 SK 依賴 | `experiment_history`(audit trail) |
 
@@ -55,7 +56,7 @@ SK-00 在 atlas 是「所有 SK 頁的目錄 + pipeline 組裝藍圖」——給
 - 對位 ATLAS_METHODOLOGY 七時期:三條 pipeline 在不同 regime 的可靠度不同——SL pipeline 在 RISK_ON 穩定,RL pipeline 在 regime 切換時更有適應力,robustness pipeline 是任何 regime 的必要驗證。
 
 ## 驗證方式
-Step 1: `ls ~/workspace/atlas-wiki/skills/SK-*.md | wc -l` 應回 **37**(2026-09-27 實測;36 編號 + SK-00 索引,SK-27/30 已 archive)。
+Step 1: `ls ~/workspace/atlas-wiki/skills/SK-*.md | wc -l` 應回 **39**(2026-09-27 實測;38 編號 + SK-00 索引,SK-27/30 已 archive)。
 Step 2: 對 `universe_get_sessions` 抽一份 supervised session,看其 strategy_id 對應哪些 SK。
 Step 3: 對 `experiment_history` 抽一份,看其 pipeline metadata 是否含 SK pipeline 標籤。
 

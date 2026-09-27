@@ -56,10 +56,10 @@ Step 2: client 端用 `universe_get_sessions` 拿一份策略名單,排除股價
 Step 3: 對排除前/後各跑一次 `backtest_signals`,呼叫 `risk_get_metrics` 對比 Sharpe / 換手率 / max_drawdown,看排除後是否仍維持 > 1.0 的 Sharpe。
 
 ## 未消化 / 待補
-- [ ] atlas 沒有「流動性分位篩選」,光看股價可能漏掉「中價股但成交量極低」的隱性仙股;應加 `stock_get_chips` 對位。
+- [ ] atlas 沒有「流動性分位篩選」,光看股價可能漏掉「中價股但成交量極低」的隱性仙股;**2026-09-27 更正:對位工具不是 `stock_get_chips`(實跑 2330 只回三大法人淨額、無 volume),成交量在 `stock_get_quote` / `stock_get_technical`**;方法與 L3 已落 `skills/SK-37-liquidity-spread-screening.md`。
 - [ ] 排除比例 20% 是論文預設,實務該看產業:(2026-08-23 TWSE 實測修正:電子股 <20 元僅 12.6%、金融股 >20 元 71.1%,原「電子 80% <20 / 金融 80% >20」不成立;電子股 87.4% ≥20 元)需分產業處理。
 - [ ] 與 SK-20 規模分組的差別:SK-20 按市值切,SK-21 按股價切,兩個高度相關但不完全重疊(高價小股 vs 低價大股)。
-- [ ] 「實盤流動性」需考量 bid-ask spread,atlas 目前無 spread 資料,需另尋 data source。
+- [ ] 「實盤流動性」需考量 bid-ask spread;**2026-09-27 精確化:atlas 無真實 spread,只有 OHLCV 代理 `SpreadEstimate`(`internal/marketdata/microstructure_provider.go`),而該 provider 無 caller ⇒ 端點不可達(已驗證的否定,見 `skills/SK-37-liquidity-spread-screening.md`)**;仍需另尋外部 data source。
 
 methodology_aligned: true
 atlas_constitution_ref: ATLAS_METHODOLOGY.md §五(策略矩陣:仙股排除需對位 7 時期,不同時期仙股風險溢價不同)(附註:2026-07-30 period_system 變動 — `period` 已是 PeriodDetector 真值,`source` 欄位正名 `regime_source` / `period_source`)

@@ -54,7 +54,7 @@
 - [[summaries/atlas-http-path-drift]] — atlas HTTP path drift 集中記錄（2026-09-27 建立,含當日實測 404/200）。檔案:`summaries/atlas-http-path-drift.md`
 
 ## Skills
-<!-- SK 知識頁索引:SK-00 索引 + SK-01~SK-36(37 檔,SK-27/30 已 archive;2026-08-22 audit-fix 快照) -->
+<!-- SK 知識頁索引:SK-00 索引 + SK-01~SK-38(39 檔,SK-27/30 已 archive;2026-09-27 補列 SK-37/38) -->
 
 - [[skills/SK-00-skill-index]] — SK 索引頁
 - **8/7-8/21 新增**:
@@ -63,6 +63,9 @@
   - [[skills/SK-35-mcp-failover]] — mcp-failover（MCP 故障切換）
   - [[skills/SK-36-sl-vs-rl]] — sl-vs-rl（原 SK-31 renumber,PR #31）
   - [[skills/SK-31-ai-investment-cycle-2026]] — AI 投資週期 2026（SK-31 唯一對應）
+- **2026-09-27 新增**:
+  - [[skills/SK-37-liquidity-spread-screening]] — 流動性分位與買賣價差篩選（L3 實跑 2026-09-27;兩個已驗證的否定:無 per-symbol 流動性端點、無真實價差）
+  - [[skills/SK-38-pnl-attribution-workflow]] — PnL 歸因工作流（描述性歸因 vs 消去法;L3 實跑 2026-09-27）
 
 ---
 
