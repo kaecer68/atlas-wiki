@@ -33,7 +33,11 @@ def main():
     ap.add_argument("--json", action="store_true")
     a = ap.parse_args()
     R = a.repo_root
-    schema = json.loads(load(os.path.join(R, "skills/_scripts/wiki-page-schema.json")))
+    schema_path = os.path.join(R, "skills/_scripts/wiki-page-schema.json")
+    if not os.path.isdir(R) or not os.path.isfile(schema_path):
+        print(f"❌ 找不到 repo 或 schema（--repo-root={R}）— 護欄不得在空環境上通過")
+        return 1
+    schema = json.loads(load(schema_path))
     try:
         import yaml; HAS_YAML = True
     except Exception:
@@ -93,7 +97,7 @@ def main():
 
     total = sum(v for k, v in counts.items() if k != "entry") + counts.get("entry", 0)
     if sum(v for k, v in counts.items() if k != "entry") == 0:
-        print(f"❌ 掃到 0 頁（--repo-root={'R'} 可能錯）— 護欄不得在空集合上通過")
+        print(f"❌ 掃到 0 頁（--repo-root={R} 可能錯）— 護欄不得在空集合上通過")
         return 1
     if a.json:
         print(json.dumps({"counts": counts, "violations": {k: v for k, v in report.items()}}, ensure_ascii=False, indent=1))

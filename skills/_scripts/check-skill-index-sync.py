@@ -76,29 +76,38 @@ def get_git_changes(repo_root: Path, paths: list) -> dict:
 
 
 def change_set_vs_base(repo_root: Path, base_ref: str) -> dict:
-    """以 `git diff --name-status -M <base_ref>...HEAD` 取變更集（CI 用）。
+    """以 `git diff --name-status -M <base>...HEAD` 取變更集（CI 用）。
 
     為什麼需要：R3 若只看「工作區 vs HEAD」，在 CI 的乾淨 checkout 下變更集**恆為空**
     ⇒ 護欄永遠通過（假綠）。2026-09-28 由獨立審查實測發現。
+
+    兩點/三點：優先 `...`（merge-base）；淺層 checkout 或無共同祖先時退回 `..`（實測可用）。
+    rename 一律拆成「舊路徑＝D、新路徑＝A」，避免 `git mv` 逃逸。
     """
-    changes = {"A": [], "M": [], "D": []}
-    res = subprocess.run(
-        ["git", "diff", "--name-status", "-M", f"{base_ref}...HEAD"],
-        cwd=str(repo_root), capture_output=True, text=True, timeout=60,
-    )
-    if res.returncode != 0:
-        raise RuntimeError(f"git diff {base_ref}...HEAD 失敗：{res.stderr.strip()[:200]}")
-    for line in res.stdout.strip().split("\n"):
-        if not line.strip():
-            continue
-        parts = line.split("\t")
-        status = parts[0][0]
-        for p in parts[1:]:          # rename/copy 會給舊路徑與新路徑，全部納入
-            if status in changes:
-                changes[status].append(p)
-            elif status == "R":      # 舊路徑視為刪除、新路徑視為新增
-                pass
-    return changes
+    last_err = ""
+    for expr in (f"{base_ref}...HEAD", f"{base_ref}..HEAD"):
+        res = subprocess.run(
+            ["git", "diff", "--name-status", "-M", expr],
+            cwd=str(repo_root), capture_output=True, text=True, timeout=60,
+        )
+        if res.returncode == 0:
+            changes = {"A": [], "M": [], "D": []}
+            for line in res.stdout.strip().split("\n"):
+                if not line.strip():
+                    continue
+                parts = line.split("\t")
+                status, paths = parts[0][0], parts[1:]
+                if status == "R" and len(paths) >= 2:      # rename：舊→D、新→A
+                    changes["D"].append(paths[0])
+                    changes["A"].append(paths[-1])
+                elif status == "C" and len(paths) >= 2:    # copy：新→A
+                    changes["A"].append(paths[-1])
+                elif status in changes:
+                    for p in paths:
+                        changes[status].append(p)
+            return changes
+        last_err = res.stderr.strip()[:200]
+    raise RuntimeError(f"git diff {base_ref} 失敗（試過 ... 與 ..）：{last_err}")
 
 
 def check_skill_index_sync(repo_root: Path, dry_run: bool = False, repo_only: bool = False,
@@ -144,7 +153,14 @@ def check_skill_index_sync(repo_root: Path, dry_run: bool = False, repo_only: bo
             "files": [],
             "fix": "確認 --repo-root 指向 atlas-wiki repo",
         })
-    if base_ref:
+    if base_ref is not None and base_ref.strip() == "":
+        violations.append({
+            "rule": "R3: --base-ref 為空字串 — 護欄不得靜默退回『工作區 vs HEAD』（CI 下恆空＝假綠）",
+            "details": "請傳 PR base SHA；若無 base 請明確不傳本參數並自行承擔假綠風險",
+            "files": [], "fix": "CI 傳 ${{ github.event.pull_request.base.sha }}",
+        })
+        atlas_changes = {"A": [], "M": [], "D": []}
+    elif base_ref:
         try:
             atlas_changes = change_set_vs_base(repo_root, base_ref)
         except RuntimeError as e:

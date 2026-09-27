@@ -22,14 +22,22 @@ BAD = re.compile(r"\$[A-Za-z_][A-Za-z0-9_]*[^\x00-\x7F]")
 
 
 def strip_literals(line):
-    """去掉單引號內的字面值（bash 不展開）與 `#` 註解，避免假陽性。"""
-    out, in_sq = [], False
+    """把「不會展開變數」的區域抹掉（單引號內、跳脫字元），並在未引號區遇 `#` 視為註解。
+
+    注意：**雙引號內仍會展開**，且雙引號內的 `'` 或 `#` 都是字面值 ⇒ 必須用狀態機，
+    不能只做字串取代（2026-09-28 審查實測：舊版會把 `echo "don't use $BASE（x）"` 整行抹掉。
+    """
+    out, in_sq, in_dq, esc = [], False, False, False
     for i, c in enumerate(line):
-        if c == "'":
-            in_sq = not in_sq
-            out.append(" ")
-            continue
-        if not in_sq and c == "#" and (i == 0 or line[i - 1] in " \t;|"):
+        if esc:
+            out.append(" "); esc = False; continue
+        if c == "\\" and not in_sq:
+            esc = True; out.append(" "); continue
+        if c == "'" and not in_dq:
+            in_sq = not in_sq; out.append(" "); continue
+        if c == '"' and not in_sq:
+            in_dq = not in_dq; out.append(" "); continue
+        if c == "#" and not in_sq and not in_dq and (i == 0 or line[i - 1] in " \t;|&("):
             break
         out.append(" " if in_sq else c)
     return "".join(out)
@@ -62,13 +70,13 @@ def workflow_blocks(repo_root):
         i = 0
         while i < len(lines):
             line = lines[i]
-            m = re.match(r"^(\s*)run:\s*(.*)$", line)
+            m = re.match(r"^(\s*)(?:-\s+)?run:\s*(.*)$", line)
             if not m:
                 i += 1
                 continue
             base = len(m.group(1))
             rest = m.group(2).strip()
-            if rest and rest not in ("|", ">", "|-", ">-"):
+            if rest and not re.match(r"^[|>][-+]?\d*$", rest):
                 out.append((wf, i + 1, line))  # 單行形式 run: cmd
                 i += 1
                 continue

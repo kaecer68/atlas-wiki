@@ -98,7 +98,11 @@ jobs:
     name: "SK 結構檢查（SSOT: skill-page-schema.json）"
     runs-on: ubuntu-latest
     steps:
+      # fetch-depth: 0 —— R3 需對 PR base SHA 做 git diff；淺層（預設 1）會失敗
+      # （2026-09-28 CI 實測：fatal: Invalid symmetric difference expression）
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - name: 段名／段序／重複段／禁用標記（失敗輸出最小重構處方）
         run: python3 skills/_scripts/check-skill-structure.py --skills-dir skills
       - name: size + frontmatter 10 欄 + YAML 合法 + L3 覆蓋率門檻（2026-09-27 kaecer 拍板 ≥90%）

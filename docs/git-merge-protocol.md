@@ -160,8 +160,7 @@ PR 建立後 **不可停留**在「compare & pull request」未完成狀態。�
 # 標準:squash + 刪分支(GitHub 已設 deleteBranchOnMerge=true,遠端會自動刪)
 gh pr merge <N> --squash --delete-branch
 
-# 若 enforce_admins=true 卡住(status check context 不匹配見 §7):
-gh pr merge <N> --squash --delete-branch --admin
+# 若被 required check 卡住:先修 check;--admin 能否繞過**未驗證**(見 §9 限度①)
 ```
 
 ### 6.3 自我合併條件
@@ -265,7 +264,7 @@ Tag 必含 commit 註明:範圍 / 對位 / 風險。
 | 情境 | 命令 | 風險 |
 |------|------|------|
 | pre-push 紅燈但確認 false positive | `SKIP_CI_GATE=1 git push` | push 後 CI 仍跑,最終防線 |
-| CI 全綠但 merge 被擋(enforce_admins 衝突) | `gh pr merge --admin` | 保護被覆寫,但保護對其他 PR 仍生效 |
+| CI 全綠但 merge 被擋 | 先修 required check | `--admin` 能否繞過**未驗證**(§9 限度①) |
 | workflow 變更導致所有 run 壞掉 | `git revert HEAD` + push + 立即開 fix PR | 緊急修復,事後補 incident report |
 
 ## 10. 參考
