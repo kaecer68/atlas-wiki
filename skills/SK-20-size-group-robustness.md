@@ -64,12 +64,12 @@ Step 1: `mcp__atlas_mcp__industry_sector_list` 取得 universe 大致清單,記�
 Step 2: 從中挑 3 個市值大股(以 PE/PB 估值中位以上為 proxy)+ 3 個小股,跑 `stock_get_quote` 取近 60 日收盤
 Step 3: 兩組各算一次近 60 日夏普(年化 std × √252),對比;若一邊 < 0.3 且另一邊 > 0.8,即代表「只在某規模有效」
 
-**L3 端點實跑狀態(2026-07-30)**:
-- ✅ `stock_get_fundamentals` 已對位(industry_sector_lookup 2330 → 半導體, 12 支代表股)
-- ⏳ `industry_sector_list` / `stock_get_quote` 待實跑
+**L3 端點實跑狀態(2026-09-27 校正,以 frontmatter `verification` 為準)**:
+- ✅ `stock_get_fundamentals` / `industry_sector_lookup` / `stock_get_quote` 三端點已跑通(2026-07-30~08-01;2026-08-01 v0.9 結算升 `status: active`,故非 draft)
+- ⏳ `industry_sector_list` 全 universe 清單仍未實跑(2026-09-27 查 frontmatter 無記載)
 
 ## 未消化 / 待補
-- [ ] L3 端點真跑:上面 Step 1~3 尚未執行(2026-07-30 仍 draft)
+- [ ] 論文 D1~D10 十分位結構未在 atlas 端落地:三端點已跑通(2026-08-01),但 client 端市值分組與十分位重切仍待實作(原記「Step 1~3 尚未執行、2026-07-30 仍 draft」與 frontmatter `status: active` 矛盾,2026-09-27 已改寫)
 - [ ] atlas-mcp 沒有原生市值時序,只能用現值快照 + 價格反推,真實回測時務必補上
 - [ ] 「tercile」三切分版未寫,理論上對應低/中/高 beta 分群,但需要先驗 median 版
 - [ ] 與 SK-21(排除仙股)的關係:SK-20 切小股會自然帶到仙股,兩者是否重複驗證待釐清
