@@ -151,15 +151,12 @@
 | 4 | **找不到合適 skill 必報**：找不到 → 報 kaecer，不亂猜或自創 | 自創 skill 但未走護欄 SOP |
 | 5 | **新增/修改 skill 必走護欄**：搜尋 70% 重疊 + 寫 references/ 或拍板新增 | skills 膨脹失控 |
 
-### 本專案常用 skill 索引（速查）
+> 任務→skill 對位**正本在 §3**。跨頁口徑矛盾 → wiki-critic / knowledge-harvest（產業桶正本 = SK-23：38 = 20 L1 + 18 L2，論文 47）。
 
-| 任務 | 必載入 skill（依層級） |
-|------|---------------------|
-| 散戶對話 / 金融判斷 | core: agent-self-judgment-mode + active: financial-advisor-coach / task-financial-judgment |
-| 知識整理 / wiki 寫入 | core: task-knowledge-routing + active: knowledge-harvest / wiki-critic / director-atlas-wiki |
-| 治理 / skill 維護 | core: task-governance / mode-escalation + active: governance-audit |
-| 程式 / 系統 / 研究 | core: task-coding + active: task-system-health / mode-research |
-| 跨頁口徑／數值矛盾 | active: wiki-critic / knowledge-harvest（先定口徑正本再改；產業桶數正本 = SK-23：atlas 38 = 20 L1 + 18 L2，論文 47） |
+### 品質護欄（S1–S8，2026-09-27）
+
+`make ci-gate` 全跑。**strict（違規即紅燈）**：結構／size／frontmatter＋YAML／L3 ≥90%＋文法／S2 schema／S5 檢索性／S7 句型／**S3 來源可追溯**／R1+R3+R4／detector 數（29）。
+**warn**：**S6 時效**（`check-freshness.py`：含日期快照頁須有 `last_verified`／`l3_run_at`／`待複驗`；禁用 `updated` 冒充）。細節見 `atlas-wiki-quality` skill。
 
 ### 紅線（不可違反）
 

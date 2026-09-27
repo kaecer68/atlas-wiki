@@ -43,8 +43,8 @@ check-size: check-skill-pages
 check-freshness:        ## 3j. 時效宣告與逾期 S6（warn；待 18 頁補完後 --strict）
 	@$(PY) skills/_scripts/check-freshness.py --repo-root $(CURDIR)
 
-check-source-tiers:     ## 3i. 外部事實來源可追溯性 S3（warn；待 25 頁補完後 --strict）
-	@$(PY) skills/_scripts/check-source-tiers.py --repo-root $(CURDIR)
+check-source-tiers:     ## 3i. 外部事實來源可追溯性 S3（strict；25 頁已補完）
+	@$(PY) skills/_scripts/check-source-tiers.py --repo-root $(CURDIR) --strict
 
 check-claim-rules:      ## 3h. 禁用句型 S7（synthetic→in-sample／零值須說明／401 須提 key）
 	@$(PY) skills/_scripts/check-claim-rules.py --repo-root $(CURDIR)
