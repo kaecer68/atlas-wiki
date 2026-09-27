@@ -16,6 +16,7 @@ atlas-mcp 端點 audit 工具 — 自動掃描 109 端點 + 抓 Description
 """
 import os
 import re
+import sys
 import glob
 import argparse
 from datetime import datetime

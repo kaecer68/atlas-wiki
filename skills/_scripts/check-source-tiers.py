@@ -44,6 +44,9 @@ def main():
     files = []
     for pat in PAGE_GLOBS:
         files += [f for f in sorted(glob.glob(os.path.join(a.repo_root, pat))) if ".bak" not in f]
+    if not files:
+        print("❌ 掃到 0 頁（--repo-root 可能錯、或檔案缺失）— 護欄不得在空集合上通過")
+        return 1
     viol = []
     for f in files:
         t = open(f, encoding="utf-8").read()

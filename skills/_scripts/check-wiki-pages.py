@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """check-wiki-pages.py — 非 SK 類知識頁的 schema 護欄（S2，2026-09-27）
 
-SSOT: `skills/_scripts/wiki-page-schema.json`（concepts／entities／summaries／templates）。
+SSOT: `skills/_scripts/wiki-page-schema.json`（concepts／entities／summaries／templates／docs）。
 SK 頁另有 `skill-page-schema.json` ＋ `check-skill-pages.py`，兩者欄位不同、不可混用。
 
 對位審計（2026-09-27）：**54/94 頁**（concepts 22／entities 7／summaries 2／templates 22，不含 audit-report）
@@ -48,6 +48,8 @@ def main():
                 report["size"].append(f"{name}: {size} > {spec['size_limit_bytes']}")
             fm = fm_of(text)
             if fm is None:
+                if spec.get("allow_no_frontmatter"):
+                    continue  # 例：docs/** 本質上無 frontmatter（2026-09-28）
                 report["no_frontmatter"].append(name); continue
             if HAS_YAML:
                 try:

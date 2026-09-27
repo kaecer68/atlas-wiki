@@ -36,7 +36,7 @@ atlas-wiki/
 ├── _internal/            # 內部設計/維運紀錄(索引見其 README.md)
 ├── _archive/             # append-only 歷史(log-YYYY-MM.md)
 └── .github/workflows/
-    └── validate-wiki.yml  # CI(9 jobs:8 驗證 + 通知)
+    └── validate-wiki.yml  # CI(10 jobs:9 驗證 + 通知)
 ```
 
 ## 規範速查(詳見 `skills/_method.md`)
@@ -84,7 +84,8 @@ push / PR 到 `main` 觸發 `validate-wiki`（2026-09-27 實測 9 個 job:8 個�
 | `check-claim-rules.py` | 禁用句型 S7(3 條規則) |
 | `check-source-tiers.py` | 外部事實來源 S3 |
 | `check-freshness.py` | 時效宣告 S6 |
-| `check-skill-index-sync.py` | 強制 skills 建立/修改時索引同步更新 |
+| `check-shell-var-ascii.py` | shell `$VAR`+非 ASCII |
+| `check-skill-index-sync.py` | skills 索引同步 R1+R3+R4 |
 | `new-skill-page.py` | SK 頁骨架產生器(反補丁 M6) |
 | `structure-health-metrics.py` | 結構健康度量測(M7;含 L3 覆蓋率＋watch list) |
 | `audit-file-index-sync.py` | 驗證 wiki 內落檔是否被索引引用 |
@@ -126,7 +127,7 @@ atlas-wiki v6.18 含 **12 核心觸發模板** 落 `templates/` = 自動信號�
 
 跑 `atlas-mcp-trigger-monitor.py`(每 5 分鐘)+ 自動 §6 紀錄 + Telegram 通知。
 
-**現況(2026-09-27 實測)**:`ls templates/trigger-*.md | wc -l` = **21**(templates/ 共 22 檔,含 `audit-report.md`);`atlas-mcp-trigger-monitor.py` 實際 wire **17** 檔(= 12 核心 + 5 新增)。v6.18 之後新增 9 檔(名稱取自各檔 H1):
+**現況(2026-09-28 實測)**:`ls templates/trigger-*.md | wc -l` = **21**(templates/ 共 22 檔);`atlas-mcp-trigger-monitor.py` 實際 wire **17** 檔(= 12 核心 + 5 新增)。v6.18 之後新增 9 檔(名稱取自各檔 H1):
 
 - `trigger-2330-tsmc-swing` — 2330 台積電報價觸發(盤中振幅逾 ±3%)
 - `trigger-ai-capex-guidance-cut` — AI capex 指引下修(對位 2026 韓股 HBM 降溫)
@@ -140,7 +141,7 @@ atlas-wiki v6.18 含 **12 核心觸發模板** 落 `templates/` = 自動信號�
 
 ## 貢獻
 
-以 PR 形式提交至 `main` 分支。CI 會自動跑 8 項驗證(共 9 jobs);需遵守 `skills/_method.md` 六條鐵律(尤其快照值必附 timestamp,見該檔 §第五條鐵律)。貢獻前請閱讀:
+以 PR 形式提交至 `main` 分支。CI 會自動跑 9 項驗證(共 10 jobs);需遵守 `skills/_method.md` 六條鐵律(尤其快照值必附 timestamp,見該檔 §第五條鐵律)。貢獻前請閱讀:
 
 1. `AGENTS.md`(專案 context)
 2. `skills/_method.md`(寫入規範)

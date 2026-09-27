@@ -105,7 +105,7 @@ jobs:
         run: python3 skills/_scripts/check-skill-pages.py --skills-dir skills --min-l3-coverage 90
       - name: 檢索性完整性 S5（載入條件／索引／入口可達性；2026-09-27 升硬門檻）
         run: python3 skills/_scripts/check-retrieval-integrity.py --strict
-      - name: 非 SK 類頁面 schema（S2；concepts／entities／summaries／templates）
+      - name: 非 SK 類頁面 schema（S2；concepts／entities／summaries／templates／docs）
         run: python3 skills/_scripts/check-wiki-pages.py
       - name: 禁用句型（S7；synthetic→in-sample／零值須說明／401 須提 key）
         run: python3 skills/_scripts/check-claim-rules.py
@@ -113,6 +113,10 @@ jobs:
         run: python3 skills/_scripts/check-source-tiers.py --strict
       - name: 時效宣告與逾期（S6；strict）
         run: python3 skills/_scripts/check-freshness.py --strict
+      - name: shell「$VAR 緊接非 ASCII」（2026-09-28 新增；會 unbound 中止的 bug）
+        run: python3 skills/_scripts/check-shell-var-ascii.py --strict
+      - name: skills 索引同步 R3（repo-only；CI 無 ~/.hermes）
+        run: python3 skills/_scripts/check-skill-index-sync.py --repo-only
   size-check:
     name: SK 頁大小檢查(≤ 9000 bytes)
     runs-on: ubuntu-latest

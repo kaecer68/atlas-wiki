@@ -5,13 +5,13 @@
 SHELL := /bin/bash
 PY    := python3
 
-.PHONY: help ci-gate ci-fast ci-full check-actionlint check-timestamp check-audit check-skill-pages check-skill-structure check-stale check-retrieval check-wiki-pages check-detector-count check-claim-rules check-source-tiers check-freshness structure-metrics check-size check-frontmatter pre-commit-install uninstall-hooks verify-clean test sync-imac
+.PHONY: help ci-gate ci-fast ci-full check-actionlint check-timestamp check-audit check-skill-pages check-skill-structure check-stale check-retrieval check-wiki-pages check-detector-count check-claim-rules check-source-tiers check-freshness check-shell-var-ascii check-index-sync structure-metrics check-size check-frontmatter pre-commit-install uninstall-hooks verify-clean test sync-imac
 
 help:                   ## 列出所有 target
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN{FS=":.*?## "}{printf "  %-22s %s\n", $$1, $$2}'
 
-ci-gate:                ## 快速門禁(對位 GitHub CI 10 job=9 驗證+notify(2026-09-27 實測) + skills 索引同步 R1+R3+R4)
-ci-gate: check-timestamp check-audit check-size check-skill-structure check-frontmatter check-actionlint check-skill-index-sync check-retrieval check-wiki-pages check-detector-count check-claim-rules check-source-tiers check-freshness
+ci-gate:                ## 快速門禁(對位 GitHub CI 10 job=9 驗證+notify(2026-09-28 實測) + skills 索引同步 R1+R3+R4)
+ci-gate: check-timestamp check-audit check-size check-skill-structure check-frontmatter check-actionlint check-skill-index-sync check-retrieval check-wiki-pages check-detector-count check-claim-rules check-source-tiers check-freshness check-shell-var-ascii check-index-sync
 	@echo ""
 	@echo "✅ local ci-gate passed（結構／size／frontmatter／YAML／L3 覆蓋率＋文法／S2 非 SK schema／S5 檢索性／S7 禁用句型／R1+R3+R4）"
 
@@ -42,6 +42,12 @@ check-size: check-skill-pages
 
 check-freshness:        ## 3j. 時效宣告與逾期 S6（strict；18 頁已補完）
 	@$(PY) skills/_scripts/check-freshness.py --repo-root $(CURDIR) --strict
+
+check-shell-var-ascii:  ## 3k. shell「$VAR 緊接非 ASCII」（strict；會 unbound 中止的 bug）
+	@$(PY) skills/_scripts/check-shell-var-ascii.py --repo-root $(CURDIR) --strict
+
+check-index-sync:       ## 3l. wiki 內檔索引同步（與 GitHub CI 同支，消除本地/CI 漂移）
+	@$(PY) skills/_scripts/audit-file-index-sync.py --repo-root $(CURDIR)
 
 check-source-tiers:     ## 3i. 外部事實來源可追溯性 S3（strict；25 頁已補完）
 	@$(PY) skills/_scripts/check-source-tiers.py --repo-root $(CURDIR) --strict

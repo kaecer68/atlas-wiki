@@ -52,6 +52,10 @@ def main():
         "summaries": (pages("summaries/*.md"), os.path.join(R, "index.md")),
     }
 
+    if sum(len(files) for files, _ in groups.values()) == 0:
+        print("❌ 掃到 0 頁（--repo-root 可能錯、或檔案缺失）— 護欄不得在空集合上通過")
+        return 1
+
     # 全站反向連結來源（所有知識頁的 [[...]]）
     inbound = defaultdict(set)
     for g, (files, _) in groups.items():
