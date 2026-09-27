@@ -127,5 +127,5 @@ archive_owner: agent(autonomous, see _inbox_archive.md)
 **待 kaecer 拍板（未自作決定）**：① 候選 1–3 是否開頁、編號自 SK-37 起 ② 模板類是否佔 quota ③ (i) 的「來源不可考」定調 ＋ 兩處幽靈引用是否修 ④ 來源是否在他機（E 條）。
 
 **Telegram**：`[SILENT]`（人工查核,非 cron）
-**改動**：依 `_method.md` 第七條歸檔 SOP（主檔只留最新 2 版結算）,原 **9/2 段（2,885B）＋ 9/15 段（2,868B）原文移入 `_inbox_archive.md`**（append,含出處標頭）＋ 本檔 append 本段;最終 11,709B ≤ 12,000B。
+**改動**：依 `_method.md` 第七條歸檔 SOP（主檔只留最新 2 版結算）,原 **9/2 段（2,885B）＋ 9/15 段（2,868B）原文移入 `_inbox_archive.md`**（append,含出處標頭）＋ 本檔 append 本段;**實測 11,990B ≤ 12,000B**。
 **移段時仍 OPEN 的項**：9/15 段「cron prompt 內嵌缺口清單 stale → 走 task-governance 更新 SKILL.md／_method.md」未結,隨段入 `_inbox_archive.md`（未消失）。
