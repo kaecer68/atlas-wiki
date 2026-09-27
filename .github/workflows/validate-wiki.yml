@@ -5,6 +5,9 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+    # 2026-09-27：必須含 labeled——否則「CI 先紅 → 貼 kaecer-reviewed 標籤」不會重跑，
+    # governance-review-gate 會永久停在 failure，PR 卡在 BLOCKED（enforce_admins=true 無法繞）。
+    types: [opened, synchronize, reopened, labeled, unlabeled]
 
 permissions:
   contents: read
