@@ -140,6 +140,15 @@ make structure-metrics                          # 前後對照 L3 覆蓋率與 w
 
 `make structure-metrics` 的前後數字（`L3 覆蓋率 N/37`、watch list 大小）要原文貼進 PR body 與回報 —— 這是這項工作的唯一成效指標。
 
+### 7b. L3 覆蓋率門檻（2026-09-27 kaecer 拍板：由「可見度指標」升為 CI 門檻）
+
+- 實作：`skills/_scripts/check-skill-pages.py --min-l3-coverage 90`（預設 **90**；環境變數 `ATLAS_WIKI_MIN_L3_COVERAGE` 可覆寫、`0` = 停用）。
+- 定義：`status: active` 的 SK 頁中，frontmatter **同時**具備 `l3_run_at` + `l3_run_by` + `l3_endpoints_probed` 的比例。
+- 接線：`make ci-gate`（本機，經 `check-size`/`check-frontmatter` → `check-skill-pages`）＋ GitHub CI 的 `skill-structure-check` job（新增一步）。
+- 失敗輸出會逐頁列出「缺 L3」的頁名並以 exit 1 結束。
+- 註：`skills/SK-00-skill-index.md` 是純索引頁，其 L3 = 索引一致性檢查（檔數 + `audit-file-index-sync.py` + `check-skill-index-sync.py`），已在 `l3_endpoints_probed` 照實註明「無 atlas HTTP 端點」。
+- 現況（2026-09-27）：**38/38 = 100%**。
+
 ## 8. 批量與額度
 
 - **一批 5 頁**是實測可用的大小:本批 5 頁共 7 個 HTTP 端點群 + 2 次 CLI/源碼代理,端到端約 20 分鐘（含改頁與驗收）,單頁平均 4 分鐘。

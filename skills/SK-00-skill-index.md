@@ -9,6 +9,12 @@ confidence: high
 atlas_go_relevance: high
 mcp_tools_used: []
 verification: 本檔是純索引頁,驗證方式 = `ls ~/workspace/atlas-wiki/skills/SK-*.md | wc -l`; **2026-09-27 實測 = 40**(39 編號 + SK-00 索引;SK-27/30 已 archive)。歷史值:同日稍早 = 39(新增 SK-39 前)、37(新增 SK-37/38 前);2026-08-21 = 36(原 35 + SK-36 新編號)。
+l3_run_at: 2026-09-27
+l3_run_by: prime-agent（PR docs/20260927-sk00-l3-and-coverage-gate）
+l3_endpoints_probed:
+  - "N/A（純索引頁，無 atlas HTTP 端點；本頁的可驗證宣稱就是索引一致性）"
+  - "`ls skills/SK-*.md | wc -l` → 40；`python3 skills/_scripts/audit-file-index-sync.py` → 8 類 sync 通過、0 未索引（2026-09-27T20:58:03+08:00）"
+  - "`python3 skills/_scripts/check-skill-index-sync.py`（R1+R3+R4）→ 通過（同上時間）"
 ---
 
 ## 一句話定位
