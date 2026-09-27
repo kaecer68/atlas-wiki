@@ -32,7 +32,7 @@
 
 | 目錄 | 一句話 |
 |------|--------|
-| `audit-2026-08-22-financial/` | 2026-08-22 金融內容稽核工作包：`AUDIT-REPORT-main.md`、`DECISION-BRIEFS-iter2.md`、`IMPROVEMENT-PLAN.md`、`VERIFICATION-BACKLOG.md`、`wp-1..8` 各工作包報告 |
+| `audit-2026-08-22-financial/` | 2026-08-22 金融內容稽核（**已結案**）：保留 4 份持久產出 —— `AUDIT-REPORT-main.md`（主報告）、`DECISION-BRIEFS-iter2.md`、`IMPROVEMENT-PLAN.md`、`VERIFICATION-BACKLOG.md`（38/38 已結案）。<br>2026-09-27 瘦身：移除 12 份過程工件（`child-A/B`、`wp-1..8`，合計 133,433 B）—— 全 repo 無任何引用（`grep` 0 命中），結論已收斂在 4 份主檔；取回方式：`git show 9a8f5e4:_internal/audit-2026-08-22-financial/<檔名>` |
 
 ## 維護規則
 

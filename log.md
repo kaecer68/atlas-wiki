@@ -660,3 +660,11 @@ E 不寫猜測，看 logs 或 re-test
 - **C 階段複查（2026-08-22）**：M1 ✅（macro_get_snapshot_latest.current_period 已公開,#1488）+ M4 ✅（strategy_for_period 實跑 bull 驗證）→ C1 解除;C2 部分 — strategy_ranker 仍無 period 欄（atlas-go 源碼複查）,補註落地 concepts/atlas-mcp-tools-reference.md §2.7（_consult-index §3 無空間 8995B）
 - **審計檔瘦身**：_methodology_alignment_audit.md 15768B → 7047B（§5 執行記錄 + §1 原文 → _archive/_methodology_alignment_audit_20260802_execution.md）;_atlas_mcp_path_investigation.md 12318B → 2921B（調查過程 → _archive/_atlas_mcp_path_investigation_history.md）;均 ≤ 9000B
 - **對位**：_inbox_archive 第七條例外模式（歷史段歸檔、主檔留現行結論）;本條目由 iter2 方法論審計結案工人落地
+
+## 2026-09-27 — `_internal/` 稽核過程工件瘦身（16 檔 → 4 檔，−133,433 B）
+
+- **做了什麼**：`_internal/audit-2026-08-22-financial/` 移除 12 份過程工件（`child-A-sk-quant`、`child-B-concepts-templates`、`wp-1`…`wp-8-verify-sys`，合計 133,433 B），保留 4 份持久產出（`AUDIT-REPORT-main` 22,767／`DECISION-BRIEFS-iter2` 4,591／`IMPROVEMENT-PLAN` 3,645／`VERIFICATION-BACKLOG` 8,127，合計 39,130 B）。
+- **為什麼**：該稽核已結案（`VERIFICATION-BACKLOG` 38/38 closed）；過程工件全 repo **0 引用**（實測 `grep -rn 'child-A-sk-quant|child-B-concepts-templates|wp-1-report|wp-7-|wp-8-verify'` 在 `_internal/audit-2026-08-22-financial/` 以外 0 命中）⇒ 屬「無持久保存價值」的重複層，留存只是稀釋可查找性。
+- **取回**：`git show 9a8f5e4:_internal/audit-2026-08-22-financial/<檔名>`（本條目前一個 commit = 9a8f5e4）。
+- **不動**：`skills/_archive/_methodology_alignment_audit*` 三檔**刻意保留** —— `AUDIT-REPORT-main.md:117` 明文把它們列為稽核基準（`_VERBATIM` 10,726／`_with_fileline` 30,522），是審計出處不是重複。
+- **量測脈絡**：全 repo tracked `.md` = 150 檔 / 1,212,899 B，其中 >9,000 B 者 36 檔 / 642,948 B（53.0%）。本條只清「已結案的過程工件」，未動 `concepts/`（13 檔 206,480 B，兩兩 line-set Jaccard <5% ⇒ 各自獨立，非重複）與 `entities/`（5 檔 69,048 B，5–10% 重疊僅為頁面樣板）。
