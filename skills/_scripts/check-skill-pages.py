@@ -171,6 +171,51 @@ def check_l3_coverage(skills_dir, min_pct):
     return (0 if ok else len(missing) or 1), active, pct
 
 
+
+def check_l3_grammar(skills_dir):
+    """L3 證據**文法**檢查（S1，2026-09-27 kaecer 拍板；原本只檢查三個 key 是否存在）。
+
+    每條 `l3_endpoints_probed` 必須符合下列之一：
+      1. 含本地時戳 `YYYY-MM-DDTHH:MM[:SS]+08:00`（秒可省略；不得逼出假精度）；
+      2. 以 `N/A` 開頭（明示本頁無 atlas 端點，例：純索引頁 SK-00）；
+      3. 含 `時間未記`（**僅限** `l3_run_at` ≤ 2026-08-31 的 legacy 紀錄；新頁不得使用）。
+    """
+    files = sorted(glob.glob(os.path.join(skills_dir, "SK-*.md")))
+    files = [f for f in files if ".bak" not in f]
+    ts_re = re.compile(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(:\d{2})?\+08:00")
+    bad = []
+    for f in files:
+        c = open(f, encoding="utf-8").read()
+        m = re.match(r"^---\n(.*?)\n---", c, re.DOTALL)
+        if not m:
+            continue
+        fm = m.group(1)
+        run_at = re.search(r"^l3_run_at:\s*(\S+)", fm, re.MULTILINE)
+        run_at = run_at.group(1) if run_at else ""
+        legacy = bool(run_at) and run_at <= "2026-08-31"
+        mm = re.search(r"^l3_endpoints_probed:\n((?:  - .*\n)+)", fm, re.MULTILINE)
+        if not mm:
+            continue
+        for line in mm.group(1).strip().split("\n"):
+            item = line.strip()[2:].strip()
+            if ts_re.search(item):
+                continue
+            if item.startswith(("N/A", "'N/A", '"N/A')):
+                continue
+            if "時間未記" in item and legacy:
+                continue
+            bad.append((os.path.basename(f), item[:90]))
+    if bad:
+        print(f"❌ L3 證據文法：{len(bad)} 條不合格（缺 +08:00 時戳，或用了不合規的 legacy 標記）")
+        for n, item in bad[:12]:
+            print(f"   {n}: {item}")
+        if len(bad) > 12:
+            print(f"   … 另有 {len(bad) - 12} 條")
+    else:
+        print(f"✅ L3 證據文法：全部合格（{len(files)} 頁）")
+    return (len(bad) or 0), len(files)
+
+
 def main():
     args = parse_args()
     skills_dir = args.skills_dir
@@ -196,6 +241,7 @@ def main():
         print(f"❌ frontmatter: {fm_bad}/{total} 頁有缺欄")
 
     l3_bad, l3_active, l3_pct = check_l3_coverage(skills_dir, args.min_l3_coverage)
+    gram_bad, _ = check_l3_grammar(skills_dir)
     yml_bad, _, have_yaml = check_frontmatter_yaml(skills_dir)
     mode = "PyYAML 實parse" if have_yaml else "fallback(未加引號 ': ' 偵測;PyYAML 未安裝)"
     if yml_bad == 0:
@@ -204,10 +250,10 @@ def main():
         print(f"❌ frontmatter YAML: {yml_bad}/{total} 頁不合法({mode})")
 
     print()
-    if sz_bad == 0 and fm_bad == 0 and yml_bad == 0 and l3_bad == 0:
+    if sz_bad == 0 and fm_bad == 0 and yml_bad == 0 and l3_bad == 0 and gram_bad == 0:
         print(f"✅ 全 {total} 頁合規")
         return 0
-    print(f"❌ 共 {sz_bad + fm_bad + yml_bad + l3_bad} 條違規(需修)")
+    print(f"❌ 共 {sz_bad + fm_bad + yml_bad + l3_bad + gram_bad} 條違規(需修)")
     return 1
 
 

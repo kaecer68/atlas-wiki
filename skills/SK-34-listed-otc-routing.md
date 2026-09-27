@@ -12,11 +12,11 @@ verification: 2026-08-12 D6 L3 端點實跑:6488(上櫃)/2330(上市)/fundamenta
 l3_run_at: 2026-08-12
 l3_run_by: hermes D6 cron 8fd1b1eda764
 l3_endpoints_probed:
-  - "/api/stock/quote?symbol=6488 → 200 last=849 source=fugle market=TW is_tradable=true"
-  - "/api/stock/quote?symbol=2330 → 200 last=2395 source=fugle market=TW"
-  - "/api/stock/fundamentals?symbol=2330 → 200 PE=30.19 PB=9.57"
-  - "/api/industry/sector-lookup?symbol=6488 → found:false(代表性名單不含)"
-  - "/api/stock/quote?symbol=9999 → 200 complete:false coverage_note:NOT_COVERED"
+  - "/api/stock/quote?symbol=6488 → 200 last=849 source=fugle market=TW is_tradable=true（2026-08-12 記錄,時間未記）"
+  - "/api/stock/quote?symbol=2330 → 200 last=2395 source=fugle market=TW（2026-08-12 記錄,時間未記）"
+  - "/api/stock/fundamentals?symbol=2330 → 200 PE=30.19 PB=9.57（2026-08-12 記錄,時間未記）"
+  - "/api/industry/sector-lookup?symbol=6488 → found:false(代表性名單不含)（2026-08-12 記錄,時間未記）"
+  - "/api/stock/quote?symbol=9999 → 200 complete:false coverage_note:NOT_COVERED（2026-08-12 記錄,時間未記）"
 methodology_aligned: true
 atlas_constitution_ref: ATLAS_METHODOLOGY.md §三(對外發布規範)
 related:

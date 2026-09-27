@@ -17,8 +17,8 @@ verification: 2026-08-01 v0.9 結算跑過 L3 Step 1~3 升 active:backtest_signa
 l3_run_at: 2026-09-27
 l3_run_by: prime-agent（PR feat/20260927-sk39-short-cost）
 l3_endpoints_probed:
-  - "/api/dashboard/sessions → 200 (11:30:41Z)｜/api/dashboard/risk → 200｜/api/backtest/signals → 200｜/api/stock/fundamentals?symbol=2330 → 200（皆 11:30:42Z）"
-  - "/api/dashboard/risk-exposure → 200 (11:31:04Z)｜/api/dashboard/sessions/session-20260927-daily → 200 (11:30:42Z)"
+  - "/api/dashboard/sessions → 200 (2026-09-27T19:30:41+08:00)｜/api/dashboard/risk → 200｜/api/backtest/signals → 200｜/api/stock/fundamentals?symbol=2330 → 200（皆 11:30:42Z）"
+  - "/api/dashboard/risk-exposure → 200 (2026-09-27T19:31:04+08:00)｜/api/dashboard/sessions/session-20260927-daily → 200 (2026-09-27T19:30:42+08:00)"
 methodology_aligned: true
 atlas_constitution_ref: ATLAS_METHODOLOGY.md §五(多空十分位屬「跟隨聰明錢」;RISK_OFF 期 Advisor.AllowedStrategies() 禁「事件套利／資金對抗」;2026-07-30 起 `period` 為 PeriodDetector 真值)
 related:
@@ -34,7 +34,7 @@ related:
 
 把「做多最強 10%、做空最弱 10%」這個學術策略,翻譯成 atlas 可驗證、可對散戶解釋的「找漏洞」核心工具。
 
-## 論文版概念（忠實還原 Fin-Skills）
+## 論文版概念
 
 SK-16 定義將股票池每月依模型預測值排序,切成 10 等分,做多最高分位（D10）、做空最低分位（D1）,形成多空對沖組合,觀察報酬序列。
 
@@ -60,7 +60,7 @@ atlas 沒有單一「long_short_decile」端點,但對位的核心數據 + 驗�
 
 **沒有對位的部分**:真實「月分組」執行（atlas 無 decile sort 端點，只能從 session 內部解讀）；市值加權細節（SK-17 公式 vs atlas 權重口徑，atlas 權重在 `risk_exposure` 而非 `risk_get_metrics`）。
 
-## 七時期 × 信號可用性表（Advisor.AllowedStrategies() 對位承諾）
+## 七時期 × 信號可用性表（AllowedStrategies 對位）
 
 引:ATLAS_METHODOLOGY.md §五。
 
@@ -76,7 +76,7 @@ atlas 沒有單一「long_short_decile」端點,但對位的核心數據 + 驗�
 
 **給散戶的話**:**同一個多空十分位訊號,在不同時期可用性完全不同；同一個 sharpe 要看當期才有意義**。
 
-## 散戶解讀（GROW+ 引用點）
+## 散戶解讀（GROW+）
 
 **對應 §Q2 散戶一句話**（consult-index §4）:
 > 「做多 top 10% / 做空 bottom 10%,先讓策略在歷史上能跑贏,再看現在訊號有沒有亮。」
