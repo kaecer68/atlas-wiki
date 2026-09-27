@@ -1,6 +1,6 @@
 # atlas-skill-inbound Inbox
 
-最後更新:2026-09-27 模板狀態校正 ＋ templates quota 條文查核（同日另段:結清兩項長期待辦）;前次更新:2026-08-21 v2 session 修補(8/21 補登（見 T9 v2）— 共同根因: A1 execute_code 會員權限 + A2 terminal 180s timeout, 修復任務 A1+A2 已寫入 hermes-governance-log T3-A493 條目請 hermes 下次 trigger 處理, 詳見 _inbox_archive.md §6 8/21 條目);前次更新:2026-08-21 歸檔 session(PR #29);前前次更新:2026-08-12 D6 session 結算(SK-34 真實 promotion + v6.59 overclaim 修正);前前前次更新:2026-08-07 D4 session 結算(`_inbox.md` size 15201B > 12000B 上限 → 啟動第七條例外歷史段歸檔 → 歷史段 5261B 移至 `_inbox_archive.md` v1.0,主檔縮為 3589B); 前前次更新:2026-08-07 16:50 (CR-2026-08-07 擱置區邊移 → v6.52 撤銷外推,改內部化)
+最後更新:2026-09-27 模板類 quota 拍板結案(不計入;條文入 `_method.md:121`);前次更新:2026-09-27 模板狀態校正 ＋ templates quota 條文查核（同日另段:結清兩項長期待辦）;前次更新:2026-08-21 v2 session 修補(8/21 補登（見 T9 v2）— 共同根因: A1 execute_code 會員權限 + A2 terminal 180s timeout, 修復任務 A1+A2 已寫入 hermes-governance-log T3-A493 條目請 hermes 下次 trigger 處理, 詳見 _inbox_archive.md §6 8/21 條目);前次更新:2026-08-21 歸檔 session(PR #29);前前次更新:2026-08-12 D6 session 結算(SK-34 真實 promotion + v6.59 overclaim 修正);前前前次更新:2026-08-07 D4 session 結算(`_inbox.md` size 15201B > 12000B 上限 → 啟動第七條例外歷史段歸檔 → 歷史段 5261B 移至 `_inbox_archive.md` v1.0,主檔縮為 3589B); 前前次更新:2026-08-07 16:50 (CR-2026-08-07 擱置區邊移 → v6.52 撤銷外推,改內部化)
 
 > 2026-08-07 D4 結算段（總體進度 ＋ 最後更新對位事實,2,816B）已於 2026-09-27 依 `_method.md` 第七條例外移入 `_inbox_archive.md`。
 
@@ -88,14 +88,14 @@ archive_owner: agent(autonomous, see _inbox_archive.md)
 3. **流動性／買賣價差篩選頁** — SK-21 未消化:「無流動性分位篩選,應加 `stock_get_chips` 對位」「無 spread 資料源」。力度:1 頁 ＋ L3 實跑 chips。
 4. 組合權重變體（min_var／max_div／risk_parity）— SK-17 未消化;atlas 端缺 ⇒ 薄頁風險。
 5. SHAP／LIME 個股層級解釋 — SK-13 未消化;atlas 端只有 global importance。
-6. SK-31 未落模板 ×3（#14 `trigger-megaproject-2-quarter-lag`／#15 `trigger-equipment-capex-external-report-cycle`／#16 `trigger-renewable-energy-divergence`）— SK-31 未消化明文待產;且 SK-31 六層因果鏈未全勾 → 未達升 active。屬 `templates/`,**是否佔 quota 待拍板**。
+6. SK-31 未落模板 ×3（#14 `trigger-megaproject-2-quarter-lag`／#15 `trigger-equipment-capex-external-report-cycle`／#16 `trigger-renewable-energy-divergence`）— SK-31 未消化明文待產;且 SK-31 六層因果鏈未全勾 → 未達升 active。屬 `templates/`;**quota 已拍板不計入(2026-09-27,見 §B),但須記模板現數**。
 
 **非新頁但缺口更大（另案）**：T9 Task 3「L3 批次 105 步」本日查核**從未執行**（37 頁僅 SK-34 有 `l3_*`）;`_inbox.md` D6 的「SK-20 60 日歷史端點缺口」＝SK-03/12/29 的共同前置依賴。
 
 **建議排序（提案,需核可）**：**1 → 2 → 3**。理由:三者皆結構性缺口（不會因再試參數而消失）、且直對 mission（找漏洞／成本誠實／流動性風險）。
 **不建議重提**：`_archive/2026-08-22-sk37-revert/SK-37-fin-skill-decision-index.md`——kaecer 2026-08-22 00:45 已以「品質不符 top 6 標準」撤回（`_internal/_completed-plans-2026-08.md`）。
 
-**待 kaecer 拍板（未自作決定）**：① 候選 1–3 是否開頁、編號自 SK-37 起 ② 模板類是否佔 quota ③ (i) 的「來源不可考」定調 ＋ 兩處幽靈引用是否修 ④ 來源是否在他機（E 條）。
+**待 kaecer 拍板（未自作決定）**：① 候選 1–3 是否開頁、編號自 SK-37 起 ② ~~模板類是否佔 quota~~ **已結案 2026-09-27(不計入,見 §B)** ③ (i) 的「來源不可考」定調 ＋ 兩處幽靈引用是否修 ④ 來源是否在他機（E 條）。
 
 **Telegram**：`[SILENT]`（人工查核,非 cron）
 **改動**：依 `_method.md` 第七條歸檔 SOP（主檔只留最新 2 版結算）,原 **9/2 段（2,885B）＋ 9/15 段（2,868B）原文移入 `_inbox_archive.md`**（append,含出處標頭）＋ 本檔 append 本段;**實測 11,990B ≤ 12,000B**。
@@ -103,7 +103,7 @@ archive_owner: agent(autonomous, see _inbox_archive.md)
 
 ---
 
-## 2026-09-27 模板狀態校正（SK-31）＋ 模板類 quota 條文查核（提案,待拍板）
+## 2026-09-27 模板狀態校正（SK-31）＋ 模板類 quota 條文查核（**已拍板結案**）
 
 **A. 模板狀態校正（stale → 已改檔）**
 
@@ -112,12 +112,13 @@ archive_owner: agent(autonomous, see _inbox_archive.md)
 - **仍未存在**:`templates/trigger-renewable-energy-divergence.md`（`ls` → No such file;全 repo grep 僅 2 處待辦文字）= #16。
 - ⇒ 原「SK-31 未落模板 ×3」**實為 ×1**。已修 `SK-31:53,54`（對位表兩列改「已存在 ✅ 已落」＋補 #16 一列）、`SK-31:107,108`（兩條「落模板」移出 §未消化）;`SK-31` 改後 8,967B ≤ 9,000B。
 
-**B. 「模板類是否佔 quota」→ 建議「不計入 quota,但需記錄義務」,待 kaecer 拍板（補充本檔 2026-09-27 (ii) 待拍板 ②;agent 未自行拍板）**
-- quota 的 SSOT 量詞 = **SK 頁**:`skills/_method.md:116`「Quota(3 頁)」（位於以 `ls SK-*.md` 為 step 3 的重啟程序內）、`README.md:48`「每日 3 頁上限」、`docs/git-merge-protocol.md:183`「每日 quota 3 頁 SK」。
-- **`templates/` 計入或排出:全 repo 無條文**。
-- 唯一非-SK 先例相反:`skills/_manifest_coverage_routing.md:134` 把 `concepts/atlas-mcp-failover-policy.md` 記「計入 1/3」;同檔 `:135`／`:137` 則把 task-governance patch 記「不占 quota」。
-- **建議**:`templates/*.md` 不計入每日 3 頁（它是 cron 觸發定義,由 `detector_registry_list`／`template_detector_status` 消費,非 SK 頁）;**但加記錄義務**——每次結算記「templates 現數」,避免「不佔 quota = 不受控」。若 quota 真義為「每日 net-new 交付量」,本建議反轉（templates 與 concepts 都應計入）。
+**B. 「模板類是否佔 quota」→ **已拍板結案（2026-09-27 kaecer）**：`templates/trigger-*.md` **不計入**每日 3 頁 quota（結清本檔 9/27 (ii) 待拍板 ②）。**
+- 拍板入 SSOT:`skills/_method.md:121` 新條文「templates = cron 觸發定義(非知識頁) → 不計入 3 頁;**交換義務** = 結算記 trigger 模板現數」;同檔 `:120` 量詞明示「Quota(3 頁 **SK**)」。
+- **記錄義務**:每次結算記 trigger 模板現數實測值（2026-09-27 = **20 檔**;`ls templates/trigger-*.md | wc -l` 實跑）。
+- **反例照實留**:`_manifest_coverage_routing.md:134` 曾把 `concepts/` 頁記「計入 1/3」——不推翻,因 templates 是**觸發定義**(cron 產物),與知識頁不同類。
+- **其他 quota 宣告實查**:`README.md:50`（本檔舊記 :48,實為 :50）／`AGENTS.md:27`／`docs/git-merge-protocol.md:183`／`_manifest_coverage_routing.md:129` 皆以「頁」為單位,無矛盾。
 
 **Telegram**:`[SILENT]`（人工查核）
 **改動**:本檔 append 本段;為容納本段,原 **2026-08-07 D4 結算段（`## 總體進度` ＋ `## 最後更新對位事實`,2,816B）原文移入 `_inbox_archive.md`**（append,含出處標頭）;實測 11,792 B ≤ 12,000B。
+**改動(quota 結案)**:B 小節改寫（**−113B**）,無新歸檔;實測 **11,965 B ≤ 12,000B**。
 **移段時仍 OPEN 的項**:D4 段「L3 待驗端點 90 個 Step」為 2026-08-07 快照,實際範圍已於 T9 Task 3 更新為 105 步且查核為「從未執行」（未消失）。
