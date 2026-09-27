@@ -46,6 +46,11 @@
 | `backtest_status` / `backtest_signals` | `/api/backtest/status` / `/api/backtest/signals` |
 | `parameters_get` | `/api/parameters` |
 | `event_calendar` | `/api/events/calendar` |
+| — (IS/OOS 唯一出口) | `/api/dashboard/agent-observatory`（**只有這裡有 `is_sharpe`/`oos_sharpe`/`is_oos_ratio`/`overfit_warning`**;`/api/dashboard/risk` 沒有） |
+| — (訊號層歸屬判斷) | `/api/strategies/layers`（L1–L5,2026-09-27 實測 12 筆） |
+| — (detector 歸屬判斷) | `/api/detector/registry/list`（2026-09-27 實測 **29** themes,非文件寫的 24） |
+
+**CLI 模型白名單（2026-09-27 實測,batch #2 補）**:`cmd/backtest-pipeline` 的 `-model` 只接受 `ols/pcr/pls/elasticnet/glm/rf`（`newModel()` 白名單,`xgboost` 會報錯）。**每個都能當模型層 L3 代理**,不只 `ols`。
 
 ### 三個必知陷阱
 
@@ -87,6 +92,8 @@ def probe(path):
 4. `verification:` 更新為**今日量到什麼**,並保留歷史結算（標明其日期為快照）。
 
 ## 5. 怎麼改頁面（含 9,000 B 上限）
+
+> **batch #2 實證**:已有 audit-fix 口徑註 ＋ 再加 9 列證據表的頁**一定撞 9,000 B 上限**（SK-09 就是）。做法:先在同頁壓縮重複敘述（verification 段的歷史、散戶解讀的重述、對位段的冗語），**保留證據表**,再寫入 L3 區塊;壓完要 `wc -c` 確認。
 
 - 插入位置:`verification:` 行之後、`methodology_aligned:` 之前（與 SK-34/37/38 一致）;§驗證方式 只**新增** `###` 小節（不算 canonical section,不觸發段序檢查）。
 - **9,000 B 硬上限**:加 L3 區塊前先看頁面大小;接近上限就先壓縮重複敘述（同一事實只留一份）,不要為了塞證據刪掉未消化項。
@@ -130,8 +137,23 @@ make structure-metrics                          # 前後對照 L3 覆蓋率與 w
 
 覆蓋率:3/37 → 8/37（數字以 PR body 的 before/after 為準）。
 
+## 9b. 本批（batch #2,2026-09-27,PR #92）實跑成果
+
+| 頁 | 今日結果 | 主要更正 |
+|---|---|---|
+| SK-06 elastic-net | CLI `-model elasticnet` R²_OOS +0.6406 WARN（vs OLS +0.9992） | 「alpha 由 CV 自動選」在 CLI 路徑**不成立**（`AlphaAuto:false`,Alpha 固定 1.0） |
+| SK-07 glm-spline | CLI `-model glm` +0.9992 | 「atlas 無 ML 訓練端點、100% client 端」**不成立**:原生 `internal/ml/spline.go`（truncated-power,degree 3,gaussian/poisson/gamma）在跑 |
+| SK-08 pcr | CLI `-model pcr` +0.9993 | 原生 SVD PCR 存在（`internal/ml/pcr.go`,NComponents 預設 4）;L1–L5（12）與 detector（29）**與 PCA 訊號無重疊** |
+| SK-09 pls | CLI `-model pls` +0.9993 | 原生 NIPALS PLS1 存在;**IS/OOS 只在 `/api/dashboard/agent-observatory`**,`risk_get_metrics` 完全沒有 R²/Sharpe |
+| SK-10 random-forest | CLI `-model rf` +0.9914 | 原生 RF 預設 `NTrees=100 / MaxDepth=10`（與頁面「500 棵淺樹 depth=2」相反）;**無 `feature_importances_`**,重要性只能走 `PermutationImportance` |
+
+覆蓋率:11/38 → **16/38（42.1%）**,watch list 27 → 22 頁。下一批建議序:SK-11、SK-12、SK-13、SK-14、SK-15。
+
 ## 10. 已知未解（下一批可接手）
 
 - `universe_get_session_detail` 仍不回 train/valid/test 三段日期（SK-03 §未消化）。
 - `/api/backtest/signals` 今日 `active_signals: null`,報酬序列無處可取;`/api/backtest/snapshots` 是替代,但只有 20 筆日快照、且無 MCP tool。
-- `/api/dashboard/risk` 的 `sharpe_short/long`、`var_95/cvar_95` 今日皆 0 → 以 Sharpe 為驗證步驟的頁（SK-04/SK-05/SK-12…）一律要先確認當日是否有值,再決定該步能不能算完成。
+- `/api/dashboard/risk` **沒有 Sharpe 欄位**（2026-09-27 更正:payload keys 只有 `degraded/gate_mode/risk_snapshot/session_count/source/var_gate`;`risk_snapshot` = `var_95/var_99/cvar_95`（皆 0,且 `insufficient_data=1` ⇒ 0 是「資料不足」不是「零風險」）、`max_drawdown_pct`、`data_points`）。**以 Sharpe 為驗證步驟的頁一律改走 `/api/dashboard/agent-observatory`**;`var_95=0` 不可當零風險引用。（先前版本誤記「sharpe_short/long 皆 0」,已於 PR #89 更正）
+- **🚧 CLI 真實資料路徑今日不可用（batch #2 新發現,影響所有要「真實 OOS R²」的頁）**:`internal/backtest/rolling_split.go:72` **硬編 `stopYear := 2020`**,而 repo 的 replay 檔 `data/replay/merged.csv` 覆蓋 **2024-07-01 → 2026-08-24**（22,956 列）⇒ 真實資料一律回 `no windows produced`;把 `-first-train-end` 移進迴圈則回 `has empty training data`。**結論:目前只能用 `-synthetic` 做「模型層」L3,不可當市場結論**;要解需 1994–2022 月頻 replay 檔,或把 `stopYear` 改成旗標（atlas-go 側,需拍板）。
+- `/api/experiment/history` 今日回 `{"history":[]}`、`/api/experiment/diff` 未知 id → 404 ⇒ **實驗 diff 目前不能當證據路徑**。
+- `cmd/atlas-mcp/server/tools_template_detector.go:19` 的 tool 描述仍寫「All **24** template trigger detectors」,而 live registry 回 **29** ⇒ 引用數目時**以 registry 為準**,勿抄文件字串（atlas-go 側待修）。
