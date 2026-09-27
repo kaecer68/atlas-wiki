@@ -3,6 +3,8 @@ title: SK-17 加權方式（等權/價值加權）
 description: "問「名單分 5 檔、每檔各放多少錢」時載入。"
 type: skill-inbound
 source: ~/workspace/Fin-Skills/Fin-Skills.md §SK-17
+sources:
+  - "外部市值（TWSE／FinMind）未接入 ⇒ 待查（2026-09-27）；1/N 等權為實務慣例"
 ingested_at: 2026-08-01
 status: active
 tier: T3
@@ -44,8 +46,6 @@ SK-17 在 atlas 是「組合內股票各放多少錢」——等權(1/N 散戶�
 | 效果對比 | risk metrics（**無權重欄位**） | `risk_get_metrics` |
 | 權重欄位（唯一出權重處） | concentration weight | `risk_exposure`（2026-09-27 實測） |
 | 換手率 | backtest 內含 | `backtest_signals` |
-
-**差異點**:論文版假設已有 market_cap;**atlas 端無此欄位**(2026-09-27 實測)⇒ value-weighted 落地不了,需 client 端自備市值。
 
 **2026-09-27 L3 實測（VERIFIED NEGATIVE;時戳見 §驗證方式）**:
 - `market_cap` **不存在** ⇒ **value-weighted 在 atlas 端算不出來**（`stock_get_fundamentals` 只回 PE/PB/DividendYield/Sector;2262 欄 `market_cap`／`shares_outstanding` 0 命中）。

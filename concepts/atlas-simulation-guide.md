@@ -2,7 +2,7 @@
 title: atlas 策略模擬指南：L1-L5 訊號驅動框架
 description: 要解讀 atlas 回測／模擬 session 的結果，或問 L1–L5 訊號驅動模擬怎麼跑時載入。
 created: 2026-08-02
-updated: 2026-08-02
+updated: 2026-09-27
 type: concept
 tags: [framework, strategy, methodology]
 sources:
@@ -11,6 +11,9 @@ sources:
   - atlas-mcp:universe_get_sessions
   - concepts/atlas-strategy-taxonomy.md
   - concepts/atlas-mcp-interpretation-guide.md
+  - "實務慣例（頁內假說與門檻為建模示例：當沖比例 > 30%、GeoIntensity 0–100 四級制，非外部統計）"
+  - "市場資料通道之一級來源＝TWSE OpenAPI https://openapi.twse.com.tw/v1/exchangeReport/STOCK_DAY_ALL（2026-09-27 curl 200）"
+  - "待查（2026-09-27）：頁內『央行匯市干預』等外部事件敘述未附官方來源"
 confidence: medium
 contested: false
 contradictions: []

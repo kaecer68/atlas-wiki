@@ -12,6 +12,9 @@ sources:
   - atlas-mcp:risk_get_calibration
   - atlas-mcp:taiwan_stress_index
   - concepts/atlas-strategy-taxonomy.md
+  - "CBOE VIX 官方產品頁 https://www.cboe.com/tradable-products/vix（2026-09-27 curl 200；頁內 VIX > 30／> 40 門檻為實務慣例，CBOE 無官方定義）"
+  - "實務慣例（個股 5–10%／產業 20–30%／因子 30–50%／現金 5–20%／MDD 70–80% 為業界風控慣例，頁內未附官方規範）"
+  - "待查（2026-09-27）：市場口語『120% 斷頭線』待證交所官方文件；整戶擔保維持率 130%（2015-05-04 起）為頁內 2026-08-22 官方驗證，本次未重驗"
 confidence: medium
 contested: false
 contradictions: []

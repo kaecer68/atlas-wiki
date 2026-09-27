@@ -9,6 +9,9 @@ sources:
   - ~/workspace/atlas-notes/02-knowledge/atlas-taiwan-trading-signals-v0.4.md
   - ~/workspace/atlas-notes/02-knowledge/audit-DeepSeek-2026-07-15.md
   - ~/workspace/atlas-notes/02-knowledge/audit-kimi-2026-07-15.md
+  - "TWSE 三大法人買賣金額統計表 https://www.twse.com.tw/zh/trading/foreign/bfi82u.html（2026-09-27 curl 200）— 頁內法人買賣超數字之一級來源"
+  - "實務慣例（I1 alpha < 0.3%、I3 動量 0.1–0.3% 為頁內 2026-07-15 推估口徑，非外部統計）"
+  - "待查（2026-09-27）：外資佔台股成交比重『4 成』與 25–35% 之爭未定；2024–2026 事件列金額未逐筆對 TWSE 日報"
 confidence: medium
 contested: true
 contradictions: [v0.4 的 I1/I3 過度強調「延遲性 alpha」, 外資佔台股成交比重「4 成」與 concepts/taiwan-chip-flow-analysis.md 的 25–35% 不一致（孰為正待查，2026-09-27）]

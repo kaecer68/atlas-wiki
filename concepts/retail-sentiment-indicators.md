@@ -10,6 +10,9 @@ sources:
   - concepts/taiwan-stock-market-structure.md（維持率現制：整戶 130% 追繳、追繳未補即處分,2015-05-04 起）
   - concepts/taiwan-chip-flow-analysis.md（當沖分級、集保分級）
   - concepts/taiwan-money-flow-seven-institutional-buckets.md（分點警示、門檻紀律）
+  - "整戶擔保維持率 130%（2015-05-04 起施行）— 頁內 2026-08-22 官方驗證，本次未重驗；沿革見 concepts/taiwan-stock-market-structure.md §5.2"
+  - "TWSE 融資融券餘額 https://www.twse.com.tw/zh/trading/margin/mi-margn.html（2026-09-27 curl 200）— 頁內融資餘額一級來源"
+  - "實務慣例（融資 5000 億／當沖 50% 僅為參考刻度；頁內已註『不用固定門檻』）"
 confidence: medium
 contested: false
 contradictions: []

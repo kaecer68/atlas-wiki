@@ -2,13 +2,16 @@
 title: atlas-mcp 工具解讀指南
 description: 呼叫 atlas-mcp 工具前後要判斷「這組回傳數字能推論到什麼、不能推論什麼」時載入。
 created: 2026-07-15
-updated: 2026-07-15
+updated: 2026-09-27
 type: concept
 tags: [framework, signal, methodology]
 sources:
   - "外部來源: hermes skill mcp-tool-interpretation (2026-07-15 讀)"
   - "外部來源: hermes skill mcp-server-integration"
   - "外部來源: ~/workspace/atlas/cmd/atlas-mcp/README.md"
+  - "頁內文獻（templates[].references 語意示例）：Ball & Brown、BIS、Hamilton 1983 —— 沿用頁內字串，未另查版本（2026-09-27）"
+  - "實務慣例（頁內 0.5 confidence／81% hit rate／70% 小型股為解讀示例數字，非外部統計；出處＝atlas-mcp 回傳示例 2026-07-15）"
+  - "待查（2026-09-27）：BIS 與 Hamilton 1983 之完整書目未在本頁載明"
 confidence: high
 contested: false
 contradictions: []

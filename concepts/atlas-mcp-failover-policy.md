@@ -2,13 +2,16 @@
 title: atlas-mcp 失效時 fail-over 政策 — 來源標籤 + 網路替代源清單
 description: 當 atlas-mcp 端點失敗、超出範圍或資料缺漏，需要改用替代來源並標註強度等級時載入。
 created: 2026-08-07
-updated: 2026-08-07
+updated: 2026-09-27
 type: concept
 tags: [framework, fallback, source-attribution, methodology]
 sources:
   - atlas-mcp:concepts/atlas-mcp-tools-reference.md §5 三層訂閱制
   - data-source-decision ~hermes/skills/data-source-decision §1-§2 三層架構 + 端點對位
   - concepts/atlas-mcp-interpretation-guide.md §Rule 3 Proxy question
+  - "TWSE 官網首頁（集中市場報價，上市範圍）https://www.twse.com.tw/zh/index.html（2026-09-27 curl 200）"
+  - "頁內替代源 URL 複測（2026-09-27 curl）：mis.twse.com.tw/stock/fibest.jsp?stock=2330 → 404；tpex.org.tw/web/stock/after_trading/index.php?l=zh-tw → 302 導向 /errors；goodinfo.tw → 403 ⇒ 待查（2026-09-27）"
+  - "實務慣例（L3 觸發率 < TWSE 的 10% 為 2026-09-27 本機實測口徑，atlas 端無官方統計）"
 confidence: high
 contested: false
 contradictions: []

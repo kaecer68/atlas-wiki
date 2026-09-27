@@ -3,6 +3,8 @@ title: SK-21 排除仙股穩健性檢驗
 description: "問「這策略賺的錢是否都來自低價股」時載入。"
 type: skill-inbound
 source: ~/workspace/Fin-Skills/Fin-Skills.md §SK-21
+sources:
+  - "TWSE OpenAPI 全量行情（2026-08-23 實測）https://openapi.twse.com.tw/v1/exchangeReport/STOCK_DAY_ALL（2026-09-27 實測 200）"
 ingested_at: 2026-08-01
 status: active
 tier: T3
@@ -48,8 +50,6 @@ SK-21 在 atlas 是「策略會不會被仙股污染」的真值檢驗——剔�
 | 排除後回測 | backtest 序列 | `backtest_signals` |
 | 效果對比 | risk metrics | `risk_get_metrics` |
 | 排除名單規則 | 需 client 端實作 percentile filter | 缺(client) |
-
-**差異點**:論文是純 Python 操作,atlas 沒有「價格百分位篩選」端點,需 client 端算每月第 20 百分位 + 過濾。
 
 **沒有對位的部分**:
 - 沒有「百分位篩選」endpoint
