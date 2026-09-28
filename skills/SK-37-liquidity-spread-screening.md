@@ -9,7 +9,7 @@ tier: T3
 confidence: medium
 atlas_go_relevance: high
 mcp_tools_used: [stock_get_quote, stock_get_technical, stock_get_chips, stock_get_volume_divergence, data_get_field_contract, data_get_channels, universe_get_session_detail]
-verification: 2026-09-27 L3 實跑 9 端點、全部附 http_code 與 UTC timestamp（§驗證方式）;兩個「已驗證的否定」——無 per-symbol 流動性端點、無真實 bid-ask spread（`SpreadEstimate` 代理存在但 provider 無 caller）;替代路徑（client 端用 quote volume 自算分位）同日實跑 14 檔
+verification: 2026-09-27 L3 實跑 9 端點、全部附 http_code 與 +08:00 timestamp（§驗證方式）;兩個「已驗證的否定」——無 per-symbol 流動性端點、無真實 bid-ask spread（`SpreadEstimate` 代理存在但 provider 無 caller）;替代路徑（client 端用 quote volume 自算分位）同日實跑 14 檔
 l3_run_at: 2026-09-27
 l3_run_by: prime-agent（PR feat/20260927-sk37-liquidity-and-attribution）
 l3_endpoints_probed:
@@ -54,13 +54,13 @@ related:
 | 這檔流動性分數? | — | ❌ **已驗證的否定**:無 per-symbol 端點 |
 | atlas 內部有流動性篩選嗎? | `parameters_get` | ✅ 有定額門檻,但只能讀參數,不能查個股 |
 
-**已驗證的否定 1（無真實價差）**:`internal/marketdata/microstructure_provider.go` 定義 `MicrostructureSnapshot{LiquidityScore, SpreadEstimate, TradeabilityScore}`,但 `NewMicrostructureProvider` **只有定義處**、無任何 caller（2026-09-27 源碼 grep,排除 `_test`）⇒ 是斷線程式碼,任何端點都拿不到。`/api/field-contract` 確實有欄位名 `spread_estimate`,但**欄位名存在 ≠ 值可得**。
+**已驗證的否定 1（無真實價差）**:`internal/marketdata/microstructure_provider.go` 定義 `MicrostructureSnapshot{...}`,但 `NewMicrostructureProvider` **只有定義處**、無 caller（2026-09-27 源碼 grep,排除 `_test`）⇒ 是斷線程式碼,端點拿不到。`/api/field-contract` 確實有欄位名 `spread_estimate`,但**欄位名存在 ≠ 值可得**。
 
-**已驗證的否定 2（無 per-symbol 流動性）**:`/api/field-contract` 有 `liquidity` 系列 10 欄、`/api/parameters` 有 `liquidity` 前綴 20 key（含 `factor_weight.base_weights.liquidity`）,但**無任何端點回傳個股流動性分數**。唯一例外是 `universe_get_session_detail` 的 `factor_scores.liquidity`——該 session 96 列**全為 0**,且同層 `momentum`/`value`/`quality`/`agent`/`institutional_sentiment` 亦全 0 ⇒ 該欄位退化,不可用。
+**已驗證的否定 2（無 per-symbol 流動性）**:`/api/field-contract` 有 `liquidity` 系列 10 欄、`/api/parameters` 有 `liquidity` 前綴 20 key（含 `factor_weight.base_weights.liquidity`），但**無端點回傳個股流動性分數**。例外是 `universe_get_session_detail` 的 `factor_scores.liquidity`——該 session 96 列**全為 0**,且同層 `momentum`/`value`/`quality`/`agent`/`institutional_sentiment` 亦全 0 ⇒ 該欄位退化,不可用。
 
 **atlas 其實有流動性下限（可讀參數,不可查個股）**:`baseline.min_tradable_volume`=1000000（股）、`smart_universe.min_daily_amount_twd`=5000000（元）、`smart_universe.volume_floor_twd`=10000000（元）、`smart_universe.price_minimum`=10（元）[2026-09-27 實跑 `parameters_get`,共 1669 key]。
 
-**替代路徑（14 檔示範,2026-09-27 實跑）**:client 逐檔 call `stock_get_quote` 取 `volume` 與 `last`,自算 `turnover = volume × last` 再排名。結果**股數分位與金額分位會分岔**:3008 股數分位 7%（最低）但金額分位 64%;1301 股數分位 93%（次高）但金額分位 36%。⇒ 只看「張數」會同時誤判高價股與低價股。
+**替代路徑（14 檔示範,2026-09-27 實跑）**:client 逐檔取 `stock_get_quote` 的 `volume` 與 `last`,自算 `turnover = volume × last` 再排名。結果**股數與金額分位分岔**:3008 股數分位 7%（最低）但金額分位 64%;1301 股數分位 93%（次高）但金額分位 36%。⇒ 只看「張數」會同時誤判高價股與低價股。
 
 ## 散戶解讀
 
@@ -76,15 +76,15 @@ related:
 
 | # | 端點（GET） | http_code | UTC timestamp |
 |---|---|---|---|
-| 1 | `/api/stock/quote?symbol=2330` | 200 | 2026-09-27T08:56:23Z |
-| 2 | `/api/stock/chips?symbol=2330` | 200 | 2026-09-27T08:56:24Z |
-| 3 | `/api/stock/technical?symbol=2330&days=10` | 200 | 2026-09-27T08:56:24Z |
-| 4 | `/api/stock/volume_divergence?symbol=2330&window=30` | 200 | 2026-09-27T08:56:24Z |
-| 5 | `/api/field-contract` | 200 | 2026-09-27T08:56:23Z |
-| 6 | `/api/dashboard/data-channels` | 200 | 2026-09-27T08:56:23Z |
-| 7 | `/api/parameters` | 200 | 2026-09-27T08:56:24Z |
-| 8 | `/api/dashboard/sessions/session-20260927-daily` | 200 | 2026-09-27T08:56:46Z |
-| 9 | `/api/dashboard/sessions/latest` | **404** | 2026-09-27T08:56:42Z |
+| 1 | `/api/stock/quote?symbol=2330` | 200 | 2026-09-27T16:56:23+08:00 |
+| 2 | `/api/stock/chips?symbol=2330` | 200 | 2026-09-27T16:56:24+08:00 |
+| 3 | `/api/stock/technical?symbol=2330&days=10` | 200 | 2026-09-27T16:56:24+08:00 |
+| 4 | `/api/stock/volume_divergence?symbol=2330&window=30` | 200 | 2026-09-27T16:56:24+08:00 |
+| 5 | `/api/field-contract` | 200 | 2026-09-27T16:56:23+08:00 |
+| 6 | `/api/dashboard/data-channels` | 200 | 2026-09-27T16:56:23+08:00 |
+| 7 | `/api/parameters` | 200 | 2026-09-27T16:56:24+08:00 |
+| 8 | `/api/dashboard/sessions/session-20260927-daily` | 200 | 2026-09-27T16:56:46+08:00 |
+| 9 | `/api/dashboard/sessions/latest` | **404** | 2026-09-27T16:56:42+08:00 |
 
 - 第 9 列是**路徑陷阱**:工具 `universe_get_session_detail` 的 canary 對照值寫 `/api/dashboard/sessions/latest`,今日 404（`{"error":"session not found"}`）。真實路徑 = `/api/dashboard/sessions/{session_id}`,id 從 `universe_get_sessions` 取。
 - 第 1–4 列同日對 14 檔各跑一次（2330/2317/2454/2412/1301/6505/2881/2603/6488/8069/2313/2308/3008/1476）,全部 200。

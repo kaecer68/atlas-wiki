@@ -216,6 +216,30 @@ def check_l3_grammar(skills_dir):
     return (len(bad) or 0), len(files)
 
 
+def check_body_tz(skills_dir):
+    """SK 頁**內文**的 L3 探針時間必須是本地時區（S1 文法擴充，2026-09-28）。
+
+    為什麼：第六條鐵律要求 `+08:00`；原 S1 文法只覆蓋 frontmatter 的 `l3_*` 欄位，
+    內文證據表格與行內探針標記不受檢（2026-09-28 CIO 試跑發現 SK-38 實例）。
+
+    只抓「我們自己的探針時間」兩種寫法：
+      1. 證據表格列的時間欄：`| <http_code> | <ts>Z |`
+      2. 行內探針標記：`（HH:MM[:SS]Z）`
+    **不抓 API 回傳的資料值**（`snapshot_time=…Z`／`last_run …Z`）——那些要忠實反映來源。
+    """
+    tbl = re.compile(r"\|\s*\**\d{3}\**\s*\|\s*\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(?::\d{2})?Z\s*\|")
+    mark = re.compile(r"（\d{2}:\d{2}(?::\d{2})?Z）")
+    bad = []
+    for f in sorted(glob.glob(os.path.join(skills_dir, "SK-*.md"))):
+        text = open(f, encoding="utf-8").read()
+        end = text.find("\n---", 3)
+        body = text[end:] if end > 0 else text
+        for line in body.split("\n"):
+            if tbl.search(line) or mark.search(line):
+                bad.append(f"{os.path.basename(f)}: {line.strip()[:70]}")
+    return bad
+
+
 def main():
     args = parse_args()
     skills_dir = args.skills_dir
@@ -242,6 +266,13 @@ def main():
 
     l3_bad, l3_active, l3_pct = check_l3_coverage(skills_dir, args.min_l3_coverage)
     gram_bad, _ = check_l3_grammar(skills_dir)
+    tz_bad = check_body_tz(skills_dir)
+    if tz_bad:
+        print(f"❌ 內文 L3 探針時區: {len(tz_bad)} 條（應為 +08:00；API 資料值不受檢）")
+        for b in tz_bad[:8]:
+            print(f"   - {b}")
+    else:
+        print("✅ 內文 L3 探針時區: 全部 +08:00")
     yml_bad, _, have_yaml = check_frontmatter_yaml(skills_dir)
     mode = "PyYAML 實parse" if have_yaml else "fallback(未加引號 ': ' 偵測;PyYAML 未安裝)"
     if yml_bad == 0:
@@ -250,10 +281,10 @@ def main():
         print(f"❌ frontmatter YAML: {yml_bad}/{total} 頁不合法({mode})")
 
     print()
-    if sz_bad == 0 and fm_bad == 0 and yml_bad == 0 and l3_bad == 0 and gram_bad == 0:
+    if sz_bad == 0 and fm_bad == 0 and yml_bad == 0 and l3_bad == 0 and gram_bad == 0 and not tz_bad:
         print(f"✅ 全 {total} 頁合規")
         return 0
-    print(f"❌ 共 {sz_bad + fm_bad + yml_bad + l3_bad + gram_bad} 條違規(需修)")
+    print(f"❌ 共 {sz_bad + fm_bad + yml_bad + l3_bad + gram_bad + len(tz_bad)} 條違規(需修)")
     return 1
 
 

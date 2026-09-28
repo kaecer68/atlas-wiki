@@ -16,7 +16,7 @@ mcp_tools_used:
   - universe_get_sessions
   - stock_get_fundamentals
   - risk_get_metrics
-verification: 2026-08-01 v0.9 結算跑過 L3 Step 1~3 升 active:backtest_signals sharpe_long=0.27 + sharpe_short=0.49(皆 > 0.2),var_95=-0.0225(> -0.05);universe_get_sessions **150 sessions** 從 2026-01-01~2026-07-20(2026-08-02 20:40 重跑確認 150 sessions 不是 147),7/4~7/9 NEUTRAL 期 outcome_count=0 對位 SK-16 §七時期表「Consolidation 不可信」;risk_get_metrics live provenance session_count=147 insufficient_data=1。**2026-09-27 重跑(L3):`universe_get_sessions` 回 **90 sessions**(滾動窗,非 1994 起算)、`risk_get_metrics` session_count=210;`backtest_signals` 當日回 **全 0** ⇒ **2026-08-01 的 0.27/0.49 今日無法重現,不得當現值引用**。
+verification: 2026-08-01 v0.9 結算跑過 L3 Step 1~3 升 active:backtest_signals sharpe_long=0.27 + sharpe_short=0.49(皆>0.2),var_95=-0.0225(>-0.05);universe_get_sessions **150 sessions** 2026-01-01~2026-07-20(2026-08-02 20:40 重跑確認非 147),7/4~7/9 NEUTRAL 期 outcome_count=0 對位 SK-16 §七時期表「Consolidation 不可信」;risk_get_metrics live provenance session_count=147 insufficient_data=1。**2026-09-27 重跑(L3):`universe_get_sessions` 回 **90 sessions**(滾動窗,非 1994 起算)、`risk_get_metrics` session_count=210;`backtest_signals` 當日回 **全 0** ⇒ **2026-08-01 的 0.27/0.49 今日無法重現,不得當現值引用**。
 l3_run_at: 2026-09-27
 l3_run_by: prime-agent（PR feat/20260927-sk39-short-cost）
 l3_endpoints_probed:
@@ -98,11 +98,11 @@ atlas 無單一「long_short_decile」端點,但核心數據 + 驗證鏈已存�
 **L3 舊跑（2026-08-01，快照已過期）**：`backtest_signals` sharpe_long=0.27、sharpe_short=0.49、var_95=-0.0225；`risk_get_metrics` session_count=147。
 
 **L3 端點（2026-09-27 重跑）**：
-- `universe_get_sessions` 200（11:30:41Z）：**90 sessions**，2026-06-27T23:26Z～2026-09-27T03:19Z；RISK_ON 49／RISK_OFF 40／NEUTRAL 1；78 筆 `top_strategies` 的 `side` 全為空字串。
-- `risk_get_metrics` 200（11:30:42Z）：session_count=210、data_points=209、var_95=0、var_99=0、max_drawdown_pct=0.722、insufficient_data=1、source=postgres、gate_mode=NORMAL。
-- `backtest_signals` 200（11:30:42Z）：**全 0**（active_signals=null），與 2026-08-01 的 0.27/0.49 不同 ⇒ 今日價值為 0，舊值不得當現值。
-- `stock_get_fundamentals` 200（11:30:42Z）：2330 PE 30.19／PB 9.57／DividendYield 1.1（與 2026-07-30 同值）。
-- `risk_exposure` 200（11:31:04Z）：position_count 3、cash_ratio 0.5228（`risk_get_metrics` 無權重欄位，權重看這條）。
+- `universe_get_sessions` 200（19:30:41+08:00）：**90 sessions**，2026-06-27T23:26Z～2026-09-27T03:19Z；RISK_ON 49／RISK_OFF 40／NEUTRAL 1；78 筆 `top_strategies` 的 `side` 全為空字串。
+- `risk_get_metrics` 200（19:30:42+08:00）：session_count=210、data_points=209、var_95=0、var_99=0、max_drawdown_pct=0.722、insufficient_data=1、source=postgres、gate_mode=NORMAL。
+- `backtest_signals` 200（19:30:42+08:00）：**全 0**（active_signals=null），與 2026-08-01 的 0.27/0.49 不同 ⇒ 今日價值為 0，舊值不得當現值。
+- `stock_get_fundamentals` 200（19:30:42+08:00）：2330 PE 30.19／PB 9.57／DividendYield 1.1（與 2026-07-30 同值）。
+- `risk_exposure` 200（19:31:04+08:00）：position_count 3、cash_ratio 0.5228（`risk_get_metrics` 無權重欄位，權重看這條）。
 
 **結論（2026-09-27）**：atlas session 是**滾動窗**（今日 90 筆），非 1994 起算序列；session 仍是「signal count」而非「monthly decile return」，D1~D10 無直接對位。
 
