@@ -9,7 +9,7 @@
 
  ## Mission
 
-atlas-wiki = 提煉成品知識層。`atlas-notes`(原料庫)→ atlas-wiki(知識引擎)流水線的輸出端。40 SK 檔（SK-00 索引 + 39 編號頁）、六條鐵律 + 第七條例外、CI 自動驗證一條龍。
+atlas-wiki = 提煉成品知識層。`atlas-notes`(原料庫)→ atlas-wiki(知識引擎)流水線的輸出端。40 SK 檔（SK-00 + 39 編號頁）、六條鐵律＋第七條例外、CI 自動驗證。
 
 ## 目錄結構
 
@@ -59,7 +59,7 @@ atlas-wiki/
 
 push / PR 到 `main` 觸發 `validate-wiki`（2026-09-28 實測 10 個 job:9 個驗證 + 1 個失敗通知）：
 
-1. **validate-timestamp-rule** — 第 5 條鐵律(快照值必附 timestamp)
+1. **validate-timestamp-rule** — 第 5 條鐵律(快照值須附 timestamp)
 2. **governance-review-gate** — 觸碰治理檔需 `kaecer-reviewed` 標籤（§6.4.2）
 3. **audit-atlas-endpoints** — 掃描 atlas-mcp 端點(實測 **115**;對位 `kaecer68/atlas-go`)
 4. **skill-structure-check** — SK 結構＋S2/S3/S5/S6/S7＋R3（SSOT `skill-page-schema.json`）
@@ -87,6 +87,7 @@ push / PR 到 `main` 觸發 `validate-wiki`（2026-09-28 實測 10 個 job:9 個
 | `check-freshness.py` | 時效宣告 S6 |
 | `check-shell-var-ascii.py` | shell `$VAR`+非 ASCII |
 | `check-guard-teeth.py` | 護欄自測（失敗情境實跑） |
+| `check-inbox-room.py` | `_inbox.md` 兩區餘裕 |
 | `check-skill-index-sync.py` | skills 索引同步 R1+R3+R4 |
 | `new-skill-page.py` | SK 頁骨架產生器(反補丁 M6) |
 | `structure-health-metrics.py` | 結構健康度量測(M7;含 L3 覆蓋率＋watch list) |
@@ -129,7 +130,7 @@ atlas-wiki v6.18 含 **12 核心觸發模板** 落 `templates/` = 自動信號�
 
 跑 `atlas-mcp-trigger-monitor.py`(每 5 分鐘)+ 自動 §6 紀錄 + Telegram 通知。
 
-**現況(2026-09-28 實測)**:`ls templates/trigger-*.md | wc -l` = **21**(templates/ 共 22 檔);`atlas-mcp-trigger-monitor.py` 實際 wire **17** 檔(= 12 核心 + 5 新增)。v6.18 之後新增 9 檔(名稱取自各檔 H1):
+**現況(2026-09-28 實測)**:`ls templates/trigger-*.md | wc -l` = **21**(共 22 檔);`atlas-mcp-trigger-monitor.py` wire **17** 檔(= 12 核心 + 5 新增)。v6.18 之後新增 9 檔(名稱取自各檔 H1):
 
 - `trigger-2330-tsmc-swing` — 2330 台積電報價觸發(盤中振幅逾 ±3%)
 - `trigger-ai-capex-guidance-cut` — AI capex 指引下修(對位 2026 韓股 HBM 降溫)

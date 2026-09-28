@@ -5,7 +5,7 @@
 SHELL := /bin/bash
 PY    := python3
 
-.PHONY: help ci-gate ci-fast ci-full check-actionlint check-timestamp check-audit check-skill-pages check-skill-structure check-stale check-retrieval check-wiki-pages check-detector-count check-claim-rules check-source-tiers check-freshness check-shell-var-ascii check-index-sync check-guard-teeth structure-metrics check-size check-frontmatter pre-commit-install uninstall-hooks verify-clean test sync-imac
+.PHONY: help ci-gate ci-fast ci-full check-actionlint check-timestamp check-audit check-skill-pages check-skill-structure check-stale check-retrieval check-wiki-pages check-detector-count check-claim-rules check-source-tiers check-freshness check-shell-var-ascii check-index-sync check-guard-teeth check-inbox-room structure-metrics check-size check-frontmatter pre-commit-install uninstall-hooks verify-clean test sync-imac
 
 help:                   ## 列出所有 target
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN{FS=":.*?## "}{printf "  %-22s %s\n", $$1, $$2}'
@@ -45,6 +45,9 @@ check-freshness:        ## 3j. 時效宣告與逾期 S6（strict；18 頁已補�
 
 check-guard-teeth:      ## 3m. 護欄自測（每個護欄的失敗情境都要實跑；S8 的機械化）
 	@$(PY) skills/_scripts/check-guard-teeth.py --repo-root $(CURDIR)
+
+check-inbox-room:       ## 3n. _inbox.md 兩區剩餘位元（寫入前的量尺；第七條 v1.1）
+	@$(PY) skills/_scripts/check-inbox-room.py --repo-root $(CURDIR)
 
 check-shell-var-ascii:  ## 3k. shell「$VAR 緊接非 ASCII」（strict；會 unbound 中止的 bug）
 	@$(PY) skills/_scripts/check-shell-var-ascii.py --repo-root $(CURDIR) --strict
