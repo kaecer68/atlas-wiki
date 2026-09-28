@@ -52,7 +52,7 @@ SK-19 在 atlas 是「回測報酬 → 實盤淨報酬」的最後一公里,把�
 - **+E 段(風險)**:警示「回測 15% 年化 → 實盤 8%」的真實落差,這是台股散戶最常見的策略夭折原因。
 
 ## 驗證方式
-**L3 實跑（2026-09-27，本 PR）**：`parameters_get` 200（11:30:42Z）⇒ atlas 預設與 SK-19 公式**完全一致**：`baseline.avg_trading_cost`=0.00654、`tax.transaction_tax_rate`=0.003；源碼 `internal/tax/taiwan_tax.go` 的 `RoundTripCost = turnover × (AvgTradingCost + TaxRate)`、`NetReturn = rawReturn − RoundTripCost` 即 SK-19 公式本體（`AvgTradingCost` 註解＝手續費 0.1425% × 券商折扣 ~0.6 ＋滑價；`TaxRate` 註明 **sell side only**）。`parameters_get_audit_log` 200 ⇒ `{"changes":null}`（無改動史可核）。`report_get_tax_snapshot` 200 ⇒ `is_simulated` false、3 筆持倉、`after_tax_pnl` -21788.18（僅稅，不含手續費）。`backtest_signals` 200 ⇒ 今日全 0。
+**L3 實跑（2026-09-27，本 PR）**：`parameters_get` 200（19:30:42+08:00）⇒ atlas 預設與 SK-19 公式**完全一致**：`baseline.avg_trading_cost`=0.00654、`tax.transaction_tax_rate`=0.003；源碼 `internal/tax/taiwan_tax.go` 的 `RoundTripCost = turnover × (AvgTradingCost + TaxRate)`、`NetReturn = rawReturn − RoundTripCost` 即 SK-19 公式本體（`AvgTradingCost` 註解＝手續費 0.1425% × 券商折扣 ~0.6 ＋滑價；`TaxRate` 註明 **sell side only**）。`parameters_get_audit_log` 200 ⇒ `{"changes":null}`（無改動史可核）。`report_get_tax_snapshot` 200 ⇒ `is_simulated` false、3 筆持倉、`after_tax_pnl` -21788.18（僅稅，不含手續費）。`backtest_signals` 200 ⇒ 今日全 0。
 
 Step 1: 呼叫 `parameters_get` 確認 atlas cost model 預設是否為 `avg_trading_cost=0.00654` 與 `tax_rate=0.003`。
 Step 2: 呼叫 `backtest_signals` 抽一條 active signal,看回傳欄位是否區分 gross_sharpe 與 net_sharpe。

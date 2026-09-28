@@ -71,11 +71,11 @@ related:
 
 | # | 端點(GET) | http_code | UTC timestamp | 回傳要點 |
 |---|---|---|---|---|
-| 1 | `/api/dashboard/pnl-attribution` | 200 | 2026-09-27T08:56:24Z | `session_id=session-20260927-daily`;`snapshot_time=2026-09-27T03:19:19Z`;`factor_attribution` 5 key 非空 |
-| 2 | `/api/strategies/foreign-3day-inflow/attribution` | 200 | 2026-09-27T08:56:24Z | `{"attribution":[],"id":"foreign-3day-inflow"}`(空) |
-| 3 | `/api/field-contract` | 200 | 2026-09-27T08:56:23Z | 含 `factor_attribution` / `symbol_attribution` / `sector_attribution` / `agent_attribution` |
-| 4 | `/api/experiment/diff?experiment_id=exec-growth-momentum-01-1775435882` | **404** | 2026-09-27T08:56:54Z | `{"error":"experiment result not found"}` |
-| 5 | `/api/experiment/history` | 200 | 2026-09-27T08:56:54Z | `{"history":[]}` |
+| 1 | `/api/dashboard/pnl-attribution` | 200 | 2026-09-27T16:56:24+08:00 | `session_id=session-20260927-daily`;`snapshot_time=2026-09-27T03:19:19Z`;`factor_attribution` 5 key 非空 |
+| 2 | `/api/strategies/foreign-3day-inflow/attribution` | 200 | 2026-09-27T16:56:24+08:00 | `{"attribution":[],"id":"foreign-3day-inflow"}`(空) |
+| 3 | `/api/field-contract` | 200 | 2026-09-27T16:56:23+08:00 | 含 `factor_attribution` / `symbol_attribution` / `sector_attribution` / `agent_attribution` |
+| 4 | `/api/experiment/diff?experiment_id=exec-growth-momentum-01-1775435882` | **404** | 2026-09-27T16:56:54+08:00 | `{"error":"experiment result not found"}` |
+| 5 | `/api/experiment/history` | 200 | 2026-09-27T16:56:54+08:00 | `{"history":[]}` |
 
 - 第 4 列的 404 是**今日實況**:SK-22 記載的 `experiment_id` 今日查不到結果 ⇒ 實驗級 delta 這條路徑本日不可用(不是端點消失,是資料不在)。
 - ablation 零命中(源碼 grep,2026-09-27):`grep -rniE 'ablation|drop_percentage|excluded_factors' ~/workspace/atlas --include='*.go' --include='*.yaml' | wc -l` → 0。
