@@ -156,8 +156,8 @@ def main():
         write_claim(99)
         r = run(["python3", os.path.join(S, "check-detector-count-sync.py"),
                  "--repo-root", tmp3, "--atlas-go-dir", os.path.join(tmp3, "atlas-go")], R)
-        check("A2b/注入錯誤 detector 數（99 vs 權威 29）⇒ 必須失敗",
-              r.returncode != 0 and "29" in r.stdout, f"exit={r.returncode}")
+        check("A2b/注入錯誤 detector 數（99 vs 權威 29）⇒ 必須失敗且指出不一致",
+              r.returncode != 0 and "不一致" in r.stdout, f"exit={r.returncode}")
         write_claim(29)
         r = run(["python3", os.path.join(S, "check-detector-count-sync.py"),
                  "--repo-root", tmp3, "--atlas-go-dir", os.path.join(tmp3, "atlas-go")], R)
@@ -398,10 +398,18 @@ def main():
                     run(G + ["commit", "-qm", "base"], R)
 
                     # case1：沒有 origin/main ⇒ 必須 fail-closed（原本 fallback 到本地分支 ⇒ fail-open）
+                    # 注意：sandbox 必須「已 checkout 到 feat 且有非治理檔 diff」，否則退回本地分支後
+                    # 會晚一步死在「diff 為空」⇒ 用錯的理由滿足斷言（2026-09-28 審查 E2）。
+                    run(G + ["checkout", "-q", "-b", "feat"], R)
+                    os.makedirs(os.path.join(sb2, "concepts"), exist_ok=True)
+                    with open(os.path.join(sb2, "concepts", "zz.md"), "w") as f:
+                        print("x", file=f)
+                    run(G + ["add", "-A"], R)
+                    run(G + ["commit", "-qm", "routine change"], R)
                     r = run(["bash", dtest], sb2, env={"BASE": "main", "GOV_LIST":
                              os.path.join(sb2, "skills", "_scripts", "governance-files.txt")})
-                    check("E/無 origin/main ⇒ fail-closed（不得退回本地分支）", r.returncode != 0,
-                          f"exit={r.returncode}")
+                    check("E/無 origin/main ⇒ fail-closed（不得退回本地分支）",
+                          r.returncode != 0 and "origin" in (r.stdout + r.stderr), f"exit={r.returncode}")
 
                     # case2：建立 origin/main 後，再做一個 commit 產生 diff
                     # ⇒ 應可計算 GOV_RE，且含寫死路徑（若無 diff，護欄會正確地 exit 1）
@@ -414,6 +422,19 @@ def main():
                              os.path.join(sb2, "skills", "_scripts", "governance-files.txt")})
                     ok = r.returncode == 0 and "governance-files" in r.stdout and "AGENTS" in r.stdout
                     check("E/有 origin/main ⇒ GOV_RE 含寫死路徑與清單內容", ok, f"exit={r.returncode}")
+
+                    # case3：base 清單有 AGENTS、head 清單刪掉它 ⇒ GOV_RE 仍須含 AGENTS（抓 head-only 回歸）
+                    run(G + ["update-ref", "refs/remotes/origin/main", "HEAD"], R)
+                    lp = os.path.join(sb2, "skills", "_scripts", "governance-files.txt")
+                    with open(lp, "w") as f:
+                        print("SCHEMA\.md", file=f)
+                    with open(os.path.join(sb2, "AGENTS.md"), "w") as f:
+                        print("v3", file=f)
+                    run(G + ["add", "-A"], R)
+                    run(G + ["commit", "-qm", "drop AGENTS from list"], R)
+                    r = run(["bash", dtest], sb2, env={"BASE": "main", "GOV_LIST": lp})
+                    check("E/base∪head：head 刪掉的行仍在 GOV_RE（抓 head-only）",
+                          r.returncode == 0 and "AGENTS" in r.stdout, f"exit={r.returncode}")
                 finally:
                     shutil.rmtree(sb2, ignore_errors=True)
                     shutil.rmtree(os.path.dirname(dtest), ignore_errors=True)
