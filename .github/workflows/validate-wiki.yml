@@ -31,6 +31,9 @@ jobs:
           LABELS: ${{ join(github.event.pull_request.labels.*.name, ',') }}
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
           MERGED: ${{ github.event.pull_request.merged }}
+          # 2026-09-28：GITHUB_TOKEN **不是** Actions 預設環境變數 ⇒ 必須顯式傳入，
+          # 否則讀 timeline／reviews 會 401 ⇒ PARSE_ERROR ⇒ 閘門永遠紅。
+          GITHUB_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
           # 已合併的 PR（例如合併後移除標籤觸發）⇒ 早退，避免無意義的紅燈與通知
