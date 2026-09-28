@@ -8,9 +8,15 @@ on:
     # 2026-09-27：必須含 labeled——否則「CI 先紅 → 貼 kaecer-reviewed 標籤」不會重跑，
     # governance-review-gate 會永久停在 failure，PR 卡在 BLOCKED（enforce_admins=true 無法繞）。
     types: [opened, synchronize, reopened, labeled, unlabeled]
+  # 2026-09-28：送出 review **不會**觸發 pull_request 事件 ⇒ 少了這段，App 核准後閘門不會重跑
+  # （會永遠停在 BLOCKED，逼人用 --admin）。dismissed 用於「撤銷核准」也要重算。
+  pull_request_review:
+    types: [submitted, dismissed]
 
 permissions:
   contents: read
+  pull-requests: read   # 讀 PR reviews（判斷核准者身分）
+  issues: read          # 讀 PR timeline（判斷貼標籤的 actor）
 
 jobs:
   governance-review-gate:
@@ -25,6 +31,9 @@ jobs:
           LABELS: ${{ join(github.event.pull_request.labels.*.name, ',') }}
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
           MERGED: ${{ github.event.pull_request.merged }}
+          # 2026-09-28：GITHUB_TOKEN **不是** Actions 預設環境變數 ⇒ 必須顯式傳入，
+          # 否則讀 timeline／reviews 會 401 ⇒ PARSE_ERROR ⇒ 閘門永遠紅。
+          GITHUB_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
           # 已合併的 PR（例如合併後移除標籤觸發）⇒ 早退，避免無意義的紅燈與通知
@@ -56,10 +65,27 @@ jobs:
           fi
           echo "觸碰治理檔（§6.4.2 重大變更）："
           printf '  - %s\n' $GOV
-          if printf '%s' "$LABELS" | tr ',' '\n' | grep -qx 'kaecer-reviewed'; then
-            echo "✅ 已標 kaecer-reviewed ⇒ 可合併（仍需人工執行 merge）"
+
+          # === 身分檢查（2026-09-28）：審查必須來自**獨立身分** atlas-qc-reviewer[bot] ===
+          # 為什麼：所有 agent 共用 kaecer68 一個 GitHub 身分 ⇒ 作者自貼標籤不算審查。
+          # 通過條件（任一）：① 標籤存在且最後一次 labeled 的 actor = App bot；
+          #                   ② 最後一個 APPROVED review 的 reviewer = App bot。
+          # 解析失敗一律 fail-closed（PARSE_ERROR ⇒ 紅燈），不得變成空值放行。
+          APP_LOGIN="atlas-qc-reviewer[bot]"
+          API="${GITHUB_API_URL:-https://api.github.com}"
+          REPO="${GITHUB_REPOSITORY}"
+          PR_NUM="${{ github.event.pull_request.number }}"
+          AUTH="Authorization: Bearer ${GITHUB_TOKEN}"
+          LABELJQ="import sys,json;d=json.load(sys.stdin);L=[x for x in d if x.get('event')=='labeled' and ((x.get('label') or {}).get('name') if isinstance(x.get('label'),dict) else x.get('label'))=='kaecer-reviewed'];print(((L[-1].get('actor') or {}).get('login','')) if L else '')"
+          REVIEWJQ="import sys,json;d=json.load(sys.stdin);A=[x for x in d if x.get('state')=='APPROVED'];print(((A[-1].get('user') or {}).get('login','')) if A else '')"
+          labeler=$(curl -fsS -H "$AUTH" -H 'Accept: application/vnd.github+json' "$API/repos/$REPO/issues/$PR_NUM/timeline?per_page=100" | python3 -c "$LABELJQ") || labeler=PARSE_ERROR
+          approver=$(curl -fsS -H "$AUTH" -H 'Accept: application/vnd.github+json' "$API/repos/$REPO/pulls/$PR_NUM/reviews?per_page=100" | python3 -c "$REVIEWJQ") || approver=PARSE_ERROR
+          has_label=$(printf '%s' "$LABELS" | tr ',' '\n' | grep -cx 'kaecer-reviewed' || true)
+          echo "  標籤存在=${has_label:-0}｜標籤 actor=${labeler:-（無）}｜APPROVED by=${approver:-（無）}"
+          if { [ "${has_label:-0}" = "1" ] && [ "$labeler" = "$APP_LOGIN" ]; } || [ "$approver" = "$APP_LOGIN" ]; then
+            echo "✅ 已由 $APP_LOGIN 審查（標籤或核准）⇒ 可合併（仍需人工執行 merge）"
           else
-            echo "::error::觸碰治理檔需 kaecer-reviewed 標籤方可合併（§6.4.2）"
+            echo "::error::觸碰治理檔需由 ${APP_LOGIN} 貼 kaecer-reviewed 或核准（§6.4.2）；作者側自貼不算"
             exit 1
           fi
 

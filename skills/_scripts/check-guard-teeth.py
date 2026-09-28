@@ -17,11 +17,14 @@
 用法: python3 skills/_scripts/check-guard-teeth.py [--repo-root .] [--quick]
   任何一項失敗 ⇒ exit 1；檢查項為 0（＝套件自己空轉）⇒ exit 1。
 """
-import argparse, importlib.util, os, re, shutil, subprocess, sys, tempfile
+import argparse, importlib.util, os, re, shutil, subprocess, sys, tempfile, time
 
 HAS_YAML = importlib.util.find_spec('yaml') is not None
 
 PASS, FAIL = "✅", "❌"
+APP_LOGIN = "atlas-qc-reviewer[bot]"
+
+MOCK_API = "import json,sys\nfrom http.server import BaseHTTPRequestHandler,HTTPServer\nPORT=int(sys.argv[1]); ACTOR=sys.argv[2]; APP=sys.argv[3] if len(sys.argv)>3 else ''\nclass H(BaseHTTPRequestHandler):\n    def log_message(self,*a): pass\n    def do_GET(self):\n        if '/timeline' in self.path:\n            b=[{'event':'labeled','label':{'name':'kaecer-reviewed'},'actor':{'login':ACTOR}}] if ACTOR else []\n        elif '/reviews' in self.path:\n            b=[{'state':'APPROVED','user':{'login':APP}}] if APP else []\n        else: b=[]\n        r=json.dumps(b).encode(); self.send_response(200)\n        self.send_header('Content-Type','application/json'); self.send_header('Content-Length',str(len(r)))\n        self.end_headers(); self.wfile.write(r)\nHTTPServer(('127.0.0.1',PORT),H).serve_forever()"
 
 
 def run(cmd, cwd, env=None):
@@ -272,8 +275,9 @@ def main():
                 j = wt.index("  validate-timestamp-rule:")
                 lines = [(l[10:] if l.startswith("          ") else l) for l in wt[i:j].split(chr(10))]
                 gate = os.path.join(tempfile.mkdtemp(prefix="teeth-gate-"), "gate.sh")
+                gate_src = chr(10).join(lines).replace("${{ github.event.pull_request.number }}", "${PR_NUM}")
                 with open(gate, "w") as f:
-                    print(chr(10).join(lines), file=f)
+                    print(gate_src, file=f)
                 check("D/抽出閘門步驟", len(lines) > 5, f"{len(lines)} 行")
             except ValueError:
                 gate = None
@@ -313,7 +317,26 @@ def main():
                     run(G + ["add", "-A"], R)
                     run(G + ["commit", "-qm", "bootstrap"], R)
                     check("D/bootstrap 未貼標籤 ⇒ 紅", gate_run(base_nolist, "") != 0)
-                    check("D/bootstrap 貼標籤 ⇒ 綠（無死結）", gate_run(base_nolist, "kaecer-reviewed") == 0)
+                    mock_py = os.path.join(sb, "mock_api.py")
+                    with open(mock_py, "w") as f:
+                        print(MOCK_API, file=f)
+
+                    def gate_with_actor(actor, approver=""):
+                        port = 8900 + (abs(hash(actor + approver)) % 90)
+                        proc = subprocess.Popen([sys.executable, mock_py, str(port), actor, approver],
+                                                stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                        try:
+                            time.sleep(0.6)
+                            env = {"BASE_SHA": base_nolist, "LABELS": "kaecer-reviewed", "MERGED": "",
+                                   "GITHUB_REPOSITORY": "x/y", "GITHUB_TOKEN": "t",
+                                   "GITHUB_API_URL": "http://127.0.0.1:%d" % port, "PR_NUM": "1"}
+                            return run(["bash", gate], sb, env=env).returncode
+                        finally:
+                            proc.kill()
+
+                    check("D/App 身分貼標籤 ⇒ 綠（無死結）", gate_with_actor(APP_LOGIN) == 0)
+                    check("D/作者自貼標籤 ⇒ 紅（洞已關）", gate_with_actor("kaecer68") != 0)
+                    check("D/作者自貼＋App 核准 ⇒ 綠", gate_with_actor("kaecer68", APP_LOGIN) == 0)
 
                     # 以「已含清單」的 commit 為新 base，測攻擊
                     base2 = run(G + ["rev-parse", "HEAD"], R).stdout.strip()
