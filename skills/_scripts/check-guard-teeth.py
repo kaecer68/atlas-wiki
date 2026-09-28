@@ -24,6 +24,11 @@ PASS, FAIL = "✅", "❌"
 
 def run(cmd, cwd, env=None):
     e = dict(os.environ)
+    # 清掉 git hook 匯出的 GIT_*（GIT_DIR/GIT_INDEX_FILE...）——否則 `git -C <sandbox>`
+    # 仍會操作到呼叫端 repo（2026-09-28 實證：hook 內跑本套件會清空呼叫端索引、
+    # 甚至切換其分支）。這是要在本套件內跑 git 的必要前置。
+    for k in [k for k in e if k.startswith("GIT_")]:
+        e.pop(k, None)
     if env:
         e.update(env)
     return subprocess.run(cmd, cwd=cwd, capture_output=True, text=True, env=e)
