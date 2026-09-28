@@ -66,3 +66,5 @@ def main():
 
 if __name__ == "__main__":
     sys.exit(main())
+
+# e2e: GitHub App 標籤/review 能力實測（2026-09-28）
