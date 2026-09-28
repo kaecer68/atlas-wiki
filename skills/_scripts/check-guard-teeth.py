@@ -102,30 +102,60 @@ def main():
     finally:
         shutil.rmtree(tmp, ignore_errors=True)
 
-    # === B3. R3：rename / 空 base-ref / 未同步（需 git sandbox） ===
+    # === B3. R3 情境（在**合成 git repo** 內測，完全不碰呼叫端；2026-09-28 改） ===
     if not a.quick:
         sb = tempfile.mkdtemp(prefix="teeth-git-")
         try:
-            run(["git", "clone", "-q", "--no-hardlinks", R, sb], R)
+            G = ["git", "-C", sb]
+            os.makedirs(os.path.join(sb, "skills"), exist_ok=True)
+            run(["git", "init", "-q", "-b", "main", sb], R)
+            run(G + ["config", "user.email", "t@t"], R)
+            run(G + ["config", "user.name", "t"], R)
+            with open(os.path.join(sb, "skills", "SK-00-skill-index.md"), "w") as f:
+                print("# index", file=f)
+                print("- [[SK-01-probe]]", file=f)
+            with open(os.path.join(sb, "skills", "SK-01-probe.md"), "w") as f:
+                print("---", file=f); print("name: SK-01", file=f); print("status: draft", file=f)
+                print("---", file=f); print("# a", file=f)
+            run(G + ["add", "-A"], R)
+            run(G + ["commit", "-qm", "base"], R)
             if not os.path.isdir(os.path.join(sb, ".git")):
-                check("B3/sandbox 建立", False, "clone 未產生 .git ⇒ 跳過 B3（不得讓指令落到呼叫端）")
+                check("B3/sandbox 建立", False, "git init 未產生 .git")
                 raise RuntimeError("sandbox-not-a-repo")
-            run(["git", "-C", sb, "checkout", "-q", "-B", "teeth", "origin/main"], R)
-            open(os.path.join(sb, "skills", "SK-93-teeth.md"), "w").write("---\nname: SK-93\nstatus: draft\n---\n# t\n")
-            run(["git", "-C", sb, "add", "-A"], R)
-            run(["git", "-C", sb, "-c", "user.email=t@t", "-c", "user.name=t", "commit", "-qm", "teeth"], R)
-            r = run(["python3", os.path.join(S, "check-skill-index-sync.py"), "--repo-only", "--repo-root", sb,
-                     "--base-ref", "origin/main"], sb)
+
+            run(G + ["checkout", "-q", "-B", "add", "main"], R)
+            with open(os.path.join(sb, "skills", "SK-99-probe.md"), "w") as f:
+                print("---", file=f); print("name: SK-99", file=f); print("status: draft", file=f)
+                print("---", file=f); print("# p", file=f)
+            run(G + ["add", "-A"], R)
+            run(G + ["commit", "-qm", "add-unsynced"], R)
+            r = run(["python3", os.path.join(S, "check-skill-index-sync.py"), "--repo-only",
+                     "--repo-root", sb, "--base-ref", "main"], R)
             check("B3/R3 未同步新 SK 頁被抓", r.returncode != 0, f"exit={r.returncode}")
-            r = run(["python3", os.path.join(S, "check-skill-index-sync.py"), "--repo-only", "--repo-root", sb,
-                     "--base-ref", ""], sb)
+
+            r = run(["python3", os.path.join(S, "check-skill-index-sync.py"), "--repo-only",
+                     "--repo-root", sb, "--base-ref", ""], R)
             check("B3/R3 空 base-ref fail-closed", r.returncode != 0, f"exit={r.returncode}")
-            run(["git", "-C", sb, "mv", "skills/SK-01-factor-library.md", "skills/SK-92-renamed.md"], R)
-            run(["git", "add", "-A"], sb)
-            run(["git", "-C", sb, "-c", "user.email=t@t", "-c", "user.name=t", "commit", "-qm", "rename"], R)
-            r = run(["python3", os.path.join(S, "check-skill-index-sync.py"), "--repo-only", "--repo-root", sb,
-                     "--base-ref", "origin/main"], sb)
+
+            run(G + ["checkout", "-q", "-B", "ren", "main"], R)
+            run(G + ["mv", "skills/SK-01-probe.md", "skills/SK-77-renamed.md"], R)
+            run(G + ["add", "-A"], R)
+            run(G + ["commit", "-qm", "rename"], R)
+            r = run(["python3", os.path.join(S, "check-skill-index-sync.py"), "--repo-only",
+                     "--repo-root", sb, "--base-ref", "main"], R)
             check("B3/R3 rename 不得逃逸", r.returncode != 0, f"exit={r.returncode}")
+
+            run(G + ["checkout", "-q", "-B", "sync", "main"], R)
+            with open(os.path.join(sb, "skills", "SK-98-probe.md"), "w") as f:
+                print("---", file=f); print("name: SK-98", file=f); print("status: draft", file=f)
+                print("---", file=f); print("# p", file=f)
+            with open(os.path.join(sb, "skills", "SK-00-skill-index.md"), "a") as f:
+                print("- [[SK-98-probe]]", file=f)
+            run(G + ["add", "-A"], R)
+            run(G + ["commit", "-qm", "synced"], R)
+            r = run(["python3", os.path.join(S, "check-skill-index-sync.py"), "--repo-only",
+                     "--repo-root", sb, "--base-ref", "main"], R)
+            check("B3/R3 已同步索引通過", r.returncode == 0, f"exit={r.returncode}")
         except RuntimeError:
             pass
         finally:
