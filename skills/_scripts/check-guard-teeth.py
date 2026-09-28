@@ -107,22 +107,27 @@ def main():
         sb = tempfile.mkdtemp(prefix="teeth-git-")
         try:
             run(["git", "clone", "-q", "--no-hardlinks", R, sb], R)
-            run(["git", "checkout", "-q", "-B", "teeth", "origin/main"], sb)
+            if not os.path.isdir(os.path.join(sb, ".git")):
+                check("B3/sandbox 建立", False, "clone 未產生 .git ⇒ 跳過 B3（不得讓指令落到呼叫端）")
+                raise RuntimeError("sandbox-not-a-repo")
+            run(["git", "-C", sb, "checkout", "-q", "-B", "teeth", "origin/main"], R)
             open(os.path.join(sb, "skills", "SK-93-teeth.md"), "w").write("---\nname: SK-93\nstatus: draft\n---\n# t\n")
-            run(["git", "add", "-A"], sb)
-            run(["git", "-c", "user.email=t@t", "-c", "user.name=t", "commit", "-qm", "teeth"], sb)
+            run(["git", "-C", sb, "add", "-A"], R)
+            run(["git", "-C", sb, "-c", "user.email=t@t", "-c", "user.name=t", "commit", "-qm", "teeth"], R)
             r = run(["python3", os.path.join(S, "check-skill-index-sync.py"), "--repo-only", "--repo-root", sb,
                      "--base-ref", "origin/main"], sb)
             check("B3/R3 未同步新 SK 頁被抓", r.returncode != 0, f"exit={r.returncode}")
             r = run(["python3", os.path.join(S, "check-skill-index-sync.py"), "--repo-only", "--repo-root", sb,
                      "--base-ref", ""], sb)
             check("B3/R3 空 base-ref fail-closed", r.returncode != 0, f"exit={r.returncode}")
-            run(["git", "mv", "skills/SK-01-factor-library.md", "skills/SK-92-renamed.md"], sb)
+            run(["git", "-C", sb, "mv", "skills/SK-01-factor-library.md", "skills/SK-92-renamed.md"], R)
             run(["git", "add", "-A"], sb)
-            run(["git", "-c", "user.email=t@t", "-c", "user.name=t", "commit", "-qm", "rename"], sb)
+            run(["git", "-C", sb, "-c", "user.email=t@t", "-c", "user.name=t", "commit", "-qm", "rename"], R)
             r = run(["python3", os.path.join(S, "check-skill-index-sync.py"), "--repo-only", "--repo-root", sb,
                      "--base-ref", "origin/main"], sb)
             check("B3/R3 rename 不得逃逸", r.returncode != 0, f"exit={r.returncode}")
+        except RuntimeError:
+            pass
         finally:
             shutil.rmtree(sb, ignore_errors=True)
 
