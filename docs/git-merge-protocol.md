@@ -187,7 +187,7 @@ gh pr merge <N> --squash --delete-branch
 
 #### 6.4.2 重大變更（必須人工 review, hermes 只開 PR 不等 merge）
 
-以下**任何一項**觸碰 = 重大變更, hermes **只開 PR**, 等 kaecer review 後 merge:
+以下**任何一項**觸碰 = 重大變更, **只開 PR**, 等 kaecer review 後 merge(清單 SSOT: `skills/_scripts/governance-files.txt`):
 
 | 類別 | 檔路徑 |
 |---|---|

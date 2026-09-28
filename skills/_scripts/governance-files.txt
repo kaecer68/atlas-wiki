@@ -10,3 +10,22 @@ skills/_method_amendment_history\.md
 docs/git-merge-protocol\.md
 \.github/workflows/
 skills/_scripts/governance-files\.txt
+# === 2026-09-28 kaecer 拍板（Tier 1＋Tier 2）：閘門實作、規則 SSOT、CI/ci-gate 硬門檻實作 ===
+# 判準：若弱化它會讓某條「repo 自稱在管」的規則靜默失效，或它本身就是執行機制／規則 SSOT，即納入。
+skills/_scripts/check-guard-teeth\.py
+skills/_scripts/skill-page-schema\.json
+skills/_scripts/wiki-page-schema\.json
+scripts/dev/auto-commit-pr\.sh
+skills/_scripts/check-skill-pages\.py
+skills/_scripts/check-skill-structure\.py
+skills/_scripts/validate-timestamp-rule\.py
+skills/_scripts/check-source-tiers\.py
+skills/_scripts/check-freshness\.py
+skills/_scripts/check-claim-rules\.py
+skills/_scripts/check-retrieval-integrity\.py
+skills/_scripts/check-wiki-pages\.py
+skills/_scripts/check-detector-count-sync\.py
+skills/_scripts/check-skill-index-sync\.py
+skills/_scripts/check-shell-var-ascii\.py
+skills/_scripts/audit-file-index-sync\.py
+skills/_scripts/audit-atlas-endpoints\.py
