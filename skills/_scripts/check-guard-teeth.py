@@ -17,7 +17,9 @@
 用法: python3 skills/_scripts/check-guard-teeth.py [--repo-root .] [--quick]
   任何一項失敗 ⇒ exit 1；檢查項為 0（＝套件自己空轉）⇒ exit 1。
 """
-import argparse, os, re, shutil, subprocess, sys, tempfile
+import argparse, importlib.util, os, re, shutil, subprocess, sys, tempfile
+
+HAS_YAML = importlib.util.find_spec('yaml') is not None
 
 PASS, FAIL = "✅", "❌"
 
@@ -41,7 +43,7 @@ def main():
     a = ap.parse_args()
     R = os.path.abspath(a.repo_root)
     S = os.path.join(R, "skills", "_scripts")
-    results, checks = [], 0
+    results, checks, skips = [], 0, []
 
     def caller_state():
         """呼叫端 repo 的 (HEAD, branch)；用於自我保護檢查（2026-09-28 加入）。
@@ -65,22 +67,29 @@ def main():
 
     # === A. 空集合即失敗 + 正常不誤傷 ===
     GUARDS = [
-        ("check-claim-rules.py", []),
-        ("check-source-tiers.py", ["--strict"]),
-        ("check-freshness.py", ["--strict"]),
-        ("check-retrieval-integrity.py", ["--strict"]),
-        ("check-detector-count-sync.py", ["--atlas-go-dir", os.path.expanduser("~/workspace/atlas")]),
-        ("check-wiki-pages.py", []),
-        ("check-shell-var-ascii.py", ["--strict"]),
-        ("check-skill-index-sync.py", ["--repo-only"]),
+        ("check-claim-rules.py", [], None),
+        ("check-source-tiers.py", ["--strict"], None),
+        ("check-freshness.py", ["--strict"], None),
+        ("check-retrieval-integrity.py", ["--strict"], None),
+        ("check-detector-count-sync.py", ["--atlas-go-dir", os.path.expanduser("~/workspace/atlas")],
+         os.path.expanduser("~/workspace/atlas")),
+        ("check-wiki-pages.py", [], None),
+        ("check-shell-var-ascii.py", ["--strict"], None),
+        ("check-skill-index-sync.py", ["--repo-only"], None),
     ]
-    for script, extra in GUARDS:
+    for script, extra, requires in GUARDS:
         p = os.path.join(S, script)
         if not os.path.isfile(p):
             check(f"A/{script} 存在", False, "找不到檔案")
             continue
         r_empty = run(["python3", p, "--repo-root", "/tmp/__no_such_repo__"] + extra, R)
         check(f"A/{script} 空集合失敗", r_empty.returncode != 0, f"exit={r_empty.returncode}")
+        if requires and not os.path.exists(requires):
+            skips.append(f"A/{script} 正常 repo 通過（環境缺 {requires}；該護欄由專屬 CI step 覆蓋）")
+            continue
+        if script == "check-wiki-pages.py" and not HAS_YAML:
+            skips.append(f"A/{script} 正常 repo 通過（環境缺 PyYAML ⇒ 檢查器降級、可能誤報）")
+            continue
         r_ok = run(["python3", p, "--repo-root", R] + extra, R)
         check(f"A/{script} 正常 repo 通過", r_ok.returncode == 0, f"exit={r_ok.returncode}")
 
@@ -190,6 +199,8 @@ def main():
     if checks == 0:
         print(f"{FAIL} 套件跑 0 項檢查 — 不得視為通過")
         return 1
+    for s in skips:
+        print(f"  ⏭️  skip: {s}")
     if bad:
         print(f"\n{FAIL} {len(bad)}/{checks} 項失敗 ⇒ 護欄沒有宣稱的牙齒")
         return 1
