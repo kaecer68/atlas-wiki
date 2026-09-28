@@ -135,6 +135,36 @@ def main():
     finally:
         shutil.rmtree(tmp2, ignore_errors=True)
 
+    # === A2b. detector-count：注入錯誤宣稱必失敗（審查 F3/M18）＋對照組 ===
+    tmp3 = tempfile.mkdtemp(prefix="teeth-det-")
+    try:
+        os.makedirs(os.path.join(tmp3, "concepts"), exist_ok=True)
+        os.makedirs(os.path.join(tmp3, "skills", "_scripts"), exist_ok=True)
+        fake_go = os.path.join(tmp3, "atlas-go", "internal", "narrative")
+        os.makedirs(fake_go, exist_ok=True)
+        with open(os.path.join(fake_go, "detector_count_gate_test.go"), "w") as f:
+            print("package narrative", file=f)
+            print("const documentedDetectorCount = 29", file=f)
+
+        def write_claim(n):
+            with open(os.path.join(tmp3, "concepts", "zz-det.md"), "w") as f:
+                print("---", file=f); print("title: zz-det", file=f); print("description: d", file=f)
+                print("created: 2026-01-01", file=f); print("updated: 2026-01-01", file=f)
+                print("type: concept", file=f); print("tags: []", file=f); print("sources: []", file=f)
+                print("---", file=f); print(f"`detector_registry_list` 回報 **{n}** 個 template trigger detectors。", file=f)
+
+        write_claim(99)
+        r = run(["python3", os.path.join(S, "check-detector-count-sync.py"),
+                 "--repo-root", tmp3, "--atlas-go-dir", os.path.join(tmp3, "atlas-go")], R)
+        check("A2b/注入錯誤 detector 數（99 vs 權威 29）⇒ 必須失敗",
+              r.returncode != 0 and "29" in r.stdout, f"exit={r.returncode}")
+        write_claim(29)
+        r = run(["python3", os.path.join(S, "check-detector-count-sync.py"),
+                 "--repo-root", tmp3, "--atlas-go-dir", os.path.join(tmp3, "atlas-go")], R)
+        check("A2b/對照組（宣稱 29 == 權威）通過", r.returncode == 0, f"exit={r.returncode}")
+    finally:
+        shutil.rmtree(tmp3, ignore_errors=True)
+
     # === B1. shell 護欄：違規要抓、引號 heredoc 不誤抓 ===
     tmp = tempfile.mkdtemp(prefix="teeth-")
     try:
@@ -235,7 +265,10 @@ def main():
         else:
             wt = open(wfpath, encoding="utf-8").read()
             try:
-                i = wt.index("          # 非 PR 事件（push 到 main）")
+                # 抽取起點必須是 `set -euo pipefail`（否則抽出的步驟少了 set -e 與 MERGED 早退，
+                # 會讓突變「移除 base 讀取 fallback」不被抓 ⇒ 保護不了 F2 死結；2026-09-28 審查）
+                job_at = wt.index("governance-review-gate")
+                i = wt.index("          set -euo pipefail", job_at)
                 j = wt.index("  validate-timestamp-rule:")
                 lines = [(l[10:] if l.startswith("          ") else l) for l in wt[i:j].split(chr(10))]
                 gate = os.path.join(tempfile.mkdtemp(prefix="teeth-gate-"), "gate.sh")
@@ -327,6 +360,63 @@ def main():
                 finally:
                     shutil.rmtree(sb, ignore_errors=True)
                     shutil.rmtree(os.path.dirname(gate), ignore_errors=True)
+
+    # === E. D 腳本（auto-commit-pr.sh）行為測試（審查 F2：本 PR 刪掉 C0 後 D 端零覆蓋）===
+    if not a.quick:
+        dpath = os.path.join(R, "scripts", "dev", "auto-commit-pr.sh")
+        if not os.path.isfile(dpath):
+            check("E/找到 auto-commit-pr.sh", False, "缺檔")
+        else:
+            dt = open(dpath, encoding="utf-8").read()
+            try:
+                i0 = dt.index('BASE_REF="origin/$BASE"')
+                i1 = dt.index("GOV_HITS=")
+                frag = dt[i0:i1]
+                dtest = os.path.join(tempfile.mkdtemp(prefix="teeth-d-"), "d.sh")
+                with open(dtest, "w") as f:
+                    print("set -euo pipefail", file=f)
+                    print(frag, file=f)
+                    print('echo "GOV_RE=$GOV_RE"', file=f)
+                check("E/抽出 D 端治理判定片段", len(frag) > 100, f"{len(frag)} bytes")
+            except ValueError:
+                dtest = None
+                check("E/抽出 D 端治理判定片段", False, "找不到錨點")
+
+            if dtest:
+                sb2 = tempfile.mkdtemp(prefix="teeth-drepo-")
+                try:
+                    G = ["git", "-C", sb2]
+                    run(["git", "init", "-q", "-b", "main", sb2], R)
+                    run(G + ["config", "user.email", "t@t"], R)
+                    run(G + ["config", "user.name", "t"], R)
+                    os.makedirs(os.path.join(sb2, "skills", "_scripts"), exist_ok=True)
+                    with open(os.path.join(sb2, "skills", "_scripts", "governance-files.txt"), "w") as f:
+                        print("AGENTS\\.md", file=f)
+                    with open(os.path.join(sb2, "AGENTS.md"), "w") as f:
+                        print("v1", file=f)
+                    run(G + ["add", "-A"], R)
+                    run(G + ["commit", "-qm", "base"], R)
+
+                    # case1：沒有 origin/main ⇒ 必須 fail-closed（原本 fallback 到本地分支 ⇒ fail-open）
+                    r = run(["bash", dtest], sb2, env={"BASE": "main", "GOV_LIST":
+                             os.path.join(sb2, "skills", "_scripts", "governance-files.txt")})
+                    check("E/無 origin/main ⇒ fail-closed（不得退回本地分支）", r.returncode != 0,
+                          f"exit={r.returncode}")
+
+                    # case2：建立 origin/main 後，再做一個 commit 產生 diff
+                    # ⇒ 應可計算 GOV_RE，且含寫死路徑（若無 diff，護欄會正確地 exit 1）
+                    run(G + ["update-ref", "refs/remotes/origin/main", "HEAD"], R)
+                    with open(os.path.join(sb2, "AGENTS.md"), "w") as f:
+                        print("v2", file=f)
+                    run(G + ["add", "-A"], R)
+                    run(G + ["commit", "-qm", "touch AGENTS.md"], R)
+                    r = run(["bash", dtest], sb2, env={"BASE": "main", "GOV_LIST":
+                             os.path.join(sb2, "skills", "_scripts", "governance-files.txt")})
+                    ok = r.returncode == 0 and "governance-files" in r.stdout and "AGENTS" in r.stdout
+                    check("E/有 origin/main ⇒ GOV_RE 含寫死路徑與清單內容", ok, f"exit={r.returncode}")
+                finally:
+                    shutil.rmtree(sb2, ignore_errors=True)
+                    shutil.rmtree(os.path.dirname(dtest), ignore_errors=True)
 
     # === C0. 治理檔清單自身受保護 ＋ base ∪ head（F2：不得靠 routine PR 解除保護）===
     gtxt = open(os.path.join(S, "governance-files.txt"), encoding="utf-8").read() if os.path.isfile(os.path.join(S, "governance-files.txt")) else ""

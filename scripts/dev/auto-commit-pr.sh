@@ -116,10 +116,11 @@ if ! git fetch -q origin "$BASE" 2>/dev/null; then
     echo "⚠️  無法 fetch origin/${BASE}（離線或遠端不可用）⇒ 以本地既有的 origin/${BASE} 判斷；若它已過期，規模判定可能失真。"
 fi
 BASE_REF="origin/$BASE"
-if ! git rev-parse --verify -q "$BASE_REF" >/dev/null 2>&1; then BASE_REF="$BASE"; fi
-# base 解析不到就 fail-closed（否則 diff 為空 ⇒ 會被誤判成 routine 而自動 merge）
+# 只用 origin/${BASE}：本地 ${BASE} 可能過期 ⇒ 用它判治理檔會 **fail-open**
+# （窄 refspec／未 fetch 的 clone 實測：治理檔 PR 被當 routine 自動 merge；2026-09-28 審查）
 if ! git rev-parse --verify -q "$BASE_REF" >/dev/null 2>&1; then
-    echo "❌ 找不到可比較的 base ref（試過 origin/${BASE} 與 ${BASE}）— 無法判定變更規模，停止，不 merge。"
+    echo "❌ 找不到 origin/${BASE}（本地分支可能過期，不能用來判治理檔）— 停止，不 merge。"
+    echo "   修法：git fetch origin ${BASE}"
     exit 1
 fi
 # 用 --name-status -M：rename 會同時給出舊路徑與新路徑（--name-only 只給新路徑 ⇒ 可繞過閘門）
