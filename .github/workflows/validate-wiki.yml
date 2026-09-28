@@ -8,6 +8,10 @@ on:
     # 2026-09-27：必須含 labeled——否則「CI 先紅 → 貼 kaecer-reviewed 標籤」不會重跑，
     # governance-review-gate 會永久停在 failure，PR 卡在 BLOCKED（enforce_admins=true 無法繞）。
     types: [opened, synchronize, reopened, labeled, unlabeled]
+  # 2026-09-28：送出 review **不會**觸發 pull_request 事件 ⇒ 少了這段，App 核准後閘門不會重跑
+  # （會永遠停在 BLOCKED，逼人用 --admin）。dismissed 用於「撤銷核准」也要重算。
+  pull_request_review:
+    types: [submitted, dismissed]
 
 permissions:
   contents: read
