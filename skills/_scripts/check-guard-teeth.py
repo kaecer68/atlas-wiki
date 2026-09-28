@@ -1,0 +1,235 @@
+#!/usr/bin/env python3
+"""check-guard-teeth.py — 護欄自測套件（2026-09-28 新增）
+
+為什麼要這支：2026-09-27/28 的 incident 顯示——**改完護欄後自稱「有牙」是不可靠的**。
+同一天內連續出現四個同型失誤，全部由外部審查才抓到：
+  ① 同一邏輯在兩處實作 ⇒ 只修了 D、漏修 C（治理檔 regex）
+  ② 護欄接了卻跑不動（CI 淺層 checkout ⇒ `git diff base...HEAD` 失敗）
+  ③ falsy 判準靜默退化（`--base-ref ""` 退回「工作區 vs HEAD」＝假綠）
+  ④ 自己的程式把資料吃掉（rename 被 `pass` 丟棄）
+本套件把「每個護欄的失敗情境都要實跑」變成可重複執行的機械檢查。
+
+檢查項：
+  A. 每支護欄：**空集合必須失敗**（S8 原則）＋ 正常 repo 必須通過（不誤傷）。
+  B. 針對性情境：shell 違規檔、引號 heredoc、docs 超標、R3（rename／空 base-ref／未同步）。
+  C. 治理檔清單必須是**單一來源**：CI job 與 auto-commit-pr.sh 都不得再硬編 regex。
+
+用法: python3 skills/_scripts/check-guard-teeth.py [--repo-root .] [--quick]
+  任何一項失敗 ⇒ exit 1；檢查項為 0（＝套件自己空轉）⇒ exit 1。
+"""
+import argparse, importlib.util, os, re, shutil, subprocess, sys, tempfile
+
+HAS_YAML = importlib.util.find_spec('yaml') is not None
+
+PASS, FAIL = "✅", "❌"
+
+
+def run(cmd, cwd, env=None):
+    e = dict(os.environ)
+    # 清掉 git hook 匯出的 GIT_*（GIT_DIR/GIT_INDEX_FILE...）——否則 `git -C <sandbox>`
+    # 仍會操作到呼叫端 repo（2026-09-28 實證：hook 內跑本套件會清空呼叫端索引、
+    # 甚至切換其分支）。這是要在本套件內跑 git 的必要前置。
+    for k in [k for k in e if k.startswith("GIT_")]:
+        e.pop(k, None)
+    if env:
+        e.update(env)
+    return subprocess.run(cmd, cwd=cwd, capture_output=True, text=True, env=e)
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--repo-root", default=os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+    ap.add_argument("--quick", action="store_true", help="跳過需要建立 git sandbox 的測試")
+    a = ap.parse_args()
+    R = os.path.abspath(a.repo_root)
+    S = os.path.join(R, "skills", "_scripts")
+    results, checks, skips = [], 0, []
+
+    def caller_state():
+        """呼叫端 repo 的 (HEAD, branch)；用於自我保護檢查（2026-09-28 加入）。
+
+        背景：本套件會在臨時 sandbox 內做 `git mv`/commit；若 sandbox 建立失敗而指令
+        落到呼叫端 repo，會污染真實工作區。此檢查會在收尾時比對並失敗。
+        """
+        try:
+            head = subprocess.run(["git", "-C", R, "rev-parse", "HEAD"], capture_output=True, text=True).stdout.strip()
+            br = subprocess.run(["git", "-C", R, "branch", "--show-current"], capture_output=True, text=True).stdout.strip()
+            return head, br
+        except Exception:
+            return "", ""
+
+    caller_before = caller_state()
+
+    def check(name, ok, detail=""):
+        nonlocal checks
+        checks += 1
+        results.append((name, ok, detail))
+
+    # === A. 空集合即失敗 + 正常不誤傷 ===
+    GUARDS = [
+        ("check-claim-rules.py", [], None),
+        ("check-source-tiers.py", ["--strict"], None),
+        ("check-freshness.py", ["--strict"], None),
+        ("check-retrieval-integrity.py", ["--strict"], None),
+        ("check-detector-count-sync.py", ["--atlas-go-dir", os.path.expanduser("~/workspace/atlas")],
+         os.path.expanduser("~/workspace/atlas")),
+        ("check-wiki-pages.py", [], None),
+        ("check-shell-var-ascii.py", ["--strict"], None),
+        ("check-skill-index-sync.py", ["--repo-only"], None),
+    ]
+    for script, extra, requires in GUARDS:
+        p = os.path.join(S, script)
+        if not os.path.isfile(p):
+            check(f"A/{script} 存在", False, "找不到檔案")
+            continue
+        r_empty = run(["python3", p, "--repo-root", "/tmp/__no_such_repo__"] + extra, R)
+        check(f"A/{script} 空集合失敗", r_empty.returncode != 0, f"exit={r_empty.returncode}")
+        if requires and not os.path.exists(requires):
+            checks += 1
+            skips.append(f"A/{script} 正常 repo 通過（環境缺 {requires}；該護欄由專屬 CI step 覆蓋）")
+            continue
+        if script == "check-wiki-pages.py" and not HAS_YAML:
+            checks += 1
+            skips.append(f"A/{script} 正常 repo 通過（環境缺 PyYAML ⇒ 檢查器降級、可能誤報）")
+            continue
+        r_ok = run(["python3", p, "--repo-root", R] + extra, R)
+        check(f"A/{script} 正常 repo 通過", r_ok.returncode == 0, f"exit={r_ok.returncode}")
+
+    # === B1. shell 護欄：違規要抓、引號 heredoc 不誤抓 ===
+    tmp = tempfile.mkdtemp(prefix="teeth-")
+    try:
+        sc = os.path.join(S, "check-shell-var-ascii.py")
+        os.makedirs(os.path.join(tmp, "scripts"), exist_ok=True)
+        bad = os.path.join(tmp, "scripts", "bad.sh")
+        open(bad, "w").write('#!/usr/bin/env bash\nset -u\nBASE=main\necho "x $BASE（離線）"\n')
+        r = run(["python3", sc, "--repo-root", tmp, "--strict"], R)
+        check("B1/shell 抓到違規", r.returncode != 0, f"exit={r.returncode}")
+        good = os.path.join(tmp, "scripts", "good.sh")
+        open(good, "w").write("#!/usr/bin/env bash\ncat <<'EOF'\n$x中\nEOF\n")
+        os.remove(bad)
+        r = run(["python3", sc, "--repo-root", tmp, "--strict"], R)
+        check("B1/shell 引號 heredoc 不誤抓", r.returncode == 0, f"exit={r.returncode}")
+
+        # === B2. docs 尺寸護欄 ===
+        # B2：fixture 必須是「有 schema 的 repo」——否則紅的原因是找不到 schema（假牙）。
+        # 2026-09-28 審查發現：舊版在孤立 tmp 目錄測，紅的原因不是 size。
+        os.makedirs(os.path.join(tmp, "skills", "_scripts"), exist_ok=True)
+        shutil.copy(os.path.join(S, "wiki-page-schema.json"),
+                    os.path.join(tmp, "skills", "_scripts", "wiki-page-schema.json"))
+        d = os.path.join(tmp, "docs"); os.makedirs(d, exist_ok=True)
+        ok_doc = os.path.join(d, "ok.md")
+        open(ok_doc, "w").write("x" * 100)
+        r = run(["python3", os.path.join(S, "check-wiki-pages.py"), "--repo-root", tmp], R)
+        check("B2/docs 合規檔通過（對照組）", r.returncode == 0, f"exit={r.returncode} {r.stdout[-80:]}")
+        open(os.path.join(d, "big.md"), "w").write("x" * 12001)
+        r = run(["python3", os.path.join(S, "check-wiki-pages.py"), "--repo-root", tmp], R)
+        check("B2/docs 超標被抓（且訊息指向 size）",
+              r.returncode != 0 and "12001" in r.stdout, f"exit={r.returncode}")
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+
+    # === B3. R3 情境（在**合成 git repo** 內測，完全不碰呼叫端；2026-09-28 改） ===
+    if not a.quick:
+        sb = tempfile.mkdtemp(prefix="teeth-git-")
+        try:
+            G = ["git", "-C", sb]
+            os.makedirs(os.path.join(sb, "skills"), exist_ok=True)
+            run(["git", "init", "-q", "-b", "main", sb], R)
+            run(G + ["config", "user.email", "t@t"], R)
+            run(G + ["config", "user.name", "t"], R)
+            with open(os.path.join(sb, "skills", "SK-00-skill-index.md"), "w") as f:
+                print("# index", file=f)
+                print("- [[SK-01-probe]]", file=f)
+            with open(os.path.join(sb, "skills", "SK-01-probe.md"), "w") as f:
+                print("---", file=f); print("name: SK-01", file=f); print("status: draft", file=f)
+                print("---", file=f); print("# a", file=f)
+            run(G + ["add", "-A"], R)
+            run(G + ["commit", "-qm", "base"], R)
+            if not os.path.isdir(os.path.join(sb, ".git")):
+                check("B3/sandbox 建立", False, "git init 未產生 .git")
+                raise RuntimeError("sandbox-not-a-repo")
+
+            run(G + ["checkout", "-q", "-B", "add", "main"], R)
+            with open(os.path.join(sb, "skills", "SK-99-probe.md"), "w") as f:
+                print("---", file=f); print("name: SK-99", file=f); print("status: draft", file=f)
+                print("---", file=f); print("# p", file=f)
+            run(G + ["add", "-A"], R)
+            run(G + ["commit", "-qm", "add-unsynced"], R)
+            r = run(["python3", os.path.join(S, "check-skill-index-sync.py"), "--repo-only",
+                     "--repo-root", sb, "--base-ref", "main"], R)
+            check("B3/R3 未同步新 SK 頁被抓", r.returncode != 0, f"exit={r.returncode}")
+
+            r = run(["python3", os.path.join(S, "check-skill-index-sync.py"), "--repo-only",
+                     "--repo-root", sb, "--base-ref", ""], R)
+            check("B3/R3 空 base-ref fail-closed", r.returncode != 0, f"exit={r.returncode}")
+
+            run(G + ["checkout", "-q", "-B", "ren", "main"], R)
+            run(G + ["mv", "skills/SK-01-probe.md", "skills/SK-77-renamed.md"], R)
+            run(G + ["add", "-A"], R)
+            run(G + ["commit", "-qm", "rename"], R)
+            r = run(["python3", os.path.join(S, "check-skill-index-sync.py"), "--repo-only",
+                     "--repo-root", sb, "--base-ref", "main"], R)
+            check("B3/R3 rename 不得逃逸", r.returncode != 0, f"exit={r.returncode}")
+
+            run(G + ["checkout", "-q", "-B", "sync", "main"], R)
+            with open(os.path.join(sb, "skills", "SK-98-probe.md"), "w") as f:
+                print("---", file=f); print("name: SK-98", file=f); print("status: draft", file=f)
+                print("---", file=f); print("# p", file=f)
+            with open(os.path.join(sb, "skills", "SK-00-skill-index.md"), "a") as f:
+                print("- [[SK-98-probe]]", file=f)
+            run(G + ["add", "-A"], R)
+            run(G + ["commit", "-qm", "synced"], R)
+            r = run(["python3", os.path.join(S, "check-skill-index-sync.py"), "--repo-only",
+                     "--repo-root", sb, "--base-ref", "main"], R)
+            check("B3/R3 已同步索引通過", r.returncode == 0, f"exit={r.returncode}")
+        except RuntimeError:
+            pass
+        finally:
+            shutil.rmtree(sb, ignore_errors=True)
+
+    # === C0. 治理檔清單自身受保護 ＋ base ∪ head（F2：不得靠 routine PR 解除保護）===
+    gtxt = open(os.path.join(S, "governance-files.txt"), encoding="utf-8").read() if os.path.isfile(os.path.join(S, "governance-files.txt")) else ""
+    check("C0/清單本身納入清單（可被自己的規則保護）", "governance-files" in gtxt)
+    wtext = open(os.path.join(R, ".github", "workflows", "validate-wiki.yml"), encoding="utf-8").read()
+    dtext = open(os.path.join(R, "scripts", "dev", "auto-commit-pr.sh"), encoding="utf-8").read()
+    check("C0/C 讀 base ∪ head（head 刪行不得解除保護）", "gov-base" in wtext or "gov.txt" in wtext)
+    check("C0/D 讀 base ∪ head（head 刪行不得解除保護）", "GOV_TMP.base" in dtext or ".base" in dtext)
+
+    # === C. 治理檔清單單一來源 ===
+    shared = os.path.join(S, "governance-files.txt")
+    if not os.path.isfile(shared):
+        check("C/共用治理檔清單存在", False, "缺少 skills/_scripts/governance-files.txt")
+    else:
+        for f, label in ((os.path.join(R, "scripts", "dev", "auto-commit-pr.sh"), "D 腳本"),
+                         (os.path.join(R, ".github", "workflows", "validate-wiki.yml"), "C workflow")):
+            text = open(f, encoding="utf-8").read()
+            ok = "governance-files.txt" in text and "AGENTS\\.md|SCHEMA" not in text
+            check(f"C/{label} 使用共用清單（無硬編 regex）", ok, "" if ok else "偵測到硬編治理檔 regex")
+
+    caller_after = caller_state()
+    if caller_before != caller_after:
+        check("Z/呼叫端 repo 未被本套件改動", False, f"before={caller_before} after={caller_after}")
+
+    print("═" * 64)
+    print(f"護欄自測（guard teeth）— {checks} 項檢查")
+    print("═" * 64)
+    bad = [(n, d) for n, ok, d in results if not ok]
+    for n, ok, d in results:
+        print(f"  {PASS if ok else FAIL} {n}{('  ' + d) if d and not ok else ''}")
+    if checks == 0:
+        print(f"{FAIL} 套件跑 0 項檢查 — 不得視為通過")
+        return 1
+    for s in skips:
+        print(f"  ⏭️  skip: {s}")
+    if bad:
+        print(f"\n{FAIL} {len(bad)}/{checks} 項失敗 ⇒ 護欄沒有宣稱的牙齒")
+        return 1
+    if skips:
+        print(f"\n{PASS} {checks - len(skips)} 項通過、{len(skips)} 項 skip（未測試，見上方 ⏭️）")
+    else:
+        print(f"\n{PASS} 全部 {checks} 項通過")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

@@ -5,13 +5,13 @@
 SHELL := /bin/bash
 PY    := python3
 
-.PHONY: help ci-gate ci-fast ci-full check-actionlint check-timestamp check-audit check-skill-pages check-skill-structure check-stale check-retrieval check-wiki-pages check-detector-count check-claim-rules check-source-tiers check-freshness check-shell-var-ascii check-index-sync structure-metrics check-size check-frontmatter pre-commit-install uninstall-hooks verify-clean test sync-imac
+.PHONY: help ci-gate ci-fast ci-full check-actionlint check-timestamp check-audit check-skill-pages check-skill-structure check-stale check-retrieval check-wiki-pages check-detector-count check-claim-rules check-source-tiers check-freshness check-shell-var-ascii check-index-sync check-guard-teeth structure-metrics check-size check-frontmatter pre-commit-install uninstall-hooks verify-clean test sync-imac
 
 help:                   ## 列出所有 target
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN{FS=":.*?## "}{printf "  %-22s %s\n", $$1, $$2}'
 
 ci-gate:                ## 快速門禁(對位 GitHub CI 10 job=9 驗證+notify(2026-09-28 實測) + skills 索引同步 R1+R3+R4)
-ci-gate: check-timestamp check-audit check-size check-skill-structure check-frontmatter check-actionlint check-skill-index-sync check-retrieval check-wiki-pages check-detector-count check-claim-rules check-source-tiers check-freshness check-shell-var-ascii check-index-sync
+ci-gate: check-timestamp check-audit check-size check-skill-structure check-frontmatter check-actionlint check-skill-index-sync check-retrieval check-wiki-pages check-detector-count check-claim-rules check-source-tiers check-freshness check-shell-var-ascii check-index-sync check-guard-teeth
 	@echo ""
 	@echo "✅ local ci-gate passed（結構／size／frontmatter／YAML／L3 覆蓋率＋文法／S2 非 SK schema／S5 檢索性／S7 禁用句型／R1+R3+R4）"
 
@@ -42,6 +42,9 @@ check-size: check-skill-pages
 
 check-freshness:        ## 3j. 時效宣告與逾期 S6（strict；18 頁已補完）
 	@$(PY) skills/_scripts/check-freshness.py --repo-root $(CURDIR) --strict
+
+check-guard-teeth:      ## 3m. 護欄自測（每個護欄的失敗情境都要實跑；S8 的機械化）
+	@$(PY) skills/_scripts/check-guard-teeth.py --repo-root $(CURDIR)
 
 check-shell-var-ascii:  ## 3k. shell「$VAR 緊接非 ASCII」（strict；會 unbound 中止的 bug）
 	@$(PY) skills/_scripts/check-shell-var-ascii.py --repo-root $(CURDIR) --strict
@@ -75,7 +78,9 @@ check-stale:            ## 3c. skills/ 未提交內容偵測（session 開頭建
 check-frontmatter:      ## 4. frontmatter 核心 10 欄齊全
 check-frontmatter: check-skill-pages
 check-skill-index-sync: ## 6. skills 索引同步檢查(Plan F CI,kaecer 8/21 21:25 拍板)
-	@$(PY) skills/_scripts/check-skill-index-sync.py --repo-root $(CURDIR)
+# R3 加上 --base-ref origin/main（聯集：工作區 ∪ base..HEAD），先 fetch 確保 base 新鮮
+	@git fetch -q origin main 2>/dev/null || true
+	@$(PY) skills/_scripts/check-skill-index-sync.py --repo-root $(CURDIR) --base-ref origin/main
 
 check-actionlint:       ## 5. workflow YAML lint(本地端,可選)
 	@if command -v actionlint >/dev/null 2>&1; then \
