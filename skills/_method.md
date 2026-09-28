@@ -42,7 +42,7 @@ amendable_by: kaecer
 | `concepts/**`、`entities/**`、`_manifest_coverage_routing.md` | 30,000 B | 參考/資料型勿硬砍;最大 28,029 |
 | `docs/**`、`SCHEMA.md`、`templates/**` | 12,000 B | 規格/產物型;最大 11,190(舊制誤判) |
 | `_method.md`/`_method_amendment_history.md` | 9,000/5,000 B | 規範本體自限 |
-| append-only `log.md`/`_self-audit*.md`/`_inbox.md`/`*_archive.md`/`_archive/**`+`skills/_archive/**` | 無上限 | 超門檻即歸檔/切月(如 `log.md` 月切);`_inbox.md` ≤ 12,000 |
+| append-only `log.md`/`_self-audit*.md`/`_inbox.md`/`*_archive.md`/`_archive/**`+`skills/_archive/**` | 無上限 | 超門檻即歸檔/切月;`_inbox.md` ≤12,000 |
 | `_internal/**` | 無上限 | 結案即瘦身(2026-09-27 示範 16→4 檔) |
 | 未列 `*.md`(summaries/其餘 `skills/_*.md`) | 9,000 B | 舊制沿用 |
 
@@ -145,12 +145,12 @@ amendable_by: kaecer
 
 ## 第七條例外（2026-09-02 kaecer 拍板，v1.0 修訂）：精確化
 
-**v1.0 修訂要點**：原第七條只管 `_inbox.md` size 上限,M10 觸發「size 持續擴張」模糊地帶 → 本次精確化例外邊界：
+**邊界**（v1.0 精確化 + v1.1 兩區）：
 
-- **規範**：`_inbox.md` ≤ 12000 bytes（size 上限例外**只針對**§3 結算頻率 / §5.3 觸發器 / M10 健康度子項事實紀錄）
+- **規範**：`_inbox.md` ≤12,000 B（size 例外**只針對**§3 結算頻率／§5.3 觸發器／M10 健康度子項事實紀錄）
 - **CI**：強制範圍見六條鐵律 6。
-- **歸檔 SOP**：連 2 次 session append 後 > 12000，agent 自動評估把 §6 §6.1 §6.2 完成段落移 `_inbox_archive.md`，主檔只留最新 2 版本結算
-- **v1.0 新增**：評分維度新增(= §2 結構變更,走 §2 修訂 SOP + kaecer 拍板)與 M10 evidence,**均不適用**本例外
+- **v1.1（2026-09-28）兩區**（總量仍 ≤12,000）：`## 待辦（active）` 標題前後合計 **≤8,000 B**、`## 已結案（近期）` **≤4,000 B**（`check-wiki-pages.py` 檢查）；append 前若該區將超限，先移最舊已結案條目到 `_inbox_archive.md`——**首次即超限亦同**。
+- **v1.0 新增**：評分維度新增（= §2 結構變更，走 §2 修訂 SOP + 拍板）與 M10 evidence **均不適用**本例外
 
 對位：SOUL §0.1 例外 6（本條即經 2026-09-02 拍板）。
 

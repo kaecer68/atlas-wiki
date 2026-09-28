@@ -37,28 +37,11 @@ archive_owner: agent(autonomous, see _inbox_archive.md)
 
 ---
 
-## 2026-09-27 結清兩項長期待辦 — Fin-Skills 來源查核 (i) ＋ SK-37+ 優先序決策簡報 (ii)
+## 待辦（active；本文以下至「已結案」標題前，預算 ≤ 8,000 B）
+
+### 結清兩項長期待辦（原標題；其中 (i) Fin-Skills 查核已於 2026-09-28 歸檔）
 
 **範圍**：結清本檔 9/2 段（原 line 96-101）與 9/15 段（原 line 129-133）兩項 D24+ 待辦。**只查核與提案,未動任何 SK 頁。**
-
-### (i) Fin-Skills 源頭查核 → **判定：全機不存在,且本機無法復原**
-
-2026-09-27 實跑證據（Mac Mini;`/Users/kk`→`/Users/kaecer` symlink ⇒ 舊紀錄同樹）：
-- `ls -d ~/workspace/Fin-Skills ~/workspace/Fin-Skills/Fin-Skills.md` → No such file or directory
-- `find / -maxdepth 4 -iname '*Fin-Skills*' 2>/dev/null` → **0 命中**（全碟;`~/workspace/Fin-Skills` 深度 4 在範圍內）
-- `find ~ -maxdepth 5 -iname '*fin*skill*'` → 13 命中,**全為本 repo 產物**（`_index-finskills.md` ＋ 2 個 .bak）與 hermes 的 `find-skills` skill 目錄,無來源目錄
-- `mdfind -name 'Fin-Skills'`（Spotlight 全索引）→ 2 命中,皆 `skills/`
-- `ls /Volumes` → 僅 `Macintosh HD` ＋ `Recovery`（**無 Time Machine／外接卷**）
-- `~/.config/atlas-backup/` 與 `~/workspace/atlas-backups/`（僅 `atlas-env, data-state, notes, pg, wiki`）⇒ **備份標的從不含 workspace 層其他目錄**
-- atlas-notes 備份 8 檔（9/19–9/27 tarball,各 ~1.1GB）逐檔列名 grep `finskills|fin-skills` → **8×0 命中**
-- `git log --all -S 'Fin-Skills'` → 最早命中 `2315bf6`(2026-08-03 repo 初始 commit) ⇒ **repo 自建立起只有引用、從無來源檔**
-- `~/.Trash` 被 macOS TCC 擋（Operation not permitted）;8/25 追查已記 Trash 內僅 `_index-finskills.md`(1,334B),非來源檔
-
-串接 8/25 追查（`hermes-governance-log.md` T3-A707:`find /Users/kk -maxdepth 4` 0 命中＋8/18 notes 備份解壓 0 命中）全數複驗成立 ⇒ **維持「8/15 之前已永久消失」**。
-
-**對檔內原兩選項的判定**：「刻意刪除」vs「意外刪除（從備份恢復）」**已無操作差異**——Trash 無、備份標的不含、Spotlight 全索引無 ⇒ 恢復不可行。**建議改記第三態「來源不可考」**。是否曾存在於他機（MacBook）**本機不可證**（未 ssh）;唯一相關紀錄＝`_inbox_archive.md:582` 的 E 條「查 Spotlight／Time Machine,需 kaecer 在 MacBook 操作」⇒ **該條仍待 kaecer**。
-
-**新發現（未結矛盾,需拍板）**：`_index-finskills.md` frontmatter 稱「原 Fin-Skills.md **從未建立**（8/21 探查）」並指向**不存在的 §0**（幽靈引用）;但 `_method.md` 的 `sources:` 與 `_consult-index.md` 的 `ground_truth_basis:` 仍列 `~/workspace/Fin-Skills/Fin-Skills.md (32 SK)`。⇒「從未存在」與「存在後遺失」兩說未對齊,影響 37 頁來源可追溯性。**修檔待 kaecer 拍板。**
 
 ### (ii) SK-37+ 優先序決策簡報 → **提案,待 kaecer 拍板**
 
@@ -84,6 +67,22 @@ archive_owner: agent(autonomous, see _inbox_archive.md)
 
 ---
 
+## 2026-09-27 S6 `待複驗` 佇列(9 頁;check-freshness 18→0)
+
+下列 9 頁的日期＋量化快照行只有**資料日／舊快照／負面查核**,查無可引核對事件 ⇒ 標 `last_verified: "待複驗（2026-09-27）"` ＋ `verify_by: pending`。**關閉＝真跑來源或端點並把結果寫回該頁證據段**,才可改實日期(另 9 頁有頁內核對事件,已寫實日期)。
+
+- `concepts/t1-t4-signal-light.md`:4 成 vs 25–35% 待查;09-27 實測僅負面(無該欄位)
+- `concepts/taiwan-chip-flow-analysis.md`:標記行只有 audit-fix／實務慣例註,40–45% 未附來源
+- `templates/trigger-etf-rebalance.md`:08-03 舊快照,僅 audit-fix
+- `templates/trigger-foreign-3day-inflow.md`:08-03 舊快照 `+21.83 億`,hit_rate 為舊條件
+- `templates/trigger-hbm-cycle-cooling.md`:08-04／08-09 舊資料日;08-09 unreachable
+- `templates/trigger-margin-350b.md`:08-03 舊快照;「> 5000 億」無核對事件
+- `templates/trigger-msci-rebalance-pressure.md`:04-30 權重資料日;08-09 unreachable
+- `templates/trigger-retail-margin-decrease.md`:08-03 舊高水位 5074.63 億
+- `templates/trigger-sox-foreignflow.md`:08-03 舊快照(SOX +0.07%)
+
+## 已結案（近期；預算 ≤ 4,000 B，超出即移 `_inbox_archive.md`）
+
 ## 2026-09-27 模板狀態校正（SK-31）＋ 模板類 quota 條文查核（**已拍板結案**）
 
 **A. 模板狀態校正（stale → 已改檔）**
@@ -106,16 +105,3 @@ archive_owner: agent(autonomous, see _inbox_archive.md)
 
 ---
 
-## 2026-09-27 S6 `待複驗` 佇列(9 頁;check-freshness 18→0)
-
-下列 9 頁的日期＋量化快照行只有**資料日／舊快照／負面查核**,查無可引核對事件 ⇒ 標 `last_verified: "待複驗（2026-09-27）"` ＋ `verify_by: pending`。**關閉＝真跑來源或端點並把結果寫回該頁證據段**,才可改實日期(另 9 頁有頁內核對事件,已寫實日期)。
-
-- `concepts/t1-t4-signal-light.md`:4 成 vs 25–35% 待查;09-27 實測僅負面(無該欄位)
-- `concepts/taiwan-chip-flow-analysis.md`:標記行只有 audit-fix／實務慣例註,40–45% 未附來源
-- `templates/trigger-etf-rebalance.md`:08-03 舊快照,僅 audit-fix
-- `templates/trigger-foreign-3day-inflow.md`:08-03 舊快照 `+21.83 億`,hit_rate 為舊條件
-- `templates/trigger-hbm-cycle-cooling.md`:08-04／08-09 舊資料日;08-09 unreachable
-- `templates/trigger-margin-350b.md`:08-03 舊快照;「> 5000 億」無核對事件
-- `templates/trigger-msci-rebalance-pressure.md`:04-30 權重資料日;08-09 unreachable
-- `templates/trigger-retail-margin-decrease.md`:08-03 舊高水位 5074.63 億
-- `templates/trigger-sox-foreignflow.md`:08-03 舊快照(SOX +0.07%)
