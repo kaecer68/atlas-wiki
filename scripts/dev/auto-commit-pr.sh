@@ -105,7 +105,10 @@ done
 
 # === Step 6.5: 治理檔／規模閘門（2026-09-27 kaecer 拍板；對位 git-merge-protocol §6.4.2）===
 # 觸碰治理檔、或規模超標（>5 檔 / >300 行）⇒ 只開 PR，**不自動 merge**，等 kaecer review。
-GOV_RE='^(AGENTS\.md|SCHEMA\.md|skills/_method\.md|skills/_method_amendment_history\.md|docs/git-merge-protocol\.md|\.github/workflows/)'
+# 治理檔清單＝單一來源（skills/_scripts/governance-files.txt），勿在此硬編第二份
+GOV_LIST="$(dirname "$0")/../../skills/_scripts/governance-files.txt"
+if [ ! -f "$GOV_LIST" ]; then echo "❌ 找不到治理檔清單 ${GOV_LIST}（不得靜默放行）"; exit 1; fi
+GOV_RE="^($(grep -vE '^\s*(#|$)' "$GOV_LIST" | paste -sd'|' -))"
 # BASE 以「遠端」為準：本地 main 可能落後 origin/main，用本地名會把別人的 commit 算進本 PR
 # （2026-09-27 實測：本地落後 3 個 commit 時，真實 2 檔的 routine PR 被判成 24 檔 + 治理檔）
 if ! git fetch -q origin "$BASE" 2>/dev/null; then

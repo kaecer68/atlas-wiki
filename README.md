@@ -41,7 +41,7 @@ atlas-wiki/
 
 ## 規範速查(詳見 `skills/_method.md`)
 
-- 單頁大小 **依類別**(2026-09-27 拍板):SK 頁/入口檔 ≤ 9,000、`concepts/**`+`entities/**` ≤ 30,000、`docs/**` ≤ 12,000、append-only(log/_self-audit/_inbox/_archive)無硬上限但需分流歸檔、`_internal/**` 無硬上限但結案即瘦身(表見 `_method.md` 六條鐵律 6)
+- 單頁大小 **依類別**(2026-09-27 拍板):SK 頁/入口檔 ≤ 9,000、`concepts/**`+`entities/**` ≤ 30,000、`docs/**` ≤ 12,000、append-only 與 `_internal/**` 無硬上限但需分流/結案瘦身(表見 `_method.md` 六條鐵律 6)
 - frontmatter 核心欄位:10 欄(見 `skills/_scripts/skill-page-schema.json`)
 - 六條鐵律(2026-09-27 校正:原記 5 條;正本 `_method.md` §六條鐵律):① 不搬運,翻譯 ② 不瞎寫 ③ 不裝完成 ④ 不違背憲章 ⑤ 派工備份 ⑥ size **依類別**(表見上一條)
 - 另見 `_method.md` §第五條鐵律(快照值必附 timestamp)+ §第六條鐵律(外部權威報告週期稽核)
@@ -86,6 +86,7 @@ push / PR 到 `main` 觸發 `validate-wiki`（2026-09-28 實測 10 個 job:9 個
 | `check-source-tiers.py` | 外部事實來源 S3 |
 | `check-freshness.py` | 時效宣告 S6 |
 | `check-shell-var-ascii.py` | shell `$VAR`+非 ASCII |
+| `check-guard-teeth.py` | 護欄自測（失敗情境實跑） |
 | `check-skill-index-sync.py` | skills 索引同步 R1+R3+R4 |
 | `new-skill-page.py` | SK 頁骨架產生器(反補丁 M6) |
 | `structure-health-metrics.py` | 結構健康度量測(M7;含 L3 覆蓋率＋watch list) |
@@ -103,7 +104,7 @@ push / PR 到 `main` 觸發 `validate-wiki`（2026-09-28 實測 10 個 job:9 個
 
 ## 版本
 
-[v1.0.0](https://github.com/kaecer68/atlas-wiki/releases/tag/v1.0.0)(2026-08-03)— 首發版。**首發當時** 33 SK 頁(v1.0.0 tag 實測;現行 40,見 §Mission)+ 9 索引 + CI validate-wiki(首發當時 4 檢查 + Telegram 通知)+ audit 模板。
+[v1.0.0](https://github.com/kaecer68/atlas-wiki/releases/tag/v1.0.0)(2026-08-03)— 首發版(當時 33 SK 頁;現行 40,見 §Mission)+ 9 索引 + CI validate-wiki(首發當時 4 檢查 + Telegram 通知)+ audit 模板。
 
 版本紀律遵循 semver:
 - **MAJOR**:憲章對位/鐵律變更(對位憲章 §1)

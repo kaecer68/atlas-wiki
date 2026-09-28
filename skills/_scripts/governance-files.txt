@@ -1,0 +1,11 @@
+# 治理檔清單（單一來源 SSOT）— 2026-09-28 新增
+# 為什麼要這個檔：C（CI `governance-review-gate`）與 D（`scripts/dev/auto-commit-pr.sh`）
+# 原本各自硬編一份 regex，2026-09-27 incident 中「只修了 D、漏修 C」就是這樣發生的。
+# 兩個消費端都必須讀本檔；`check-guard-teeth.py` 會驗證它們沒有再各自硬編。
+# 每行一個 ERE（相對 repo root）；空行與 `#` 開頭忽略。
+AGENTS\.md
+SCHEMA\.md
+skills/_method\.md
+skills/_method_amendment_history\.md
+docs/git-merge-protocol\.md
+\.github/workflows/

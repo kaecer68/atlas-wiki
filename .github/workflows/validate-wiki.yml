@@ -37,7 +37,8 @@ jobs:
             echo "ℹ️  非 PR 事件 ⇒ 治理檔 review 閘門不適用，通過"
             exit 0
           fi
-          GOV_RE='^(AGENTS\.md|SCHEMA\.md|skills/_method\.md|skills/_method_amendment_history\.md|docs/git-merge-protocol\.md|\.github/workflows/)'
+          # 治理檔清單＝單一來源（勿在此硬編第二份；與 auto-commit-pr.sh 共用）
+          GOV_RE="^($(grep -vE '^[[:space:]]*(#|$)' skills/_scripts/governance-files.txt | paste -sd'|' -))"
           # --name-status -M：rename 同時給舊路徑與新路徑（--name-only 只給新路徑 ⇒ 改名可繞過）
           CHANGED="$(git diff --name-status -M "$BASE_SHA" HEAD | awk -F'\t' 'NF>1 {for (i=2; i<=NF; i++) print $i}')"
           GOV="$(printf '%s\n' "$CHANGED" | grep -E "$GOV_RE" || true)"
@@ -119,6 +120,8 @@ jobs:
         run: python3 skills/_scripts/check-freshness.py --strict
       - name: shell「$VAR 緊接非 ASCII」（2026-09-28 新增；會 unbound 中止的 bug）
         run: python3 skills/_scripts/check-shell-var-ascii.py --strict
+      - name: 護欄自測（每個護欄的失敗情境都要實跑；S8 機械化）
+        run: python3 skills/_scripts/check-guard-teeth.py
       - name: skills 索引同步 R3（repo-only ＋ 對 PR base SHA 取變更集）
         run: python3 skills/_scripts/check-skill-index-sync.py --repo-only --base-ref "${{ github.event.pull_request.base.sha || github.event.before }}"
   size-check:
