@@ -1,7 +1,14 @@
 ---
 description: retail_margin_balance 超過 5000 億台幣時載入本模板。
-last_verified: "待複驗（2026-09-27）"
-verify_by: pending
+last_verified: 2026-09-28
+verify_by: l3_endpoint
+l3_run_at: "2026-09-28T02:25:31+08:00"
+l3_endpoints_probed:
+  - tool: mcp__atlas__macro_get_snapshot_latest
+    field: retail_margin_balance
+    value: 6151.034
+    timestamp_unix: 1790533531
+    http_code: 200
 ---
 
 # 融資 3500 億觸發模板(單日版)
@@ -12,9 +19,9 @@ verify_by: pending
 
 > **v1.1 對位說明**:融資餘額在 §5 #5「散戶情緒」是融資餘額 / 融資維持率 / 當沖佔比 三元件之一，屬「寬鬆觀測框架」（v1.1 §3↔§5 角色對位）。本模板保留「> 5000 億」為信號捕捉，但應明確標示其角色為觀測觸發，非時期判別條件。具體 §3 時期引用：§3 #1 低迷「融資餘額較高點減少 > 15%」(line 174);§3 #3 上升「融資餘額溫和增加（日均增幅 < 1%）」(line 204);§3 #6 轉折下壓「融資維持率降至 150% 以下」(line 246)。
 
-## Step 1:信號捕捉(對位真實 2026-08-03)
-- **retail_margin_balance 5074.63 億** ✅(觸發 > 5000,屬 §5 #5 散戶情緒觀測之融資餘額元件)
-- 對位端點:mcp__atlas_mcp__macro_get_snapshot_latest(retail_margin_balance/value)
+## Step 1:信號捕捉(對位真實 2026-09-28)
+- **retail_margin_balance 6151.034 億** ✅(觸發 > 5000,屬 §5 #5 散戶情緒觀測之融資餘額元件;L3 端點實跑 2026-09-28T02:25:31+08:00)
+- 對位端點:mcp__atlas__macro_get_snapshot_latest(retail_margin_balance/value) → 6151.034(http_code 200)
 
 ## Step 2:自動跑端點
 - mcp__atlas_mcp__risk_get_metrics(var_95 -38.69%)
