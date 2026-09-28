@@ -163,10 +163,14 @@ def check_skill_index_sync(repo_root: Path, dry_run: bool = False, repo_only: bo
     elif base_ref:
         try:
             atlas_changes = change_set_vs_base(repo_root, base_ref)
-        except RuntimeError as e:
+            # 聯集：併入尚未 commit 的工作區變更（否則「先 commit 後才跑」會反向漏抓；R3 修正）
+            wt = get_git_changes(repo_root, ["skills/"])
+            for k in ("A", "M", "D"):
+                atlas_changes[k] = sorted(set(atlas_changes[k]) | set(wt[k]))
+        except (RuntimeError, FileNotFoundError, OSError) as e:
             violations.append({
                 "rule": "R3: 無法對 base ref 取變更集 — 護欄不得靜默通過",
-                "details": str(e), "files": [],
+                "details": str(e)[:200], "files": [],
                 "fix": "確認 --base-ref 指向存在的 commit（CI 應傳 PR base SHA）",
             })
             atlas_changes = {"A": [], "M": [], "D": []}

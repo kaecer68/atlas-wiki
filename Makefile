@@ -75,7 +75,9 @@ check-stale:            ## 3c. skills/ 未提交內容偵測（session 開頭建
 check-frontmatter:      ## 4. frontmatter 核心 10 欄齊全
 check-frontmatter: check-skill-pages
 check-skill-index-sync: ## 6. skills 索引同步檢查(Plan F CI,kaecer 8/21 21:25 拍板)
-	@$(PY) skills/_scripts/check-skill-index-sync.py --repo-root $(CURDIR)
+# R3 加上 --base-ref origin/main（聯集：工作區 ∪ base..HEAD），先 fetch 確保 base 新鮮
+	@git fetch -q origin main 2>/dev/null || true
+	@$(PY) skills/_scripts/check-skill-index-sync.py --repo-root $(CURDIR) --base-ref origin/main
 
 check-actionlint:       ## 5. workflow YAML lint(本地端,可選)
 	@if command -v actionlint >/dev/null 2>&1; then \

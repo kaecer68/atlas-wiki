@@ -19,6 +19,8 @@ import argparse, glob, json, os, re, sys
 
 # $VAR 或 $VAR123 緊接一個非 ASCII 字元
 BAD = re.compile(r"\$[A-Za-z_][A-Za-z0-9_]*[^\x00-\x7F]")
+# `<<EOF` / `<<-EOF` / `<<'EOF'` / `<<"EOF"`
+HEREDOC = re.compile(r"<<-?\s*(['\"]?)([A-Za-z_][A-Za-z0-9_]*)\1")
 
 
 def strip_literals(line):
@@ -44,10 +46,32 @@ def strip_literals(line):
 
 
 def scan_text(text):
+    """逐行掃描，並追蹤 heredoc 邊界（R1，2026-09-28 審查發現）：
+
+    - `<<EOF`（未引號）⇒ heredoc 內**仍會展開變數** ⇒ 要掃。
+    - `<<'EOF'` / `<<"EOF"`（引號）⇒ heredoc 內是**字面值** ⇒ 不掃（避免假陽性）。
+    - heredoc 內含 `'` 或 `#` 不會開啟引號/註解狀態（避免假陰性）。
+    """
     out = []
-    for i, line in enumerate(text.split("\n"), 1):
-        for m in BAD.finditer(strip_literals(line)):
-            out.append({"line": i, "match": m.group(0), "text": line.strip()[:120]})
+    lines = text.split("\n")
+    heredoc = None          # (delimiter, expand?)
+    for i, line in enumerate(lines, 1):
+        if heredoc:
+            delim, expand = heredoc
+            if line.strip() == delim or (expand is None and line.strip() == delim):
+                heredoc = None
+                continue
+            if expand:
+                for m in BAD.finditer(line):
+                    out.append({"line": i, "match": m.group(0), "text": line.strip()[:120]})
+            continue
+        m = HEREDOC.search(line)
+        if m:
+            quoted = bool(m.group(1))
+            heredoc = (m.group(2), not quoted)
+            # 起始行本身仍要掃（`<<EOF` 之後同行的內容）
+        for mm in BAD.finditer(strip_literals(line)):
+            out.append({"line": i, "match": mm.group(0), "text": line.strip()[:120]})
     return out
 
 
