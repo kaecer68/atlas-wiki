@@ -9,3 +9,4 @@ skills/_method\.md
 skills/_method_amendment_history\.md
 docs/git-merge-protocol\.md
 \.github/workflows/
+skills/_scripts/governance-files\.txt

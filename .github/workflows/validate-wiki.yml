@@ -37,8 +37,15 @@ jobs:
             echo "ℹ️  非 PR 事件 ⇒ 治理檔 review 閘門不適用，通過"
             exit 0
           fi
-          # 治理檔清單＝單一來源（勿在此硬編第二份；與 auto-commit-pr.sh 共用）
-          GOV_RE="^($(grep -vE '^[[:space:]]*(#|$)' skills/_scripts/governance-files.txt | paste -sd'|' -))"
+          # 治理檔清單＝單一來源；**取 base ∪ head**：head 刪掉某行不得解除保護
+          # （否則一支 routine PR 改 skills/_scripts/ 就能關掉 §6.4.2 閘門；2026-09-28 審查 F2）
+          LIST=skills/_scripts/governance-files.txt
+          if ! git show "$BASE_SHA:$LIST" > /tmp/gov-base.txt 2>/dev/null; then
+            echo "::error::取不到 base 版治理檔清單（${BASE_SHA}:${LIST}）— fail-closed"
+            exit 1
+          fi
+          cat /tmp/gov-base.txt "$LIST" > /tmp/gov.txt 2>/dev/null || cp /tmp/gov-base.txt /tmp/gov.txt
+          GOV_RE="^($(grep -vE '^[[:space:]]*(#|$)' /tmp/gov.txt | sort -u | paste -sd'|' -))"
           # --name-status -M：rename 同時給舊路徑與新路徑（--name-only 只給新路徑 ⇒ 改名可繞過）
           CHANGED="$(git diff --name-status -M "$BASE_SHA" HEAD | awk -F'\t' 'NF>1 {for (i=2; i<=NF; i++) print $i}')"
           GOV="$(printf '%s\n' "$CHANGED" | grep -E "$GOV_RE" || true)"

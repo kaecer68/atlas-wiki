@@ -109,10 +109,20 @@ def main():
         check("B1/shell 引號 heredoc 不誤抓", r.returncode == 0, f"exit={r.returncode}")
 
         # === B2. docs 尺寸護欄 ===
+        # B2：fixture 必須是「有 schema 的 repo」——否則紅的原因是找不到 schema（假牙）。
+        # 2026-09-28 審查發現：舊版在孤立 tmp 目錄測，紅的原因不是 size。
+        os.makedirs(os.path.join(tmp, "skills", "_scripts"), exist_ok=True)
+        shutil.copy(os.path.join(S, "wiki-page-schema.json"),
+                    os.path.join(tmp, "skills", "_scripts", "wiki-page-schema.json"))
         d = os.path.join(tmp, "docs"); os.makedirs(d, exist_ok=True)
+        ok_doc = os.path.join(d, "ok.md")
+        open(ok_doc, "w").write("x" * 100)
+        r = run(["python3", os.path.join(S, "check-wiki-pages.py"), "--repo-root", tmp], R)
+        check("B2/docs 合規檔通過（對照組）", r.returncode == 0, f"exit={r.returncode} {r.stdout[-80:]}")
         open(os.path.join(d, "big.md"), "w").write("x" * 12001)
         r = run(["python3", os.path.join(S, "check-wiki-pages.py"), "--repo-root", tmp], R)
-        check("B2/docs 超標被抓", r.returncode != 0, f"exit={r.returncode}")
+        check("B2/docs 超標被抓（且訊息指向 size）",
+              r.returncode != 0 and "12001" in r.stdout, f"exit={r.returncode}")
     finally:
         shutil.rmtree(tmp, ignore_errors=True)
 
@@ -174,6 +184,14 @@ def main():
             pass
         finally:
             shutil.rmtree(sb, ignore_errors=True)
+
+    # === C0. 治理檔清單自身受保護 ＋ base ∪ head（F2：不得靠 routine PR 解除保護）===
+    gtxt = open(os.path.join(S, "governance-files.txt"), encoding="utf-8").read() if os.path.isfile(os.path.join(S, "governance-files.txt")) else ""
+    check("C0/清單本身納入清單（可被自己的規則保護）", "governance-files" in gtxt)
+    wtext = open(os.path.join(R, ".github", "workflows", "validate-wiki.yml"), encoding="utf-8").read()
+    dtext = open(os.path.join(R, "scripts", "dev", "auto-commit-pr.sh"), encoding="utf-8").read()
+    check("C0/C 讀 base ∪ head（head 刪行不得解除保護）", "gov-base" in wtext or "gov.txt" in wtext)
+    check("C0/D 讀 base ∪ head（head 刪行不得解除保護）", "GOV_TMP.base" in dtext or ".base" in dtext)
 
     # === C. 治理檔清單單一來源 ===
     shared = os.path.join(S, "governance-files.txt")

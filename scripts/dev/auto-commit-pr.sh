@@ -108,7 +108,14 @@ done
 # 治理檔清單＝單一來源（skills/_scripts/governance-files.txt），勿在此硬編第二份
 GOV_LIST="$(dirname "$0")/../../skills/_scripts/governance-files.txt"
 if [ ! -f "$GOV_LIST" ]; then echo "❌ 找不到治理檔清單 ${GOV_LIST}（不得靜默放行）"; exit 1; fi
-GOV_RE="^($(grep -vE '^\s*(#|$)' "$GOV_LIST" | paste -sd'|' -))"
+# 取 base ∪ head（base 版取自 BASE_REF）：head 刪掉某行不得解除保護（2026-09-28 審查 F2）
+GOV_TMP="$(mktemp)"; GOV_BASE="${GOV_TMP}.base"
+if ! git show "origin/${BASE}:skills/_scripts/governance-files.txt" > "$GOV_BASE" 2>/dev/null; then
+    echo "❌ 取不到 base 版治理檔清單（origin/${BASE}）— fail-closed，不 merge。"; exit 1
+fi
+cat "$GOV_BASE" "$GOV_LIST" > "$GOV_TMP"
+GOV_RE="^($(grep -vE '^[[:space:]]*(#|$)' "$GOV_TMP" | sort -u | paste -sd'|' -))"
+rm -f "$GOV_TMP" "$GOV_BASE"
 # BASE 以「遠端」為準：本地 main 可能落後 origin/main，用本地名會把別人的 commit 算進本 PR
 # （2026-09-27 實測：本地落後 3 個 commit 時，真實 2 檔的 routine PR 被判成 24 檔 + 治理檔）
 if ! git fetch -q origin "$BASE" 2>/dev/null; then
