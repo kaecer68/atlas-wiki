@@ -85,9 +85,11 @@ def main():
         r_empty = run(["python3", p, "--repo-root", "/tmp/__no_such_repo__"] + extra, R)
         check(f"A/{script} 空集合失敗", r_empty.returncode != 0, f"exit={r_empty.returncode}")
         if requires and not os.path.exists(requires):
+            checks += 1
             skips.append(f"A/{script} 正常 repo 通過（環境缺 {requires}；該護欄由專屬 CI step 覆蓋）")
             continue
         if script == "check-wiki-pages.py" and not HAS_YAML:
+            checks += 1
             skips.append(f"A/{script} 正常 repo 通過（環境缺 PyYAML ⇒ 檢查器降級、可能誤報）")
             continue
         r_ok = run(["python3", p, "--repo-root", R] + extra, R)
