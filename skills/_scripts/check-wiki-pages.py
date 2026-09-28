@@ -85,6 +85,10 @@ def main():
     ENTRY_LIMITS = {"AGENTS.md": 12500, "README.md": 9000, "index.md": 9000, "SCHEMA.md": 12000,
                     "skills/SK-00-skill-index.md": 9000, "skills/_consult-index.md": 9000,
                     "skills/_knowledge-router.md": 9000, "skills/_method.md": 9000}
+    # 第七條 v1.1（2026-09-28 拍板）：`_inbox.md` 兩區預算（總量仍 12,000）
+    INBOX = "skills/_inbox.md"
+    _inbox_caps = {"active": 8000, "closed": 4000}
+    _inbox_headers = {"active": "## 待辦（active", "closed": "## 已結案（近期"}
     for rel, cap in ENTRY_LIMITS.items():
         fp = os.path.join(R, rel)
         if not os.path.exists(fp):
@@ -94,6 +98,20 @@ def main():
         counts["entry"] += 1
         if sz > cap:
             report["entry_size"].append(f"{rel}: {sz} > {cap}")
+
+    fp_inbox = os.path.join(R, INBOX)
+    if os.path.exists(fp_inbox):
+        text = load(fp_inbox)
+        missing = [z for z, hdr in _inbox_headers.items() if hdr not in text]
+        if missing:
+            report["entry_size"].append(f"{INBOX}: 缺區標題 {missing}（第七條 v1.1 要求兩區）")
+        else:
+            ic = text.index(_inbox_headers["closed"])
+            act, clo = len(text[:ic].encode()), len(text[ic:].encode())
+            if act > _inbox_caps["active"]:
+                report["entry_size"].append(f"{INBOX}: active 區 {act} > {_inbox_caps['active']}")
+            if clo > _inbox_caps["closed"]:
+                report["entry_size"].append(f"{INBOX}: 已結案區 {clo} > {_inbox_caps['closed']}")
 
     total = sum(v for k, v in counts.items() if k != "entry") + counts.get("entry", 0)
     if sum(v for k, v in counts.items() if k != "entry") == 0:

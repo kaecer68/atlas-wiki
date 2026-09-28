@@ -816,3 +816,25 @@ archive_owner: agent(autonomous)
 - `/api/industry/sectors` → **200**(正確 path)
 - 推論:atlas-mcp wrapper 與 atlas-go HTTP path 可能不一致,後續所有 SK 寫的 atlas-mcp tool 名稱 commit 前必須 `curl` 探一次實際 HTTP path
 - 待辦:在 `summaries/atlas-http-path-drift.md` 集中記錄所有發現的 path drift,給 atlas dev agent 修 wrapper
+
+---
+
+## [2026-09-28 自 _inbox.md 歸檔] (i) Fin-Skills 源頭查核 → 判定：全機不存在,且本機無法復原
+
+2026-09-27 實跑證據（Mac Mini;`/Users/kk`→`/Users/kaecer` symlink ⇒ 舊紀錄同樹）：
+- `ls -d ~/workspace/Fin-Skills ~/workspace/Fin-Skills/Fin-Skills.md` → No such file or directory
+- `find / -maxdepth 4 -iname '*Fin-Skills*' 2>/dev/null` → **0 命中**（全碟;`~/workspace/Fin-Skills` 深度 4 在範圍內）
+- `find ~ -maxdepth 5 -iname '*fin*skill*'` → 13 命中,**全為本 repo 產物**（`_index-finskills.md` ＋ 2 個 .bak）與 hermes 的 `find-skills` skill 目錄,無來源目錄
+- `mdfind -name 'Fin-Skills'`（Spotlight 全索引）→ 2 命中,皆 `skills/`
+- `ls /Volumes` → 僅 `Macintosh HD` ＋ `Recovery`（**無 Time Machine／外接卷**）
+- `~/.config/atlas-backup/` 與 `~/workspace/atlas-backups/`（僅 `atlas-env, data-state, notes, pg, wiki`）⇒ **備份標的從不含 workspace 層其他目錄**
+- atlas-notes 備份 8 檔（9/19–9/27 tarball,各 ~1.1GB）逐檔列名 grep `finskills|fin-skills` → **8×0 命中**
+- `git log --all -S 'Fin-Skills'` → 最早命中 `2315bf6`(2026-08-03 repo 初始 commit) ⇒ **repo 自建立起只有引用、從無來源檔**
+- `~/.Trash` 被 macOS TCC 擋（Operation not permitted）;8/25 追查已記 Trash 內僅 `_index-finskills.md`(1,334B),非來源檔
+
+串接 8/25 追查（`hermes-governance-log.md` T3-A707:`find /Users/kk -maxdepth 4` 0 命中＋8/18 notes 備份解壓 0 命中）全數複驗成立 ⇒ **維持「8/15 之前已永久消失」**。
+
+**對檔內原兩選項的判定**：「刻意刪除」vs「意外刪除（從備份恢復）」**已無操作差異**——Trash 無、備份標的不含、Spotlight 全索引無 ⇒ 恢復不可行。**建議改記第三態「來源不可考」**。是否曾存在於他機（MacBook）**本機不可證**（未 ssh）;唯一相關紀錄＝`_inbox_archive.md:582` 的 E 條「查 Spotlight／Time Machine,需 kaecer 在 MacBook 操作」⇒ **該條仍待 kaecer**。
+
+**新發現（未結矛盾,需拍板）**：`_index-finskills.md` frontmatter 稱「原 Fin-Skills.md **從未建立**（8/21 探查）」並指向**不存在的 §0**（幽靈引用）;但 `_method.md` 的 `sources:` 與 `_consult-index.md` 的 `ground_truth_basis:` 仍列 `~/workspace/Fin-Skills/Fin-Skills.md (32 SK)`。⇒「從未存在」與「存在後遺失」兩說未對齊,影響 37 頁來源可追溯性。**修檔待 kaecer 拍板。**
+
