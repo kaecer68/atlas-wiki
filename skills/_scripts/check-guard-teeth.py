@@ -66,23 +66,32 @@ def main():
         results.append((name, ok, detail))
 
     # === A. 空集合即失敗 + 正常不誤傷 ===
+    # (script, 空集合參數, 正常 repo 參數, 需要的路徑或 None)：空集合必須失敗、正常必須通過
     GUARDS = [
-        ("check-claim-rules.py", [], None),
-        ("check-source-tiers.py", ["--strict"], None),
-        ("check-freshness.py", ["--strict"], None),
-        ("check-retrieval-integrity.py", ["--strict"], None),
-        ("check-detector-count-sync.py", ["--atlas-go-dir", os.path.expanduser("~/workspace/atlas")],
+        ("check-claim-rules.py", ["--repo-root", "/tmp/__no_such_repo__"], ["--repo-root", R], None),
+        ("check-source-tiers.py", ["--repo-root", "/tmp/__no_such_repo__", "--strict"], ["--repo-root", R, "--strict"], None),
+        ("check-freshness.py", ["--repo-root", "/tmp/__no_such_repo__", "--strict"], ["--repo-root", R, "--strict"], None),
+        ("check-retrieval-integrity.py", ["--repo-root", "/tmp/__no_such_repo__", "--strict"], ["--repo-root", R, "--strict"], None),
+        ("check-detector-count-sync.py",
+         ["--repo-root", "/tmp/__no_such_repo__", "--atlas-go-dir", os.path.expanduser("~/workspace/atlas")],
+         ["--repo-root", R, "--atlas-go-dir", os.path.expanduser("~/workspace/atlas")],
          os.path.expanduser("~/workspace/atlas")),
-        ("check-wiki-pages.py", [], None),
-        ("check-shell-var-ascii.py", ["--strict"], None),
-        ("check-skill-index-sync.py", ["--repo-only"], None),
+        ("check-wiki-pages.py", ["--repo-root", "/tmp/__no_such_repo__"], ["--repo-root", R], None),
+        ("check-shell-var-ascii.py", ["--repo-root", "/tmp/__no_such_repo__", "--strict"], ["--repo-root", R, "--strict"], None),
+        ("check-skill-index-sync.py", ["--repo-only", "--repo-root", "/tmp/__no_such_repo__"], ["--repo-only", "--repo-root", R], None),
+        # 2026-09-28 補涵蓋（審查 M11：這四支先前未被自測套件涵蓋）
+        ("check-skill-structure.py", ["--skills-dir", "/tmp/__no_such_skills__"], ["--skills-dir", os.path.join(R, "skills")], None),
+        ("check-skill-pages.py", ["--skills-dir", "/tmp/__no_such_skills__"], ["--skills-dir", os.path.join(R, "skills")], None),
+        ("validate-timestamp-rule.py", ["--skills-dir", "/tmp/__no_such_skills__", "--all-classes"],
+         ["--skills-dir", os.path.join(R, "skills"), "--all-classes"], None),
+        ("audit-file-index-sync.py", ["--repo-root", "/tmp/__no_such_repo__"], ["--repo-root", R], None),
     ]
-    for script, extra, requires in GUARDS:
-        p = os.path.join(S, script)
-        if not os.path.isfile(p):
+    for script, empty_args, normal_args, requires in GUARDS:
+        p_ = os.path.join(S, script)
+        if not os.path.isfile(p_):
             check(f"A/{script} 存在", False, "找不到檔案")
             continue
-        r_empty = run(["python3", p, "--repo-root", "/tmp/__no_such_repo__"] + extra, R)
+        r_empty = run(["python3", p_] + empty_args, R)
         check(f"A/{script} 空集合失敗", r_empty.returncode != 0, f"exit={r_empty.returncode}")
         if requires and not os.path.exists(requires):
             checks += 1
@@ -92,8 +101,39 @@ def main():
             checks += 1
             skips.append(f"A/{script} 正常 repo 通過（環境缺 PyYAML ⇒ 檢查器降級、可能誤報）")
             continue
-        r_ok = run(["python3", p, "--repo-root", R] + extra, R)
+        r_ok = run(["python3", p_] + normal_args, R)
         check(f"A/{script} 正常 repo 通過", r_ok.returncode == 0, f"exit={r_ok.returncode}")
+
+    # === A2. 注入已知違規必失敗（審查 M18：證明 A 段正向檢查不是空的）===
+    tmp2 = tempfile.mkdtemp(prefix="teeth-inject-")
+    try:
+        import shutil as _sh
+        _sh.copytree(os.path.join(R, "skills", "_scripts"), os.path.join(tmp2, "skills", "_scripts"))
+        for d in ("concepts", "entities", "summaries", "templates"):
+            os.makedirs(os.path.join(tmp2, d), exist_ok=True)
+        with open(os.path.join(tmp2, "concepts", "zz-inject.md"), "w") as f:
+            print("---", file=f)
+            print("title: zz-inject", file=f)
+            print("description: inject", file=f)
+            print("created: 2026-01-01", file=f)
+            print("updated: 2026-01-01", file=f)
+            print("type: concept", file=f)
+            print("tags: []", file=f)
+            print("sources: []", file=f)
+            print("---", file=f)
+            print("本頁引用 synthetic 的 R²_OOS 數值。", file=f)
+        r = run(["python3", os.path.join(S, "check-claim-rules.py"), "--repo-root", tmp2], R)
+        check("A2/注入 S7 違規 ⇒ check-claim-rules 必須失敗", r.returncode != 0, f"exit={r.returncode}")
+        # 對照：拿掉違規句 ⇒ 必須通過（證明失敗來自注入內容）
+        with open(os.path.join(tmp2, "concepts", "zz-inject.md"), "w") as f:
+            print("---", file=f); print("title: zz-inject", file=f); print("description: inject", file=f)
+            print("created: 2026-01-01", file=f); print("updated: 2026-01-01", file=f)
+            print("type: concept", file=f); print("tags: []", file=f); print("sources: []", file=f)
+            print("---", file=f); print("本頁無違規句。", file=f)
+        r = run(["python3", os.path.join(S, "check-claim-rules.py"), "--repo-root", tmp2], R)
+        check("A2/對照組（移除違規句）通過", r.returncode == 0, f"exit={r.returncode}")
+    finally:
+        shutil.rmtree(tmp2, ignore_errors=True)
 
     # === B1. shell 護欄：違規要抓、引號 heredoc 不誤抓 ===
     tmp = tempfile.mkdtemp(prefix="teeth-")
@@ -187,13 +227,113 @@ def main():
         finally:
             shutil.rmtree(sb, ignore_errors=True)
 
+    # === D. 治理閘門「行為測試」（審查 C0/N1/N2：字串比對抓不到突變）===
+    if not a.quick:
+        wfpath = os.path.join(R, ".github", "workflows", "validate-wiki.yml")
+        if not os.path.isfile(wfpath):
+            check("D/找到 workflow", False, "缺 validate-wiki.yml")
+        else:
+            wt = open(wfpath, encoding="utf-8").read()
+            try:
+                i = wt.index("          # 非 PR 事件（push 到 main）")
+                j = wt.index("  validate-timestamp-rule:")
+                lines = [(l[10:] if l.startswith("          ") else l) for l in wt[i:j].split(chr(10))]
+                gate = os.path.join(tempfile.mkdtemp(prefix="teeth-gate-"), "gate.sh")
+                with open(gate, "w") as f:
+                    print(chr(10).join(lines), file=f)
+                check("D/抽出閘門步驟", len(lines) > 5, f"{len(lines)} 行")
+            except ValueError:
+                gate = None
+                check("D/抽出閘門步驟", False, "找不到 run 區塊邊界")
+
+            if gate:
+                sb = tempfile.mkdtemp(prefix="teeth-gate-repo-")
+                try:
+                    G = ["git", "-C", sb]
+                    run(["git", "init", "-q", "-b", "main", sb], R)
+                    run(G + ["config", "user.email", "t@t"], R)
+                    run(G + ["config", "user.name", "t"], R)
+                    os.makedirs(os.path.join(sb, "skills", "_scripts"), exist_ok=True)
+                    os.makedirs(os.path.join(sb, ".github", "workflows"), exist_ok=True)
+                    for rel in ("AGENTS.md", "SCHEMA.md", "docs/git-merge-protocol.md", "skills/_method.md"):
+                        d = os.path.dirname(os.path.join(sb, rel))
+                        if d:
+                            os.makedirs(d, exist_ok=True)
+                        with open(os.path.join(sb, rel), "w") as f:
+                            print("v1", file=f)
+                    with open(os.path.join(sb, ".github/workflows/validate-wiki.yml"), "w") as f:
+                        print("name: x", file=f)
+                    run(G + ["add", "-A"], R)
+                    run(G + ["commit", "-qm", "base(no list)"], R)
+                    base_nolist = run(G + ["rev-parse", "HEAD"], R).stdout.strip()
+
+                    def gate_run(base_sha, labels):
+                        env = {"BASE_SHA": base_sha, "LABELS": labels, "MERGED": ""}
+                        return run(["bash", gate], sb, env=env).returncode
+
+                    # case1 bootstrap：分支新增清單檔（base 沒有）＋動 AGENTS.md
+                    run(G + ["checkout", "-q", "-B", "boot", base_nolist], R)
+                    with open(os.path.join(sb, "skills/_scripts/governance-files.txt"), "w") as f:
+                        print("AGENTS\\.md", file=f)
+                    with open(os.path.join(sb, "AGENTS.md"), "w") as f:
+                        print("v2", file=f)
+                    run(G + ["add", "-A"], R)
+                    run(G + ["commit", "-qm", "bootstrap"], R)
+                    check("D/bootstrap 未貼標籤 ⇒ 紅", gate_run(base_nolist, "") != 0)
+                    check("D/bootstrap 貼標籤 ⇒ 綠（無死結）", gate_run(base_nolist, "kaecer-reviewed") == 0)
+
+                    # 以「已含清單」的 commit 為新 base，測攻擊
+                    base2 = run(G + ["rev-parse", "HEAD"], R).stdout.strip()
+
+                    def attack(name, mutate):
+                        run(G + ["checkout", "-q", "-B", name, base2], R)
+                        mutate()
+                        run(G + ["add", "-A"], R)
+                        run(G + ["commit", "-qm", name], R)
+                        return gate_run(base2, "")
+
+                    def drop_agents_line():
+                        p2 = os.path.join(sb, "skills/_scripts/governance-files.txt")
+                        keep = [l for l in open(p2).read().split(chr(10)) if "AGENTS" not in l]
+                        with open(p2, "w") as f:
+                            print(chr(10).join(keep), file=f)
+                        with open(os.path.join(sb, "AGENTS.md"), "w") as f:
+                            print("v3", file=f)
+
+                    def drop_self_line():
+                        drop_agents_line()
+                        p2 = os.path.join(sb, "skills/_scripts/governance-files.txt")
+                        keep = [l for l in open(p2).read().split(chr(10)) if "governance-files" not in l]
+                        with open(p2, "w") as f:
+                            print(chr(10).join(keep), file=f)
+
+                    def delete_list():
+                        os.remove(os.path.join(sb, "skills/_scripts/governance-files.txt"))
+                        with open(os.path.join(sb, "AGENTS.md"), "w") as f:
+                            print("v3", file=f)
+
+                    check("D/攻擊A（刪 AGENTS 行＋改 AGENTS.md）⇒ 紅", attack("atkA", drop_agents_line) != 0)
+                    check("D/攻擊B（連清單自身那行一起刪）⇒ 紅", attack("atkB", drop_self_line) != 0)
+                    check("D/攻擊C（整檔刪除）⇒ 紅", attack("atkC", delete_list) != 0)
+
+                    # case4 合法 routine（只改 concepts/）
+                    run(G + ["checkout", "-q", "-B", "routine", base2], R)
+                    os.makedirs(os.path.join(sb, "concepts"), exist_ok=True)
+                    with open(os.path.join(sb, "concepts", "a.md"), "w") as f:
+                        print("x", file=f)
+                    run(G + ["add", "-A"], R)
+                    run(G + ["commit", "-qm", "routine"], R)
+                    check("D/合法 routine ⇒ 綠", gate_run(base2, "") == 0)
+                finally:
+                    shutil.rmtree(sb, ignore_errors=True)
+                    shutil.rmtree(os.path.dirname(gate), ignore_errors=True)
+
     # === C0. 治理檔清單自身受保護 ＋ base ∪ head（F2：不得靠 routine PR 解除保護）===
     gtxt = open(os.path.join(S, "governance-files.txt"), encoding="utf-8").read() if os.path.isfile(os.path.join(S, "governance-files.txt")) else ""
     check("C0/清單本身納入清單（可被自己的規則保護）", "governance-files" in gtxt)
     wtext = open(os.path.join(R, ".github", "workflows", "validate-wiki.yml"), encoding="utf-8").read()
     dtext = open(os.path.join(R, "scripts", "dev", "auto-commit-pr.sh"), encoding="utf-8").read()
-    check("C0/C 讀 base ∪ head（head 刪行不得解除保護）", "gov-base" in wtext or "gov.txt" in wtext)
-    check("C0/D 讀 base ∪ head（head 刪行不得解除保護）", "GOV_TMP.base" in dtext or ".base" in dtext)
+    # base ∪ head 與攻擊矩陣改由 D 段以「真實閘門步驟」行為測試覆蓋（2026-09-28）。
 
     # === C. 治理檔清單單一來源 ===
     shared = os.path.join(S, "governance-files.txt")

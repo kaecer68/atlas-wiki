@@ -108,13 +108,8 @@ done
 # 治理檔清單＝單一來源（skills/_scripts/governance-files.txt），勿在此硬編第二份
 GOV_LIST="$(dirname "$0")/../../skills/_scripts/governance-files.txt"
 if [ ! -f "$GOV_LIST" ]; then echo "❌ 找不到治理檔清單 ${GOV_LIST}（不得靜默放行）"; exit 1; fi
-# 取 base ∪ head（base 版取自 BASE_REF）：head 刪掉某行不得解除保護（2026-09-28 審查 F2）
-GOV_TMP="$(mktemp)"; GOV_BASE="${GOV_TMP}.base"
-git show "origin/${BASE}:skills/_scripts/governance-files.txt" > "$GOV_BASE" 2>/dev/null || : > "$GOV_BASE"
-cat "$GOV_BASE" "$GOV_LIST" > "$GOV_TMP"
-# 清單檔路徑寫死（不可由清單內容移除；base 取不到視為空，避免引進本檔的 PR 自我死結）
-GOV_RE="^(skills/_scripts/governance-files\.txt|$(grep -vE '^[[:space:]]*(#|$)' "$GOV_TMP" | sort -u | paste -sd'|' -))"
-rm -f "$GOV_TMP" "$GOV_BASE"
+# 註：GOV_RE（base ∪ head）延後到 BASE_REF 解析後才計算——原版在 fetch 之前讀
+# `origin/${BASE}`，本機尚無該 ref 時會誤停（2026-09-28 審查建議）。
 # BASE 以「遠端」為準：本地 main 可能落後 origin/main，用本地名會把別人的 commit 算進本 PR
 # （2026-09-27 實測：本地落後 3 個 commit 時，真實 2 檔的 routine PR 被判成 24 檔 + 治理檔）
 if ! git fetch -q origin "$BASE" 2>/dev/null; then
@@ -143,6 +138,12 @@ if [ "${N_FILES:-0}" -eq 0 ]; then
     echo "❌ diff 為空（BASE_REF=${BASE_REF}）— base 可能選錯或分支無變更；停止，不 merge。"
     exit 1
 fi
+GOV_TMP="$(mktemp)"; GOV_BASE="${GOV_TMP}.base"
+git show "${BASE_REF}:skills/_scripts/governance-files.txt" > "$GOV_BASE" 2>/dev/null || : > "$GOV_BASE"
+cat "$GOV_BASE" "$GOV_LIST" > "$GOV_TMP"
+# 清單檔路徑寫死（不可由清單內容移除；base 取不到視為空，避免引進本檔的 PR 自我死結）
+GOV_RE="^(skills/_scripts/governance-files\.txt|$(grep -vE '^[[:space:]]*(#|$)' "$GOV_TMP" | sort -u | paste -sd'|' -))"
+rm -f "$GOV_TMP" "$GOV_BASE"
 GOV_HITS="$(printf '%s\n' "$CHANGED_FILES" | grep -E "$GOV_RE" || true)"
 MAJOR=0
 [ -n "$GOV_HITS" ] && MAJOR=1
