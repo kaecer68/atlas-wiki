@@ -37,15 +37,16 @@ jobs:
             echo "ℹ️  非 PR 事件 ⇒ 治理檔 review 閘門不適用，通過"
             exit 0
           fi
-          # 治理檔清單＝單一來源；**取 base ∪ head**：head 刪掉某行不得解除保護
-          # （否則一支 routine PR 改 skills/_scripts/ 就能關掉 §6.4.2 閘門；2026-09-28 審查 F2）
+          # 治理檔清單＝單一來源；規則（2026-09-28 審查 F2 + 死結修正）：
+          #   ① 清單檔路徑**寫死**於此（不可由清單內容移除 ⇒ 刪檔也會被攔）
+          #   ② 取 base ∪ head：head 刪掉某行不得解除保護
+          #   ③ base 版取不到 ⇒ **視為空集合**（否則「引進本檔的 PR」自我死結：
+          #      貼標籤也無法轉綠，只能 --admin override，正是 §6.4.2 要防的動作）
           LIST=skills/_scripts/governance-files.txt
-          if ! git show "$BASE_SHA:$LIST" > /tmp/gov-base.txt 2>/dev/null; then
-            echo "::error::取不到 base 版治理檔清單（${BASE_SHA}:${LIST}）— fail-closed"
-            exit 1
-          fi
-          cat /tmp/gov-base.txt "$LIST" > /tmp/gov.txt 2>/dev/null || cp /tmp/gov-base.txt /tmp/gov.txt
-          GOV_RE="^($(grep -vE '^[[:space:]]*(#|$)' /tmp/gov.txt | sort -u | paste -sd'|' -))"
+          HARD='skills/_scripts/governance-files\.txt'
+          git show "$BASE_SHA:$LIST" > /tmp/gov-base.txt 2>/dev/null || : > /tmp/gov-base.txt
+          { cat /tmp/gov-base.txt; cat "$LIST" 2>/dev/null || true; } > /tmp/gov.txt
+          GOV_RE="^(${HARD}|$(grep -vE '^[[:space:]]*(#|$)' /tmp/gov.txt | sort -u | paste -sd'|' -))"
           # --name-status -M：rename 同時給舊路徑與新路徑（--name-only 只給新路徑 ⇒ 改名可繞過）
           CHANGED="$(git diff --name-status -M "$BASE_SHA" HEAD | awk -F'\t' 'NF>1 {for (i=2; i<=NF; i++) print $i}')"
           GOV="$(printf '%s\n' "$CHANGED" | grep -E "$GOV_RE" || true)"

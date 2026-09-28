@@ -222,7 +222,10 @@ def main():
     if bad:
         print(f"\n{FAIL} {len(bad)}/{checks} 項失敗 ⇒ 護欄沒有宣稱的牙齒")
         return 1
-    print(f"\n{PASS} 全部 {checks} 項通過")
+    if skips:
+        print(f"\n{PASS} {checks - len(skips)} 項通過、{len(skips)} 項 skip（未測試，見上方 ⏭️）")
+    else:
+        print(f"\n{PASS} 全部 {checks} 項通過")
     return 0
 
 
