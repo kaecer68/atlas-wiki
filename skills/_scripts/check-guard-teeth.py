@@ -38,6 +38,21 @@ def main():
     S = os.path.join(R, "skills", "_scripts")
     results, checks = [], 0
 
+    def caller_state():
+        """呼叫端 repo 的 (HEAD, branch)；用於自我保護檢查（2026-09-28 加入）。
+
+        背景：本套件會在臨時 sandbox 內做 `git mv`/commit；若 sandbox 建立失敗而指令
+        落到呼叫端 repo，會污染真實工作區。此檢查會在收尾時比對並失敗。
+        """
+        try:
+            head = subprocess.run(["git", "-C", R, "rev-parse", "HEAD"], capture_output=True, text=True).stdout.strip()
+            br = subprocess.run(["git", "-C", R, "branch", "--show-current"], capture_output=True, text=True).stdout.strip()
+            return head, br
+        except Exception:
+            return "", ""
+
+    caller_before = caller_state()
+
     def check(name, ok, detail=""):
         nonlocal checks
         checks += 1
@@ -91,7 +106,7 @@ def main():
     if not a.quick:
         sb = tempfile.mkdtemp(prefix="teeth-git-")
         try:
-            run(["git", "clone", "-q", "--local", R, sb], R)
+            run(["git", "clone", "-q", "--no-hardlinks", R, sb], R)
             run(["git", "checkout", "-q", "-B", "teeth", "origin/main"], sb)
             open(os.path.join(sb, "skills", "SK-93-teeth.md"), "w").write("---\nname: SK-93\nstatus: draft\n---\n# t\n")
             run(["git", "add", "-A"], sb)
@@ -121,6 +136,10 @@ def main():
             text = open(f, encoding="utf-8").read()
             ok = "governance-files.txt" in text and "AGENTS\\.md|SCHEMA" not in text
             check(f"C/{label} 使用共用清單（無硬編 regex）", ok, "" if ok else "偵測到硬編治理檔 regex")
+
+    caller_after = caller_state()
+    if caller_before != caller_after:
+        check("Z/呼叫端 repo 未被本套件改動", False, f"before={caller_before} after={caller_after}")
 
     print("═" * 64)
     print(f"護欄自測（guard teeth）— {checks} 項檢查")
