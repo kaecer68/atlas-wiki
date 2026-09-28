@@ -46,6 +46,6 @@ make ci-gate   # 本地 5 項檢查（快，push 前必跑）
 ## CI 驗證（merge 前必跑）
 
 ```bash
-make ci-gate   # 對位 GitHub CI 9 job（8 驗證 + notify-telegram；2026-09-27 實測）+ actionlint，本地 0.5-1s
+make ci-gate   # 對位 GitHub CI 10 job（9 驗證 + notify-telegram；2026-09-28 實測）+ actionlint，本地 0.5-1s
 ```
-GitHub `validate-wiki` **9 job** 會在 push 後跑（8 驗證：timestamp / atlas 端點 audit / size / frontmatter / 內檔索引同步 / SK 結構 / 12 觸發模板存在 / 12 觸發模板對位端點；＋ notify-telegram）。
+GitHub `validate-wiki` **10 job** 會在 push 後跑（9 驗證：治理檔治理標籤閘門 / timestamp / atlas 端點 audit / size / frontmatter / 內檔索引同步 / SK 結構（含 S2/S3/S5/S6/S7 步驟）/ 12 觸發模板存在 / 12 觸發模板對位端點；＋ notify-telegram）。

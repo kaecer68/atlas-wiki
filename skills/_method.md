@@ -119,7 +119,7 @@ amendable_by: kaecer
 
 自動歸位:6 段格式 / 9 欄 frontmatter / Quota(3 頁 SK)/ 路徑(憲法在 atlas-notes)/ 命名(atlas≠atlas-go)/ 精選序(SK-01→16→18→20→29)。
 
-**模板不佔 quota(2026-09-27 kaecer 拍板)**:`templates/trigger-*.md` = cron 觸發定義(非知識頁)→ 不計入 3 頁;**交換義務** = 結算記「trigger 模板現數」(2026-09-27:20 檔)。反例照實記:`_manifest_coverage_routing.md:134` 曾把 `concepts/` 頁記「計入 1/3」——不推翻,因 templates 是觸發定義非知識頁。
+**模板不佔 quota(2026-09-27 kaecer 拍板)**:`templates/trigger-*.md` = cron 觸發定義(非知識頁)→ 不計入 3 頁;**交換義務** = 結算記「trigger 模板現數」(2026-09-28:21 檔)。反例照實記:`_manifest_coverage_routing.md:134` 曾把 `concepts/` 頁記「計入 1/3」——不推翻,因 templates 是觸發定義非知識頁。
 
 **權威等級 = 憲法 §1**。
 

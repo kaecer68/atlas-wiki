@@ -98,14 +98,18 @@ jobs:
     name: "SK 結構檢查（SSOT: skill-page-schema.json）"
     runs-on: ubuntu-latest
     steps:
+      # fetch-depth: 0 —— R3 需對 PR base SHA 做 git diff；淺層（預設 1）會失敗
+      # （2026-09-28 CI 實測：fatal: Invalid symmetric difference expression）
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - name: 段名／段序／重複段／禁用標記（失敗輸出最小重構處方）
         run: python3 skills/_scripts/check-skill-structure.py --skills-dir skills
       - name: size + frontmatter 10 欄 + YAML 合法 + L3 覆蓋率門檻（2026-09-27 kaecer 拍板 ≥90%）
         run: python3 skills/_scripts/check-skill-pages.py --skills-dir skills --min-l3-coverage 90
       - name: 檢索性完整性 S5（載入條件／索引／入口可達性；2026-09-27 升硬門檻）
         run: python3 skills/_scripts/check-retrieval-integrity.py --strict
-      - name: 非 SK 類頁面 schema（S2；concepts／entities／summaries／templates）
+      - name: 非 SK 類頁面 schema（S2；concepts／entities／summaries／templates／docs）
         run: python3 skills/_scripts/check-wiki-pages.py
       - name: 禁用句型（S7；synthetic→in-sample／零值須說明／401 須提 key）
         run: python3 skills/_scripts/check-claim-rules.py
@@ -113,6 +117,10 @@ jobs:
         run: python3 skills/_scripts/check-source-tiers.py --strict
       - name: 時效宣告與逾期（S6；strict）
         run: python3 skills/_scripts/check-freshness.py --strict
+      - name: shell「$VAR 緊接非 ASCII」（2026-09-28 新增；會 unbound 中止的 bug）
+        run: python3 skills/_scripts/check-shell-var-ascii.py --strict
+      - name: skills 索引同步 R3（repo-only ＋ 對 PR base SHA 取變更集）
+        run: python3 skills/_scripts/check-skill-index-sync.py --repo-only --base-ref "${{ github.event.pull_request.base.sha || github.event.before }}"
   size-check:
     name: SK 頁大小檢查(≤ 9000 bytes)
     runs-on: ubuntu-latest

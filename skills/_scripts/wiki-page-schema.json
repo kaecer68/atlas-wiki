@@ -69,6 +69,13 @@
         "template_id"
       ],
       "notes": "觸發模板＝cron 觸發定義；門檻等細節寫在內文。編號欄位只有部分模板有（atlas 端無對應概念，見 recipe §2）。"
+    },
+    "docs": {
+      "glob": "docs/*.md",
+      "size_limit_bytes": 12000,
+      "allow_no_frontmatter": true,
+      "frontmatter_required": [],
+      "note": "2026-09-28 新增：docs/** 原本完全沒有護欄（只有 _method.md 的類別表寫 ≤12,000 但無人執行）⇒ 納入 S2 檢查器。"
     }
   },
   "rules": [

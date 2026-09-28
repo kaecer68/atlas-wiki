@@ -75,11 +75,47 @@ def get_git_changes(repo_root: Path, paths: list) -> dict:
     return changes
 
 
-def check_skill_index_sync(repo_root: Path, dry_run: bool = False) -> list:
+def change_set_vs_base(repo_root: Path, base_ref: str) -> dict:
+    """以 `git diff --name-status -M <base>...HEAD` 取變更集（CI 用）。
+
+    為什麼需要：R3 若只看「工作區 vs HEAD」，在 CI 的乾淨 checkout 下變更集**恆為空**
+    ⇒ 護欄永遠通過（假綠）。2026-09-28 由獨立審查實測發現。
+
+    兩點/三點：優先 `...`（merge-base）；淺層 checkout 或無共同祖先時退回 `..`（實測可用）。
+    rename 一律拆成「舊路徑＝D、新路徑＝A」，避免 `git mv` 逃逸。
+    """
+    last_err = ""
+    for expr in (f"{base_ref}...HEAD", f"{base_ref}..HEAD"):
+        res = subprocess.run(
+            ["git", "diff", "--name-status", "-M", expr],
+            cwd=str(repo_root), capture_output=True, text=True, timeout=60,
+        )
+        if res.returncode == 0:
+            changes = {"A": [], "M": [], "D": []}
+            for line in res.stdout.strip().split("\n"):
+                if not line.strip():
+                    continue
+                parts = line.split("\t")
+                status, paths = parts[0][0], parts[1:]
+                if status == "R" and len(paths) >= 2:      # rename：舊→D、新→A
+                    changes["D"].append(paths[0])
+                    changes["A"].append(paths[-1])
+                elif status == "C" and len(paths) >= 2:    # copy：新→A
+                    changes["A"].append(paths[-1])
+                elif status in changes:
+                    for p in paths:
+                        changes[status].append(p)
+            return changes
+        last_err = res.stderr.strip()[:200]
+    raise RuntimeError(f"git diff {base_ref} 失敗（試過 ... 與 ..）：{last_err}")
+
+
+def check_skill_index_sync(repo_root: Path, dry_run: bool = False, repo_only: bool = False,
+                           base_ref=None) -> list:
     violations = []
 
     # === R1: hermes SKILL.md 變更 → skills-map.md 必同步 ===
-    if HERMES_SKILLS_DIR.exists():
+    if HERMES_SKILLS_DIR.exists() and not repo_only:
         all_skills = [str(p.relative_to(HERMES_SKILLS_DIR))
                       for p in HERMES_SKILLS_DIR.rglob("SKILL.md")
                       if "_archive" not in str(p)]
@@ -109,7 +145,33 @@ def check_skill_index_sync(repo_root: Path, dry_run: bool = False) -> list:
     # 新版：索引紀律的對象是「SK 頁清單」⇒ 只在 SK 頁新增/刪除時要求索引頁同步；
     #   工具（skills/_scripts/**）、schema、_method 等變更不再觸發本規則。
     SK_INDEX = "skills/SK-00-skill-index.md"
-    atlas_changes = get_git_changes(repo_root, ["skills/"])
+    sk_pages_present = len(list((repo_root / "skills").glob("SK-*.md"))) if (repo_root / "skills").is_dir() else 0
+    if sk_pages_present == 0:
+        violations.append({
+            "rule": "R3: 掃到 0 個 SK 頁 — 護欄不得在空集合上通過",
+            "details": f"{repo_root}/skills 下找不到 SK-*.md（--repo-root 可能錯）",
+            "files": [],
+            "fix": "確認 --repo-root 指向 atlas-wiki repo",
+        })
+    if base_ref is not None and base_ref.strip() == "":
+        violations.append({
+            "rule": "R3: --base-ref 為空字串 — 護欄不得靜默退回『工作區 vs HEAD』（CI 下恆空＝假綠）",
+            "details": "請傳 PR base SHA；若無 base 請明確不傳本參數並自行承擔假綠風險",
+            "files": [], "fix": "CI 傳 ${{ github.event.pull_request.base.sha }}",
+        })
+        atlas_changes = {"A": [], "M": [], "D": []}
+    elif base_ref:
+        try:
+            atlas_changes = change_set_vs_base(repo_root, base_ref)
+        except RuntimeError as e:
+            violations.append({
+                "rule": "R3: 無法對 base ref 取變更集 — 護欄不得靜默通過",
+                "details": str(e), "files": [],
+                "fix": "確認 --base-ref 指向存在的 commit（CI 應傳 PR base SHA）",
+            })
+            atlas_changes = {"A": [], "M": [], "D": []}
+    else:
+        atlas_changes = get_git_changes(repo_root, ["skills/"])
     sk_page_added_or_deleted = [
         f for f in (atlas_changes["A"] + atlas_changes["D"])
         if re.match(r"^skills/SK-(?!00)\d", f)
@@ -128,11 +190,13 @@ def check_skill_index_sync(repo_root: Path, dry_run: bool = False) -> list:
         })
 
     # === R4: SKILL.md frontmatter 必含 status 欄位 ===
-    if HERMES_SKILLS_DIR.exists():
+    if HERMES_SKILLS_DIR.exists() and not repo_only:
         bad_frontmatter = []
+        scanned = 0
         for skill_path in HERMES_SKILLS_DIR.rglob("SKILL.md"):
             if "_archive" in str(skill_path):
                 continue
+            scanned += 1
             try:
                 with open(skill_path, encoding="utf-8") as f:
                     content = f.read(2000)  # 只讀前 2000 chars
@@ -151,6 +215,14 @@ def check_skill_index_sync(repo_root: Path, dry_run: bool = False) -> list:
             except Exception:
                 pass
 
+        if scanned == 0:
+            violations.append({
+                "rule": "R4: 掃到 0 個 SKILL.md — 護欄不得在空集合上通過",
+                "details": f"{HERMES_SKILLS_DIR} 下找不到 SKILL.md",
+                "files": [],
+                "fix": "確認 hermes skills 目錄存在；若在 CI 請改用 --repo-only",
+            })
+
         if bad_frontmatter:
             violations.append({
                 "rule": "R4: SKILL.md frontmatter 必含合法 status 欄位",
@@ -167,6 +239,9 @@ def main():
     parser.add_argument("--repo-root", default=str(Path.cwd()))
     parser.add_argument("--dry-run", action="store_true", help="只顯示違規,不退出")
     parser.add_argument("--skip-r4", action="store_true", help="跳過 R4 frontmatter 檢查（Plan F Week 3 補完前用）")
+    parser.add_argument("--repo-only", action="store_true", help="只檢查 atlas-wiki repo 側（R3）；CI 用（CI 無 ~/.hermes）")
+    parser.add_argument("--base-ref", default=None,
+                        help="對 base ref 取變更集（CI 必須傳 PR base SHA；不傳則只看工作區 vs HEAD ⇒ CI 下恆空＝假綠）")
     args = parser.parse_args()
 
     repo_root = Path(args.repo_root).resolve()
@@ -177,7 +252,8 @@ def main():
     print(f"dry-run: {args.dry_run}")
     print()
 
-    violations = check_skill_index_sync(repo_root, dry_run=args.dry_run)
+    violations = check_skill_index_sync(repo_root, dry_run=args.dry_run, repo_only=args.repo_only,
+                                        base_ref=args.base_ref)
     if args.skip_r4:
         violations = [v for v in violations if not v["rule"].startswith("R4")]
 

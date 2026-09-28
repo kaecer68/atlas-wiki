@@ -128,7 +128,7 @@ PR 建立後 **不可停留**在「compare & pull request」未完成狀態。�
 
 ### 5.2 10 個 job（2026-09-27 實測 `validate-wiki.yml`:驗證 9 + 通知 1;舊記 4）
 
-驗證:`governance-review-gate`（治理檔需 `kaecer-reviewed` 標籤,見 §6.4.2）／`validate-timestamp-rule`（第 5 條鐵律）／`audit-atlas-endpoints`（atlas-go 稀疏 checkout;**實測 115 端點,舊記 109**）／`skill-structure-check`（段名/段序/禁用標記＋S2/S3/S5/S6/S7 步驟）／`size-check`（SK 頁 ≤9,000B）／`frontmatter-check`（10 欄）／`audit-file-index-sync`（索引同步）／`trigger-template-existence`／`trigger-endpoint-validation`;第 10 個 `notify-telegram`（`if: failure()`）任一失敗才發 Telegram。
+驗證:`governance-review-gate`（治理檔需 `kaecer-reviewed` 標籤,見 §6.4.2）／`validate-timestamp-rule`（第 5 條鐵律）／`audit-atlas-endpoints`（atlas-go 稀疏 checkout;**實測 115 端點**）／`skill-structure-check`（結構＋S2/S3/S5/S6/S7）／`size-check`（SK 頁 ≤9,000B）／`frontmatter-check`（10 欄）／`audit-file-index-sync`（索引同步）／`trigger-template-existence`／`trigger-endpoint-validation`;第 10 個 `notify-telegram`（`if: failure()`）任一失敗才發 Telegram。
 
 ### 5.3 Branch protection
 
@@ -160,8 +160,7 @@ PR 建立後 **不可停留**在「compare & pull request」未完成狀態。�
 # 標準:squash + 刪分支(GitHub 已設 deleteBranchOnMerge=true,遠端會自動刪)
 gh pr merge <N> --squash --delete-branch
 
-# 若 enforce_admins=true 卡住(status check context 不匹配見 §7):
-gh pr merge <N> --squash --delete-branch --admin
+# 若被 required check 卡住:先修 check;--admin 能否繞過**未驗證**(見 §9 限度①)
 ```
 
 ### 6.3 自我合併條件
@@ -201,24 +200,22 @@ gh pr merge <N> --squash --delete-branch --admin
 
 重大變更流程: hermes 開 PR → 填 §4.1 三段 body → **不自行 merge** → Telegram 通知 kaecer → 等 review。
 
-**2026-09-27 補牙（incident 後）**：本條原無機械強制；當日 **22 個觸碰治理檔的 PR 被自動合併**（慣犯路徑：`auto-commit-pr.sh` 無排除檢查＋`--admin`）。三道防線：**C** `validate-wiki.yml` 新增 `governance-review-gate`：觸碰治理檔而無 `kaecer-reviewed` 標籤 ⇒ 紅燈（已列 required checks）；**D** `auto-commit-pr.sh` Step 6.5：觸碰治理檔或 >5 檔／>300 行 ⇒ 只開 PR 不 merge，並移除 `--admin`；**A** `check-skill-index-sync.py` R3 收窄為「SK 頁新增/刪除 ⇒ 同步 `SK-00-skill-index.md`」（舊版強制改 `AGENTS.md` = 互撞根因）。
+**2026-09-27 補牙（incident 後）**：本條原無機械強制；當日 **22 個治理檔 PR 被自動合併**（慣犯：`auto-commit-pr.sh` 無排除檢查＋`--admin`）。三道防線：**C** `validate-wiki.yml` 的 `governance-review-gate`（無 `kaecer-reviewed` 標籤 ⇒ 紅燈，已列 required checks）；**D** 該腳本 Step 6.5（治理檔或 >5 檔／>300 行 ⇒ 只開 PR、移除 `--admin`）；**A** R3 收窄為「SK 頁新增/刪除 ⇒ 同步 `SK-00-skill-index.md`」（舊版強制改 `AGENTS.md` = 互撞根因）。
 
-**限度（誠實）**：agent 共用單一帳號（`mergedBy` 一律 `kaecer68`）；`required reviewers`／`CODEOWNERS` 不可行（作者不可自審），標籤可被同 token 自貼 ⇒ 屬**留痕**非**授權**；真解需**第二個 bot 帳號**。
+**限度**：共用單一帳號（`mergedBy` 一律 `kaecer68`）⇒ `required reviewers`／`CODEOWNERS` 不可行（作者不可自審）；標籤可自貼 ⇒ 屬**留痕**非**授權**。真解＝第二個 bot 帳號（§9）。
 
 #### 6.4.3 合夥人制判斷速查
 
 ```
-變更範圍 → 是 SK/concepts/templates/scripts 工具?
-  ├─ 是 + <300 lines + CI 綠 → routine → auto-commit-pr.sh 自主 merge
-  └─ 否 (憲法/規範/AGENTS/CI/SCHEMA) → 重大 → 開 PR 等 kaecer
-
-    或 > 300 lines / 跨 > 5 檔案 → 重大 → 開 PR 等 kaecer
+變更範圍 → SK/concepts/templates/scripts 工具?
+  ├─ 是 + <300 lines + CI 綠 → routine → 自主 merge
+  └─ 否（憲法/規範/AGENTS/CI/SCHEMA）或 >300 lines／>5 檔 → 重大 → 開 PR 等 kaecer
 ```
 
 #### 6.4.4 後合併自驗（routine 也適用）
 
 - merge 後 60 秒內: 切回 main + `git pull` 確認無衝突
-- 每日結算: `_self-audit.md` 記錄當日自主 merge 數量 + 是否有漏 review 的重大變更
+- 每日結算: `_self-audit.md` 記當日自主 merge 數 + 有無漏 review 的重大變更
 
 ## 7. 後合併規範(merge 後動作)
 
@@ -262,10 +259,12 @@ Tag 必含 commit 註明:範圍 / 對位 / 風險。
 
 ## 9. 緊急繞過
 
+> **2026-09-28 限度**：① `--admin` 能否繞過 **未驗證**（token 具 admin 但 `enforce_admins=true`；唯讀審查無法實測）⇒ 不得當保證。② workflow 故障時 required check 不回報 ⇒ PR 停在 BLOCKED，須修 workflow 或 kaecer 處理。
+
 | 情境 | 命令 | 風險 |
 |------|------|------|
 | pre-push 紅燈但確認 false positive | `SKIP_CI_GATE=1 git push` | push 後 CI 仍跑,最終防線 |
-| CI 全綠但 merge 被擋(enforce_admins 衝突) | `gh pr merge --admin` | 保護被覆寫,但保護對其他 PR 仍生效 |
+| CI 全綠但 merge 被擋 | 先修 required check | `--admin` 能否繞過**未驗證**(§9 限度①) |
 | workflow 變更導致所有 run 壞掉 | `git revert HEAD` + push + 立即開 fix PR | 緊急修復,事後補 incident report |
 
 ## 10. 參考

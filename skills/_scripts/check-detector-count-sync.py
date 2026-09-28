@@ -68,9 +68,9 @@ def main():
         flag = "✅" if n == val else "❌"
         print(f"  {flag} {rel}:{ln} → {n} ｜ {text}")
     if not claims:
-        print("  （wiki 目前沒有『N 個 template trigger detectors』型敘述 ⇒ 無需比對；")
-        print("    但若新增此類敘述，本檢查會自動開始把關。）")
-        return 0
+        print("❌ wiki 掃到 0 處 detector 數敘述（--repo-root 可能錯、或敘述被移除）")
+        print("   （S8 原則：掃 0 檔即失敗，不得靜默放行）")
+        return 1
     if bad:
         print(f"\n❌ {len(bad)} 處與權威值 {val} 不一致 ⇒ 請同步（數值由 atlas-go registry 決定）")
         return 1

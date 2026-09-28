@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """check-wiki-pages.py — 非 SK 類知識頁的 schema 護欄（S2，2026-09-27）
 
-SSOT: `skills/_scripts/wiki-page-schema.json`（concepts／entities／summaries／templates）。
+SSOT: `skills/_scripts/wiki-page-schema.json`（concepts／entities／summaries／templates／docs）。
 SK 頁另有 `skill-page-schema.json` ＋ `check-skill-pages.py`，兩者欄位不同、不可混用。
 
 對位審計（2026-09-27）：**54/94 頁**（concepts 22／entities 7／summaries 2／templates 22，不含 audit-report）
@@ -13,6 +13,9 @@ SK 頁另有 `skill-page-schema.json` ＋ `check-skill-pages.py`，兩者欄位�
 """
 import argparse, glob, json, os, re, sys
 from collections import defaultdict
+
+# 只有這些類別可宣告「本質上無 frontmatter」（避免任一類別靜默關掉檢查；2026-09-28 審查建議）
+ALLOW_NO_FM_GROUPS = {"docs"}
 
 def load(p):
     try: return open(p, encoding="utf-8").read()
@@ -30,7 +33,11 @@ def main():
     ap.add_argument("--json", action="store_true")
     a = ap.parse_args()
     R = a.repo_root
-    schema = json.loads(load(os.path.join(R, "skills/_scripts/wiki-page-schema.json")))
+    schema_path = os.path.join(R, "skills/_scripts/wiki-page-schema.json")
+    if not os.path.isdir(R) or not os.path.isfile(schema_path):
+        print(f"❌ 找不到 repo 或 schema（--repo-root={R}）— 護欄不得在空環境上通過")
+        return 1
+    schema = json.loads(load(schema_path))
     try:
         import yaml; HAS_YAML = True
     except Exception:
@@ -48,6 +55,8 @@ def main():
                 report["size"].append(f"{name}: {size} > {spec['size_limit_bytes']}")
             fm = fm_of(text)
             if fm is None:
+                if spec.get("allow_no_frontmatter") and g in ALLOW_NO_FM_GROUPS:
+                    continue  # 例：docs/** 本質上無 frontmatter（2026-09-28）
                 report["no_frontmatter"].append(name); continue
             if HAS_YAML:
                 try:
@@ -87,6 +96,9 @@ def main():
             report["entry_size"].append(f"{rel}: {sz} > {cap}")
 
     total = sum(v for k, v in counts.items() if k != "entry") + counts.get("entry", 0)
+    if sum(v for k, v in counts.items() if k != "entry") == 0:
+        print(f"❌ 掃到 0 頁（--repo-root={R} 可能錯）— 護欄不得在空集合上通過")
+        return 1
     if a.json:
         print(json.dumps({"counts": counts, "violations": {k: v for k, v in report.items()}}, ensure_ascii=False, indent=1))
         return 0
