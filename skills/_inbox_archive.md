@@ -816,3 +816,23 @@ archive_owner: agent(autonomous)
 - `/api/industry/sectors` → **200**(正確 path)
 - 推論:atlas-mcp wrapper 與 atlas-go HTTP path 可能不一致,後續所有 SK 寫的 atlas-mcp tool 名稱 commit 前必須 `curl` 探一次實際 HTTP path
 - 待辦:在 `summaries/atlas-http-path-drift.md` 集中記錄所有發現的 path drift,給 atlas dev agent 修 wrapper
+
+---
+
+## 2026-09-27 S6 `待複驗` 佇列原文(2026-09-30 §CIO-1404 結清 1 項後歸檔;剩 8 頁見 _inbox.md 2026-09-30 結算段)
+
+> 原文出處:`_inbox.md` 2026-09-27 S6 佇列段(原 line 109-121,約 1,847B);2026-09-30 atlas-skill-inbound 結清 1 項後歸入本檔(原 _inbox.md 已由 2026-09-30 結算段替換)。
+
+下列 9 頁的日期＋量化快照行只有**資料日／舊快照／負面查核**,查無可引核對事件 ⇒ 標 `last_verified: "待複驗（2026-09-27）"` ＋ `verify_by: pending`。**關閉＝真跑來源或端點並把結果寫回該頁證據段**,才可改實日期(另 9 頁有頁內核對事件,已寫實日期)。
+
+- `concepts/t1-t4-signal-light.md`:4 成 vs 25–35% 待查;09-27 實測僅負面(無該欄位)
+- `concepts/taiwan-chip-flow-analysis.md`:標記行只有 audit-fix／實務慣例註,40–45% 未附來源
+- `templates/trigger-etf-rebalance.md`:08-03 舊快照,僅 audit-fix
+- `templates/trigger-foreign-3day-inflow.md`:08-03 舊快照 `+21.83 億`,hit_rate 為舊條件
+- `templates/trigger-hbm-cycle-cooling.md`:08-04／08-09 舊資料日;08-09 unreachable
+- `templates/trigger-margin-350b.md`:08-03 舊快照;「> 5000 億」無核對事件
+- `templates/trigger-msci-rebalance-pressure.md`:04-30 權重資料日;08-09 unreachable
+- `templates/trigger-retail-margin-decrease.md`:08-03 舊高水位 5074.63 億
+- `templates/trigger-sox-foreignflow.md`:08-03 舊快照(SOX +0.07%)
+
+**2026-09-30 §CIO-1404 結算**:觸發 `templates/trigger-sox-foreignflow.md` L3 補強 → SOX +1.47% (12648.198) / foreign -341.84 億 / 觸發判定未觸發 / PR #144 / commit `e0cf903`(WIP);剩 8 頁見 `_inbox.md` 2026-09-30 結算段。

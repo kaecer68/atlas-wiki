@@ -106,16 +106,20 @@ archive_owner: agent(autonomous, see _inbox_archive.md)
 
 ---
 
-## 2026-09-27 S6 `待複驗` 佇列(9 頁;check-freshness 18→0)
+## 2026-09-30 atlas-skill-inbound 結清 S6 待複驗 1 項
 
-下列 9 頁的日期＋量化快照行只有**資料日／舊快照／負面查核**,查無可引核對事件 ⇒ 標 `last_verified: "待複驗（2026-09-27）"` ＋ `verify_by: pending`。**關閉＝真跑來源或端點並把結果寫回該頁證據段**,才可改實日期(另 9 頁有頁內核對事件,已寫實日期)。
+**今日 1/1 項**(S6 9 → 8 頁)。補強 `templates/trigger-sox-foreignflow.md`(PR #144 WIP)。
 
-- `concepts/t1-t4-signal-light.md`:4 成 vs 25–35% 待查;09-27 實測僅負面(無該欄位)
-- `concepts/taiwan-chip-flow-analysis.md`:標記行只有 audit-fix／實務慣例註,40–45% 未附來源
-- `templates/trigger-etf-rebalance.md`:08-03 舊快照,僅 audit-fix
-- `templates/trigger-foreign-3day-inflow.md`:08-03 舊快照 `+21.83 億`,hit_rate 為舊條件
-- `templates/trigger-hbm-cycle-cooling.md`:08-04／08-09 舊資料日;08-09 unreachable
-- `templates/trigger-margin-350b.md`:08-03 舊快照;「> 5000 億」無核對事件
-- `templates/trigger-msci-rebalance-pressure.md`:04-30 權重資料日;08-09 unreachable
-- `templates/trigger-retail-margin-decrease.md`:08-03 舊高水位 5074.63 億
-- `templates/trigger-sox-foreignflow.md`:08-03 舊快照(SOX +0.07%)
+**L3 實跑**(2026-09-30T02:21:40+08:00):`macro_get_snapshot_latest` → `sox_index.change_pct=1.47` (12648.198, 差 0.03pp 未達 +1.5%);`foreign_investor_net.value=-3.418389`(=-341.84 億,反向);`capital_flow_summary` → foreign z=-0.797 / dealer z=-1.506 bearish / retail z=+1.249 bullish(勢力對抗)。**觸發判定:未觸發**。
+
+**改動**:移除 `last_verified: "待複驗"` → `"2026-09-30"`;加 `l3_run_at` + `l3_endpoints_probed`;Step 1 改實跑快照。**待查**:SOX 50 日線(atlas-mcp 無歷史序列端點,結構性缺口,對位 D6「SK-20 60 日歷史端點缺口」);`risk_get_correlation_matrix` 0.96 舊值未實跑。ci-gate 全綠(strict);commit `e0cf903`(WIP);worktree `atlas-wiki-sox-fix` 分支已 push origin。
+
+**S6 佇列剩 8 頁**(見 `_inbox_archive.md` §2026-09-30 歸檔段;`trigger-margin-350b.md` 2026-09-28 已 L3,WIP `1367f05` 待開 PR)。
+
+**對位**:`§CIO-1404` / `atlas-skill-inbound` v0.2.2。
+
+---
+
+## 2026-09-27 S6 `待複驗` 佇列(原 9 頁;**已歸檔 `_inbox_archive.md` §2026-09-30 歸檔段**)
+
+> 原文 9 條 bullet + 說明段已歸檔;剩 8 頁見上方 §CIO-1404 段。
