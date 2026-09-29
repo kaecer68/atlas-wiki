@@ -5,7 +5,7 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
-    # 2026-09-27：必須含 labeled——否則「CI 先紅 → 貼 kaecer-reviewed 標籤」不會重跑，
+    # 2026-09-27：必須含 labeled——否則「CI 先紅 → 貼 qc-reviewed 標籤」不會重跑，
     # governance-review-gate 會永久停在 failure，PR 卡在 BLOCKED（enforce_admins=true 無法繞）。
     types: [opened, synchronize, reopened, labeled, unlabeled]
   # 2026-09-28：送出 review **不會**觸發 pull_request 事件 ⇒ 少了這段，App 核准後閘門不會重跑
@@ -20,7 +20,7 @@ permissions:
 
 jobs:
   governance-review-gate:
-    name: 治理檔變更需 kaecer-reviewed 標籤（§6.4.2）
+    name: 治理檔變更需 qc-reviewed 標籤（§6.4.2）
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
@@ -76,16 +76,16 @@ jobs:
           REPO="${GITHUB_REPOSITORY}"
           PR_NUM="${{ github.event.pull_request.number }}"
           AUTH="Authorization: Bearer ${GITHUB_TOKEN}"
-          LABELJQ="import sys,json;d=json.load(sys.stdin);L=[x for x in d if x.get('event')=='labeled' and ((x.get('label') or {}).get('name') if isinstance(x.get('label'),dict) else x.get('label'))=='kaecer-reviewed'];print(((L[-1].get('actor') or {}).get('login','')) if L else '')"
+          LABELJQ="import sys,json;d=json.load(sys.stdin);L=[x for x in d if x.get('event')=='labeled' and ((x.get('label') or {}).get('name') if isinstance(x.get('label'),dict) else x.get('label'))=='qc-reviewed'];print(((L[-1].get('actor') or {}).get('login','')) if L else '')"
           REVIEWJQ="import sys,json;d=json.load(sys.stdin);A=[x for x in d if x.get('state')=='APPROVED'];print(((A[-1].get('user') or {}).get('login','')) if A else '')"
           labeler=$(curl -fsS -H "$AUTH" -H 'Accept: application/vnd.github+json' "$API/repos/$REPO/issues/$PR_NUM/timeline?per_page=100" | python3 -c "$LABELJQ") || labeler=PARSE_ERROR
           approver=$(curl -fsS -H "$AUTH" -H 'Accept: application/vnd.github+json' "$API/repos/$REPO/pulls/$PR_NUM/reviews?per_page=100" | python3 -c "$REVIEWJQ") || approver=PARSE_ERROR
-          has_label=$(printf '%s' "$LABELS" | tr ',' '\n' | grep -cx 'kaecer-reviewed' || true)
+          has_label=$(printf '%s' "$LABELS" | tr ',' '\n' | grep -cx 'qc-reviewed' || true)
           echo "  標籤存在=${has_label:-0}｜標籤 actor=${labeler:-（無）}｜APPROVED by=${approver:-（無）}"
           if { [ "${has_label:-0}" = "1" ] && [ "$labeler" = "$APP_LOGIN" ]; } || [ "$approver" = "$APP_LOGIN" ]; then
             echo "✅ 已由 $APP_LOGIN 審查（標籤或核准）⇒ 可合併（仍需人工執行 merge）"
           else
-            echo "::error::觸碰治理檔需由 ${APP_LOGIN} 貼 kaecer-reviewed 或核准（§6.4.2）；作者側自貼不算"
+            echo "::error::觸碰治理檔需由 ${APP_LOGIN} 貼 qc-reviewed 或核准（§6.4.2）；作者側自貼不算"
             exit 1
           fi
 
