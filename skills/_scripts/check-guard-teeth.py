@@ -24,7 +24,7 @@ HAS_YAML = importlib.util.find_spec('yaml') is not None
 PASS, FAIL = "✅", "❌"
 APP_LOGIN = "atlas-qc-reviewer[bot]"
 
-MOCK_API = "import json,sys\nfrom http.server import BaseHTTPRequestHandler,HTTPServer\nPORT=int(sys.argv[1]); ACTOR=sys.argv[2]; APP=sys.argv[3] if len(sys.argv)>3 else ''\nclass H(BaseHTTPRequestHandler):\n    def log_message(self,*a): pass\n    def do_GET(self):\n        if '/timeline' in self.path:\n            b=[{'event':'labeled','label':{'name':'kaecer-reviewed'},'actor':{'login':ACTOR}}] if ACTOR else []\n        elif '/reviews' in self.path:\n            b=[{'state':'APPROVED','user':{'login':APP}}] if APP else []\n        else: b=[]\n        r=json.dumps(b).encode(); self.send_response(200)\n        self.send_header('Content-Type','application/json'); self.send_header('Content-Length',str(len(r)))\n        self.end_headers(); self.wfile.write(r)\nHTTPServer(('127.0.0.1',PORT),H).serve_forever()"
+MOCK_API = "import json,sys\nfrom http.server import BaseHTTPRequestHandler,HTTPServer\nPORT=int(sys.argv[1]); ACTOR=sys.argv[2]; APP=sys.argv[3] if len(sys.argv)>3 else ''\nclass H(BaseHTTPRequestHandler):\n    def log_message(self,*a): pass\n    def do_GET(self):\n        if '/timeline' in self.path:\n            b=[{'event':'labeled','label':{'name':'qc-reviewed'},'actor':{'login':ACTOR}}] if ACTOR else []\n        elif '/reviews' in self.path:\n            b=[{'state':'APPROVED','user':{'login':APP}}] if APP else []\n        else: b=[]\n        r=json.dumps(b).encode(); self.send_response(200)\n        self.send_header('Content-Type','application/json'); self.send_header('Content-Length',str(len(r)))\n        self.end_headers(); self.wfile.write(r)\nHTTPServer(('127.0.0.1',PORT),H).serve_forever()"
 
 
 def run(cmd, cwd, env=None):
@@ -327,7 +327,7 @@ def main():
                                                 stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
                         try:
                             time.sleep(0.6)
-                            env = {"BASE_SHA": base_nolist, "LABELS": "kaecer-reviewed", "MERGED": "",
+                            env = {"BASE_SHA": base_nolist, "LABELS": "qc-reviewed", "MERGED": "",
                                    "GITHUB_REPOSITORY": "x/y", "GITHUB_TOKEN": "t",
                                    "GITHUB_API_URL": "http://127.0.0.1:%d" % port, "PR_NUM": "1"}
                             return run(["bash", gate], sb, env=env).returncode

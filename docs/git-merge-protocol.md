@@ -128,7 +128,7 @@ PR 建立後 **不可停留**在「compare & pull request」未完成狀態。�
 
 ### 5.2 10 個 job（2026-09-27 實測 `validate-wiki.yml`:驗證 9 + 通知 1;舊記 4）
 
-驗證:`governance-review-gate`（治理檔需 `kaecer-reviewed` 標籤,見 §6.4.2）／`validate-timestamp-rule`（第 5 條鐵律）／`audit-atlas-endpoints`（atlas-go 稀疏 checkout;**實測 115 端點**）／`skill-structure-check`（結構＋S2/S3/S5/S6/S7）／`size-check`（SK 頁 ≤9,000B）／`frontmatter-check`（10 欄）／`audit-file-index-sync`（索引同步）／`trigger-template-existence`／`trigger-endpoint-validation`;第 10 個 `notify-telegram`（`if: failure()`）任一失敗才發 Telegram。
+驗證:`governance-review-gate`（治理檔需 `qc-reviewed` 標籤,見 §6.4.2）／`validate-timestamp-rule`（第 5 條鐵律）／`audit-atlas-endpoints`（atlas-go 稀疏 checkout;**實測 115 端點**）／`skill-structure-check`（結構＋S2/S3/S5/S6/S7）／`size-check`（SK 頁 ≤9,000B）／`frontmatter-check`（10 欄）／`audit-file-index-sync`（索引同步）／`trigger-template-existence`／`trigger-endpoint-validation`;第 10 個 `notify-telegram`（`if: failure()`）任一失敗才發 Telegram。
 
 ### 5.3 Branch protection
 
@@ -200,7 +200,7 @@ gh pr merge <N> --squash --delete-branch
 
 重大變更流程: hermes 開 PR → 填 §4.1 三段 body → **不自行 merge** → Telegram 通知 kaecer → 等 review。
 
-**2026-09-27 補牙（incident 後）**：本條原無機械強制；當日 **22 個治理檔 PR 被自動合併**（慣犯：`auto-commit-pr.sh` 無排除檢查＋`--admin`）。三道防線：**C** `validate-wiki.yml` 的 `governance-review-gate`（無 `kaecer-reviewed` 標籤 ⇒ 紅燈，已列 required checks）；**D** 該腳本 Step 6.5（治理檔或 >5 檔／>300 行 ⇒ 只開 PR、移除 `--admin`）；**A** R3 收窄為「SK 頁新增/刪除 ⇒ 同步 `SK-00-skill-index.md`」（舊版強制改 `AGENTS.md` = 互撞根因）。
+**2026-09-27 補牙（incident 後）**：本條原無機械強制；當日 **22 個治理檔 PR 被自動合併**（慣犯：`auto-commit-pr.sh` 無排除檢查＋`--admin`）。三道防線：**C** `validate-wiki.yml` 的 `governance-review-gate`（無 `qc-reviewed` 標籤 ⇒ 紅燈，已列 required checks）；**D** 該腳本 Step 6.5（治理檔或 >5 檔／>300 行 ⇒ 只開 PR、移除 `--admin`）；**A** R3 收窄為「SK 頁新增/刪除 ⇒ 同步 `SK-00-skill-index.md`」（舊版強制改 `AGENTS.md` = 互撞根因）。
 
 **限度**：共用單一帳號（`mergedBy` 一律 `kaecer68`）⇒ `required reviewers`／`CODEOWNERS` 不可行（作者不可自審）；標籤可自貼 ⇒ 屬**留痕**非**授權**。真解＝第二個 bot 帳號（§9）。
 

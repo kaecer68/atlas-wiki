@@ -60,7 +60,7 @@ atlas-wiki/
 push / PR 到 `main` 觸發 `validate-wiki`（2026-09-28 實測 10 個 job:9 個驗證 + 1 個失敗通知）：
 
 1. **validate-timestamp-rule** — 第 5 條鐵律(快照值須附 timestamp)
-2. **governance-review-gate** — 觸碰治理檔需 `kaecer-reviewed` 標籤（§6.4.2）
+2. **governance-review-gate** — 觸碰治理檔需 `qc-reviewed` 標籤（§6.4.2）
 3. **audit-atlas-endpoints** — 掃描 atlas-mcp 端點(實測 **115**;對位 `kaecer68/atlas-go`)
 4. **skill-structure-check** — SK 結構＋S2/S3/S5/S6/S7＋R3（SSOT `skill-page-schema.json`）
 5. **size-check** — SK 頁 ≤ 9,000 bytes（類別表見 `_method.md` 六條鐵律 6）
