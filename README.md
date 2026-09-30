@@ -9,7 +9,7 @@
 
  ## Mission
 
-atlas-wiki = 提煉成品知識層。`atlas-notes`(原料庫)→ atlas-wiki(知識引擎)流水線的輸出端。40 SK 檔（SK-00 + 39 編號頁）、六條鐵律＋第七條例外、CI 自動驗證。
+atlas-wiki = 提煉成品知識層（`atlas-notes` 原料庫 → 知識引擎流水線的輸出端）。40 SK 檔（SK-00 + 39 編號頁）、六條鐵律＋第七條例外、CI 自動驗證。
 
 ## 目錄結構
 
@@ -41,9 +41,9 @@ atlas-wiki/
 
 ## 規範速查(詳見 `skills/_method.md`)
 
-- 單頁大小 **依類別**(2026-09-27 拍板):SK 頁/入口檔 ≤ 9,000、`concepts/**`+`entities/**` ≤ 30,000、`docs/**` ≤ 12,000、append-only 與 `_internal/**` 無硬上限但需分流/結案瘦身(表見 `_method.md` 六條鐵律 6)
+- 單頁大小 **依類別**(2026-09-27):SK 頁/入口檔 ≤ 9,000、`concepts/**`+`entities/**` ≤ 30,000、`docs/**` ≤ 12,000、append-only 與 `_internal/**` 無硬上限但需瘦身(見 `_method.md` 鐵律 6)
 - frontmatter 核心欄位:10 欄(見 `skills/_scripts/skill-page-schema.json`)
-- 六條鐵律(2026-09-27 校正:原記 5 條;正本 `_method.md` §六條鐵律):① 不搬運,翻譯 ② 不瞎寫 ③ 不裝完成 ④ 不違背憲章 ⑤ 派工備份 ⑥ size **依類別**(表見上一條)
+- 六條鐵律(正本 `_method.md`):① 不搬運,翻譯 ② 不瞎寫 ③ 不裝完成 ④ 不違背憲章 ⑤ 派工備份 ⑥ size **依類別**
 - 另見 `_method.md` §第五條鐵律(快照值必附 timestamp)+ §第六條鐵律(外部權威報告週期稽核)
 - 每日 quota:D1 示範 1 頁 → D2+ 每日 3 頁上限(2026-07-29 降標)
 
@@ -129,7 +129,7 @@ v6.18 的 **12 核心觸發模板**(`templates/`；對位憲章 7 層因果鏈 +
 
 跑 `atlas-mcp-trigger-monitor.py`(每 5 分鐘)+ 自動 §6 紀錄 + Telegram 通知。
 
-**現況(2026-09-30 實測)**:`ls templates/trigger-*.md | wc -l` = **22**;`atlas-mcp-trigger-monitor.py` wire **17** 檔(= 12 核心 + 5)。v6.18 後新增 10 檔:
+**現況(2026-09-30)**:`ls templates/trigger-*.md | wc -l` = **23**;monitor wire **17** 檔。v6.18 後新增 11 檔:
 
 - `trigger-2330-tsmc-swing` — 2330 台積電報價觸發(盤中振幅逾 ±3%)
 - `trigger-ai-capex-guidance-cut` — AI capex 指引下修(對位 2026 韓股 HBM 降溫)
@@ -140,7 +140,8 @@ v6.18 的 **12 核心觸發模板**(`templates/`；對位憲章 7 層因果鏈 +
 - `trigger-megaproject-2-quarter-lag` — 巨型專案 2 季落後(訂單時序)
 - `trigger-msci-rebalance-pressure` — MSCI 季度再平衡壓力(被動 ETF 增減持)
 - `trigger-renewable-energy-divergence` — 綠能發電 vs 電網/重電雙臂分歧(第 16 模板,月頻+日頻雙確認)
-- `trigger-buyback-treasury-shares` — 庫藏股買回(28-2；atlas 未對位，2026-09-30)
+- `trigger-buyback-treasury-shares` — 庫藏股買回(28-2；atlas 未對位)
+- `trigger-insider-transfer-declaration` — 內部人申報轉讓(22-2＋金管會 2015 令；atlas 未對位)
 
 ## 貢獻
 
