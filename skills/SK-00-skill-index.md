@@ -9,7 +9,7 @@ tier: T3
 confidence: high
 atlas_go_relevance: high
 mcp_tools_used: []
-verification: 本檔是純索引頁,驗證方式 = `ls ~/workspace/atlas-wiki/skills/SK-*.md | wc -l`; **2026-09-30 實測 = 43**(42 編號 + SK-00;SK-27/30 已 archive)。歷史值:同日 = 42／41／40／39,2026-08-21 = 36。
+verification: 本檔是純索引頁,驗證方式 = `ls ~/workspace/atlas-wiki/skills/SK-*.md | wc -l`; **2026-09-30 實測 = 44**(43 編號 + SK-00;SK-27/30 已 archive)。歷史值:同日 = 43／42／41／40／39,2026-08-21 = 36。
 l3_run_at: 2026-09-27
 l3_run_by: prime-agent（PR docs/20260927-sk00-l3-and-coverage-gate）
 l3_endpoints_probed:
@@ -21,7 +21,7 @@ l3_endpoints_probed:
 ## 一句話定位
 SK-00 在 atlas 是「所有 SK 頁的目錄 + pipeline 組裝藍圖」——給散戶一句話看完整套體系怎麼用,不需逐頁翻。
 
-## SK 全表（43 檔;2026-09-30 `ls skills/SK-*.md | wc -l` 實測）
+## SK 全表（44 檔;2026-09-30 `ls skills/SK-*.md | wc -l` 實測）
 
 > 2026-09-27 補:本節補列 17 檔原本未被本索引引用的 SK 頁（audit-file-index-sync.py 實測）。名稱取自各頁 frontmatter `title`。
 
@@ -31,6 +31,7 @@ SK-00 在 atlas 是「所有 SK 頁的目錄 + pipeline 組裝藍圖」——給
 - **SK-20~29 穩健性與強化學習**:SK-20 規模分組穩健性檢驗｜SK-21 排除仙股穩健性檢驗｜SK-22 消去法(排除特定因子集)｜SK-23 產業輪動環境建構｜SK-24 PPO 強化學習訓練框架｜SK-25 獎勵函數設計與評估｜SK-26 經典策略網路(LSTM/Transformer)｜SK-27 量子增強策略網路(已 archive)｜SK-28 獎勵-績效錯配診斷｜SK-29 滾動窗口回測模擬
 - **SK-30~36 治理・判斷・備援**:SK-30 量子模型訓練穩定性分析(已 archive)｜SK-31 2026 AI 投資週期對位台股｜SK-32 獎勵函數敏感性分析｜SK-33 三 audience 表達口徑切換｜SK-34 上市/上櫃分流判斷與備援｜SK-35 atlas-mcp 失敗時 4 級 fallback 鏈｜SK-36 監督學習 vs. 強化學習策略比較
 - **SK-37~38 流動性・歸因(2026-09-27 新增)**:SK-37 流動性分位與買賣價差篩選｜SK-38 PnL 歸因工作流(描述性歸因 vs 消去法)
+- **SK-43 端到端選股 SOP(2026-09-30 新增)**:填 G6——九步 fail-stop 漏斗（環境→事件→資金→標的→籌碼→成本→出場→檢查表→檢討）
 - **SK-42 出場紀律(2026-09-30 新增)**:填 G2——事件／技術／時間＋風控四類規則;外部 T2 = AQR Time Series Momentum／NBER w20439／w22208
 - **SK-41 部位大小(2026-09-30 新增)**:填 G1——部位上限 = 可承受虧損 ÷ 停損距離;T2 = Kelly(1956)／Thorp(2007)／Moreira & Muir(2017)
 - **SK-40 行為偏誤反制(2026-09-30 新增)**:填 G3——Barber et al.(2009) 3.8pp 拆解＋5 欄下單前檢查表
