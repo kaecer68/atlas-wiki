@@ -122,15 +122,14 @@ push / PR 到 `main` 觸發 `validate-wiki`（2026-09-28 實測 10 個 job:9 個
 
 ## 12 觸發模板自動化(2026-08-03 v6.18)
 
-atlas-wiki v6.18 含 **12 核心觸發模板** 落 `templates/` = 自動信號捕捉系統(對位 ATLAS 憲章 7 層因果鏈 + 12 strategy):
+v6.18 的 **12 核心觸發模板**(`templates/`；對位憲章 7 層因果鏈 + 12 strategy):
 - trigger-nvda-tsm / trigger-usd-twd-32 / trigger-dxy-us10y-weak / trigger-margin-350b
-- trigger-foreign-3day-inflow / trigger-sox-foreignflow / trigger-taiwan-strait-tension
-- trigger-china-slowdown / trigger-tariff-shock / trigger-etf-rebalance
-- trigger-cb-fx-intervention / trigger-retail-margin-decrease
+- trigger-foreign-3day-inflow / trigger-sox-foreignflow / trigger-taiwan-strait-tension / trigger-china-slowdown
+- trigger-tariff-shock / trigger-etf-rebalance / trigger-cb-fx-intervention / trigger-retail-margin-decrease
 
 跑 `atlas-mcp-trigger-monitor.py`(每 5 分鐘)+ 自動 §6 紀錄 + Telegram 通知。
 
-**現況(2026-09-28 實測)**:`ls templates/trigger-*.md | wc -l` = **21**(共 22 檔);`atlas-mcp-trigger-monitor.py` wire **17** 檔(= 12 核心 + 5 新增)。v6.18 之後新增 9 檔(名稱取自各檔 H1):
+**現況(2026-09-30 實測)**:`ls templates/trigger-*.md | wc -l` = **22**;`atlas-mcp-trigger-monitor.py` wire **17** 檔(= 12 核心 + 5)。v6.18 後新增 10 檔:
 
 - `trigger-2330-tsmc-swing` — 2330 台積電報價觸發(盤中振幅逾 ±3%)
 - `trigger-ai-capex-guidance-cut` — AI capex 指引下修(對位 2026 韓股 HBM 降溫)
@@ -141,6 +140,7 @@ atlas-wiki v6.18 含 **12 核心觸發模板** 落 `templates/` = 自動信號�
 - `trigger-megaproject-2-quarter-lag` — 巨型專案 2 季落後(訂單時序)
 - `trigger-msci-rebalance-pressure` — MSCI 季度再平衡壓力(被動 ETF 增減持)
 - `trigger-renewable-energy-divergence` — 綠能發電 vs 電網/重電雙臂分歧(第 16 模板,月頻+日頻雙確認)
+- `trigger-buyback-treasury-shares` — 庫藏股買回(28-2；atlas 未對位，2026-09-30)
 
 ## 貢獻
 
