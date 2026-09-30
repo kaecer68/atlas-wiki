@@ -9,7 +9,7 @@ tier: T3
 confidence: high
 atlas_go_relevance: high
 mcp_tools_used: []
-verification: 本檔是純索引頁,驗證方式 = `ls ~/workspace/atlas-wiki/skills/SK-*.md | wc -l`; **2026-09-30 實測 = 41**(40 編號 + SK-00 索引;SK-27/30 已 archive)。歷史值:2026-09-27 = 40、同日稍早 = 39(新增 SK-39 前)、37(新增 SK-37/38 前);2026-08-21 = 36(原 35 + SK-36 新編號)。
+verification: 本檔是純索引頁,驗證方式 = `ls ~/workspace/atlas-wiki/skills/SK-*.md | wc -l`; **2026-09-30 實測 = 42**(41 編號 + SK-00;SK-27/30 已 archive)。歷史值:同日 = 41／40／39,2026-09-27 = 40,2026-08-21 = 36。
 l3_run_at: 2026-09-27
 l3_run_by: prime-agent（PR docs/20260927-sk00-l3-and-coverage-gate）
 l3_endpoints_probed:
@@ -21,7 +21,7 @@ l3_endpoints_probed:
 ## 一句話定位
 SK-00 在 atlas 是「所有 SK 頁的目錄 + pipeline 組裝藍圖」——給散戶一句話看完整套體系怎麼用,不需逐頁翻。
 
-## SK 全表（41 檔;2026-09-30 `ls skills/SK-*.md | wc -l` 實測）
+## SK 全表（42 檔;2026-09-30 `ls skills/SK-*.md | wc -l` 實測）
 
 > 2026-09-27 補:本節補列 17 檔原本未被本索引引用的 SK 頁（audit-file-index-sync.py 實測）。名稱取自各頁 frontmatter `title`。
 
@@ -31,7 +31,8 @@ SK-00 在 atlas 是「所有 SK 頁的目錄 + pipeline 組裝藍圖」——給
 - **SK-20~29 穩健性與強化學習**:SK-20 規模分組穩健性檢驗｜SK-21 排除仙股穩健性檢驗｜SK-22 消去法(排除特定因子集)｜SK-23 產業輪動環境建構｜SK-24 PPO 強化學習訓練框架｜SK-25 獎勵函數設計與評估｜SK-26 經典策略網路(LSTM/Transformer)｜SK-27 量子增強策略網路(已 archive)｜SK-28 獎勵-績效錯配診斷｜SK-29 滾動窗口回測模擬
 - **SK-30~36 治理・判斷・備援**:SK-30 量子模型訓練穩定性分析(已 archive)｜SK-31 2026 AI 投資週期對位台股｜SK-32 獎勵函數敏感性分析｜SK-33 三 audience 表達口徑切換｜SK-34 上市/上櫃分流判斷與備援｜SK-35 atlas-mcp 失敗時 4 級 fallback 鏈｜SK-36 監督學習 vs. 強化學習策略比較
 - **SK-37~38 流動性・歸因(2026-09-27 新增)**:SK-37 流動性分位與買賣價差篩選｜SK-38 PnL 歸因工作流(描述性歸因 vs 消去法)
-- **SK-40 行為偏誤反制:下單前檢查表(2026-09-30 新增)**:Barber-Lee-Liu-Odean (2009) 台灣普查 3.8pp 損失與 27/32/34/7 拆解＋六類偏誤反制＋八喜(BAHI)紀律協議＋5 欄下單前檢查表;atlas 端三個當日數據對位(risk／retail-sentiment／sessions)
+- **SK-41 部位大小與資金管理(2026-09-30 新增)**:填 G1——部位上限 = 可承受虧損 ÷ 停損距離;外部 T2 = Kelly(1956)／Thorp(2007)／Moreira & Muir(2017)
+- **SK-40 行為偏誤反制(2026-09-30 新增)**:Barber et al.(2009) 台灣普查 3.8pp＋27/32/34/7 拆解;含 5 欄下單前檢查表
 - **SK-39 放空成本模型(2026-09-27 新增)**:借券費/標借費/平盤下規則的外部制度面＋atlas 端四個已驗證的否定(無借券費參數、SBL 欄位不可達、`sharpe_short` 非可實現報酬、可行性 0 對位)
 
 ## 論文版概念（忠實還原來源）
