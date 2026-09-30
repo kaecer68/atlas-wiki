@@ -129,19 +129,12 @@ v6.18 的 **12 核心觸發模板**(`templates/`；對位憲章 7 層因果鏈 +
 
 跑 `atlas-mcp-trigger-monitor.py`(每 5 分鐘)+ 自動 §6 紀錄 + Telegram 通知。
 
-**現況(2026-09-30)**:`ls templates/trigger-*.md | wc -l` = **23**;monitor wire **17** 檔。v6.18 後新增 11 檔:
+**現況(2026-09-30)**:`ls templates/trigger-*.md | wc -l` = **26**;monitor wire **17** 檔。v6.18 後新增 14 檔:
 
-- `trigger-2330-tsmc-swing` — 2330 台積電報價觸發(盤中振幅逾 ±3%)
-- `trigger-ai-capex-guidance-cut` — AI capex 指引下修(對位 2026 韓股 HBM 降溫)
-- `trigger-cb-emergency-intervention` — 央行緊急干預匯市(1997 IMF + 2022 BOK)
-- `trigger-equipment-capex-external-report-cycle` — 設備 capex 外部報告週期(年/半年)
-- `trigger-hbm-cycle-cooling` — HBM/AI 敘事降溫(對位 2026 韓股崩盤)
-- `trigger-hedge-fund-unwind` — 對沖基金集中持倉爆倉(對位 2021 Archegos)
-- `trigger-megaproject-2-quarter-lag` — 巨型專案 2 季落後(訂單時序)
-- `trigger-msci-rebalance-pressure` — MSCI 季度再平衡壓力(被動 ETF 增減持)
-- `trigger-renewable-energy-divergence` — 綠能發電 vs 電網/重電雙臂分歧(第 16 模板,月頻+日頻雙確認)
-- `trigger-buyback-treasury-shares` — 庫藏股買回(28-2；atlas 未對位)
-- `trigger-insider-transfer-declaration` — 內部人申報轉讓(22-2＋金管會 2015 令；atlas 未對位)
+- `trigger-2330-tsmc-swing` 2330 盤中振幅±3%｜`trigger-ai-capex-guidance-cut` AI capex 指引下修｜`trigger-cb-emergency-intervention` 央行緊急干預｜`trigger-equipment-capex-external-report-cycle` 設備 capex 週期
+- `trigger-hbm-cycle-cooling` HBM 降溫｜`trigger-hedge-fund-unwind` 對沖基金爆倉｜`trigger-megaproject-2-quarter-lag` 巨型專案 2 季落後｜`trigger-msci-rebalance-pressure` MSCI 再平衡
+- `trigger-renewable-energy-divergence` 綠能 vs 電網｜`trigger-buyback-treasury-shares` 庫藏股買回(28-2)｜`trigger-insider-transfer-declaration` 內部人申報轉讓(22-2)
+- `trigger-earnings-call-investor-conference` 法說會｜`trigger-capital-reduction` 減資(公司法 168)｜`trigger-ma-public-tender-offer` 併購/公開收購(20–50 日)
 
 ## 貢獻
 
