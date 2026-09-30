@@ -83,25 +83,6 @@ archive_owner: agent(autonomous, see _inbox_archive.md)
 
 ## 已結案（近期；預算 ≤ 4,000 B，超出即移 `_inbox_archive.md`）
 
-## 2026-09-27 模板狀態校正（SK-31）＋ 模板類 quota 條文查核（**已拍板結案**）
+## 已結案（近期；預算 ≤ 4,000 B，超出即移 `_inbox_archive.md`）
 
-**A. 模板狀態校正（stale → 已改檔）**
-
-2026-09-28 `ls -l templates/` 實測:`templates/trigger-*.md` = **21 檔**（`templates/` 全 22 檔 = 21 trigger ＋ `audit-report.md`）。
-- **已存在（非「未落」）**:`trigger-megaproject-2-quarter-lag.md`（9,996B;立此日期 2026-08-04）= #14;`trigger-equipment-capex-external-report-cycle.md`（7,465B;立此日期 2026-08-04,`template_number: 15`）= #15。
-- **仍未存在**:`templates/trigger-renewable-energy-divergence.md`（`ls` → No such file;全 repo grep 僅 2 處待辦文字）= #16。
-- ⇒ 原「SK-31 未落模板 ×3」**實為 ×1**。已修 `SK-31:53,54`（對位表兩列改「已存在 ✅ 已落」＋補 #16 一列）、`SK-31:107,108`（兩條「落模板」移出 §未消化）;`SK-31` 改後 8,967B ≤ 9,000B。
-
-**B. 「模板類是否佔 quota」→ **已拍板結案（2026-09-27 kaecer）**：`templates/trigger-*.md` **不計入**每日 3 頁 quota（結清本檔 9/27 (ii) 待拍板 ②）。**
-- 拍板入 SSOT:`skills/_method.md:121` 新條文「templates = cron 觸發定義(非知識頁) → 不計入 3 頁;**交換義務** = 結算記 trigger 模板現數」;同檔 `:120` 量詞明示「Quota(3 頁 **SK**)」。
-- **記錄義務**:每次結算記 trigger 模板現數實測值（2026-09-28 = **21 檔**;`ls templates/trigger-*.md | wc -l` 實跑）。
-- **反例照實留**:`_manifest_coverage_routing.md:134` 曾把 `concepts/` 頁記「計入 1/3」——不推翻,因 templates 是**觸發定義**(cron 產物),與知識頁不同類。
-- **其他 quota 宣告實查**:`README.md:50`（本檔舊記 :48,實為 :50）／`AGENTS.md:27`／`docs/git-merge-protocol.md:183`／`_manifest_coverage_routing.md:129` 皆以「頁」為單位,無矛盾。
-
-**Telegram**:`[SILENT]`（人工查核）
-**改動**:本檔 append 本段;為容納本段,原 **2026-08-07 D4 結算段（`## 總體進度` ＋ `## 最後更新對位事實`,2,816B）原文移入 `_inbox_archive.md`**（append,含出處標頭）;實測 11,792 B ≤ 12,000B。
-**改動(quota 結案)**:B 小節改寫（**−113B**）,無新歸檔;實測 **11,965 B ≤ 12,000B**。
-**移段時仍 OPEN 的項**:D4 段「L3 待驗端點 90 個 Step」為 2026-08-07 快照,實際範圍已於 T9 Task 3 更新為 105 步且查核為「從未執行」（未消失）。
-
----
-
+- 2026-09-27 模板狀態校正（SK-31）＋ 模板類 quota 條文查核（**已拍板結案**）⇒ 原文已歸檔 `_inbox_archive.md` §[2026-09-30 自 _inbox.md 歸檔]（2026-09-30）
