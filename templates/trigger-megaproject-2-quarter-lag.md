@@ -1,5 +1,10 @@
 ---
 description: 2330 月營收 YoY >+5%、設備鏈連 3 月 YoY >+30%、投信連 5 日買超 >+20 億，任一層成立時載入本模板。
+last_verified: 2026-10-04
+verify_by: l3_endpoint
+l3_run_at: 2026-10-04
+l3_endpoints_probed:
+  - mcp__atlas__narrative_get_models → 200（hit_rate/weight 重探;2026-10-04T03:15:00+08:00;§6 對位表修正）
 sources:
   - UNCTAD WIR 2026 figure III.1（半導體 greenfield 5 年 CAGR +54%；頁內 §2）
   - Stanford HAI 2026 AI Index Chapter 4／HKS M-RCBG WP No.213（2026/05；頁內 §對位文獻）
@@ -102,7 +107,7 @@ UNCTAD WIR 2026 figure III.1 顯示半導體 greenfield 5 年 CAGR +54%(2020→2
 |---------|---------|------|
 | §1 一句話定位 | §3 觸發後執行 | 「週期性外部報告成為 atlas ground truth 校正點」的執行端 |
 | §2 論文版第 7 點 | §2 為什麼是 lag | 「2026 Q3~Q4 設備鏈首次訂單 → 2027~2028 月營收跳升」的鏈 |
-| §3 對位 atlas | §1 觸發條件 | hit_rate 0.625 / weight 0.1639 narrative model 校對 |
+| §3 對位 atlas | §1 觸發條件 | narrative model 校對(**2026-09-27 SK-31 L3 重跑**後：ai_supercycle_model hit_rate 0.4111／weight 0.03696／已非最大,**2026-10-04 本次 L3 再探**ai_supercycle_model hit_rate 0.4／weight 0.0373、當下最大=hawkish_fed_model weight 0.0447);本表是當下對位,**L17「hit_rate 0.625 / weight 0.1639」為立此日期 2026-08-04 歷史快照保留** |
 | §4 散戶解讀 | §3 觸發後執行 | 給散戶的可操作訊號 |
 | §5 驗證 | §5 atlas-mcp-trigger-monitor.py 修改 | 驗證機制 |
 
