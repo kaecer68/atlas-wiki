@@ -10,9 +10,12 @@ sources:
   - ~/workspace/atlas-notes/02-knowledge/atlas-original-paper-v0.1-L1T3-five-chains.md
 confidence: medium
 contested: false
-contradictions: [v0.1-L1T-multi 中部分舊詮釋]
+contradictions:
+  - 「本檔舊詮釋（Day 3 2026-07-17 當日紀實段中之 L1-T.1=美國 3 支柱等占位描述）」vs「2026-09-27 校正 + 子頁正名」——以子頁正名為準，本檔舊案段為歷史紀錄保留[2026-10-13 lint 收斂]
 ---
 > 命名消歧：本檔「L1-T」屬 kaecer 拍板之範式框架編號（L1=真實驅動層…L5=散戶情緒）,與 atlas strategy_techniques 策略分層 L1-L5（全球流動性…地緣政治）及憲章因果鏈第〇~六層為三套不同軸 [2026-08-22 iter2]
+
+> **裁定 2026-10-13（lint 收斂補強）**：本檔 `contradictions` 早期欄位列 `v0.1-L1T-multi 中部分舊詮釋`，經查 wiki 內**這個頁面從未存在**——`L1-T-multi` 為原始 paper，存於 `~/workspace/atlas-notes/02-knowledge/atlas-original-paper-v0.1-L1T-multi.md`（1860 行 raw,非 wiki 頁），是 lint script 誤報的 dead ref。實質衝突已於 **2026-09-27 校正（S4 跨頁矛盾）**處理完畢（L1-T.1~T.6 子頁已建、正名已更正、Day 3 原文標註保留），見頂部校正註與文末「相關 entities / concepts」。
 
 # L1-T 系列範式架構總覽(Day 3 補做)
 

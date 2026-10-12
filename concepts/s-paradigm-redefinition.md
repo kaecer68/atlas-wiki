@@ -10,10 +10,13 @@ sources:
   - 與 kaecer 對話紀錄(2026-07-15)
 confidence: high
 contested: true
-contradictions: [v0.1-three-paradigms, v0.2-three-paradigms]
+contradictions:
+  - 「本檔早期 v0.2 寫法（S = 90 天時間帶）」vs 「kaecer 2026-07-15 拍板：S = 訊號紊亂狀態」——以 kaecer 拍板為準（本檔為重定義版）[2026-10-13 lint 收斂]
 ---
 
 # S 範式重新定義 — 不等於盤整期
+
+> **裁定 2026-10-13（lint 收斂補強）**：本檔 `contradictions` 早期欄位列 `v0.1-three-paradigms` / `v0.2-three-paradigms`，經查 wiki 內**這兩頁從未存在**（無 wikilink 解析目標）——是早期的編號假名，現已更新為**指向存活的 `[[concepts/atlas-three-paradigms-v0.2-summary]]` 為對位頁**，原 v0.2 寫法的具體推翻內容已在內文詳述（見「為什麼 S 必須被重新定義?」段）。本檔 `contested: true` 沿用。
 
 > **一句話定義**:**S 範式(演化)不是「盤整期」的同義詞**,而是指「**訊號紊亂、難以辨識方向、需要外部 L2 收斂才會脫離的時段**」。盤整期是 S 的一種典型表象,**不是 S 的本體**。
 
