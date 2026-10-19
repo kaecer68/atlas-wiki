@@ -150,7 +150,7 @@ related:
 | `_inbox.md` | 跨 SK 待辦總表 |
 | `task-tracker.md` | 任務追蹤(治理層) |
 | `hermes-governance-log.md` | 治理決策歷史 |
-| `~/.hermes/skills/data-source-decision/SKILL.md` | **底層 channel 對位(2026-08-01 入庫)** — §3 atlas-mcp 端點的「實際走哪個 channel」真相;5 channel 付費矩陣;Fugle 升級誤判糾錯機制 |
+| `data-source-decision` skill | **底層 channel 對位(2026-08-01 入庫)** — §3 atlas-mcp 端點的「實際走哪個 channel」真相;5 channel 付費矩陣;Fugle 升級誤判糾錯機制 |
 
 ---
 
