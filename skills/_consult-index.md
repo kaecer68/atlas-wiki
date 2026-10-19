@@ -9,7 +9,7 @@ ground_truth_basis: |
   - ~/workspace/Fin-Skills/Fin-Skills.md (32 SK)
   - atlas-mcp 端點實跑驗證 2026-07-29：
     * backtest_signals → sharpe_long/short、VaR、active_signals
-    * risk_get_metrics → max_drawdown_pct、insufficient_data、session_count
+    * risk_get_metrics → max_drawdown_pct、var_95、var_99、cvar_95、insufficient_data、data_points、session_count
     * industry_sector_lookup → 半導體(class 12 支同業)
 status: active
 related:
@@ -75,7 +75,7 @@ related:
 `stock_get_quote` 報價、`stock_get_fundamentals` 基本面、`stock_get_technical` 技術面、`stock_get_chips` 籌碼面、`industry_sector_lookup` 產業
 
 ### Q2 選股策略
-`backtest_signals` 多空、`risk_get_metrics` Alpha、`universe_get_sessions` 模擬
+`backtest_signals` 多空、`risk_get_metrics` (max_drawdown_pct／var_95／var_99／cvar_95／insufficient_data；**不暴露 Alpha 欄位**)、`universe_get_sessions` 模擬
 
 ### Q3 產業輪動
 `industry_sector_list` 清單、`industry_sector_lookup` 找產業
