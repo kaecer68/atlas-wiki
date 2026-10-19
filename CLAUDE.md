@@ -49,3 +49,21 @@ make ci-gate   # 本地 5 項檢查（快，push 前必跑）
 make ci-gate   # 對位 GitHub CI 10 job（9 驗證 + notify-telegram；2026-09-28 實測）+ actionlint，本地 0.5-1s
 ```
 GitHub `validate-wiki` **10 job** 會在 push 後跑（9 驗證：治理檔治理標籤閘門 / timestamp / atlas 端點 audit / size / frontmatter / 內檔索引同步 / SK 結構（含 S2/S3/S5/S6/S7 步驟）/ 12 觸發模板存在 / 12 觸發模板對位端點；＋ notify-telegram）。
+
+## 本機操作陷阱（2026-10-19 實測；先讀再動手）
+
+1. **`pre-push` hook 會拒絕任何「純 ref 操作」** ✗ —— hook 依 **PR-only** 設計（每個 `local_sha` 必須屬於某個 **OPEN PR** 的 head）
+   ⇒ `git push --delete origin <branch>`、`git push origin :<branch>` **必然被拒** ✗（與內容無關）。清 ref 請走 API：
+   `gh api -X DELETE repos/kaecer68/atlas-wiki/git/refs/heads/<branch>`
+2. **`check-actionlint` 在 baseline 即紅** ✗ —— `.github/workflows/validate-wiki.yml:37` 有**既有** shellcheck `SC2086:info`
+   ⇒ 本機 `make ci-gate` **恆為 rc≠0**（`make: *** [check-actionlint] Error 1`），**不是你的改動造成** ✓。
+   ⇒ 判紅燈一律用**差異法**：同一組檢查先在 baseline（暫存 clone 的 main）跑一次，**兩邊都紅**的才算既有 ✓。
+   GitHub CI **不跑 actionlint** ✓。
+3. **同機一次只跑一個 CI** ✗ —— 多 lane 同時在同一台跑 `ci-full`／`ci-gate` 會互相搶資源造成**假紅** ✓
+   （同族實例：atlas-go `parallel golangci-lint` 非併發安全 ⇒ 已立案 `FU-20261019-06` ✓）。
+
+> 同源教訓（跨 repo 通用）：
+> - 判定「分支是否已落地」**不可**只看 `git rev-list --count main..branch` ✗（**squash 合併**會讓它永遠 >0）；
+>   看 **PR 是否 MERGED** 或**內容是否已在 main** ✓。
+> - 掃 secret 必須**同時**掃三處：**檔案內容 ＋ 歷史 diff ＋ commit message** ✗（`git log -p` 會帶出訊息）；
+>   且掃描器要先跑**陽性對照**（先證明抓得到已知值，才可信陰性結果 ✓）。
