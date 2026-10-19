@@ -67,3 +67,16 @@ GitHub `validate-wiki` **10 job** 會在 push 後跑（9 驗證：治理檔治�
 >   看 **PR 是否 MERGED** 或**內容是否已在 main** ✓。
 > - 掃 secret 必須**同時**掃三處：**檔案內容 ＋ 歷史 diff ＋ commit message** ✗（`git log -p` 會帶出訊息）；
 >   且掃描器要先跑**陽性對照**（先證明抓得到已知值，才可信陰性結果 ✓）。
+
+### 追加（2026-10-19 晚，第二輪實測）
+
+4. **`check-skill-index-sync` 在**本機**會紅、在 CI 不會** ✗ —— 它的 **R4** 會掃 `~/.hermes/skills`（本機 82 個 `SKILL.md` 缺 `status`）⇒
+   不帶參數跑 rc=2 ✓；但 **CI 用 `--repo-only`** ⇒ 同參數本地 `rc=0` ✓ **CI 不受影響** ✓。
+   ⇒ 本機要評估這支時請跑：`python3 skills/_scripts/check-skill-index-sync.py --repo-only --base-ref origin/main`
+5. **`make` 不加 `-k` 會在**第一個**紅燈就中止** ✗ —— 想看**完整**逐項結果要用 `make -k ci-gate` ✓
+   （否則第 6 項之後的 10 項根本不會跑 ⇒ 會誤以為「只剩一個問題」✗）。
+
+### ⚠️ 入口檔 size 餘裕告急（2026-10-19 收工時實測）
+`skills/_consult-index.md` 現為 **8,963 B / 上限 9,000 B** ⇒ **只剩 37 B** ✗。
+下一次只要在該檔加超過 37 bytes（含中文一個字 3 B）就會**頂破硬度上限** ⇒ 建議**先做瘦身**（歸檔歷史段或壓縮冗言 ✓），
+或把內容搬去 `_knowledge-router.md`／對應 concept 頁 ✓（**入口檔只留最短定位** ✓）。
