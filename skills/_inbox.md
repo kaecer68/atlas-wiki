@@ -1,6 +1,6 @@
 # atlas-skill-inbound Inbox
 
-最後更新:2026-10-21 atlas-skill-inbound tick（§CIO-2010；C 項 `wc -c` 二次量測結案 = 不需 split；`check-stale` 91.5h 未提交項處置 + §第七條 v1.1 歸檔 5,806 B，主檔收為 8,911 B）;前次更新:2026-10-16 週末 lint 解讀（Stale 4 條首進 l1-t4/l1-t5）;前次更新:2026-09-27 模板類 quota 拍板結案(不計入;條文入 `_method.md:121`);前次更新:2026-09-27 模板狀態校正 ＋ templates quota 條文查核（同日另段:結清兩項長期待辦）;前次更新:2026-08-21 v2 session 修補(8/21 補登（見 T9 v2）— 共同根因: A1 execute_code 會員權限 + A2 terminal 180s timeout, 修復任務 A1+A2 已寫入 hermes-governance-log T3-A493 條目請 hermes 下次 trigger 處理, 詳見 _inbox_archive.md §6 8/21 條目);前次更新:2026-08-21 歸檔 session(PR #29);前前次更新:2026-08-12 D6 session 結算(SK-34 真實 promotion + v6.59 overclaim 修正);前前前次更新:2026-08-07 D4 session 結算(`_inbox.md` size 15201B > 12000B 上限 → 啟動第七條例外歷史段歸檔 → 歷史段 5261B 移至 `_inbox_archive.md` v1.0,主檔縮為 3589B); 前前次更新:2026-08-07 16:50 (CR-2026-08-07 擱置區邊移 → v6.52 撤銷外推,改內部化)
+最後更新:2026-10-21 atlas-skill-inbound tick（§CIO-2278；C 項 `wc -c` 二次量測結案 = 不需 split；`check-stale` 91.5h 未提交項處置 + §第七條 v1.1 歸檔 5,806 B，主檔收為 8,911 B）;前次更新:2026-10-16 週末 lint 解讀（Stale 4 條首進 l1-t4/l1-t5）;前次更新:2026-09-27 模板類 quota 拍板結案(不計入;條文入 `_method.md:121`);前次更新:2026-09-27 模板狀態校正 ＋ templates quota 條文查核（同日另段:結清兩項長期待辦）;前次更新:2026-08-21 v2 session 修補(8/21 補登（見 T9 v2）— 共同根因: A1 execute_code 會員權限 + A2 terminal 180s timeout, 修復任務 A1+A2 已寫入 hermes-governance-log T3-A493 條目請 hermes 下次 trigger 處理, 詳見 _inbox_archive.md §6 8/21 條目);前次更新:2026-08-21 歸檔 session(PR #29);前前次更新:2026-08-12 D6 session 結算(SK-34 真實 promotion + v6.59 overclaim 修正);前前前次更新:2026-08-07 D4 session 結算(`_inbox.md` size 15201B > 12000B 上限 → 啟動第七條例外歷史段歸檔 → 歷史段 5261B 移至 `_inbox_archive.md` v1.0,主檔縮為 3589B); 前前次更新:2026-08-07 16:50 (CR-2026-08-07 擱置區邊移 → v6.52 撤銷外推,改內部化)
 
 > 2026-08-07 D4 結算段（總體進度 ＋ 最後更新對位事實,2,816B）已於 2026-09-27 依 `_method.md` 第七條例外移入 `_inbox_archive.md`。
 
@@ -18,7 +18,7 @@
 
 ## 待辦（active；本文以下至「已結案」標題前，預算 ≤ 8,000 B）
 
-## 2026-10-21 atlas-skill-inbound tick — C 項 `wc -c` 二次量測結案（§CIO-2010）
+## 2026-10-21 atlas-skill-inbound tick — C 項 `wc -c` 二次量測結案（§CIO-2278）
 
 **C 項已實測結案 = 不需 split。** 2026-10-16 清單 C 項要求「需 `wc -c` 二次量測才能下『需 split』結論」,本 tick 實跑完成:
 
@@ -42,5 +42,5 @@
 
 ## 已結案（近期；預算 ≤ 4,000 B，超出即移 `_inbox_archive.md`）
 
-- **C 項「`atlas-mcp-tools-reference` 482 行需 split」→ 撤銷**（2026-10-21 實測 23,834 B < 30,000 B/頁上限，§CIO-2010）。原建議基於 lint 行數推 size，量測單位錯誤。
+- **C 項「`atlas-mcp-tools-reference` 482 行需 split」→ 撤銷**（2026-10-21 實測 23,834 B < 30,000 B/頁上限，§CIO-2278）。原建議基於 lint 行數推 size，量測單位錯誤。
 - 2026-09-27 模板狀態校正（SK-31）＋ 模板類 quota 條文查核（**已拍板結案**）⇒ 原文已歸檔 `_inbox_archive.md` §[2026-09-30 自 _inbox.md 歸檔]（2026-09-30）
