@@ -40,6 +40,33 @@
 
 ---
 
+## 2026-10-22 atlas-skill-inbound tick — templates L3 複驗 + §CIO-N 競態（§CIO-2364）
+
+**關閉 1 項真缺口**:工作區 2 個 `templates/` 頁有 **20 天未提交 WIP**(`M` unstaged,不在任何 branch),L3 證據為 2026-10-02。實跑端點後**數值已反向**:
+
+| 欄位 | 10-02 WIP | 10-22 live |
+|---|---|---|
+| foreign_investor_net | -16.81 億張(賣) | **+3.65 億張(買)** |
+| current_period | consolidation | **turnaround_down** |
+| foreign_futures_oi_net | -78151 | -89748(偏空) |
+| retail_margin_balance | 6298.67 億 | **6443.74 億** |
+
+⇒ 原樣落地會發布**失效假證據**。已更新 + commit `4a3acae` + push branch `ci/l3-reverify-triggers-2026-10-22`。
+**S3 strict 曾紅 2 次**:首次補 `sources:` 仍紅,讀 `check-source-tiers.py:25` TRACE regex 才知需 `實測|自算|待查|報告` token,端點名本身不含 ⇒ 加 `L3 live 實測` 後綠。**教訓:S3 補來源前先讀 regex,不要試錯**。
+另移除未複驗的 `var_95 -38.69%` 硬寫值 + 修正錯誤 tool 名 `mcp__atlas_mcp__*` → `mcp__atlas__*`。
+
+**🛑 未解(需外部)**:PR **未開成** — `gh` keyring token 失效(`atlas-qc-reviewer[bot]`, HTTP 401),`gh pr create` 與 `scripts/dev/auto-commit-pr.sh` 皆受阻。分支已 push,待 `gh auth login -h github.com` 後手動開:
+`https://github.com/kaecer68/atlas-wiki/pull/new/ci/l3-reverify-triggers-2026-10-22`
+(環境層憑證問題,依 MEMORY §8 應由 @mis／@hermes 處理,本 cron 不越界自修憑證)
+
+**⚠️ §CIO-N 競態**:Step 0 實算 next_n=2363,但 `atlas-notes-pulse`(03:30 CST)在我 Step 0 與 append 之間搶先 append `§CIO-2363` ⇒ 同日跨 cron 撞號實測重現(MEMORY §5 已載根因未根治)。處置:本 tick 段落改號 **§CIO-2364**(單行改號,pulse cron 內容未動)。**next_n 仍無跨 cron 鎖 = 待辦**。
+
+**驗證**:`make ci-gate` ✅ exit 0 / `make check-guard-teeth` ✅ 52/52 / size 2,264 B + 2,594 B / `make check-inbox-room` ✅。
+
+**對位**:`atlas-skill-inbound` Step 1-5 / atlas-wiki-quality §2.1 S3 strict + §4.4 / MEMORY §5 編號競態 / USER §1 第 2 條。
+
+---
+
 ## 已結案（近期；預算 ≤ 4,000 B，超出即移 `_inbox_archive.md`）
 
 - **C 項「`atlas-mcp-tools-reference` 482 行需 split」→ 撤銷**（2026-10-21 實測 23,834 B < 30,000 B/頁上限，§CIO-2278）。原建議基於 lint 行數推 size，量測單位錯誤。
