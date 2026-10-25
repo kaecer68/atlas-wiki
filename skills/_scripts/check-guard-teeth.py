@@ -13,18 +13,41 @@
   A. 每支護欄：**空集合必須失敗**（S8 原則）＋ 正常 repo 必須通過（不誤傷）。
   B. 針對性情境：shell 違規檔、引號 heredoc、docs 超標、R3（rename／空 base-ref／未同步）。
   C. 治理檔清單必須是**單一來源**：CI job 與 auto-commit-pr.sh 都不得再硬編 regex。
+  D. 治理閘門（workflow）行為測試：實跑抽出的 gate 步驟對 mock API，含 approve-then-push
+     與 CHANGES_REQUESTED／DISMISSED 情境（2026-10-26 補）。
+  E. auto-commit-pr.sh（D 腳本）行為測試。
+  F. 閘門判定核心 gate-review-decision.py 單元行為測試 ＋ **突變測試**（把規則拿掉後
+     對應情境必須翻綠，否則該 case 沒有牙；2026-10-26 補）。
 
 用法: python3 skills/_scripts/check-guard-teeth.py [--repo-root .] [--quick]
   任何一項失敗 ⇒ exit 1；檢查項為 0（＝套件自己空轉）⇒ exit 1。
 """
-import argparse, importlib.util, os, re, shutil, subprocess, sys, tempfile, time
+import argparse, importlib.util, json, os, re, shutil, socket, subprocess, sys, tempfile, time
 
 HAS_YAML = importlib.util.find_spec('yaml') is not None
 
 PASS, FAIL = "✅", "❌"
 APP_LOGIN = "atlas-qc-reviewer[bot]"
 
-MOCK_API = "import json,sys\nfrom http.server import BaseHTTPRequestHandler,HTTPServer\nPORT=int(sys.argv[1]); ACTOR=sys.argv[2]; APP=sys.argv[3] if len(sys.argv)>3 else ''\nclass H(BaseHTTPRequestHandler):\n    def log_message(self,*a): pass\n    def do_GET(self):\n        if '/timeline' in self.path:\n            b=[{'event':'labeled','label':{'name':'qc-reviewed'},'actor':{'login':ACTOR}}] if ACTOR else []\n        elif '/reviews' in self.path:\n            b=[{'state':'APPROVED','user':{'login':APP}}] if APP else []\n        else: b=[]\n        r=json.dumps(b).encode(); self.send_response(200)\n        self.send_header('Content-Type','application/json'); self.send_header('Content-Length',str(len(r)))\n        self.end_headers(); self.wfile.write(r)\nHTTPServer(('127.0.0.1',PORT),H).serve_forever()"
+MOCK_API = """import json,sys
+from http.server import BaseHTTPRequestHandler,HTTPServer
+PORT=int(sys.argv[1]); SCEN=sys.argv[2]   # 每次請求重讀 scenario 檔 ⇒ 一支 mock 服務多情境
+class H(BaseHTTPRequestHandler):
+    def log_message(self,*a): pass
+    def do_GET(self):
+        try:
+            scen=json.load(open(SCEN,encoding='utf-8'))
+        except Exception:
+            scen={}
+        p=self.path
+        if '/timeline' in p: b=scen.get('timeline',[])
+        elif '/reviews' in p: b=scen.get('reviews',[])
+        elif '/pulls/' in p: b=scen.get('pull',{})
+        else: b=[]
+        r=json.dumps(b).encode(); self.send_response(200)
+        self.send_header('Content-Type','application/json'); self.send_header('Content-Length',str(len(r)))
+        self.end_headers(); self.wfile.write(r)
+HTTPServer(('127.0.0.1',PORT),H).serve_forever()"""
 
 
 def run(cmd, cwd, env=None):
@@ -285,6 +308,7 @@ def main():
 
             if gate:
                 sb = tempfile.mkdtemp(prefix="teeth-gate-repo-")
+                mocks, mockdir = [], None
                 try:
                     G = ["git", "-C", sb]
                     run(["git", "init", "-q", "-b", "main", sb], R)
@@ -292,6 +316,10 @@ def main():
                     run(G + ["config", "user.name", "t"], R)
                     os.makedirs(os.path.join(sb, "skills", "_scripts"), exist_ok=True)
                     os.makedirs(os.path.join(sb, ".github", "workflows"), exist_ok=True)
+                    # 閘門的判定核心是獨立腳本（在治理清單內）⇒ sandbox 必須同步具備，
+                    # 否則每個 case 都因「腳本不存在」而紅 ⇒ 假紅/假綠都失去意義。
+                    shutil.copy(os.path.join(S, "gate-review-decision.py"),
+                                os.path.join(sb, "skills", "_scripts", "gate-review-decision.py"))
                     for rel in ("AGENTS.md", "SCHEMA.md", "docs/git-merge-protocol.md", "skills/_method.md"):
                         d = os.path.dirname(os.path.join(sb, rel))
                         if d:
@@ -304,9 +332,42 @@ def main():
                     run(G + ["commit", "-qm", "base(no list)"], R)
                     base_nolist = run(G + ["rev-parse", "HEAD"], R).stdout.strip()
 
+                    # mock API：一支行程、每次請求重讀 scenario 檔 ⇒ 同一支 mock 服務所有情境
+                    mockdir = tempfile.mkdtemp(prefix="teeth-mock-")
+                    mock_py = os.path.join(mockdir, "mock_api.py")
+                    with open(mock_py, "w") as f:
+                        print(MOCK_API, file=f)
+                    scen_path = os.path.join(mockdir, "scenario.json")
+
+                    def set_scenario(head="", reviews=None, timeline=None):
+                        with open(scen_path, "w", encoding="utf-8") as f:
+                            json.dump({"pull": {"head": {"sha": head}},
+                                       "reviews": reviews or [], "timeline": timeline or []}, f)
+
+                    set_scenario()
+                    port = 8811 + (os.getpid() % 400)
+                    mocks.append(subprocess.Popen([sys.executable, mock_py, str(port), scen_path],
+                                                  stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL))
+                    for _ in range(60):
+                        try:
+                            socket.create_connection(("127.0.0.1", port), 0.2).close()
+                            break
+                        except OSError:
+                            time.sleep(0.1)
+
                     def gate_run(base_sha, labels):
-                        env = {"BASE_SHA": base_sha, "LABELS": labels, "MERGED": ""}
+                        env = {"BASE_SHA": base_sha, "LABELS": labels, "MERGED": "",
+                               "GITHUB_REPOSITORY": "x/y", "GITHUB_TOKEN": "t",
+                               "GITHUB_API_URL": "http://127.0.0.1:%d" % port, "PR_NUM": "1"}
                         return run(["bash", gate], sb, env=env).returncode
+
+                    SHA_A, SHA_B = "a" * 40, "b" * 40
+
+                    def labeled_by(login):
+                        return [{"event": "labeled", "label": {"name": "qc-reviewed"}, "actor": {"login": login}}]
+
+                    def review(login, state, commit):
+                        return {"state": state, "commit_id": commit, "user": {"login": login}}
 
                     # case1 bootstrap：分支新增清單檔（base 沒有）＋動 AGENTS.md
                     run(G + ["checkout", "-q", "-B", "boot", base_nolist], R)
@@ -316,30 +377,40 @@ def main():
                         print("v2", file=f)
                     run(G + ["add", "-A"], R)
                     run(G + ["commit", "-qm", "bootstrap"], R)
+
+                    set_scenario()
                     check("D/bootstrap 未貼標籤 ⇒ 紅", gate_run(base_nolist, "") != 0)
-                    mock_py = os.path.join(sb, "mock_api.py")
-                    with open(mock_py, "w") as f:
-                        print(MOCK_API, file=f)
+                    set_scenario(head=SHA_A, timeline=labeled_by(APP_LOGIN))
+                    check("D/App 身分貼標籤 ⇒ 綠（無死結）", gate_run(base_nolist, "qc-reviewed") == 0)
+                    set_scenario(head=SHA_A, timeline=labeled_by("kaecer68"))
+                    check("D/作者自貼標籤 ⇒ 紅（洞已關）", gate_run(base_nolist, "qc-reviewed") != 0)
+                    set_scenario(head=SHA_A, timeline=labeled_by("kaecer68"),
+                                 reviews=[review(APP_LOGIN, "APPROVED", SHA_A)])
+                    check("D/作者自貼＋App 核准（綁當前 head.sha）⇒ 綠", gate_run(base_nolist, "qc-reviewed") == 0)
 
-                    def gate_with_actor(actor, approver=""):
-                        port = 8900 + (abs(hash(actor + approver)) % 90)
-                        proc = subprocess.Popen([sys.executable, mock_py, str(port), actor, approver],
-                                                stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-                        try:
-                            time.sleep(0.6)
-                            env = {"BASE_SHA": base_nolist, "LABELS": "qc-reviewed", "MERGED": "",
-                                   "GITHUB_REPOSITORY": "x/y", "GITHUB_TOKEN": "t",
-                                   "GITHUB_API_URL": "http://127.0.0.1:%d" % port, "PR_NUM": "1"}
-                            return run(["bash", gate], sb, env=env).returncode
-                        finally:
-                            proc.kill()
+                    # === 2026-10-26 新增：情境 A｜核准綁舊 commit（approve-then-push）===
+                    set_scenario(head=SHA_B, reviews=[review(APP_LOGIN, "APPROVED", SHA_A)])
+                    check("D/A 核准綁舊 commit、head 已前進 ⇒ 紅", gate_run(base_nolist, "") != 0)
+                    set_scenario(head=SHA_B, timeline=labeled_by(APP_LOGIN),
+                                 reviews=[review(APP_LOGIN, "APPROVED", SHA_A)])
+                    check("D/A 同上但 App 已貼標籤 ⇒ 仍紅（標籤不得洗白舊核准）", gate_run(base_nolist, "qc-reviewed") != 0)
 
-                    check("D/App 身分貼標籤 ⇒ 綠（無死結）", gate_with_actor(APP_LOGIN) == 0)
-                    check("D/作者自貼標籤 ⇒ 紅（洞已關）", gate_with_actor("kaecer68") != 0)
-                    check("D/作者自貼＋App 核准 ⇒ 綠", gate_with_actor("kaecer68", APP_LOGIN) == 0)
+                    # === 2026-10-26 新增：情境 B｜CHANGES_REQUESTED／DISMISSED 撤銷核准 ===
+                    set_scenario(head=SHA_A, reviews=[review(APP_LOGIN, "APPROVED", SHA_A),
+                                                      review(APP_LOGIN, "DISMISSED", SHA_A)])
+                    check("D/B1 核准被 DISMISSED 撤銷 ⇒ 紅", gate_run(base_nolist, "") != 0)
+                    set_scenario(head=SHA_A, timeline=labeled_by(APP_LOGIN),
+                                 reviews=[review(APP_LOGIN, "APPROVED", SHA_A),
+                                          review("kaecer68", "CHANGES_REQUESTED", SHA_A)])
+                    check("D/B2 最新 review 為 CHANGES_REQUESTED ⇒ 紅（標籤不得洗白）", gate_run(base_nolist, "qc-reviewed") != 0)
+                    set_scenario(head=SHA_A, reviews=[review(APP_LOGIN, "APPROVED", SHA_A),
+                                                      review(APP_LOGIN, "DISMISSED", SHA_A),
+                                                      review(APP_LOGIN, "APPROVED", SHA_A)])
+                    check("D/B3 DISMISSED 後重新核准 ⇒ 綠（只取每人最後一筆）", gate_run(base_nolist, "") == 0)
 
                     # 以「已含清單」的 commit 為新 base，測攻擊
                     base2 = run(G + ["rev-parse", "HEAD"], R).stdout.strip()
+                    set_scenario()  # 攻擊／routine case 都用「無標籤、無 review」情境
 
                     def attack(name, mutate):
                         run(G + ["checkout", "-q", "-B", name, base2], R)
@@ -381,8 +452,128 @@ def main():
                     run(G + ["commit", "-qm", "routine"], R)
                     check("D/合法 routine ⇒ 綠", gate_run(base2, "") == 0)
                 finally:
+                    for p in mocks:
+                        p.kill()
+                    if mockdir:
+                        shutil.rmtree(mockdir, ignore_errors=True)
                     shutil.rmtree(sb, ignore_errors=True)
                     shutil.rmtree(os.path.dirname(gate), ignore_errors=True)
+
+    # === F. 治理閘門判定核心（gate-review-decision.py）行為測試（2026-10-26）===
+    # 為什麼獨立一節：D 段是「workflow ↔ 腳本」的接線測試；本節把 commit 綁定與
+    # CHANGES_REQUESTED／DISMISSED 語意逐條釘死，並用**突變測試**證明每個 case 有牙
+    # （對位本檔開頭 S8：宣稱有牙不算，把規則拿掉後情境必須翻轉才算）。
+    if not a.quick:
+        decide = os.path.join(S, "gate-review-decision.py")
+        if not os.path.isfile(decide):
+            check("F/找到 gate-review-decision.py", False, "缺檔（治理閘門判定核心）")
+        else:
+            fd = tempfile.mkdtemp(prefix="teeth-decide-")
+            try:
+                pull_p = os.path.join(fd, "pull.json")
+                rv_p = os.path.join(fd, "reviews.json")
+                tl_p = os.path.join(fd, "timeline.json")
+                SHA_A, SHA_B = "a" * 40, "b" * 40
+
+                def fixtures(head, reviews, timeline):
+                    for path, obj in ((pull_p, {"head": {"sha": head}}), (rv_p, reviews), (tl_p, timeline)):
+                        with open(path, "w", encoding="utf-8") as f:
+                            json.dump(obj, f)
+
+                def decide_run(has_label, script=None):
+                    return run([sys.executable, script or decide, "--app-login", APP_LOGIN,
+                                "--has-label", has_label, "--pull", pull_p,
+                                "--reviews", rv_p, "--timeline", tl_p], R)
+
+                def rv(login, state, commit):
+                    return {"state": state, "commit_id": commit, "user": {"login": login}}
+
+                def lab(login):
+                    return [{"event": "labeled", "label": {"name": "qc-reviewed"}, "actor": {"login": login}}]
+
+                def expect(name, head, reviews, timeline, has_label, zero, needle=""):
+                    fixtures(head, reviews, timeline)
+                    r = decide_run(has_label)
+                    ok = (r.returncode == 0) == zero and (needle in r.stdout)
+                    tail = r.stdout.strip().split(chr(10))[-1] if r.stdout.strip() else ""
+                    check(name, ok, f"exit={r.returncode} want_zero={zero} {tail[:80]}")
+
+                src = open(decide, encoding="utf-8").read()
+
+                def mutate(anchor, repl, tag):
+                    """把一條規則拿掉；錨點必須恰好出現一次（否則突變測試本身失效）。"""
+                    if src.count(anchor) != 1:
+                        return None
+                    p2 = os.path.join(fd, "mut-%s.py" % tag)
+                    with open(p2, "w", encoding="utf-8") as f:
+                        f.write(src.replace(anchor, repl))
+                    return p2
+
+                def sensitivity(name, anchor, repl, tag, head, reviews, timeline, has_label):
+                    """真腳本必須紅、突變後必須綠 ⇒ 該情境確實由這條規則把關（不是靠別的規則才紅）。"""
+                    fixtures(head, reviews, timeline)
+                    real = decide_run(has_label)
+                    mp = mutate(anchor, repl, tag)
+                    if mp is None:
+                        check(name, False, "突變錨點不唯一／不存在：%s" % anchor[:40])
+                        return
+                    mut = decide_run(has_label, mp)
+                    check(name, real.returncode != 0 and mut.returncode == 0,
+                          f"real={real.returncode} mutated={mut.returncode}（需 real!=0 且 mutated==0）")
+
+                # ① 對照組：核准綁當前 head ⇒ 綠（證明後面的紅不是「一律紅」）
+                expect("F/對照組：APPROVED 綁當前 head.sha ⇒ 綠", SHA_A,
+                       [rv(APP_LOGIN, "APPROVED", SHA_A)], [], "0", True, "通過")
+                # ② 情境 A：approve-then-push
+                expect("F/A1 核准綁舊 commit（approve-then-push）⇒ 紅", SHA_B,
+                       [rv(APP_LOGIN, "APPROVED", SHA_A)], [], "0", False, "approve-then-push")
+                expect("F/A2 舊 commit 核准＋App 標籤 ⇒ 仍紅（標籤不得洗白）", SHA_B,
+                       [rv(APP_LOGIN, "APPROVED", SHA_A)], lab(APP_LOGIN), "1", False, "approve-then-push")
+                expect("F/A3 核准缺 commit_id ⇒ 紅（不得空值放行）", SHA_A,
+                       [rv(APP_LOGIN, "APPROVED", "")], [], "0", False)
+                # ③ 情境 B：DISMISSED／CHANGES_REQUESTED
+                expect("F/B1 核准被 DISMISSED 撤銷 ⇒ 紅", SHA_A,
+                       [rv(APP_LOGIN, "APPROVED", SHA_A), rv(APP_LOGIN, "DISMISSED", SHA_A)],
+                       [], "0", False, "DISMISSED")
+                expect("F/B2 DISMISSED 後重新核准 ⇒ 綠（只取每人最後一筆）", SHA_A,
+                       [rv(APP_LOGIN, "APPROVED", SHA_A), rv(APP_LOGIN, "DISMISSED", SHA_A),
+                        rv(APP_LOGIN, "APPROVED", SHA_A)], [], "0", True, "通過")
+                expect("F/B3 最新 review 為 CHANGES_REQUESTED ⇒ 紅", SHA_A,
+                       [rv(APP_LOGIN, "APPROVED", SHA_A), rv("kaecer68", "CHANGES_REQUESTED", SHA_A)],
+                       [], "0", False, "CHANGES_REQUESTED")
+                expect("F/B4 App 自己最新 CHANGES_REQUESTED ⇒ 紅", SHA_A,
+                       [rv(APP_LOGIN, "APPROVED", SHA_A), rv(APP_LOGIN, "CHANGES_REQUESTED", SHA_A)],
+                       [], "0", False, "CHANGES_REQUESTED")
+                expect("F/B5 CHANGES_REQUESTED ＋ App 標籤 ⇒ 仍紅（否決優先）", SHA_A,
+                       [rv(APP_LOGIN, "APPROVED", SHA_A), rv("kaecer68", "CHANGES_REQUESTED", SHA_A)],
+                       lab(APP_LOGIN), "1", False, "CHANGES_REQUESTED")
+                # ④ 標籤路徑不得倒退（既有機制）
+                expect("F/C1 App 貼標籤、無 review ⇒ 綠（既有機制不倒退）", SHA_A, [],
+                       lab(APP_LOGIN), "1", True, "通過")
+                expect("F/C2 作者自貼標籤 ⇒ 紅", SHA_A, [], lab("kaecer68"), "1", False, "作者側自貼不算")
+                # ⑤ fail-closed
+                fixtures(SHA_A, [], [])
+                r = run([sys.executable, decide, "--app-login", APP_LOGIN, "--has-label", "0",
+                         "--pull", os.path.join(fd, "__no_such__.json"), "--reviews", rv_p,
+                         "--timeline", tl_p], R)
+                check("F/D1 讀不到 pull JSON ⇒ 紅（PARSE_ERROR fail-closed）",
+                      r.returncode != 0 and "PARSE_ERROR" in r.stdout, f"exit={r.returncode}")
+                expect("F/D2 取不到 head.sha ⇒ 紅（無法綁 commit）", "",
+                       [rv(APP_LOGIN, "APPROVED", "")], [], "0", False, "head.sha")
+                # ⑥ 突變測試：每個新規則拿掉後，對應情境必須翻綠
+                sensitivity("F/M1 突變（移除 commit 綁定）⇒ A1 翻綠（證明情境 A 有效）",
+                            "if app_commit and app_commit == head_sha:", "if True:", "commit",
+                            SHA_B, [rv(APP_LOGIN, "APPROVED", SHA_A)], [], "0")
+                sensitivity("F/M2 突變（移除 CHANGES_REQUESTED 否決）⇒ B3 翻綠",
+                            'changes = sorted(k for k, v in latest.items() if (v.get("state") or "").upper() == "CHANGES_REQUESTED")',
+                            "changes = []", "changes", SHA_A,
+                            [rv(APP_LOGIN, "APPROVED", SHA_A), rv("kaecer68", "CHANGES_REQUESTED", SHA_A)], [], "0")
+                sensitivity("F/M3 突變（移除 DISMISSED 否決）⇒ 該情境翻綠",
+                            'dismissed = sorted(k for k, v in latest.items() if (v.get("state") or "").upper() == "DISMISSED")',
+                            "dismissed = []", "dismissed", SHA_A,
+                            [rv(APP_LOGIN, "APPROVED", SHA_A), rv("kaecer68", "DISMISSED", SHA_A)], [], "0")
+            finally:
+                shutil.rmtree(fd, ignore_errors=True)
 
     # === E. D 腳本（auto-commit-pr.sh）行為測試（審查 F2：本 PR 刪掉 C0 後 D 端零覆蓋）===
     if not a.quick:

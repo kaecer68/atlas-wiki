@@ -92,6 +92,7 @@ push / PR 到 `main` 觸發 `validate-wiki`（2026-09-28 實測 10 個 job:9 個
 | `new-skill-page.py` | SK 頁骨架產生器(反補丁 M6) |
 | `structure-health-metrics.py` | 結構健康度量測(M7;含 L3 覆蓋率＋watch list) |
 | `audit-file-index-sync.py` | 驗證 wiki 內落檔是否被索引引用 |
+| `gate-review-decision.py` | 治理閘門判定核心：核准綁 `commit_id`↔`head.sha`、認 `CHANGES_REQUESTED`／`DISMISSED`（2026-10-26） |
 | `atlas-mcp-trigger-monitor.py` | 觸發模板自動信號捕捉(每 5 分鐘) |
 | `handle-atlas-failures.py` | atlas-mcp 端點失敗降級處理 |
 | `atlas-failures-telegram-report.py` | 每日 atlas 端點健康檢查 + Telegram |

@@ -66,28 +66,36 @@ jobs:
           echo "觸碰治理檔（§6.4.2 重大變更）："
           printf '  - %s\n' $GOV
 
-          # === 身分檢查（2026-09-28）：審查必須來自**獨立身分** atlas-qc-reviewer[bot] ===
-          # 為什麼：所有 agent 共用 kaecer68 一個 GitHub 身分 ⇒ 作者自貼標籤不算審查。
-          # 通過條件（任一）：① 標籤存在且最後一次 labeled 的 actor = App bot；
-          #                   ② 最後一個 APPROVED review 的 reviewer = App bot。
-          # 解析失敗一律 fail-closed（PARSE_ERROR ⇒ 紅燈），不得變成空值放行。
+          # === 身分檢查（2026-09-28）＋ commit 綁定（2026-10-26）：審查必須來自**獨立身分** atlas-qc-reviewer[bot] ===
+          # 為什麼：所有 agent 共用 kaecer68 一個 GitHub 身分 ⇒ 作者自貼標籤／自按核准都不算審查。
+          # 通過條件（任一）：
+          #   ① App bot 的最後一筆 review = APPROVED，且其 commit_id == PR 當前 head.sha；
+          #   ② qc-reviewed 標籤存在且最後一次貼標的 actor = App bot。
+          # 2026-10-26 補（§QC-11／§QC-12 approve-then-push）：舊版只問「有沒有 APPROVED」，
+          # 不問「核准的是哪個 commit」⇒ 對 commit A 核准後再 push commit B 仍綠燈；
+          # 且 CHANGES_REQUESTED／DISMISSED 都不會撤銷既有核准。兩者現已納入否決語意。
+          # 判定邏輯本體在 skills/_scripts/gate-review-decision.py（在治理清單內、可自測）。
+          # 解析失敗一律 fail-closed（PARSE_ERROR／取不到 head.sha ⇒ 紅燈），不得變成空值放行。
           APP_LOGIN="atlas-qc-reviewer[bot]"
           API="${GITHUB_API_URL:-https://api.github.com}"
           REPO="${GITHUB_REPOSITORY}"
           PR_NUM="${{ github.event.pull_request.number }}"
           AUTH="Authorization: Bearer ${GITHUB_TOKEN}"
-          LABELJQ="import sys,json;d=json.load(sys.stdin);L=[x for x in d if x.get('event')=='labeled' and ((x.get('label') or {}).get('name') if isinstance(x.get('label'),dict) else x.get('label'))=='qc-reviewed'];print(((L[-1].get('actor') or {}).get('login','')) if L else '')"
-          REVIEWJQ="import sys,json;d=json.load(sys.stdin);A=[x for x in d if x.get('state')=='APPROVED'];print(((A[-1].get('user') or {}).get('login','')) if A else '')"
-          labeler=$(curl -fsS -H "$AUTH" -H 'Accept: application/vnd.github+json' "$API/repos/$REPO/issues/$PR_NUM/timeline?per_page=100" | python3 -c "$LABELJQ") || labeler=PARSE_ERROR
-          approver=$(curl -fsS -H "$AUTH" -H 'Accept: application/vnd.github+json' "$API/repos/$REPO/pulls/$PR_NUM/reviews?per_page=100" | python3 -c "$REVIEWJQ") || approver=PARSE_ERROR
+          DECIDE=skills/_scripts/gate-review-decision.py
+          TMPD="$(mktemp -d)"
+          # head.sha 一律取 API 現值：pull_request_review 的 payload 可能落後於最新一次 push
+          curl -fsS -H "$AUTH" -H 'Accept: application/vnd.github+json' \
+            "$API/repos/$REPO/pulls/$PR_NUM" > "$TMPD/pull.json" \
+            || { echo "::error::讀取 PR 失敗 ⇒ fail-closed"; exit 1; }
+          curl -fsS -H "$AUTH" -H 'Accept: application/vnd.github+json' \
+            "$API/repos/$REPO/pulls/$PR_NUM/reviews?per_page=100" > "$TMPD/reviews.json" \
+            || { echo "::error::讀取 reviews 失敗 ⇒ fail-closed"; exit 1; }
+          curl -fsS -H "$AUTH" -H 'Accept: application/vnd.github+json' \
+            "$API/repos/$REPO/issues/$PR_NUM/timeline?per_page=100" > "$TMPD/timeline.json" \
+            || { echo "::error::讀取 PR timeline 失敗 ⇒ fail-closed"; exit 1; }
           has_label=$(printf '%s' "$LABELS" | tr ',' '\n' | grep -cx 'qc-reviewed' || true)
-          echo "  標籤存在=${has_label:-0}｜標籤 actor=${labeler:-（無）}｜APPROVED by=${approver:-（無）}"
-          if { [ "${has_label:-0}" = "1" ] && [ "$labeler" = "$APP_LOGIN" ]; } || [ "$approver" = "$APP_LOGIN" ]; then
-            echo "✅ 已由 $APP_LOGIN 審查（標籤或核准）⇒ 可合併（仍需人工執行 merge）"
-          else
-            echo "::error::觸碰治理檔需由 ${APP_LOGIN} 貼 qc-reviewed 或核准（§6.4.2）；作者側自貼不算"
-            exit 1
-          fi
+          python3 "$DECIDE" --app-login "$APP_LOGIN" --has-label "${has_label:-0}" \
+            --pull "$TMPD/pull.json" --reviews "$TMPD/reviews.json" --timeline "$TMPD/timeline.json"
 
   validate-timestamp-rule:
     name: 第 5 條鐵律 timestamp 驗證

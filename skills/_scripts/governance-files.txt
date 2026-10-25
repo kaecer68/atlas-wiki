@@ -29,3 +29,7 @@ skills/_scripts/check-skill-index-sync\.py
 skills/_scripts/check-shell-var-ascii\.py
 skills/_scripts/audit-file-index-sync\.py
 skills/_scripts/audit-atlas-endpoints\.py
+# === 2026-10-26 CIO（§QC-11／§QC-12 approve-then-push）：治理閘門的判定核心 ===
+# 判準同上：把它改弱（例：不綁 commit_id、不認 CHANGES_REQUESTED／DISMISSED）就讓
+# `governance-review-gate` 靜默失效 ⇒ 納入。
+skills/_scripts/gate-review-decision\.py
