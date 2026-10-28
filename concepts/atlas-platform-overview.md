@@ -2,12 +2,15 @@
 title: atlas 平台概覽：台股策略模擬平台架構
 description: 被問「atlas 是什麼、架構分幾層、資料多久更新一次」時載入。
 created: 2026-08-02
-updated: 2026-08-02
+updated: 2026-10-29
+last_verified: 2026-10-29
 type: concept
 tags: [framework, methodology]
 sources:
   - atlas-mcp:mcp_quickstart
   - atlas-mcp:system_get_health
+  - atlas-mcp:channel_health（2026-10-29T02:31+08:00 實讀）
+  - atlas-go:internal/marketdata/twse_sector_index_provider.go（2026-10-29 唯讀核對）
   - concepts/atlas-mcp-interpretation-guide.md
 confidence: medium
 contested: false
@@ -82,6 +85,16 @@ Atlas 是專為 **台股散戶投資人** 設計的 **策略模擬與交易模�
 - **資料源**：Fugle 即時報價、TWSE 集中市場、Yahoo Finance（美股/指數）、FinMind（基本面/籌碼）、內部自有資料流。
 - **通道管理**：`system_get_data_pipeline`、`data_get_channels`、`channel_health`、`macro_get_ingest_status` 提供每個 channel 的最後抓取時間、錯誤率、延遲秒數。
 - **事件流**：高頻 tick 與法人買賣超透過 Kafka 進入分析層，由 cron 排程（`scheduler_get_status`）定期聚合。
+
+#### 2.1.1 通道綠燈 ≠ 當日資料齊（2026-10-28 實證）
+
+`data_get_channels` / `channel_health` 的 `status=ok` 只證明**那次呼叫成功**，不證明**產出檔有內容**。
+
+- **實例**：2026-10-28 為交易日（三源互證：`data/state/capital_flow/20261028_capital_flow.json`、`data/state/margin/20261028_margin.json`、`data/replay/tw_extended_90days.csv` 均含當日列）。`twse_sector_index` 在 `channel_health` 回 `status=ok`、`last_success_at=2026-10-28T18:21:06Z`、`latency_ms=213`（讀於 2026-10-29T02:31+08:00），但 `data/state/sector_index/sector_indices_20261028_20261028.json`（寫入於 2026-10-28 23:45:14）內容是空 map（`{}`，2 B）；前一交易日 10-27 同格式檔為 20 個 L1 產業（`auto` index 297.65／return_pct 1.93，2,814 B）。`sector_index/` 全部 1,693 個日檔中空檔僅 10 個，其中 9 個是週六日或補假（10-25 週日、10-26 週一補假），**唯一非假日空檔就是 10-28**。
+- **源碼層根因**（`internal/marketdata/twse_sector_index_provider.go`，本機唯讀核對）：`fetchWithMapper`（L100-141）對單日 `fetchSingleDay` 失敗只 `logging.Warn` 後 `continue`，結尾 `saveToCache(result, …)` 仍把空 map 寫檔，函式回 `(result, nil)`；`fetchSingleDay` 解析時 `closeIndex` 為空即 `continue`，同樣回空 map 不報錯。⇒「單日抓取失敗」與「抓取成功但零筆」**兩條路徑都變成綠燈＋空檔**，無空結果護欄。
+- **判讀規則**：宣稱「通道已恢復」前，除 `channel_health.last_success_at` 外**必查產出檔非空**（`sector_index/` 檔 size、`data/state/capital_flow/` 當日檔）。`fetchWithMapper` 的 cache 命中條件是 `len(cached) > 0`（L96-99），故空檔不會被誤當命中，但當日缺口不會自補，需另行 backfill。
+- **同日對照**（`channel_health`，2026-10-29T02:31+08:00）：`taiex_index` ok（`last_success_at=2026-10-28T18:30:53Z`，`macro.latest` taiex 47,035.58／change_pct 2.04）、`us_cpi` ok（`2026-10-28T16:46:00Z`）；`finmind` error（HTTP 400 `Token is illegal`，`last_success_at=2026-10-23T03:29:55Z`），並連帶 `tdcc_equity_dispersion` error（`finmind circuit breaker open`，`last_success_at=2026-09-29T06:44:29Z`）。
+- **散戶解讀**：產業輪動／類股相對強弱若直接吃 `sector_index` 當日檔（見 [[skills/SK-23-sector-environment]]），遇此類綠燈空檔會少一個交易日樣本；引用輪動結論前先確認當日檔非空。
 
 ### 2.2 分析層（Analytics Layer）
 
