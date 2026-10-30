@@ -53,7 +53,7 @@ SK-23 在 atlas 是「從個股走到產業」——把個股聚合成產業面�
 
 **差異點**:論文是純 Python 組裝,atlas 已有現成產業端點。**這是 atlas 對位完整的 SK 之一**。
 
-**沒有對位的部分**（2026-09-27 更正）:無「產業指數時序」**對外端點**——但資料層**已有**原生類股指數時序（TWSE MI_INDEX/FinMind → `data/state/sector_index/` 日檔,本機 106 檔,＋排程 `macro_cache_twse_sector_index`）;無「市值加權」端點。
+**沒有對位的部分**（2026-10-31 複驗）:無「產業指數時序」**對外端點**——但資料層**已有**原生類股指數時序（`data/state/sector_index/` 日檔,本機 **1,695** 檔,2020-01-02 → 2026-10-29）;無「市值加權」端點。
 
 ## 散戶解讀
 - **G**:用戶問「該重壓電子還是金融?」 → SK-23 給產業層級訊號,搭配 SK-16 的十分位多空,在「產業」+「個股」兩層做決策。
@@ -81,7 +81,7 @@ Step 3: 產業層訊號品質直接用 `/api/stock/industry_winrate?condition_id
 
 **更正（2026-09-27）**
 
-1. 「無『產業指數時序』單一端點（需 client 端組裝）」只對一半:資料層**已有**原生類股指數時序 —— `adapter_twse_sector_index.go`（TWSE MI_INDEX／FinMind,`TAISEMI`）＋ `cmd/backfill-sector-index` 寫入 `data/state/sector_index/`（本機 **106** 個日檔,2026-06-03 → 2026-09-24,每檔 **20** 個 L1 key 的 `index`＋`return_pct`）。**缺對外端點,不是資料**。
+1. 「無『產業指數時序』單一端點（需 client 端組裝）」只對一半:資料層**已有**原生類股指數時序 —— `adapter_twse_sector_index.go`（TWSE MI_INDEX／FinMind,`TAISEMI`）＋ `cmd/backfill-sector-index` 寫入 `data/state/sector_index/`（本機 **1,695** 個日檔,2020-01-02 → 2026-10-29,每檔 **20** 個 L1 key 的 `index`＋`return_pct`;**10** 檔為空 `{}`,10-31 複驗）。**缺對外端點,不是資料**。
 2. 「47 個產業」定案 **38 = 20 L1 + 18 L2**:`internal/industry/sector.go` 的 20 個 `SectorID` 常數＋`internal/sectormap/canonical.go`（`canonicalL1`/`canonicalL2`）,與 live 端點同日一致。
 3. 「client 端用 `stock_get_fundamentals` × `industry_sector_list` 算市值加權」**無資料基礎**:今日無 `market_cap`（2026-09-27T20:26:19+08:00）,與 SK-20／SK-37 的 2262 欄 field-contract 0 命中一致。
 4. 「macro 確認 `current_period=consolidation`」**不可重現**:該端點回 43 條序列,無任何 period/regime 欄位（2026-09-27T20:26:19+08:00）。時期真值改查 PeriodDetector 出口,不要用 macro snapshot 反推。
