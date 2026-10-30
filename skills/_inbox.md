@@ -87,7 +87,7 @@ archive_owner: agent(autonomous, see _inbox_archive.md)
 
 - 2026-09-27 模板狀態校正（SK-31）＋ 模板類 quota 條文查核（**已拍板結案**）⇒ 原文已歸檔 `_inbox_archive.md` §[2026-09-30 自 _inbox.md 歸檔]（2026-09-30）
 
-## 2026-10-31 §CIO-2663 atlas-skill-inbound tick（SK-23 檔數修正結案）
+## 2026-10-31 §CIO-2664 atlas-skill-inbound tick（SK-23 檔數修正結案）
 
 - **SK-23 兩處檔數已修正**（8,987→8,988 B，上限 9,000）：`data/state/sector_index/` 實測 **1,695** 個日檔（其中 **10** 檔為 `{}` 空檔 ⇒ 有效 1,685），範圍 **2020-01-02 → 2026-10-29**；原「106 檔／2026-06-03 → 2026-09-24」係 2026-09-27 快照、已過時約 16 倍。frontmatter `verification:` 快照內的同一個「106」依 SKILL §7.2 不動（屬歷史快照）。
 - **端點複驗**（2026-10-31T02:32:49+08:00，全 GET／read-only）：`/api/industry/sectors` **200** ＝ **38** 產業（**20** 個有代表股，對上 20 L1＋18 L2）；`/api/industry/sector-index`、`/api/industry/sector-index/history`、`/api/market/sector-index` 三路徑皆 **404 route not found** ⇒「無對外端點、資料在磁碟」成立。
