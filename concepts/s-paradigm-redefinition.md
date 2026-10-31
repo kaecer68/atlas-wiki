@@ -11,7 +11,7 @@ sources:
 confidence: high
 contested: true
 contradictions:
-  - 「本檔早期 v0.2 寫法（S = 90 天時間帶）」vs 「kaecer 2026-07-15 拍板：S = 訊號紊亂狀態」——以 kaecer 拍板為準（本檔為重定義版）[2026-10-13 lint 收斂]
+  - concepts/atlas-three-paradigms-v0.2-summary
 ---
 
 # S 範式重新定義 — 不等於盤整期
@@ -167,6 +167,13 @@ atlas-go 在 S 期間的「**真實工作**」:
 - [ ] 3 個範例是否真的符合 S 定義?需要 kaecer 確認或反駁
 
 ---
+
+## 矛盾紀錄
+
+> 2026-11-01（schema 對位）：`contradictions` frontmatter 依 `SCHEMA.md`「只放其他頁面 slug」規定改為 `concepts/atlas-three-paradigms-v0.2-summary`；原散文條目原文照錄於此，不刪。
+
+- **原條目（2026-10-13 lint 收斂時寫法）**：「本檔早期 v0.2 寫法（S = 90 天時間帶）」vs 「kaecer 2026-07-15 拍板：S = 訊號紊亂狀態」——以 kaecer 拍板為準（本檔為重定義版）。
+- **對位頁**：[[concepts/atlas-three-paradigms-v0.2-summary]]（v0.2 三範式摘要）。
 
 ## 相關 entities / concepts
 

@@ -15,7 +15,7 @@ sources:
 confidence: low
 contested: true
 contradictions:
-  - 「本檔採七類核心機構分法」vs「atlas 規格 3+2+2 七維錢潮雷達（2026-07-17 業主接受）」——兩者切法不同；衝突時以 atlas spec 3+2+2 為準（本檔為散戶可觀測代理視角）[2026-08-22 iter2 對位]
+  - concepts/funding-forces-taxonomy-e05-pending-approval
 ---
 
 # 台灣法人錢潮追蹤：七類核心機構與散戶可觀測代理
@@ -179,6 +179,13 @@ contradictions:
 > **從「預測股價」改成「辨認哪一類錢、為什麼進出、公開資料何時才露出痕跡」。**
 
 這正好可以成為 L1-T.3 之後的新研究支線：把 T1→T4 的粗粒度訊號燈，升級成「七類資金目的 × 資料代理 × 延續狀態」模型。
+
+## 矛盾紀錄
+
+> 2026-11-01（schema 對位）：`contradictions` frontmatter 依 `SCHEMA.md`「只放其他頁面 slug」規定改為 `concepts/funding-forces-taxonomy-e05-pending-approval`；原散文條目原文照錄於此，不刪。
+
+- **原條目（2026-08-22 iter2 對位時寫法）**：「本檔採七類核心機構分法」vs「atlas 規格 3+2+2 七維錢潮雷達（2026-07-17 業主接受）」——兩者切法不同；衝突時以 atlas spec 3+2+2 為準（本檔為散戶可觀測代理視角）。
+- **對位頁**：[[concepts/funding-forces-taxonomy-e05-pending-approval]]。
 
 ## 相關頁面
 

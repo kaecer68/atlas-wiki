@@ -10,8 +10,6 @@ sources:
   - ~/workspace/atlas-notes/02-knowledge/atlas-original-paper-v0.1-L1T3-five-chains.md
 confidence: medium
 contested: false
-contradictions:
-  - 「本檔舊詮釋（Day 3 2026-07-17 當日紀實段中之 L1-T.1=美國 3 支柱等占位描述）」vs「2026-09-27 校正 + 子頁正名」——以子頁正名為準，本檔舊案段為歷史紀錄保留[2026-10-13 lint 收斂]
 ---
 > 命名消歧：本檔「L1-T」屬 kaecer 拍板之範式框架編號（L1=真實驅動層…L5=散戶情緒）,與 atlas strategy_techniques 策略分層 L1-L5（全球流動性…地緣政治）及憲章因果鏈第〇~六層為三套不同軸 [2026-08-22 iter2]
 
@@ -161,6 +159,13 @@ kaecer 拍板的「**L1-T 範式**」結構中,L1 = 鐵律的「**真實驅動�
 - [ ] MCP 工具修復後,可否用真實當日資料驗證 L1-T.2 即時油價反應 + L1-T.3 鏈間傳導?
 
 ---
+
+## 矛盾紀錄
+
+> 2026-11-01（schema 對位）：本頁 `contested: false`（2026-09-27 校正後已無未解矛盾），故 frontmatter 的 `contradictions:` 鍵移除；原散文條目原文照錄於此，不刪。
+
+- **原條目（2026-10-13 lint 收斂時寫法）**：「本檔舊詮釋（Day 3 2026-07-17 當日紀實段中之 L1-T.1=美國 3 支柱等占位描述）」vs「2026-09-27 校正 + 子頁正名」——以子頁正名為準，本檔舊案段為歷史紀錄保留。
+- **對位**：[[entities/l1-t1-energy-transition]]～[[entities/l1-t6-demographic-turning-point]] 六子頁（2026-09-27 正名）。
 
 ## 相關 entities / concepts
 

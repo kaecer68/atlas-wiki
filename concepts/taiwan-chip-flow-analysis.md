@@ -18,7 +18,7 @@ sources:
   - "待查（2026-09-27）：外資持股市值 40–45%／單日成交 25–35% 兩項未附來源與期間"
 confidence: medium
 contested: true
-contradictions: [外資佔台股成交比重 25–35% 與 concepts/t1-t4-signal-light.md 的「4 成成交」不一致（孰為正待查，2026-09-27）]
+contradictions: [concepts/t1-t4-signal-light]
 ---
 # 台股籌碼面分析手冊
 
@@ -475,3 +475,10 @@ LLM agent 在引用 atlas 策略時，建議：
 ```
 
 LLM 在回答投資人問題時，建議將籌碼面與技術面、基本面**交叉運用**，避免單一指標決定結論。
+
+## 矛盾紀錄
+
+> 2026-11-01（schema 對位）：`contradictions` frontmatter 依 `SCHEMA.md`「只放其他頁面 slug」規定改為 `concepts/t1-t4-signal-light`；原散文條目原文照錄於此，不刪。
+
+- **原條目**：外資佔台股成交比重 25–35% 與 [[concepts/t1-t4-signal-light]] 的「4 成成交」不一致（孰為正待查，2026-09-27）。
+- **現況**：未結 —— 兩頁皆標 `last_verified: 待複驗（2026-09-27）`，待以 TWSE 官方成交比重實測收斂。

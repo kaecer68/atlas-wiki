@@ -16,7 +16,7 @@ sources:
   - "待查（2026-09-27）：外資佔台股成交比重『4 成』與 25–35% 之爭未定；2024–2026 事件列金額未逐筆對 TWSE 日報"
 confidence: medium
 contested: true
-contradictions: [v0.4 的 I1/I3 過度強調「延遲性 alpha」, 外資佔台股成交比重「4 成」與 concepts/taiwan-chip-flow-analysis.md 的 25–35% 不一致（孰為正待查，2026-09-27）]
+contradictions: [concepts/taiwan-chip-flow-analysis]
 ---
 
 # T1→T4 訊號燈四層驅動結構
@@ -203,6 +203,14 @@ v0.4 提到:
 - [ ] T1 美股的「**費半 SOX 觸發門檻**」應該設多少?±2%?±4%?需要回測
 
 ---
+
+## 矛盾紀錄
+
+> 2026-11-01（schema 對位）：`contradictions` frontmatter 依 `SCHEMA.md`「只放其他頁面 slug」規定改為 `concepts/taiwan-chip-flow-analysis`；原散文條目原文照錄於此，不刪。
+
+- **原條目 1**：v0.4 的 I1/I3 過度強調「延遲性 alpha」（本檔內部自我修正，正文見「為什麼 v0.4 的 I1/I3 是『過度強調』?」段）。
+- **原條目 2**：外資佔台股成交比重「4 成」與 [[concepts/taiwan-chip-flow-analysis]] 的 25–35% 不一致（孰為正待查，2026-09-27）。
+- **現況**：條目 2 未結 —— 兩頁皆標 `last_verified: 待複驗（2026-09-27）`，待以 TWSE 官方成交比重實測收斂。
 
 ## 相關 entities / concepts
 
