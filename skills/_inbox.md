@@ -1,6 +1,6 @@
 # atlas-skill-inbound Inbox
 
-最後更新:2026-09-27 S6 時效宣告補完(18 頁未宣告 → 0)＋ `待複驗` 工作佇列 9 頁;前次更新:2026-09-27 模板類 quota 拍板結案(不計入;條文入 `_method.md:121`);前次更新:2026-09-27 模板狀態校正 ＋ templates quota 條文查核（同日另段:結清兩項長期待辦）;前次更新:2026-08-21 v2 session 修補(8/21 補登（見 T9 v2）— 共同根因: A1 execute_code 會員權限 + A2 terminal 180s timeout, 修復任務 A1+A2 已寫入 hermes-governance-log T3-A493 條目請 hermes 下次 trigger 處理, 詳見 _inbox_archive.md §6 8/21 條目);前次更新:2026-08-21 歸檔 session(PR #29);前前次更新:2026-08-12 D6 session 結算(SK-34 真實 promotion + v6.59 overclaim 修正);前前前次更新:2026-08-07 D4 session 結算(`_inbox.md` size 15201B > 12000B 上限 → 啟動第七條例外歷史段歸檔 → 歷史段 5261B 移至 `_inbox_archive.md` v1.0,主檔縮為 3589B); 前前次更新:2026-08-07 16:50 (CR-2026-08-07 擱置區邊移 → v6.52 撤銷外推,改內部化)
+最後更新:2026-10-31 §CIO-2673 lint 週末清單（真問題/誤判分流）＋ §CIO-2672 平台缺陷待辦；前次更新:2026-09-27 S6 時效宣告補完(18 頁未宣告 → 0)＋ `待複驗` 工作佇列 9 頁;前次更新:2026-09-27 模板類 quota 拍板結案(不計入;條文入 `_method.md:121`);前次更新:2026-09-27 模板狀態校正 ＋ templates quota 條文查核（同日另段:結清兩項長期待辦）;前次更新:2026-08-21 v2 session 修補(8/21 補登（見 T9 v2）— 共同根因: A1 execute_code 會員權限 + A2 terminal 180s timeout, 修復任務 A1+A2 已寫入 hermes-governance-log T3-A493 條目請 hermes 下次 trigger 處理, 詳見 _inbox_archive.md §6 8/21 條目);前次更新:2026-08-21 歸檔 session(PR #29);前前次更新:2026-08-12 D6 session 結算(SK-34 真實 promotion + v6.59 overclaim 修正);前前前次更新:2026-08-07 D4 session 結算(`_inbox.md` size 15201B > 12000B 上限 → 啟動第七條例外歷史段歸檔 → 歷史段 5261B 移至 `_inbox_archive.md` v1.0,主檔縮為 3589B); 前前次更新:2026-08-07 16:50 (CR-2026-08-07 擱置區邊移 → v6.52 撤銷外推,改內部化)
 
 > 2026-08-07 D4 結算段（總體進度 ＋ 最後更新對位事實,2,816B）已於 2026-09-27 依 `_method.md` 第七條例外移入 `_inbox_archive.md`。
 
@@ -81,17 +81,24 @@ archive_owner: agent(autonomous, see _inbox_archive.md)
 - `templates/trigger-retail-margin-decrease.md`:08-03 舊高水位 5074.63 億
 - `templates/trigger-sox-foreignflow.md`:08-03 舊快照(SOX +0.07%)
 
+## 2026-10-31 §CIO-2673 atlas-wiki lint 週末清單（判讀 10-30 報告）
+- 真問題 6 類：A1 `contradictions` 散文非 slug×5｜A2 tag 缺 14 標籤/22 次（`methodology`×9）｜A3 >200 行 13 頁（首批 split 3）｜A4 `updated`>90d 5 頁（3 頁無 `last_verified`）｜A5 contested 6 頁序｜A6 `templates/audit-report.md` 零 inbound
+- 誤判 4 類：報告由無 PyYAML 直譯器產生 → `parse_minimal` 把 `[]` 讀成字串 ⇒ `contradictions: [[]]` 20 筆、tag 字串化、metadata 誤報；`check-wiki-pages.py` = 0 違規
+- 拍板：C1 `SCHEMA.md` contradictions slug/散文二擇一｜C2 補 14 tag（治理檔 ⇒ PR＋`kaecer-reviewed`）
+- 全文：`workspace/atlas-cio-daily/2026-10-31-wiki-lint-weekend-fixlist.md`｜期限 2026-11-08
+
 ## 已結案（近期；預算 ≤ 4,000 B，超出即移 `_inbox_archive.md`）
 
 ## 已結案（近期；預算 ≤ 4,000 B，超出即移 `_inbox_archive.md`）
 
 - 2026-09-27 模板狀態校正（SK-31）＋ 模板類 quota 條文查核（**已拍板結案**）⇒ 原文已歸檔 `_inbox_archive.md` §[2026-09-30 自 _inbox.md 歸檔]（2026-09-30）
 
-## 2026-10-31 §CIO-2664 atlas-skill-inbound tick（SK-23 檔數修正結案）
+## 2026-10-31 §CIO-2672 平台缺陷待辦（3 項，皆非內容頁、需 backend 或 @qc 處置）
 
-- **SK-23 兩處檔數已修正**（8,987→8,988 B，上限 9,000）：`data/state/sector_index/` 實測 **1,695** 個日檔（其中 **10** 檔為 `{}` 空檔 ⇒ 有效 1,685），範圍 **2020-01-02 → 2026-10-29**；原「106 檔／2026-06-03 → 2026-09-24」係 2026-09-27 快照、已過時約 16 倍。frontmatter `verification:` 快照內的同一個「106」依 SKILL §7.2 不動（屬歷史快照）。
-- **端點複驗**（2026-10-31T02:32:49+08:00，全 GET／read-only）：`/api/industry/sectors` **200** ＝ **38** 產業（**20** 個有代表股，對上 20 L1＋18 L2）；`/api/industry/sector-index`、`/api/industry/sector-index/history`、`/api/market/sector-index` 三路徑皆 **404 route not found** ⇒「無對外端點、資料在磁碟」成立。
-- **⚠️ `twse_sector_index` 綠燈空檔復現於 10-30（週五交易日）**：日檔 `sector_indices_20261030_20261030.json` = `{}`（2 B），而 `/api/scheduler/status`（02:32:54+08:00）顯示 `macro_cache_twse_sector_index` enabled、`last_run=2026-10-30T18:25:13Z`、`consecutive_failures=0`、`last_new_samples=0` ⇒「跑成功但寫空」。與 §CIO-2564 第 7 項同源，**本 cron 不改 backend**（需 governance PR ＋ `kaecer-reviewed`）。
-- **10 個空檔清單**：2026-09-12／09-13／09-20／10-03／10-11／10-17／10-18／10-25／10-26／10-30（前 9 檔為週末或休市日；**10-26 光復節補假**、**10-30 週五為真缺陷**）。
-- **未搬動**：10-29／10-30 nightly 待補 3 段仍在未合併分支 `ci/inbound-channel-health-2026-10-29-clean`（含 risk-framework sect24 v3 提案待套用、M-7a 口徑規則），本 PR 不重複收錄以免與該分支衝突。
-- **PR 狀態**：`gh` token 失效（`atlas-qc-reviewer[bot]` keyring invalid）⇒ 分支可推（SSH），**PR 未開**，不得記為「已交 PR」。
+| # | 缺陷 | 實測證據（2026-10-31T06:0x+08:00） | 建議去向 |
+|---|---|---|---|
+| 1 | `macro.snapshot.dram_spot_price` **欄位契約錯誤**：值為 Micron 個股價，非 DRAM 現貨 | atlas 884.739990234375／−5.30% ≡ CNBC MU 收盤 884.74（−49.53／−5.30%）≡ Yahoo MU 884.739990234375，**逐位相同**；且該欄驅動 narrative `evt-dram-*` → theme `memory_oversupply`（conf 0.715），而同期一手事實為**缺貨漲價**（Intel Q3 法說「unprecedented memory crunch」；TrendForce Q4 常規 DRAM 合約價 +10~15%、NAND +15~20%）⇒ **標籤方向倒反** | backend（欄位改名或改真 DRAM 現貨源）＋ narrative detector 標籤複核；屬治理檔範圍 ⇒ 只開 PR 等 `kaecer-reviewed` |
+| 2 | `capital_flow` 的 `dealer` 維度與 **TWSE T86 官方合計差 16.2%** | atlas `dealer_net` −25.5578 億股 vs T86（18,432 列逐欄加總）−30.5084 億股，差 **4.9506**；差額幾乎全在避險腿（−4.9527，自行腿僅差 −0.0021）。按 4 位股票（−1.2872）／ETF 00xxxx（−10.0923）／6 位權證·ETN（−16.7168）／5 位（−2.4121）四桶**皆無法重建 −4.9506** ⇒ ❓ 排除範圍未明。**投信逐位相符**（46,268,331 股 ≡ 0.46268331 億股）、外資差 0.10% | @qc／backend 說明排除範圍；在此之前**佔比結論可用、絕對水位不可跨源混用** |
+| 3 | **geo 歷史端點停更**（R206，§CIO-2670 已立） | `/api/geopolitical/history?days=10` 最新列停在 2026-10-23（27），`geopolitical/latest.json` 為 10-30T21:29:35Z（36） | backend；本 tick 不重複立規則 |
+
+**另記**：`concepts/taiwan-money-flow-seven-institutional-buckets.md` 的 refine 提案（自營商避險佔比機械化檢測，＋1,883 B）全文在 `workspace/atlas-cio-daily/2026-10-31-patch-proposal-dealer-hedging-share.md`，**blocked**：gh token invalid（`atlas-qc-reviewer[bot]`）＋ 本工作樹在未合併分支 `ci/inbound-sk23-sector-index-count-2026-10-31`。與 10-31 harvest 的 pending refine（`concepts/atlas-mcp-interpretation-guide.md` §Capital flow tools）**不同頁不同段，互不衝突**。
