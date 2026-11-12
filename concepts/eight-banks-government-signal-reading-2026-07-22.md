@@ -2,13 +2,17 @@
 title: 八大行庫買賣超 — 反推政府護盤訊號的實戰方法
 description: 散戶問「八大行庫買賣超代表什麼、是不是政府在護盤」時載入。
 created: 2026-07-22
-updated: 2026-09-27
+updated: 2026-11-12
+last_verified: 2026-11-12
 type: concept
 tags: [concept, signal, time-anchor]
 sources:
   - https://www.yottau.com.tw/article/242 (2026-07-22 重讀)
   - https://www.stockfeel.com.tw/八大官股-公股銀行-八大行庫 (2025 持股資料)
   - https://readmo.cmoney.tw/article/bf1ace38-0862-4b8a-9219-c61d277aeae8
+  - https://histock.tw/stock/broker8.aspx（2026-11-12 重讀；11/11 買賣超榜列）
+  - https://trend9999.com/market/institutional（2026-11-12 重讀；八大官股 11/11 買賣超）
+  - TWSE BFI82U／MI_INDEX（2026-11-11 官方資料，2026-11-12 讀取）
 confidence: medium
 contested: false
 contradictions: []
@@ -70,6 +74,8 @@ atlas-mcp `capital_flow_daily` 的 government 維度**沒有官方即時資料�
 2. **客戶交易混雜**：八大行庫下單的不只政府，散戶在該券商下單也算進去
 3. **延遲生效**：八大行庫已連買但賣方仍強，指數仍會下跌
 4. **國安基金 ≠ 八大行庫**：國安基金「可能透過」八大行庫下單，但八大行庫也有自己的資產配置需求（readmo FAQ）
+5. **日期語義陷阱**：代理值的 `as_of` 可能**早於**所引用的交易日 —— 引用前必對 state 檔名／`as_of_trading_date` 欄位，**不可用「最新可用值」填入當日欄**（案例：2026-11-11 欄位值 `17.5801` 億實為 2026-11-10 之值）。
+6. **方向陷阱**：官股在**上漲日**可能為**淨賣超** —— 2026-11-11 台股 +3.62% 收最高，八大官股當日**賣超**（histock broker8 榜列與 trend9999 八大官股榜雙源同向，個股金額吻合至 0.1 億內；媒體報導合計賣超 79.4 億）⇒ 「買超＝護盤」之反向（賣超＝調節）同樣成立，**不得由前一日方向外推**。
 
 ## 數據源
 
